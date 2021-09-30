@@ -26,7 +26,7 @@ interface Medium
      * @param  string|null  $conversion
      * @return string
      */
-    public function absolutePath(?string $conversion = null): string;
+    public function getAbsolutePath(?string $conversion = null): string;
 
     /**
      * Get the url to the conversion.

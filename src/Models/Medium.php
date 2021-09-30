@@ -113,7 +113,7 @@ class Medium extends Model implements Contract
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Bazar\Database\Factories\MediumFactory
+     * @return \root\Database\Factories\MediumFactory
      */
     protected static function newFactory(): MediumFactory
     {
@@ -221,7 +221,7 @@ class Medium extends Model implements Contract
      * @param  string|null  $conversion
      * @return string
      */
-    public function absolutePath(?string $conversion = null): string
+    public function getAbsolutePath(?string $conversion = null): string
     {
         return $this->path($conversion, true);
     }

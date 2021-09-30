@@ -20,11 +20,11 @@ class GdDriver extends Driver
      */
     public function perform(Medium $medium): Medium
     {
-        if (! Storage::disk($medium->disk)->exists($medium->path())) {
-            throw new FileNotFoundException("The file located at [{$medium->absolutePath()}] is not found.");
+        if (! Storage::disk($medium->disk)->exists($medium->getPath())) {
+            throw new FileNotFoundException("The file located at [{$medium->getAbsolutePath()}] is not found.");
         }
 
-        File::ensureDirectoryExists(Storage::disk('local')->path('bazar-tmp'));
+        File::ensureDirectoryExists(Storage::disk('local')->path('root-tmp'));
 
         foreach (Conversion::all() as $conversion => $callback) {
             $image = $this->createImage($medium);
@@ -34,7 +34,7 @@ class GdDriver extends Driver
             $image->save();
 
             Storage::disk($medium->disk)->put(
-                $medium->path($conversion), File::get($image->path())
+                $medium->getPath($conversion), File::get($image->getPath())
             );
 
             $image->destroy();

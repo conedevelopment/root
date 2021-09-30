@@ -59,9 +59,9 @@ class Image
     {
         $this->medium = $medium;
 
-        $this->path = Storage::disk('local')->path('bazar-tmp/'.Str::random(40));
+        $this->path = Storage::disk('local')->path('root-tmp/'.Str::random(40));
 
-        $this->type = exif_imagetype($medium->absolutePath());
+        $this->type = exif_imagetype($medium->getAbsolutePath());
 
         $this->create();
     }
@@ -71,7 +71,7 @@ class Image
      *
      * @return string
      */
-    public function path(): string
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -137,10 +137,10 @@ class Image
      * @param  bool  $crop
      * @return $this
      */
-    public function resize(?int $width = null, ?int $height = null, bool $crop = false): Image
+    public function resize(?int $width = null, ?int $height = null, bool $crop = false): self
     {
         $x = $y = 0;
-        [$originalWidth, $originalHeight] = getimagesize($this->medium->absolutePath());
+        [$originalWidth, $originalHeight] = getimagesize($this->medium->getAbsolutePath());
 
         $width = $width ?: $this->attributes['width'];
         $width = $width ? min($width, $originalWidth) : $originalWidth;
@@ -200,7 +200,7 @@ class Image
                 imagewebp($this->resource, $this->path, $this->attributes['quality']);
                 break;
             default:
-                throw new Exception('The file type is not supported.');
+                throw new Exception("The file type [{$this->type}] is not supported.");
         }
     }
 
@@ -215,19 +215,19 @@ class Image
     {
         switch ($this->type) {
             case IMAGETYPE_GIF:
-                $this->resource = imagecreatefromgif($this->medium->absolutePath());
+                $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
                 break;
             case IMAGETYPE_JPEG:
-                $this->resource = imagecreatefromjpeg($this->medium->absolutePath());
+                $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
                 break;
             case IMAGETYPE_PNG:
-                $this->resource = imagecreatefrompng($this->medium->absolutePath());
+                $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
                 break;
             case IMAGETYPE_WEBP:
-                $this->resource = imagecreatefromwebp($this->medium->absolutePath());
+                $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
                 break;
             default:
-                throw new Exception('The file type is not supported.');
+            throw new Exception("The file type [{$this->type}] is not supported.");
         }
     }
 

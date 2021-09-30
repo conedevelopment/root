@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Bazar
+about: Suggest an idea for root
 ---
 
 - Root version: #.#.#

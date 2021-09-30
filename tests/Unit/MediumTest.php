@@ -38,7 +38,7 @@ class MediumTest extends TestCase
     public function a_medium_has_path()
     {
         $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->path());
-        $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->absolutePath());
+        $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->getAbsolutePath());
     }
 
     /** @test */
