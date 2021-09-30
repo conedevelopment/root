@@ -9,7 +9,7 @@ trait InteractsWithProxy
     /**
      * The resolve proxy instance.
      *
-     * @var object
+     * @var self
      */
     protected static self $proxy;
 
@@ -23,7 +23,7 @@ trait InteractsWithProxy
     /**
      * Resolve and get the proxy instance.
      *
-     * @return object
+     * @return self
      */
     public static function proxy(): self
     {
