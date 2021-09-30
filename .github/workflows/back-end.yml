@@ -1,0 +1,42 @@
+name: Back-end
+
+on:
+  push:
+    branches:
+      - master
+  pull_request: null
+
+jobs:
+  unit_tests:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["ubuntu-20.04", "windows-latest"]
+        php: ["8.0"]
+        stability: ["prefer-stable"]
+
+    name: "Unit - ${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
+
+    runs-on: "${{ matrix.os }}"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Check Composer configuration
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit --verbose
