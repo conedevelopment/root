@@ -28,7 +28,7 @@ class MediaTest extends TestCase
 
         $this->medium = Medium::factory()->create();
 
-        Storage::disk('public')->put($this->medium->path(), 'fake content');
+        Storage::disk('public')->put($this->medium->getPath(), 'fake content');
     }
 
     /** @test */
@@ -91,14 +91,14 @@ class MediaTest extends TestCase
     /** @test */
     public function an_admin_can_destroy_medium()
     {
-        Storage::disk('public')->assertExists($this->medium->path());
+        Storage::disk('public')->assertExists($this->medium->getPath());
 
         $this->actingAs($this->admin)
             ->delete(URL::route('root.media.destroy', $this->medium))
             ->assertOk()
             ->assertExactJson(['deleted' => true]);
 
-        Storage::disk('public')->assertMissing($this->medium->path());
+        Storage::disk('public')->assertMissing($this->medium->getPath());
 
         $this->assertDatabaseMissing('root_media', ['id' => $this->medium->id]);
     }

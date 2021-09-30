@@ -31,13 +31,13 @@ class MediumTest extends TestCase
     {
         $this->assertEquals(['original'], array_keys($this->medium->urls));
 
-        $this->assertStringContainsString('-thumb', $this->medium->url('thumb'));
+        $this->assertStringContainsString('-thumb', $this->medium->getUrl('thumb'));
     }
 
     /** @test */
     public function a_medium_has_path()
     {
-        $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->path());
+        $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->getPath());
         $this->assertStringContainsString("{$this->medium->id}/{$this->medium->name}", $this->medium->getAbsolutePath());
     }
 

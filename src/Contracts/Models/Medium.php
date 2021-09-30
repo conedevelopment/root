@@ -18,7 +18,7 @@ interface Medium
      * @param  bool  $absolute
      * @return string
      */
-    public function path(?string $conversion = null, bool $absolute = false): string;
+    public function getPath(?string $conversion = null, bool $absolute = false): string;
 
     /**
      * Get the full path to the conversion.
@@ -34,5 +34,5 @@ interface Medium
      * @param  string|null  $conversion
      * @return string
      */
-    public function url(?string $conversion = null): string;
+    public function getUrl(?string $conversion = null): string;
 }
