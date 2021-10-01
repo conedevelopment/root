@@ -2,7 +2,10 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 abstract class Field implements Arrayable
@@ -248,6 +251,50 @@ abstract class Field implements Arrayable
     }
 
     /**
+     * Create a new method.
+     *
+     * @return void
+     */
+    public function format(Closure $callback)
+    {
+        //
+    }
+
+    /**
+     * Create a new method.
+     *
+     * @return void
+     */
+    public function default(Closure $callback)
+    {
+        //
+    }
+
+    /**
+     * Format the value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        //
+    }
+
+    /**
+     * Resolve the default value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveDefault(Request $request, Model $model): mixed
+    {
+        //
+    }
+
+    /**
      * Set the given attribute.
      *
      * @param  string  $key
@@ -298,6 +345,28 @@ abstract class Field implements Arrayable
      * @return array
      */
     public function toArray(): array
+    {
+        return [];
+    }
+
+    /**
+     * Get the display representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toDisplay(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Get the form representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toForm(Request $request): array
     {
         return [];
     }
