@@ -156,7 +156,7 @@ class Medium extends Model implements Contract
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::getProxiedClass());
     }
 
     /**
