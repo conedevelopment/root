@@ -11,14 +11,14 @@ use Illuminate\Support\Str;
 abstract class Field implements Arrayable
 {
     /**
-     * Indicates if the column is sortable.
+     * Indicates if the field is sortable.
      *
      * @var bool
      */
     protected bool $sortable = false;
 
     /**
-     * Indicates if the column is searchable.
+     * Indicates if the field is searchable.
      *
      * @var bool
      */
@@ -30,6 +30,20 @@ abstract class Field implements Arrayable
      * @var array
      */
     protected array $attributes = [];
+
+    /**
+     * The format resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $formatResolver = null;
+
+    /**
+     * The default resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $defaultResolver = null;
 
     /**
      * Create a new field instance.
@@ -251,23 +265,29 @@ abstract class Field implements Arrayable
     }
 
     /**
-     * Create a new method.
+     * Set the format resolver.
      *
-     * @return void
+     * @param  \Closure  $callback
+     * @return $this
      */
-    public function format(Closure $callback)
+    public function format(Closure $callback): self
     {
-        //
+        $this->formatResolver = $callback;
+
+        return $this;
     }
 
     /**
-     * Create a new method.
+     * Set the default resolver.
      *
-     * @return void
+     * @param  \Closure  $callback
+     * @return $this
      */
-    public function default(Closure $callback)
+    public function default(Closure $callback): self
     {
-        //
+        $this->defaultResolver = $callback;
+
+        return $this;
     }
 
     /**
@@ -363,12 +383,12 @@ abstract class Field implements Arrayable
     }
 
     /**
-     * Get the form representation of the field.
+     * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toForm(Request $request): array
+    public function toInput(Request $request): array
     {
         return array_merge($this->toArray(), [
             //

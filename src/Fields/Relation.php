@@ -2,9 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-
 abstract class Relation extends Field
 {
     /**
@@ -25,29 +22,5 @@ abstract class Relation extends Field
         $this->nullable = $value;
 
         return $this;
-    }
-
-    /**
-     * Format the value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
-     */
-    public function resolveFormat(Request $request, Model $model): mixed
-    {
-        //
-    }
-
-    /**
-     * Resolve the default value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
-     */
-    public function resolveDefault(Request $request, Model $model): mixed
-    {
-        //
     }
 }

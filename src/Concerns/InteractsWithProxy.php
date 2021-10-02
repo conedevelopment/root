@@ -7,7 +7,7 @@ use Illuminate\Container\Container;
 trait InteractsWithProxy
 {
     /**
-     * The resolve proxy instance.
+     * The resolved proxy instance.
      *
      * @var self
      */
