@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Contracts\Conversion;
+namespace Cone\Root\Interfaces\Conversion;
 
 use Closure;
 use Cone\Root\Conversion\GdDriver;

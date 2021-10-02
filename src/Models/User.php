@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Models;
 
-use Cone\Root\Concerns\InteractsWithProxy;
-use Cone\Root\Contracts\Models\User as Contract;
 use Cone\Root\Database\Factories\UserFactory;
+use Cone\Root\Interfaces\Models\User as Contract;
+use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -101,7 +101,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
      *
      * @return string
      */
-    public static function getProxiedContract(): string
+    public static function getProxiedInterface(): string
     {
         return Contract::class;
     }

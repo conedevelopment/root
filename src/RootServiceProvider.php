@@ -12,8 +12,8 @@ class RootServiceProvider extends ServiceProvider
      * @var array
      */
     public array $bindings = [
-        Contracts\Models\Medium::class => Models\Medium::class,
-        Contracts\Models\User::class => Models\User::class,
+        Interfaces\Models\Medium::class => Models\Medium::class,
+        Interfaces\Models\User::class => Models\User::class,
     ];
 
     /**
@@ -22,8 +22,7 @@ class RootServiceProvider extends ServiceProvider
      * @var array
      */
     public array $singletons = [
-        Contracts\Conversion\Manager::class => Conversion\Manager::class,
-        Contracts\Registries\ResourceRegistry::class => Registries\ResourceRegistry::class,
+        Interfaces\Conversion\Manager::class => Conversion\Manager::class,
     ];
 
     /**

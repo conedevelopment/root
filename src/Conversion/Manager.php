@@ -3,7 +3,7 @@
 namespace Cone\Root\Conversion;
 
 use Closure;
-use Cone\Root\Contracts\Conversion\Manager as Contract;
+use Cone\Root\Interfaces\Conversion\Manager as Contract;
 use Illuminate\Support\Manager as BaseManager;
 
 class Manager extends BaseManager implements Contract

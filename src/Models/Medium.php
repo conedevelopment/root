@@ -2,12 +2,12 @@
 
 namespace Cone\Root\Models;
 
-use Cone\Root\Concerns\Filterable;
-use Cone\Root\Concerns\HasUuid;
-use Cone\Root\Concerns\InteractsWithProxy;
-use Cone\Root\Contracts\Models\Medium as Contract;
 use Cone\Root\Database\Factories\MediumFactory;
+use Cone\Root\Interfaces\Models\Medium as Contract;
 use Cone\Root\Support\Facades\Conversion;
+use Cone\Root\Traits\Filterable;
+use Cone\Root\Traits\HasUuid;
+use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -107,7 +107,7 @@ class Medium extends Model implements Contract
      *
      * @return string
      */
-    public static function getProxiedContract(): string
+    public static function getProxiedInterface(): string
     {
         return Contract::class;
     }

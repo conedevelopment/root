@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Concerns;
+namespace Cone\Root\Traits;
 
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;

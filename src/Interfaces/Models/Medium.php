@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Contracts\Models;
+namespace Cone\Root\Interfaces\Models;
 
 interface Medium
 {

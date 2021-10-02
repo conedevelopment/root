@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Concerns;
+namespace Cone\Root\Traits;
 
 use Illuminate\Container\Container;
 
@@ -14,11 +14,11 @@ trait InteractsWithProxy
     protected static self $proxy;
 
     /**
-     * Get the proxied contract.
+     * Get the proxied interface.
      *
      * @return string
      */
-    abstract public static function getProxiedContract(): string;
+    abstract public static function getProxiedInterface(): string;
 
     /**
      * Resolve and get the proxy instance.
@@ -29,7 +29,7 @@ trait InteractsWithProxy
     {
         if (! isset(static::$proxy)) {
             static::$proxy = Container::getInstance()->make(
-                static::getProxiedContract()
+                static::getProxiedInterface()
             );
         }
 

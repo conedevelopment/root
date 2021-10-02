@@ -3,13 +3,13 @@
 namespace Cone\Root\Support\Facades;
 
 use Closure;
-use Cone\Root\Contracts\Conversion\Manager;
+use Cone\Root\Interfaces\Conversion\Manager;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \Cone\Root\Models\Medium perform(\Cone\Root\Models\Medium $medium)
  *
- * @see \Cone\Root\Contracts\Conversion\Manager
+ * @see \Cone\Root\Interfaces\Conversion\Manager
  */
 class Conversion extends Facade
 {

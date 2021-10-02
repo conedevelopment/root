@@ -4,7 +4,6 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -44,6 +43,13 @@ class Field implements Arrayable
      * @var \Closure|null
      */
     protected ?Closure $defaultResolver = null;
+
+    /**
+     * The hydrate resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $hydrateResolver = null;
 
     /**
      * Create a new field instance.
@@ -289,27 +295,16 @@ class Field implements Arrayable
     }
 
     /**
-     * Format the value.
+     * Set the hydrate resolver.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * @param  \Closure  $callback
+     * @return $this
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function hydrate(Closure $callback): self
     {
-        //
-    }
+        $this->hydrateResolver = $callback;
 
-    /**
-     * Resolve the default value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
-     */
-    public function resolveDefault(Request $request, Model $model): mixed
-    {
-        //
+        return $this;
     }
 
     /**
