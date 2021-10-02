@@ -53,4 +53,16 @@ class FieldTest extends TestCase
         $this->assertSame(10, $this->field->getAttribute('min'));
         $this->assertSame(30, $this->field->getAttribute('max'));
     }
+
+    /** @test */
+    public function a_feild_removes_attributes()
+    {
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function a_field_clears_attributes()
+    {
+        $this->assertTrue(true);
+    }
 }

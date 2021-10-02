@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -103,6 +104,16 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
     public static function getProxiedContract(): string
     {
         return Contract::class;
+    }
+
+    /**
+     * Get the uploads for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function uploads(): HasMany
+    {
+        return $this->hasMany(Medium::getProxiedClass(), 'user_id');
     }
 
     /**
