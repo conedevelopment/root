@@ -17,6 +17,14 @@ class MediumTest extends TestCase
     }
 
     /** @test */
+    public function a_medium_belongs_to_a_user()
+    {
+        $this->medium->user()->associate($this->admin)->save();
+
+        $this->assertSame($this->admin->id, $this->medium->user_id);
+    }
+
+    /** @test */
     public function a_medium_can_determine_if_image()
     {
         $this->medium->update(['mime_type' => 'image/jpg']);

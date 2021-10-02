@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('root_media', static function (Blueprint $table): void {
             $table->uuid('id')->primary();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name')->index();
             $table->string('file_name');
             $table->string('mime_type');

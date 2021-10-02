@@ -357,7 +357,9 @@ abstract class Field implements Arrayable
      */
     public function toDisplay(Request $request): array
     {
-        return [];
+        return array_merge($this->toArray(), [
+            //
+        ]);
     }
 
     /**
@@ -368,6 +370,8 @@ abstract class Field implements Arrayable
      */
     public function toForm(Request $request): array
     {
-        return [];
+        return array_merge($this->toArray(), [
+            //
+        ]);
     }
 }

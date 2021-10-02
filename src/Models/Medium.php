@@ -9,8 +9,10 @@ use Cone\Root\Contracts\Models\Medium as Contract;
 use Cone\Root\Database\Factories\MediumFactory;
 use Cone\Root\Support\Facades\Conversion;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -113,9 +115,9 @@ class Medium extends Model implements Contract
     /**
      * Create a new factory instance for the model.
      *
-     * @return \root\Database\Factories\MediumFactory
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory(): MediumFactory
+    protected static function newFactory(): Factory
     {
         return MediumFactory::new();
     }
@@ -124,7 +126,7 @@ class Medium extends Model implements Contract
      * Create a new medium from the given path.
      *
      * @param  string  $path
-     * @return self
+     * @return static
      */
     public static function createFrom(string $path): self
     {
@@ -145,6 +147,16 @@ class Medium extends Model implements Contract
             'size' => round(filesize($path) / 1024),
             'name' => pathinfo($name, PATHINFO_FILENAME),
         ]);
+    }
+
+    /**
+     * Get the user for the medium.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
