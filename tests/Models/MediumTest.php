@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Unit;
+namespace Cone\Root\Tests\Models;
 
 use Cone\Root\Models\Medium;
 use Cone\Root\Tests\TestCase;

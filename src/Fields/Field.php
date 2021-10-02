@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-abstract class Field implements Arrayable
+class Field implements Arrayable
 {
     /**
      * Indicates if the field is sortable.
@@ -54,11 +54,9 @@ abstract class Field implements Arrayable
      */
     public function __construct(string $label, ?string $name = null)
     {
-        $this->label($label);
-
-        $this->name($name ??= Str::snake(strtolower($label)));
-
-        $this->id($name);
+        $this->attributes['label'] = $label;
+        $this->attributes['name'] = $name ??= Str::snake(strtolower($label));
+        $this->attributes['id'] = $name;
     }
 
     /**

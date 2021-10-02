@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Feature;
+namespace Cone\Root\Tests\Http\Conrollers;
 
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
