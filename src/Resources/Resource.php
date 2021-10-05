@@ -1,12 +1,13 @@
 <?php
 
-namespace Cone\Root\Nodes;
+namespace Cone\Root\Resources;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
-abstract class Node implements Arrayable
+abstract class Resource implements Arrayable
 {
     /**
      * The model class.
@@ -49,7 +50,18 @@ abstract class Node implements Arrayable
      */
     public static function getModelInstance(): Model
     {
-        return static::query()->getModel();
+        return new (static::getModel())();
+    }
+
+    /**
+     * Get the fields for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [];
     }
 
     /**
