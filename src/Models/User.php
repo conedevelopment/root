@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\UserFactory;
 use Cone\Root\Interfaces\Models\User as Contract;
+use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable implements Contract, MustVerifyEmail
 {
+    use Filterable;
     use HasFactory;
     use InteractsWithProxy;
     use Notifiable;
@@ -113,7 +115,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
      */
     public function uploads(): HasMany
     {
-        return $this->hasMany(Medium::getProxiedClass(), 'user_id');
+        return $this->hasMany(Medium::getProxiedClass());
     }
 
     /**
