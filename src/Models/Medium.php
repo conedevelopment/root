@@ -103,7 +103,7 @@ class Medium extends Model implements Contract
     }
 
     /**
-     * Get the proxied contract.
+     * Get the proxied interface.
      *
      * @return string
      */

@@ -576,16 +576,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.62.0",
+            "version": "v8.63.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "60a7e00488167ce2babf3a2aeb3677e48aaf39be"
+                "reference": "8f3d280f36a427730c8c8fa34316c79eed38781e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/60a7e00488167ce2babf3a2aeb3677e48aaf39be",
-                "reference": "60a7e00488167ce2babf3a2aeb3677e48aaf39be",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/8f3d280f36a427730c8c8fa34316c79eed38781e",
+                "reference": "8f3d280f36a427730c8c8fa34316c79eed38781e",
                 "shasum": ""
             },
             "require": {
@@ -743,7 +743,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-09-28T13:30:25+00:00"
+            "time": "2021-10-05T14:04:25+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -5150,16 +5150,16 @@
         },
         {
             "name": "laravel/laravel",
-            "version": "v8.6.2",
+            "version": "v8.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/laravel.git",
-                "reference": "4f8a0f35fabd8603fb756122bf820719a259ac9b"
+                "reference": "a3b76dbeb71518f3b82d50983d039a20bf49ce8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/4f8a0f35fabd8603fb756122bf820719a259ac9b",
-                "reference": "4f8a0f35fabd8603fb756122bf820719a259ac9b",
+                "url": "https://api.github.com/repos/laravel/laravel/zipball/a3b76dbeb71518f3b82d50983d039a20bf49ce8e",
+                "reference": "a3b76dbeb71518f3b82d50983d039a20bf49ce8e",
                 "shasum": ""
             },
             "require": {
@@ -5174,9 +5174,9 @@
                 "facade/ignition": "^2.5",
                 "fakerphp/faker": "^1.9.1",
                 "laravel/sail": "^1.0.1",
-                "mockery/mockery": "^1.4.2",
-                "nunomaduro/collision": "^5.0",
-                "phpunit/phpunit": "^9.3.3"
+                "mockery/mockery": "^1.4.4",
+                "nunomaduro/collision": "^5.10",
+                "phpunit/phpunit": "^9.5.8"
             },
             "type": "project",
             "extra": {
@@ -5201,9 +5201,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/laravel/tree/v8.6.2"
+                "source": "https://github.com/laravel/laravel/tree/v8.6.3"
             },
-            "time": "2021-09-07T14:33:40+00:00"
+            "time": "2021-10-05T18:40:50+00:00"
         },
         {
             "name": "laravel/sanctum",

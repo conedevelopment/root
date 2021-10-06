@@ -97,7 +97,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
     }
 
     /**
-     * Get the proxied contract.
+     * Get the proxied interface.
      *
      * @return string
      */
