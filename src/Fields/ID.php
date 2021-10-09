@@ -5,14 +5,31 @@ namespace Cone\Root\Fields;
 class ID extends Field
 {
     /**
-     * Create a new field instance.
+     * The field attributes.
      *
-     * @param  string  $label
-     * @param  string|null  $name
-     * @return void
+     * @var array
      */
-    public function __construct(string $label = 'ID', ?string $name = null)
+    protected array $attributes = [
+        'label' => 'ID',
+    ];
+
+    /**
+     * Indicates if the field is UUID.
+     *
+     * @var bool
+     */
+    protected bool $uuid = false;
+
+    /**
+     * Mark the field as UUID.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function uuid(bool $value = true): self
     {
-        parent::__construct($label, $name);
+        $this->uuid = $value;
+
+        return $this;
     }
 }
