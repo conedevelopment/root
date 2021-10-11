@@ -2,6 +2,7 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Http\Middleware\HandleRootRequests;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -23,6 +24,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
+        Interfaces\Registries\ResourceRegistry::class => Registries\ResourceRegistry::class,
     ];
 
     /**
@@ -49,7 +51,15 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(function (): void {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+            $this->app['router']
+                ->as('root.')
+                ->prefix('root')
+                ->middleware(['web', /*'auth', 'verified',*/ HandleRootRequests::class])
+                ->group(function (): void {
+                    $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+                });
         });
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
     }
 }

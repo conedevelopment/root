@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
-class MediaTest extends TestCase
+class MediaControllerTest extends TestCase
 {
     protected $medium;
 

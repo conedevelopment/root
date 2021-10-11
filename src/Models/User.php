@@ -6,6 +6,7 @@ use Cone\Root\Database\Factories\UserFactory;
 use Cone\Root\Interfaces\Models\User as Contract;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
+use Cone\Root\Traits\Resourceable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,6 +25,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
     use HasFactory;
     use InteractsWithProxy;
     use Notifiable;
+    use Resourceable;
     use SoftDeletes;
 
     /**
