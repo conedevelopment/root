@@ -12,7 +12,7 @@ class HandleRootRequests extends Middleware
      *
      * @var string
      */
-    protected string $rootView = 'app';
+    protected $rootView = 'app';
 
     /**
      * Defines the props that are shared by default.
