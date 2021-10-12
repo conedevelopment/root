@@ -3,16 +3,10 @@
 namespace Cone\Root\Traits;
 
 use Illuminate\Container\Container;
+use Throwable;
 
 trait InteractsWithProxy
 {
-    /**
-     * The resolved proxy instance.
-     *
-     * @var self
-     */
-    protected static self $proxy;
-
     /**
      * Get the proxied interface.
      *
@@ -27,13 +21,19 @@ trait InteractsWithProxy
      */
     public static function proxy(): self
     {
-        if (! isset(static::$proxy)) {
-            static::$proxy = Container::getInstance()->make(
-                static::getProxiedInterface()
-            );
+        static $proxy;
+
+        if (! isset($proxy)) {
+            try {
+                $proxy = Container::getInstance()->make(
+                    static::getProxiedInterface()
+                );
+            } catch (Throwable) {
+                $proxy = new static();
+            }
         }
 
-        return static::$proxy;
+        return $proxy;
     }
 
     /**

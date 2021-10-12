@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -26,6 +25,6 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return Resource::all();
+        //
     }
 }
