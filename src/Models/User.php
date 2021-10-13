@@ -4,9 +4,11 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\UserFactory;
 use Cone\Root\Interfaces\Models\User as Contract;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Resources\UserResource;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
-use Cone\Root\Traits\Resourceable;
+use Cone\Root\Traits\InteractsWithResources;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,8 +26,8 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
     use Filterable;
     use HasFactory;
     use InteractsWithProxy;
+    use InteractsWithResources;
     use Notifiable;
-    use Resourceable;
     use SoftDeletes;
 
     /**
@@ -143,5 +145,15 @@ class User extends Authenticatable implements Contract, MustVerifyEmail
             return $query->where($query->qualifyColumn('name'), 'like', "%{$value}%")
                         ->orWhere($query->qualifyColumn('email'), 'like', "%{$value}%");
         });
+    }
+
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\Resource
+     */
+    public static function toResource(): Resource
+    {
+        return new UserResource(static::class);
     }
 }
