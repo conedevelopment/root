@@ -1,24 +1,25 @@
 <?php
 
-namespace Cone\Root\FIlters;
+namespace Cone\Root\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-
-class SelectFilter extends Filter
+abstract class SelectFilter extends Filter
 {
     /**
-     * Apply the filter on the query.
+     * Indicates if mulitple options can be selected.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @var bool
      */
-    public function apply(Builder $query, Request $request, mixed $value): Builder
-    {
-        //
+    protected bool $multiple = false;
 
-        return parent::apply($query, $request, $value);
+    /**
+     * Set the multiple attribute.
+     *
+     * @return void
+     */
+    public function multiple(bool $value = true): self
+    {
+        $this->multiple = $value;
+
+        return $this;
     }
 }

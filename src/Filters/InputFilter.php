@@ -1,11 +1,11 @@
 <?php
 
-namespace Cone\Root\FIlters;
+namespace Cone\Root\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class InputFilter extends Filter
+abstract class InputFilter extends Filter
 {
     /**
      * Apply the filter on the query.

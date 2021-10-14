@@ -5,9 +5,21 @@ namespace Cone\Root\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 abstract class Filter implements Arrayable
 {
+    /**
+     * Make a new filter instance.
+     *
+     * @param  array  ...$parameters
+     * @return static
+     */
+    public static function make(...$parameters): self
+    {
+        return new static(...$parameters);
+    }
+
     /**
      * Apply the filter on the query.
      *
@@ -28,13 +40,23 @@ abstract class Filter implements Arrayable
     }
 
     /**
-     * Get the URI key for the filter.
+     * Get the key for the filter.
      *
      * @return string
      */
     public function getKey(): string
     {
-        return strtolower(class_basename(static::class));
+        return Str::of(static::class)->classBasename()->lower();
+    }
+
+    /**
+     * The default value of the filter.
+     *
+     * @return mixed
+     */
+    public function getDefault(): mixed
+    {
+        return null;
     }
 
     /**
@@ -46,6 +68,7 @@ abstract class Filter implements Arrayable
     {
        return [
            'key' => $this->getKey(),
+           'default' => $this->getDefault(),
        ];
     }
 }
