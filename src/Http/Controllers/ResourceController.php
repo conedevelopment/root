@@ -35,9 +35,11 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, string $key)
     {
         //
     }
@@ -59,9 +61,13 @@ class ResourceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, string $key, string $id)
     {
-        //
+        $resource = Resource::resolve($key);
+
+        $model = $resource->getModelInstance()->resolveRouteBinding($id);
+
+        return $model;
     }
 
     /**
