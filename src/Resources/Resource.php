@@ -3,7 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Closure;
-use Cone\Root\Collections\FieldCollection;
+use Cone\Root\Support\Collections\Fields;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,9 +29,9 @@ class Resource implements Arrayable
     /**
      * The fields resolver.
      *
-     * @var \Closure|null
+     * @var \Closure
      */
-    protected ?Closure $fieldsResolver = null;
+    protected Closure $fieldsResolver;
 
     /**
      * Create a new resource instance.
@@ -41,6 +41,10 @@ class Resource implements Arrayable
     public function __construct(string $model)
     {
         $this->model = $model;
+
+        $this->fieldsResolver = static function (): array {
+            return [];
+        };
     }
 
     /**
@@ -54,13 +58,13 @@ class Resource implements Arrayable
     }
 
     /**
-     * Get the key for the resource.
+     * Get the key.
      *
      * @return string
      */
     public function getKey(): string
     {
-        return Str::of($this->getModel())->classBasename()->lower()->kebab();
+        return Str::of($this->getModel())->classBasename()->lower()->plural()->kebab();
     }
 
     /**
@@ -73,7 +77,7 @@ class Resource implements Arrayable
         static $instance;
 
         if (! isset($instance)) {
-            $instance = new $this->getModel();
+            $instance = new ($this->getModel());
         }
 
         return $instance;
@@ -117,19 +121,12 @@ class Resource implements Arrayable
      * Collect the resolved fields.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Collections\FieldCollection
+     * @return \Cone\Root\Support\Collections\Fields
      */
-    protected function collectFields(Request $request): FieldCollection
+    protected function collectFields(Request $request): Fields
     {
-        $fields = FieldCollection::make($this->fields($request));
-
-        if (is_callable($this->withFieldsResolver)) {
-            $fields->push(
-                ...call_user_func_array($this->withFieldsResolver, [$request])
-            );
-        }
-
-        return $fields;
+        return Fields::make($this->fields($request))
+                    ->merge(call_user_func_array($this->fieldsResolver, [$request]));
     }
 
     /**
@@ -174,8 +171,18 @@ class Resource implements Arrayable
      */
     public function toIndex(Request $request): array
     {
-        //
+        $query = $this->query()
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString();
 
-        return [];
+        $fields = $this->collectFields($request);
+
+        $query->getCollection()->transform(static function (Model $model) use ($request, $fields) {
+            return $fields->mapToDisplay($request, $model);
+        });
+
+        return array_merge($this->toArray(), [
+            'query' => $query,
+        ]);
     }
 }

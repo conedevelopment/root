@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\UserFactory;
 use Cone\Root\Interfaces\Models\User as Contract;
+use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Resources\UserResource;
 use Cone\Root\Traits\Filterable;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable implements Contract, MustVerifyEmail
+class User extends Authenticatable implements Contract, MustVerifyEmail, Resourceable
 {
     use Filterable;
     use HasFactory;

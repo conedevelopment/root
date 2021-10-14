@@ -4,6 +4,7 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -269,6 +270,37 @@ class Field implements Arrayable
     }
 
     /**
+     * Set the default resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function default(Closure $callback): self
+    {
+        $this->defaultResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the default value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveDefault(Request $request, Model $model): mixed
+    {
+        $value = $model->getAttribute($this->name);
+
+        if (is_null($this->defaultResolver)) {
+            return $value;
+        }
+
+        return call_user_func_array($this->defaultResolver, [$request, $model, $value]);
+    }
+
+    /**
      * Set the format resolver.
      *
      * @param  \Closure  $callback
@@ -282,16 +314,21 @@ class Field implements Arrayable
     }
 
     /**
-     * Set the default resolver.
+     * Format the value.
      *
-     * @param  \Closure  $callback
-     * @return $this
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
      */
-    public function default(Closure $callback): self
+    public function resolveFormat(Request $request, Model $model): mixed
     {
-        $this->defaultResolver = $callback;
+        $value = $this->resolveDefault($request, $model);
 
-        return $this;
+        if (is_null($this->formatResolver)) {
+            return $value;
+        }
+
+        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
 
     /**
@@ -359,19 +396,21 @@ class Field implements Arrayable
      */
     public function toArray(): array
     {
-        return [];
+        return $this->attributes;
     }
 
     /**
      * Get the display representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toDisplay(Request $request): array
+    public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            //
+            'value' => $this->resolveDefault($request, $model),
+            'formatted_value' => $this->resolveFormat($request, $model),
         ]);
     }
 
@@ -379,12 +418,13 @@ class Field implements Arrayable
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toInput(Request $request): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge($this->toArray(), [
-            //
+        return array_merge($this->toDisplay($request, $model), [
+            // component
         ]);
     }
 }

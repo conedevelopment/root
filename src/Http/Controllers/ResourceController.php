@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
+use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\Request;
 
 class ResourceController extends Controller
@@ -20,11 +21,15 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, string $key)
     {
-        //
+        $resource = Resource::resolve($key);
+
+        return $resource->toIndex($request);
     }
 
     /**

@@ -5,13 +5,16 @@ namespace Cone\Root\Fields;
 class ID extends Field
 {
     /**
-     * The field attributes.
+     * Create a new field instance.
      *
-     * @var array
+     * @param  string  $label
+     * @param  string|null  $name
+     * @return void
      */
-    protected array $attributes = [
-        'label' => 'ID',
-    ];
+    public function __construct(string $label = 'ID', ?string $name = null)
+    {
+        parent::__construct($label, $name);
+    }
 
     /**
      * Indicates if the field is UUID.

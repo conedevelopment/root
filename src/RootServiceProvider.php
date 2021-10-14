@@ -3,6 +3,7 @@
 namespace Cone\Root;
 
 use Cone\Root\Http\Middleware\HandleRootRequests;
+use Cone\Root\Support\Facades\Resource;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -61,5 +62,7 @@ class RootServiceProvider extends ServiceProvider
         });
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+
+        Resource::discover($this->app->path('Models'));
     }
 }
