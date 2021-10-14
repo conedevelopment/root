@@ -55,7 +55,7 @@ class ResourceRegistry extends Registry implements Contract
 
             if (is_subclass_of($model, Resourceable::class) && ! (new ReflectionClass($model))->isAbstract()) {
                 $this->register(
-                    ($instance = $model::toResource())->getKey(), $instance
+                    ($instance = $model::toRootResource())->getKey(), $instance
                 );
             }
         }

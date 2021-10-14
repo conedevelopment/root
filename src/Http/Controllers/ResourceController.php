@@ -65,9 +65,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        $model = $resource->getModelInstance()->resolveRouteBinding($id);
-
-        return $model;
+        return $resource->toShow($request, $id);
     }
 
     /**

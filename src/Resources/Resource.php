@@ -177,12 +177,28 @@ class Resource implements Arrayable
 
         $fields = $this->collectFields($request);
 
-        $query->getCollection()->transform(static function (Model $model) use ($request, $fields) {
-            return $fields->mapToDisplay($request, $model);
+        $query->getCollection()->transform(function (Model $model) use ($request, $fields): array {
+            return $model->toRootDisplay($request, $this, $fields);
         });
 
         return array_merge($this->toArray(), [
             'query' => $query,
         ]);
+    }
+
+    /**
+     * Get the show representation of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return array
+     */
+    public function toShow(Request $request, string $id): array
+    {
+        $fields = $this->collectFields($request);
+
+        $model = $this->getModelInstance()->resolveRouteBinding($id);
+
+        return $model->toRootDisplay($request, $this, $fields);
     }
 }
