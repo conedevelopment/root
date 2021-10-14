@@ -46,13 +46,6 @@ class Field implements Arrayable
     protected ?Closure $defaultResolver = null;
 
     /**
-     * The hydrate resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $hydrateResolver = null;
-
-    /**
      * Create a new field instance.
      *
      * @param  string  $label
@@ -332,16 +325,18 @@ class Field implements Arrayable
     }
 
     /**
-     * Set the hydrate resolver.
+     * Hydrate the model.
      *
-     * @param  \Closure  $callback
-     * @return $this
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  mixed  $value
+     * @return void
      */
-    public function hydrate(Closure $callback): self
+    public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $this->hydrateResolver = $callback;
-
-        return $this;
+        $model->saving(function (Model $model) use ($value): void {
+            $model->setAttribute($this->name, $value);
+        });
     }
 
     /**
