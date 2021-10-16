@@ -27,8 +27,6 @@ class ResourceController extends Controller
      */
     public function index(Request $request, string $key)
     {
-        auth()->setUser(\App\Models\User::first());
-
         $resource = Resource::resolve($key);
 
         return $resource->toIndex($request);
