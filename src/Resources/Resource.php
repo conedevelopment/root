@@ -8,6 +8,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable
@@ -152,6 +155,39 @@ class Resource implements Arrayable
     }
 
     /**
+     * Map the URLs.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapUrls(Request $request): array
+    {
+        return [
+            'index' => URL::route('root.resource.index', $this->getKey()),
+            'create' => URL::route('root.resource.create', $this->getKey()),
+        ];
+    }
+
+    /**
+     * Map the abilities.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapAbilities(Request $request): array
+    {
+        $policy = Gate::getPolicyFor($this->getModel());
+
+        $abilities = ['viewAny', 'create'];
+
+        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
+            return array_merge($stack, [
+                $ability => is_null($policy) || $request?->user()->can($ability, $this->getModel()),
+            ]);
+        }, []);
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -160,6 +196,12 @@ class Resource implements Arrayable
     {
         return [
             'key' => $this->getKey(),
+            'urls' => App::call(function (Request $request): array {
+                return $this->mapUrls($request);
+            }),
+            'abilities' => App::call(function (Request $request): array {
+                return $this->mapAbilities($request);
+            }),
         ];
     }
 
@@ -178,7 +220,7 @@ class Resource implements Arrayable
         $fields = $this->collectFields($request);
 
         $query->getCollection()->transform(function (Model $model) use ($request, $fields): array {
-            return $model->toRootDisplay($request, $this, $fields);
+            return $model->toResourceDisplay($request, $this, $fields);
         });
 
         return array_merge($this->toArray(), [
@@ -199,6 +241,6 @@ class Resource implements Arrayable
 
         $model = $this->getModelInstance()->resolveRouteBinding($id);
 
-        return $model->toRootDisplay($request, $this, $fields);
+        return $model->toResourceDisplay($request, $this, $fields);
     }
 }

@@ -16,7 +16,7 @@ interface Resourceable
      * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toRootDisplay(Request $request, Resource $resource, Fields $fields): array;
+    public function toResourceDisplay(Request $request, Resource $resource, Fields $fields): array;
 
     /**
      * Get the Root resource form representation of the model.
@@ -26,12 +26,12 @@ interface Resourceable
      * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toRootForm(Request $request, Resource $resource, Fields $fields): array;
+    public function toResourceForm(Request $request, Resource $resource, Fields $fields): array;
 
     /**
      * Get the resource representation of the model.
      *
      * @return \Cone\Root\Resources\Resource
      */
-    public static function toRootResource(): Resource;
+    public static function toResource(): Resource;
 }

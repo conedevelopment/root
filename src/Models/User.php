@@ -153,7 +153,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail, Resourc
      *
      * @return \Cone\Root\Resources\Resource
      */
-    public static function toRootResource(): Resource
+    public static function toResource(): Resource
     {
         return new UserResource(static::class);
     }

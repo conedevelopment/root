@@ -5,44 +5,73 @@ namespace Cone\Root\Traits;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 trait InteractsWithResources
 {
     /**
-     * Get the Root resource display representation of the model.
+     * Map the resource URLs for the model.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toRootDisplay(Request $request, Resource $resource, Fields $fields): array
+    public function mapResourceUrls(Request $request, Resource $resource): array
     {
         return [
-            'fields' => $fields->mapToDisplay($request, $this)->toArray(),
-            'urls' => [
-                'show' => URL::route('root.resource.show', [$resource->getKey(), $this]),
-                'edit' => URL::route('root.resource.edit', [$resource->getKey(), $this]),
-            ],
-            'can' => [
-                //
-            ],
+            'edit' => URL::route('root.resource.edit', [$resource->getKey(), $this]),
+            'show' => URL::route('root.resource.show', [$resource->getKey(), $this]),
         ];
     }
 
     /**
-     * Get the Root resource form representation of the model.
+     * Map the resource abilities for the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return array
+     */
+    public function mapResourceAbilities(Request $request, Resource $resource): array
+    {
+        $policy = Gate::getPolicyFor(static::class);
+
+        $abilities = ['view', 'update', 'delete', 'restore', 'forceDelete'];
+
+        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
+            return array_merge($stack, [
+                $ability => is_null($policy) || $request->user()?->can($ability, $this),
+            ]);
+        }, []);
+    }
+
+    /**
+     * Get the resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
      * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toRootForm(Request $request, Resource $resource, Fields $fields): array
+    public function toResourceDisplay(Request $request, Resource $resource, Fields $fields): array
     {
-        //
+        return [
+            'abilities' => $this->mapResourceAbilities($request, $resource),
+            'fields' => $fields->mapToDisplay($request, $this)->toArray(),
+            'urls' => $this->mapResourceUrls($request, $resource),
+        ];
+    }
 
+    /**
+     * Get the resource form representation of the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Fields  $fields
+     * @return array
+     */
+    public function toResourceForm(Request $request, Resource $resource, Fields $fields): array
+    {
         return [];
     }
 
@@ -51,7 +80,7 @@ trait InteractsWithResources
      *
      * @return \Cone\Root\Resources\Resource
      */
-    public static function toRootResource(): Resource
+    public static function toResource(): Resource
     {
         return new Resource(static::class);
     }
