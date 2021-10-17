@@ -194,15 +194,15 @@ class Resource implements Arrayable
      */
     public function toArray(): array
     {
-        return [
-            'key' => $this->getKey(),
-            'urls' => App::call(function (Request $request): array {
-                return $this->mapUrls($request);
-            }),
-            'abilities' => App::call(function (Request $request): array {
-                return $this->mapAbilities($request);
-            }),
-        ];
+        return array_merge(
+            ['key' => $this->getKey()],
+            App::call(function (Request $request): array {
+                return [
+                    'urls' => $this->mapUrls($request),
+                    'abilities' => $this->mapAbilities($request)
+                ];
+            })
+        );
     }
 
     /**
