@@ -4,6 +4,7 @@ namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,13 @@ class Resource implements Arrayable
     protected Closure $fieldsResolver;
 
     /**
+     * The filters resolver.
+     *
+     * @var \Closure
+     */
+    protected Closure $filtersResolver;
+
+    /**
      * Create a new resource instance.
      *
      * @return void
@@ -46,6 +54,10 @@ class Resource implements Arrayable
         $this->model = $model;
 
         $this->fieldsResolver = static function (): array {
+            return [];
+        };
+
+        $this->filtersResolver = static function (): array {
             return [];
         };
     }
@@ -68,6 +80,16 @@ class Resource implements Arrayable
     public function getKey(): string
     {
         return Str::of($this->getModel())->classBasename()->lower()->plural()->kebab();
+    }
+
+    /**
+     * Get the name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return Str::of($this->getModel())->classBasename();
     }
 
     /**
@@ -144,6 +166,31 @@ class Resource implements Arrayable
     }
 
     /**
+     * Set the filters resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function withFiilters(Closure $callback): self
+    {
+        $this->filtersResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Collect the resolved filters.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Support\Collections\Filters
+     */
+    protected function collectFilters(Request $request): Filters
+    {
+        return Filters::make($this->filters($request))
+                    ->merge(call_user_func_array($this->filtersResolver, [$request]));
+    }
+
+    /**
      * Define the actions for the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -194,15 +241,12 @@ class Resource implements Arrayable
      */
     public function toArray(): array
     {
-        return array_merge(
-            ['key' => $this->getKey()],
-            App::call(function (Request $request): array {
-                return [
-                    'urls' => $this->mapUrls($request),
-                    'abilities' => $this->mapAbilities($request)
-                ];
-            })
-        );
+        return [
+            'key' => $this->getKey(),
+            'name' => $this->getName(),
+            'urls' => App::call([$this, 'mapUrls']),
+            'abilities' => App::call([$this, 'mapAbilities']),
+        ];
     }
 
     /**
@@ -213,11 +257,16 @@ class Resource implements Arrayable
      */
     public function toIndex(Request $request): array
     {
-        $query = $this->query()
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString();
+        $filters = $this->collectFilters($request);
+
+        $query = $filters->apply($this->query(), $request)
+                        ->latest()
+                        ->paginate($request->input('per_page'))
+                        ->withQueryString();
 
         $fields = $this->collectFields($request);
+
+        // actions
 
         $query->getCollection()->transform(function (Model $model) use ($request, $fields): array {
             return $model->toResourceDisplay($request, $this, $fields);
@@ -225,7 +274,21 @@ class Resource implements Arrayable
 
         return array_merge($this->toArray(), [
             'query' => $query,
+            'filters' => $filters,
         ]);
+    }
+
+    /**
+     * Get the create representation of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toCreate(Request $request): array
+    {
+        $fields = $this->collectFields($request);
+
+        return $this->getModelInstance()->toResourceForm($request, $this, $fields);
     }
 
     /**

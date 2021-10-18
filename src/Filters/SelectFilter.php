@@ -2,6 +2,9 @@
 
 namespace Cone\Root\Filters;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+
 abstract class SelectFilter extends Filter
 {
     /**
@@ -10,6 +13,14 @@ abstract class SelectFilter extends Filter
      * @var bool
      */
     protected bool $multiple = false;
+
+    /**
+     * Get the filter options.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    abstract public function options(Request $request): array;
 
     /**
      * Set the multiple attribute.
@@ -21,5 +32,17 @@ abstract class SelectFilter extends Filter
         $this->multiple = $value;
 
         return $this;
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return array_merge(parent::toArray(), [
+           'options' => App::call([$this, 'options']),
+        ]);
     }
 }

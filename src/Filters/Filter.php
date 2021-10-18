@@ -5,6 +5,7 @@ namespace Cone\Root\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Filter implements Arrayable
@@ -32,7 +33,7 @@ abstract class Filter implements Arrayable
     {
         $name = $this->getKey();
 
-        if ($query->getModel()->hasNamedScope($name) && ! is_null($value)) {
+        if ($query->getModel()->hasNamedScope($name)) {
             $query->getModel()->callNamedScope($name, [$query, $value]);
         }
 
@@ -52,9 +53,10 @@ abstract class Filter implements Arrayable
     /**
      * The default value of the filter.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function getDefault(): mixed
+    public function default(Request $request): mixed
     {
         return null;
     }
@@ -66,9 +68,9 @@ abstract class Filter implements Arrayable
      */
     public function toArray(): array
     {
-       return [
+        return [
            'key' => $this->getKey(),
-           'default' => $this->getDefault(),
-       ];
+           'default' => App::call([$this, 'default']),
+        ];
     }
 }

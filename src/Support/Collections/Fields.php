@@ -19,9 +19,8 @@ class Fields extends Collection
     public function mapToDisplay(Request $request, Model $model): Collection
     {
         return $this->map(static function (Field $field) use ($request, $model): array {
-                        return $field->toDisplay($request, $model);
-                    })
-                    ->toBase();
+            return $field->toDisplay($request, $model);
+        })->toBase();
     }
 
     /**
@@ -34,8 +33,7 @@ class Fields extends Collection
     public function mapToForm(Request $request, Model $model): Collection
     {
         return $this->map(static function (Field $field) use ($request, $model): array {
-                        return $field->toInput($request, $model);
-                    })
-                    ->toBase();
+            return $field->toInput($request, $model);
+        })->toBase();
     }
 }

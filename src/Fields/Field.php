@@ -46,6 +46,20 @@ class Field implements Arrayable
     protected ?Closure $defaultResolver = null;
 
     /**
+     * The validation rules.
+     *
+     * @var array
+     */
+    protected array $rules = [];
+
+    /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'Input';
+
+    /**
      * Create a new field instance.
      *
      * @param  string  $label
@@ -68,6 +82,16 @@ class Field implements Arrayable
     public static function make(...$parameters): self
     {
         return new static(...$parameters);
+    }
+
+    /**
+     * Get the Vue component.
+     *
+     * @return string
+     */
+    public function getComponent(): string
+    {
+        return $this->component;
     }
 
     /**
@@ -419,7 +443,7 @@ class Field implements Arrayable
     public function toInput(Request $request, Model $model): array
     {
         return array_merge($this->toDisplay($request, $model), [
-            // component
+            'component' => $this->getComponent(),
         ]);
     }
 }

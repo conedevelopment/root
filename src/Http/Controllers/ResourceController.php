@@ -41,7 +41,9 @@ class ResourceController extends Controller
      */
     public function create(Request $request, string $key)
     {
-        //
+        $resource = Resource::resolve($key);
+
+        return $resource->toCreate($request);
     }
 
     /**

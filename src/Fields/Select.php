@@ -46,7 +46,7 @@ class Select extends Field
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    protected function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request): array
     {
         if (empty($this->options) && ! is_null($this->optionResolver)) {
             $this->options = call_user_func_array($this->optionResolver, [$request]);
