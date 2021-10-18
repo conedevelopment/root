@@ -73,7 +73,11 @@ trait InteractsWithResources
      */
     public function toResourceForm(Request $request, Resource $resource, Fields $fields): array
     {
-        return [];
+        return [
+            'abilities' => $this->mapResourceAbilities($request, $resource),
+            'fields' => $fields->mapToForm($request, $this)->toArray(),
+            'urls' => $this->exists ? $this->mapResourceUrls($request, $resource) : [],
+        ];
     }
 
     /**

@@ -415,7 +415,10 @@ class Field implements Arrayable
      */
     public function toArray(): array
     {
-        return $this->attributes;
+        return array_merge($this->attributes, [
+            '_searchable' => $this->searchable,
+            '_sortable' => $this->sortable,
+        ]);
     }
 
     /**
@@ -428,8 +431,8 @@ class Field implements Arrayable
     public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'value' => $this->resolveDefault($request, $model),
-            'formatted_value' => $this->resolveFormat($request, $model),
+            '_value' => $this->resolveDefault($request, $model),
+            '_formatted_value' => $this->resolveFormat($request, $model),
         ]);
     }
 
@@ -443,7 +446,7 @@ class Field implements Arrayable
     public function toInput(Request $request, Model $model): array
     {
         return array_merge($this->toDisplay($request, $model), [
-            'component' => $this->getComponent(),
+            '_component' => $this->getComponent(),
         ]);
     }
 }
