@@ -3,9 +3,11 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Resources\Resource;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Field implements Arrayable
@@ -39,7 +41,7 @@ class Field implements Arrayable
     protected ?Closure $formatResolver = null;
 
     /**
-     * The default resolver callback.
+     * The default value resolver callback.
      *
      * @var \Closure|null
      */
@@ -50,7 +52,18 @@ class Field implements Arrayable
      *
      * @var array
      */
-    protected array $rules = [];
+    protected array $rules = [
+        '*' => [],
+        Resource::CREATE => [],
+        Resource::UPDATE => [],
+    ];
+
+    /**
+     * The rules resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $rulesResolver = null;
 
     /**
      * The Vue compoent.
@@ -364,6 +377,25 @@ class Field implements Arrayable
     }
 
     /**
+     * Set the validation rules.
+     *
+     * @param  array|Closure  $rule
+     * @return $this
+     */
+    public function rules(array|Closure $rules): self
+    {
+        if ($rules instanceof Closure) {
+            $this->rulesResolver = $rules;
+        } elseif (Arr::isAssoc($rules)) {
+            $this->rules = array_merge($this->rules, $rules);
+        } else {
+            $this->rules['*'] = $rules;
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the given attribute.
      *
      * @param  string  $key
@@ -431,7 +463,7 @@ class Field implements Arrayable
     public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            '_value' => $this->resolveDefault($request, $model),
+            'value' => $this->resolveDefault($request, $model),
             '_formatted_value' => $this->resolveFormat($request, $model),
         ]);
     }
@@ -448,5 +480,32 @@ class Field implements Arrayable
         return array_merge($this->toDisplay($request, $model), [
             '_component' => $this->getComponent(),
         ]);
+    }
+
+    /**
+     * Get the validation representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $action
+     * @return array
+     */
+    public function toValidate(Request $request, Model $model, string $action = '*'): array
+    {
+        $rules = $this->rules;
+
+        $resolved = is_null($this->rulesResolver)
+            ? []
+            : call_user_func_array($this->rulesResolver, [$request, $model]);
+
+        if (! Arr::isAssoc($resolved)) {
+            $resolved = ['*' => $resolved];
+        }
+
+        $rules = array_merge_recursive($rules, $resolved);
+
+        return array_unique(
+            $action === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$action] ?? [])
+        );
     }
 }

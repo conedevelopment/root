@@ -20,6 +20,10 @@ trait InteractsWithResources
      */
     public function mapResourceUrls(Request $request, Resource $resource): array
     {
+        if (! $this->exists) {
+            return [];
+        }
+
         return [
             'edit' => URL::route('root.resource.edit', [$resource->getKey(), $this]),
             'show' => URL::route('root.resource.show', [$resource->getKey(), $this]),
@@ -76,7 +80,7 @@ trait InteractsWithResources
         return [
             'abilities' => $this->mapResourceAbilities($request, $resource),
             'fields' => $fields->mapToForm($request, $this)->toArray(),
-            'urls' => $this->exists ? $this->mapResourceUrls($request, $resource) : [],
+            'urls' => $this->mapResourceUrls($request, $resource),
         ];
     }
 

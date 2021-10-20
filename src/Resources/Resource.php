@@ -16,6 +16,11 @@ use Illuminate\Support\Str;
 
 class Resource implements Arrayable
 {
+    public const INDEX = 'index';
+    public const SHOW = 'show';
+    public const UPDATE = 'update';
+    public const CREATE = 'create';
+
     /**
      * The model class.
      *
@@ -288,7 +293,9 @@ class Resource implements Arrayable
     {
         $fields = $this->collectFields($request);
 
-        return $this->getModelInstance()->toResourceForm($request, $this, $fields);
+        return array_merge($this->toArray(), [
+            'model' => $this->getModelInstance()->toResourceForm($request, $this, $fields),
+        ]);
     }
 
     /**
@@ -304,6 +311,8 @@ class Resource implements Arrayable
 
         $model = $this->getModelInstance()->resolveRouteBinding($id);
 
-        return $model->toResourceDisplay($request, $this, $fields);
+        return array_merge($this->toArray(), [
+            'model' => $model->toResourceDisplay($request, $this, $fields),
+        ]);
     }
 }
