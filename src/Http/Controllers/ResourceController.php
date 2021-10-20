@@ -5,6 +5,8 @@ namespace Cone\Root\Http\Controllers;
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ResourceController extends Controller
 {
@@ -23,13 +25,16 @@ class ResourceController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $key
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
-    public function index(Request $request, string $key)
+    public function index(Request $request, string $key): Response
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toIndex($request);
+        return Inertia::render(
+            'Resource/Index',
+            $resource->toIndex($request)
+        );
     }
 
     /**

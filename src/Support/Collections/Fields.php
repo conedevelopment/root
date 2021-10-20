@@ -48,7 +48,7 @@ class Fields extends Collection
     public function mapToValidate(Request $request, Model $model, string $action = '*'): Collection
     {
         return $this->map(static function (Field $field) use ($request, $model, $action): array {
-            return $field->toValidate($request, $model);
+            return $field->toValidate($request, $model, $action);
         })->toBase();
     }
 }
