@@ -22,12 +22,10 @@ class UserResource extends Resource
             ID::make(),
 
             Text::make(__('Name'), 'name')
-                ->required()
                 ->rules(['required', 'string', 'max:256']),
 
             Text::make(__('Email'), 'email')
                 ->type('email')
-                ->required()
                 ->rules(static function (Request $request, Model $model): array {
                     return [
                         '*' => ['required', 'string', 'email', 'max:256'],

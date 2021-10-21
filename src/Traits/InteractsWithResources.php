@@ -61,6 +61,7 @@ trait InteractsWithResources
     public function toResourceDisplay(Request $request, Resource $resource, Fields $fields): array
     {
         return [
+            'id' => $this->getKey(),
             'abilities' => $this->mapResourceAbilities($request, $resource),
             'fields' => $fields->mapToDisplay($request, $this)->toArray(),
             'urls' => $this->mapResourceUrls($request, $resource),

@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Closure;
+use Cone\Root\Fields\Field;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
@@ -271,8 +272,6 @@ class Resource implements Arrayable
 
         $fields = $this->collectFields($request);
 
-        // actions
-
         $query->getCollection()->transform(function (Model $model) use ($request, $fields): array {
             return $model->toResourceDisplay($request, $this, $fields);
         });
@@ -314,5 +313,49 @@ class Resource implements Arrayable
         return array_merge($this->toArray(), [
             'model' => $model->toResourceDisplay($request, $this, $fields),
         ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return array
+     */
+    public function toEdit(Request $request, string $id): array
+    {
+        $fields = $this->collectFields($request);
+
+        $model = $this->getModelInstance()->resolveRouteBinding($id);
+
+        return array_merge($this->toArray(), [
+            'model' => $model->toResourceForm($request, $this, $fields),
+        ]);
+    }
+
+    /**
+     * Handle the update request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model
+     */
+    public function handleUpdate(Request $request, string $id): Model
+    {
+        $fields = $this->collectFields($request);
+
+        $model = $this->getModelInstance()->resolveRouteBinding($id);
+
+        $request->validate(
+            $fields->mapToValidate($request, $model, static::UPDATE)->toArray()
+        );
+
+        $fields->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrate($request, $model, $request->input($field->name));
+        });
+
+        $model->save();
+
+        return $model;
     }
 }

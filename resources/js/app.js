@@ -1,15 +1,22 @@
 import { createApp, h } from 'vue';
-// import { InertiaProgress } from '@inertiajs/progress';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import FormHandler from './Components/Form/Handler';
+import FormInput from './Components/Form/Input';
 
 createInertiaApp({
     resolve: (name) => require(`./Pages/${name}`),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
+        const app = createApp({ render: () => h(App, props) });
 
-        // document.dispatchEvent(new CustomEvent('root:booting', { detail: app }));
-        // document.dispatchEvent(new CustomEvent('root:booted', { detail: app }));
+        app.component('FormHandler', FormHandler);
+        app.component('FormInput', FormInput);
+
+        app.use(plugin);
+
+        document.dispatchEvent(new CustomEvent('root:booting', { detail: app }));
+
+        app.mount(el);
+
+        document.dispatchEvent(new CustomEvent('root:booted', { detail: app }));
     },
 });

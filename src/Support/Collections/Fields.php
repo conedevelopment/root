@@ -19,8 +19,9 @@ class Fields extends Collection
     public function mapToDisplay(Request $request, Model $model): Collection
     {
         return $this->map(static function (Field $field) use ($request, $model): array {
-            return $field->toDisplay($request, $model);
-        })->toBase();
+                        return $field->toDisplay($request, $model);
+                    })
+                    ->toBase();
     }
 
     /**
@@ -33,8 +34,9 @@ class Fields extends Collection
     public function mapToForm(Request $request, Model $model): Collection
     {
         return $this->map(static function (Field $field) use ($request, $model): array {
-            return $field->toInput($request, $model);
-        })->toBase();
+                        return $field->toInput($request, $model);
+                    })
+                    ->toBase();
     }
 
     /**
@@ -47,8 +49,10 @@ class Fields extends Collection
      */
     public function mapToValidate(Request $request, Model $model, string $action = '*'): Collection
     {
-        return $this->map(static function (Field $field) use ($request, $model, $action): array {
-            return $field->toValidate($request, $model, $action);
-        })->toBase();
+        return $this->mapWithKeys(static function (Field $field) use ($request, $model, $action): array {
+                    return [$field->name => $field->toValidate($request, $model, $action)];
+                })
+                ->filter()
+                ->toBase();
     }
 }

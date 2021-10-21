@@ -4,7 +4,9 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Support\Facades\Resource;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -65,37 +67,52 @@ class ResourceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Inertia\Response
      */
-    public function show(Request $request, string $key, string $id)
+    public function show(Request $request, string $key, string $id): Response
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toShow($request, $id);
+        return Inertia::render(
+            'Resource/Show',
+            $resource->toShow($request, $id)
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Inertia\Response
      */
-    public function edit($id)
+    public function edit(Request $request, string $key, string $id): Response
     {
-        //
+        $resource = Resource::resolve($key);
+
+        return Inertia::render(
+            'Resource/Edit',
+            $resource->toEdit($request, $id)
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  string  $key
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $key, string $id): RedirectResponse
     {
-        //
+        $resource = Resource::resolve($key);
+
+        $model = $resource->handleUpdate($request, $id);
+
+        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
 
     /**
