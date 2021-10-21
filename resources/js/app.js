@@ -2,6 +2,7 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import FormHandler from './Components/Form/Handler';
 import FormInput from './Components/Form/Input';
+import FormSelect from './Components/Form/Select';
 
 createInertiaApp({
     resolve: (name) => require(`./Pages/${name}`),
@@ -10,6 +11,7 @@ createInertiaApp({
 
         app.component('FormHandler', FormHandler);
         app.component('FormInput', FormInput);
+        app.component('FormSelect', FormSelect);
 
         app.use(plugin);
 

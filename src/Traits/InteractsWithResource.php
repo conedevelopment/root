@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
-trait InteractsWithResources
+trait InteractsWithResource
 {
     /**
      * Map the resource URLs for the model.

@@ -17,17 +17,6 @@ abstract class Registry implements Arrayable, ArrayAccess, IteratorAggregate
     protected array $items = [];
 
     /**
-     * Create a new registry instance.
-     *
-     * @param  array  $items
-     * @return void
-     */
-    public function __construct(array $items = [])
-    {
-        $this->items = $items;
-    }
-
-    /**
      * Register an item into the registry.
      *
      * @param  string  $key

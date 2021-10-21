@@ -9,7 +9,7 @@ use Cone\Root\Resources\Resource;
 use Cone\Root\Resources\UserResource;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
-use Cone\Root\Traits\InteractsWithResources;
+use Cone\Root\Traits\InteractsWithResource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -27,7 +27,7 @@ class User extends Authenticatable implements Contract, MustVerifyEmail, Resourc
     use Filterable;
     use HasFactory;
     use InteractsWithProxy;
-    use InteractsWithResources;
+    use InteractsWithResource;
     use Notifiable;
     use SoftDeletes;
 

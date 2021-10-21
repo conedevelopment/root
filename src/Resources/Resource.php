@@ -9,6 +9,7 @@ use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
@@ -112,6 +113,38 @@ class Resource implements Arrayable
         }
 
         return $instance;
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @return \Illuminate\Database\Eloquent\Model|null
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function resolveRouteBinding(string $id): ?Model
+    {
+        $model = $this->getModelInstance()->resolveRouteBinding($id);
+
+        if (is_null($model)) {
+            throw new ModelNotFoundException();
+        }
+
+        return $model;
+    }
+
+    /**
+     * Set the relations to eagerload.
+     *
+     * @param  array  $relations
+     * @return $this
+     */
+    public function with(array $relations): self
+    {
+        $this->with = $relations;
+
+        return $this;
     }
 
     /**
@@ -308,7 +341,7 @@ class Resource implements Arrayable
     {
         $fields = $this->collectFields($request);
 
-        $model = $this->getModelInstance()->resolveRouteBinding($id);
+        $model = $this->resolveRouteBinding($id);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceDisplay($request, $this, $fields),
@@ -326,7 +359,7 @@ class Resource implements Arrayable
     {
         $fields = $this->collectFields($request);
 
-        $model = $this->getModelInstance()->resolveRouteBinding($id);
+        $model = $this->resolveRouteBinding($id);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
@@ -344,7 +377,7 @@ class Resource implements Arrayable
     {
         $fields = $this->collectFields($request);
 
-        $model = $this->getModelInstance()->resolveRouteBinding($id);
+        $model = $this->resolveRouteBinding($id);
 
         $request->validate(
             $fields->mapToValidate($request, $model, static::UPDATE)->toArray()
