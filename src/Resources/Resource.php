@@ -40,16 +40,16 @@ class Resource implements Arrayable
     /**
      * The fields resolver.
      *
-     * @var \Closure
+     * @var \Closure|null
      */
-    protected Closure $fieldsResolver;
+    protected ?Closure $fieldsResolver = null;
 
     /**
      * The filters resolver.
      *
-     * @var \Closure
+     * @var \Closure|null
      */
-    protected Closure $filtersResolver;
+    protected ?Closure $filtersResolver = null;
 
     /**
      * Create a new resource instance.
@@ -59,14 +59,6 @@ class Resource implements Arrayable
     public function __construct(string $model)
     {
         $this->model = $model;
-
-        $this->fieldsResolver = static function (): array {
-            return [];
-        };
-
-        $this->filtersResolver = static function (): array {
-            return [];
-        };
     }
 
     /**
@@ -189,8 +181,13 @@ class Resource implements Arrayable
      */
     protected function collectFields(Request $request): Fields
     {
-        return Fields::make($this->fields($request))
-                    ->merge(call_user_func_array($this->fieldsResolver, [$request]));
+        $fields = Fields::make($this->fields($request));
+
+        if (! is_null($this->fieldsResolver)) {
+            $fields = $fields->merge(call_user_func_array($this->fieldsResolver, [$request]));
+        }
+
+        return $fields;
     }
 
     /**
@@ -210,7 +207,7 @@ class Resource implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    public function withFiilters(Closure $callback): self
+    public function withFilters(Closure $callback): self
     {
         $this->filtersResolver = $callback;
 
@@ -225,8 +222,13 @@ class Resource implements Arrayable
      */
     protected function collectFilters(Request $request): Filters
     {
-        return Filters::make($this->filters($request))
-                    ->merge(call_user_func_array($this->filtersResolver, [$request]));
+        $filters = Filters::make($this->filters($request));
+
+        if (! is_null($this->filtersResolver)) {
+            $filters = $filters->merge(call_user_func_array($this->filtersResolver, [$request]));
+        }
+
+        return $filters;
     }
 
     /**

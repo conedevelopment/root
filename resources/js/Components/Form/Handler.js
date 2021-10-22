@@ -11,7 +11,7 @@ export default {
             type: String,
             default: null,
         },
-        _component: {
+        component: {
             type: String,
             default: 'FormInput',
         },
@@ -22,7 +22,7 @@ export default {
     emits: ['update:modelValue'],
 
     render() {
-        return h(resolveComponent(this._component), {
+        return h(resolveComponent(this.component), {
             ...this.$attrs,
             error: this.error,
             modelValue: this.modelValue,

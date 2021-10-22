@@ -24,11 +24,25 @@ abstract class Relation extends Field
     protected bool $nullable = false;
 
     /**
+     * Indicates if the field options should be lazily populated.
+     *
+     * @var bool
+     */
+    protected bool $lazy = false;
+
+    /**
      * The display key name.
      *
      * @var string
      */
     protected string $displayKeyName = 'id';
+
+    /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'FormSelect';
 
     /**
      * Create a new relation field instance.
@@ -66,9 +80,20 @@ abstract class Relation extends Field
      */
     public function display(string $value): self
     {
-        // $model->getDisplayKeyName
-
         $this->displayKeyName = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the lazy attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function lazy(bool $value = true): self
+    {
+        $this->lazy = $value;
 
         return $this;
     }
@@ -83,7 +108,7 @@ abstract class Relation extends Field
     public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatter)) {
-            $default = parent::resolveDefault($request, $model);
+            $default = $this->resolveDefault($request, $model);
 
             $this->formatter = function () use ($default): mixed {
                 if ($default instanceof Model) {
@@ -120,6 +145,30 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the options for the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    protected function resolveOptions(Request $request, Model $model): array
+    {
+        if (! method_exists($model, $this->relation)) {
+            return [];
+        }
+
+        $relation = call_user_func([$model, $this->relation]);
+
+        return $relation->getModel()
+                        ->newQuery()
+                        ->get()
+                        ->mapWithKeys(function (Model $model): array {
+                            return [$model->getAttribute($this->displayKeyName) => $model->getKey()];
+                        })
+                        ->toArray();
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -127,7 +176,22 @@ abstract class Relation extends Field
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            '_nullable' => $this->nullable,
+            'nullable' => $this->nullable,
+        ]);
+    }
+
+    /**
+     * Get the input representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toInput(Request $request, Model $model): array
+    {
+        return array_merge(parent::toInput($request, $model), [
+            'lazy' => $this->lazy,
+            'options' => $this->resolveOptions($request, $model),
         ]);
     }
 }

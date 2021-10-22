@@ -2,11 +2,19 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class BelongsToMany extends BelongsTo
 {
+    /**
+     * The pivot fields resolver.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $pivotFieldsResolver = null;
+
     /**
      * Hydrate the model.
      *
@@ -20,6 +28,25 @@ class BelongsToMany extends BelongsTo
         $model->saved(function (Model $model) use ($value): void {
             call_user_func([$model, $this->relation])->sync($value);
         });
+    }
+
+    /**
+     * Set the pivot fields resolver.
+     *
+     * @param  \Closre|array  $callback
+     * @return $this
+     */
+    public function withPivotFields(array|Closure $callback): self
+    {
+        if (is_array($callback)) {
+            $this->pivotFieldsResolver = static function () use ($callback): array {
+                return $callback;
+            };
+        } else {
+            $this->pivotFieldsResolver = $callback;
+        }
+
+        return $this;
     }
 
     /**
