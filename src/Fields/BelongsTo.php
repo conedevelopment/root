@@ -47,8 +47,8 @@ class BelongsTo extends Relation
         return $relation->getModel()
                         ->newQuery()
                         ->get()
-                        ->mapWithKeys(static function (Model $model): array {
-                            return [$model->getKey() => $model->getKey()];
+                        ->mapWithKeys(function (Model $model): array {
+                            return [$model->getAttribute($this->displayKeyName) => $model->getKey()];
                         })
                         ->toArray();
     }

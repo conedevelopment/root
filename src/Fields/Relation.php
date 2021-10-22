@@ -24,6 +24,13 @@ abstract class Relation extends Field
     protected bool $nullable = false;
 
     /**
+     * The display key name.
+     *
+     * @var string
+     */
+    protected string $displayKeyName = 'id';
+
+    /**
      * Create a new relation field instance.
      *
      * @param  string  $label
@@ -52,6 +59,21 @@ abstract class Relation extends Field
     }
 
     /**
+     * Set the display key name.
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function display(string $value): self
+    {
+        // $model->getDisplayKeyName
+
+        $this->displayKeyName = $value;
+
+        return $this;
+    }
+
+    /**
      * Format the value.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -63,11 +85,11 @@ abstract class Relation extends Field
         if (is_null($this->formatter)) {
             $default = parent::resolveDefault($request, $model);
 
-            $this->formatter = static function () use ($default): mixed {
+            $this->formatter = function () use ($default): mixed {
                 if ($default instanceof Model) {
-                    return $default->getKey();
+                    return $default->getAttribute($this->displayKeyName);
                 } elseif ($default instanceof Collection) {
-                    return $default->map->getKey()->toArray();
+                    return $default->map->getAttribute($this->displayKeyName)->toArray();
                 }
 
                 return $default;

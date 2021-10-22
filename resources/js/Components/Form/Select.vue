@@ -1,7 +1,7 @@
 <template>
     <div>
         <label :for="$attrs.id">{{ label }}</label>
-        <select v-bind="$attrs" :value="modelValue" @change="update">
+        <select v-bind="$attrs" v-model="value">
             <option disabled selected>{{ label }}</option>
             <option v-for="(value, option) in options" :value="value" :key="value">
                 {{ option }}
@@ -15,7 +15,7 @@
     export default {
         props: {
             modelValue: {
-                type: [String, Number],
+                type: [String, Number, Array],
                 default: null,
             },
             label: {
@@ -40,9 +40,14 @@
 
         emits: ['update:modelValue'],
 
-        methods: {
-            update(event) {
-                this.$emit('update:modelValue', event.target.value);
+        computed: {
+            value: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return JSON.parse(JSON.stringify(this.modelValue));
+                },
             },
         },
     }
