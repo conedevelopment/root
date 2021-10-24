@@ -3,23 +3,24 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class Select extends Field
 {
     /**
-     * The selectable options.
+     * The Vue compoent.
      *
-     * @var array
+     * @var string
      */
-    protected array $options = [];
+    protected string $component = 'FormSelect';
 
     /**
      * The option resolver callback.
      *
      * @var \Closure|null
      */
-    protected ?Closure $optionResolver = null;
+    protected ?Closure $optionsResolver = null;
 
     /**
      * Set the options attribute.
@@ -30,28 +31,43 @@ class Select extends Field
     public function options(array|Closure $value): self
     {
         if (is_array($value)) {
-            $this->options = $value;
-            $this->optionResolver = null;
-        } elseif ($value instanceof Closure) {
-            $this->options = [];
-            $this->optionResolver = $value;
+            $value = static function () use ($value): array {
+                return $value;
+            };
         }
+
+        $this->optionsResolver = $value;
 
         return $this;
     }
 
     /**
-     * Resolve the options.
+     * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function resolveOptions(Request $request): array
+    protected function resolveOptions(Request $request, Model $model): array
     {
-        if (empty($this->options) && ! is_null($this->optionResolver)) {
-            $this->options = call_user_func_array($this->optionResolver, [$request]);
+        if (is_null($this->optionsResolver)) {
+            return [];
         }
 
-        return $this->options;
+        return call_user_func_array($this->optionsResolver, [$request, $model]);
+    }
+
+    /**
+     * Get the input representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toInput(Request $request, Model $model): array
+    {
+        return array_merge(parent::toInput($request, $model), [
+            'options' => $this->resolveOptions($request, $model),
+        ]);
     }
 }

@@ -92,7 +92,7 @@ class Resource implements Arrayable
     }
 
     /**
-     * Get the model instance of the query.
+     * Get the model instance.
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -110,7 +110,7 @@ class Resource implements Arrayable
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  mixed  $value
+     * @param  string  $value
      * @return \Illuminate\Database\Eloquent\Model|null
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException

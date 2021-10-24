@@ -3,7 +3,7 @@
         <label :for="$attrs.id">{{ label }}</label>
         <select v-bind="$attrs" v-model="value">
             <option disabled selected>{{ label }}</option>
-            <option v-for="(value, option) in options" :value="value" :key="value">
+            <option v-for="(option, value) in options" :value="value" :key="value">
                 {{ option }}
             </option>
         </select>

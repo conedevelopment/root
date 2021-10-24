@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -43,6 +44,13 @@ abstract class Relation extends Field
      * @var string
      */
     protected string $component = 'FormSelect';
+
+    /**
+     * The query resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $queryResolver = null;
 
     /**
      * Create a new relation field instance.
@@ -145,6 +153,19 @@ abstract class Relation extends Field
     }
 
     /**
+     * Set the query resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function withQuery(Closure $callback): self
+    {
+        $this->queryResolver = $callback;
+
+        return $this;
+    }
+
+    /**
      * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -157,15 +178,17 @@ abstract class Relation extends Field
             return [];
         }
 
-        $relation = call_user_func([$model, $this->relation]);
+        $query = call_user_func([$model, $this->relation])->getModel()->newQuery();
 
-        return $relation->getModel()
-                        ->newQuery()
-                        ->get()
-                        ->mapWithKeys(function (Model $model): array {
-                            return [$model->getAttribute($this->displayKeyName) => $model->getKey()];
-                        })
-                        ->toArray();
+        if (! is_null($this->queryResolver)) {
+            call_user_func_array($this->queryResolver, [$query, $request, $model]);
+        }
+
+        return $query->get()
+                    ->mapWithKeys(function (Model $model): array {
+                        return [$model->getKey() => $model->getAttribute($this->displayKeyName)];
+                    })
+                    ->toArray();
     }
 
     /**

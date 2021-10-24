@@ -58,6 +58,13 @@ class Field implements Arrayable
         Resource::UPDATE => [],
     ];
 
+    protected array $visibility = [
+        Resource::INDEX => true,
+        Resource::UPDATE => true,
+        Resource::CREATE => true,
+        Resource::SHOW => true,
+    ];
+
     /**
      * The rules resolver callback.
      *
