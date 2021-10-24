@@ -3,6 +3,7 @@
 namespace Cone\Root;
 
 use Cone\Root\Http\Middleware\HandleRootRequests;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -50,6 +51,16 @@ class RootServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
 
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+
+        $this->registerRoutes();
+        $this->registerComposers();
+
+        (Models\User::proxy())::registerResource();
+    }
+
+    protected function registerRoutes(): void
+    {
         $this->app->booted(function (): void {
             $this->app['router']
                 ->as('root.')
@@ -59,9 +70,21 @@ class RootServiceProvider extends ServiceProvider
                     $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
                 });
         });
+    }
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+    /**
+     * Register the view composers.
+     *
+     * @return void
+     */
+    protected function registerComposers(): void
+    {
+        $this->app['view']->composer('app', function (View $view): void {
+            $view->with('user', $this->app['request']->user());
 
-        (Models\User::proxy())::registerResource();
+            $view->with('translations', (object) $this->app['translator']->getLoader()->load(
+                $this->app->getLocale(), '*', '*'
+            ));
+        });
     }
 }

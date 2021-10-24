@@ -44,24 +44,35 @@ class ResourceController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $key
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
-    public function create(Request $request, string $key)
+    public function create(Request $request, string $key): Response
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toCreate($request);
+        return Inertia::render(
+            'Resource/Create',
+            $resource->toCreate($request)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  string  $key
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request, string $key): RedirectResponse
     {
-        //
+        $resource = Resource::resolve($key);
+
+        $model = $resource->handleStore($request);
+
+        return Redirect::route(
+            'root.resource.show',
+            [$resource->getKey(), $model]
+        );
     }
 
     /**
@@ -112,17 +123,29 @@ class ResourceController extends Controller
 
         $model = $resource->handleUpdate($request, $id);
 
-        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
+        return Redirect::route(
+            'root.resource.show',
+            [$resource->getKey(), $model]
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, string $key, string $id): RedirectResponse
     {
-        //
+        $resource = Resource::resolve($key);
+
+        $resource->handleDestroy($request, $id);
+
+        return Redirect::route(
+            'root.resource.index',
+            [$resource->getKey()]
+        );
     }
 }

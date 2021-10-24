@@ -7,7 +7,7 @@
             <tbody>
                 <tr v-for="item in query.data" :key="item.id">
                     <td v-for="field in item.fields" :key="`${item.id}-${field.name}`">
-                        {{ field._formatted_value }}
+                        {{ field.formatted_value }}
                     </td>
                 </tr>
             </tbody>
@@ -26,10 +26,10 @@
                 type: Array,
                 required: true,
             },
-            // actions: {
-            //     type: Array,
-            //     required: true,
-            // },
+            actions: {
+                type: Array,
+                required: true,
+            },
         },
     }
 </script>

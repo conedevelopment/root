@@ -1,5 +1,6 @@
 <?php
 
+use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Controllers\DashboardController;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Controllers\ResourceController;
@@ -11,7 +12,10 @@ Route::get('/', DashboardController::class)->name('dashboard');
 // Media
 Route::apiResource('media', MediaController::class);
 
-// Resources
+// Action
+Route::post('/{resource}/action/{action}', ActionController::class)->name('resource.action');
+
+// Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');
 Route::get('/{resource}/create', [ResourceController::class, 'create'])->name('resource.create');
 Route::post('/{resource}', [ResourceController::class, 'store'])->name('resource.store');

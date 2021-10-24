@@ -7,6 +7,7 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -171,11 +172,17 @@ class Resource implements Arrayable
     /**
      * Set the fields resolver.
      *
-     * @param  \Closure  $callback
+     * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withFields(Closure $callback): self
+    public function withFields(array|Closure $callback): self
     {
+        if (is_array($callback)) {
+            $callback = static function () use ($callback) {
+                return $callback;
+            };
+        }
+
         $this->fieldsResolver = $callback;
 
         return $this;
@@ -212,11 +219,17 @@ class Resource implements Arrayable
     /**
      * Set the filters resolver.
      *
-     * @param  \Closure  $callback
+     * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withFilters(Closure $callback): self
+    public function withFilters(array|Closure $callback): self
     {
+        if (is_array($callback)) {
+            $callback = static function () use ($callback) {
+                return $callback;
+            };
+        }
+
         $this->filtersResolver = $callback;
 
         return $this;
@@ -253,11 +266,17 @@ class Resource implements Arrayable
     /**
      * Set the actions resolver.
      *
-     * @param  \Closure  $callback
+     * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withActions(Closure $callback): self
+    public function withActions(array|Closure $callback): self
     {
+        if (is_array($callback)) {
+            $callback = static function () use ($callback) {
+                return $callback;
+            };
+        }
+
         $this->actionsResolver = $callback;
 
         return $this;
@@ -338,20 +357,22 @@ class Resource implements Arrayable
     {
         $filters = $this->collectFilters($request);
 
-        $query = $filters->apply($this->query(), $request)
-                        ->latest()
-                        ->paginate($request->input('per_page'))
-                        ->withQueryString();
-
         $fields = $this->collectFields($request);
 
-        $query->getCollection()->transform(function (Model $model) use ($request, $fields): array {
-            return $model->toResourceDisplay($request, $this, $fields);
-        });
+        $query = $filters->apply($this->query(), $request)
+                    ->latest()
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->tap(function (LengthAwarePaginator $paginator) use ($request, $fields) {
+                        $paginator->getCollection()->transform(function (Model $model) use ($request, $fields): array {
+                            return $model->toResourceDisplay($request, $this, $fields);
+                        });
+                    });
 
         return array_merge($this->toArray(), [
             'query' => $query,
             'filters' => $filters,
+            'actions' => $this->collectActions($request),
         ]);
     }
 
@@ -453,6 +474,24 @@ class Resource implements Arrayable
         });
 
         $model->save();
+
+        return $model;
+    }
+
+    /**
+     * Handle the destroy request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model
+     */
+    public function handleDestroy(Request $request, string $id): Model
+    {
+        $model = $this->resolveRouteBinding($id);
+
+        // Implement forceDelete
+
+        $model->delete();
 
         return $model;
     }
