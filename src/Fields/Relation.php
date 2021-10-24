@@ -25,7 +25,7 @@ abstract class Relation extends Field
     protected bool $nullable = false;
 
     /**
-     * Indicates if the field options should be lazily populated.
+     * Indicates if the options should be lazily populated.
      *
      * @var bool
      */
@@ -192,18 +192,6 @@ abstract class Relation extends Field
     }
 
     /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return array_merge(parent::toArray(), [
-            'nullable' => $this->nullable,
-        ]);
-    }
-
-    /**
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -214,6 +202,7 @@ abstract class Relation extends Field
     {
         return array_merge(parent::toInput($request, $model), [
             'lazy' => $this->lazy,
+            'nullable' => $this->nullable,
             'options' => $this->resolveOptions($request, $model),
         ]);
     }

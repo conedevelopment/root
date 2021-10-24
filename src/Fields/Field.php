@@ -58,6 +58,11 @@ class Field implements Arrayable
         Resource::UPDATE => [],
     ];
 
+    /**
+     * The visibility map.
+     *
+     * @var array
+     */
     protected array $visibility = [
         Resource::INDEX => true,
         Resource::UPDATE => true,

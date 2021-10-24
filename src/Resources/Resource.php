@@ -4,6 +4,7 @@ namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Fields\Field;
+use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
@@ -50,6 +51,13 @@ class Resource implements Arrayable
      * @var \Closure|null
      */
     protected ?Closure $filtersResolver = null;
+
+    /**
+     * The actions resolver.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $actionsResolver = null;
 
     /**
      * Create a new resource instance.
@@ -243,6 +251,36 @@ class Resource implements Arrayable
     }
 
     /**
+     * Set the actions resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function withActions(Closure $callback): self
+    {
+        $this->actionsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Collect the resolved actions.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Support\Collections\Actions
+     */
+    protected function collectActions(Request $request): Actions
+    {
+        $actions = Actions::make($this->actions($request));
+
+        if (! is_null($this->actionsResolver)) {
+            $actions = $actions->merge(call_user_func_array($this->actionsResolver, [$request]));
+        }
+
+        return $actions;
+    }
+
+    /**
      * Map the URLs.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -328,7 +366,7 @@ class Resource implements Arrayable
         $fields = $this->collectFields($request);
 
         return array_merge($this->toArray(), [
-            'model' => $this->getModelInstance()->toResourceForm($request, $this, $fields),
+            'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
         ]);
     }
 
@@ -366,6 +404,31 @@ class Resource implements Arrayable
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
         ]);
+    }
+
+    /**
+     * Handle the store request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model
+     */
+    public function handleStore(Request $request): Model
+    {
+        $fields = $this->collectFields($request);
+
+        $model = $this->getModelInstance()->newInstance();
+
+        $request->validate(
+            $fields->mapToValidate($request, $model, static::CREATE)->toArray()
+        );
+
+        $fields->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrate($request, $model, $request->input($field->name));
+        });
+
+        $model->save();
+
+        return $model;
     }
 
     /**
