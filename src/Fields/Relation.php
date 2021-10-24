@@ -116,13 +116,13 @@ abstract class Relation extends Field
     public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatter)) {
-            $default = $this->resolveDefault($request, $model);
+            $default = parent::resolveDefault($request, $model);
 
-            $this->formatter = function () use ($default): mixed {
+            $this->formatResolver = function () use ($default): mixed {
                 if ($default instanceof Model) {
                     return $default->getAttribute($this->displayKeyName);
                 } elseif ($default instanceof Collection) {
-                    return $default->map->getAttribute($this->displayKeyName)->toArray();
+                    return $default->map->getAttribute($this->displayKeyName)->join(', ');
                 }
 
                 return $default;
