@@ -10,6 +10,21 @@ use Illuminate\Support\Collection;
 class Fields extends Collection
 {
     /**
+     * Filter the field that are visible for the given request and action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $action
+     * @return static
+     */
+    public function filterVisibleFor(Request $request, string $action): self
+    {
+        return $this->filter(static function (Field $field) use ($request, $action): bool {
+                        return $field->visible($request, $action);
+                    })
+                    ->values();
+    }
+
+    /**
      * Map the fields to display.
      *
      * @param  \Illuminate\Http\Request  $request

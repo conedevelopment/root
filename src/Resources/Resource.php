@@ -357,7 +357,7 @@ class Resource implements Arrayable
     {
         $filters = $this->collectFilters($request);
 
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::INDEX);
 
         $query = $filters->apply($this->query(), $request)
                     ->latest()
@@ -384,7 +384,7 @@ class Resource implements Arrayable
      */
     public function toCreate(Request $request): array
     {
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::CREATE);
 
         return array_merge($this->toArray(), [
             'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
@@ -400,7 +400,7 @@ class Resource implements Arrayable
      */
     public function toShow(Request $request, string $id): array
     {
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::SHOW);
 
         $model = $this->resolveRouteBinding($id);
 
@@ -418,7 +418,7 @@ class Resource implements Arrayable
      */
     public function toEdit(Request $request, string $id): array
     {
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::UPDATE);
 
         $model = $this->resolveRouteBinding($id);
 
@@ -435,7 +435,7 @@ class Resource implements Arrayable
      */
     public function handleStore(Request $request): Model
     {
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::CREATE);
 
         $model = $this->getModelInstance()->newInstance();
 
@@ -461,7 +461,7 @@ class Resource implements Arrayable
      */
     public function handleUpdate(Request $request, string $id): Model
     {
-        $fields = $this->collectFields($request);
+        $fields = $this->collectFields($request)->filterVisibleFor($request, static::UPDATE);
 
         $model = $this->resolveRouteBinding($id);
 

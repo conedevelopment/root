@@ -63,12 +63,7 @@ class Field implements Arrayable
      *
      * @var array
      */
-    protected array $visibility = [
-        Resource::INDEX => true,
-        Resource::UPDATE => true,
-        Resource::CREATE => true,
-        Resource::SHOW => true,
-    ];
+    protected array $visibility = [];
 
     /**
      * The rules resolver callback.
@@ -405,6 +400,24 @@ class Field implements Arrayable
         }
 
         return $this;
+    }
+
+    /**
+     * Determine if the field is visible for the given request and action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $action
+     * @return bool
+     */
+    public function visible(Request $request, string $action): bool
+    {
+        foreach ($this->visibility as $callback) {
+            if (! call_user_func_array($callback, [$request, $action])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

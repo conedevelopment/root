@@ -5,9 +5,16 @@ namespace Cone\Root\Fields;
 class Textarea extends Field
 {
     /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'FormTextarea';
+
+    /**
      * Set the rows attribute.
      *
-     * @param  int  $rows
+     * @param  int  $value
      * @return $this
      */
     public function rows(int $value): self
@@ -18,7 +25,7 @@ class Textarea extends Field
     /**
      * Set the cols attribute.
      *
-     * @param  int  $cols
+     * @param  int  $value
      * @return $this
      */
     public function cols(int $value): self
