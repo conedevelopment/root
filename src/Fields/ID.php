@@ -2,9 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Resources\Resource;
-use Illuminate\Http\Request;
-
 class ID extends Field
 {
     /**
@@ -18,9 +15,7 @@ class ID extends Field
     {
         parent::__construct($label, $name);
 
-        $this->visibility[] = static function (Request $request, string $action): bool {
-            return in_array($action, [Resource::INDEX, Resource::SHOW]);
-        };
+        $this->visibleOnDisplay();
     }
 
     /**
