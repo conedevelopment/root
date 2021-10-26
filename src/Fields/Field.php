@@ -427,7 +427,6 @@ class Field implements Arrayable
             return $action === Resource::INDEX
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
-
     }
 
     /**

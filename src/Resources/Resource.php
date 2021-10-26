@@ -372,7 +372,7 @@ class Resource implements Arrayable
         return array_merge($this->toArray(), [
             'query' => $query,
             'filters' => $filters,
-            'actions' => $this->collectActions($request),
+            'actions' => $this->collectActions($request)->filterVisibleFor($request, static::INDEX),
         ]);
     }
 
@@ -406,6 +406,7 @@ class Resource implements Arrayable
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceDisplay($request, $this, $fields),
+            'actions' => $this->collectActions($request)->filterVisibleFor($request, static::SHOW),
         ]);
     }
 
