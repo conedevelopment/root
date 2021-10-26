@@ -16,7 +16,7 @@ abstract class Filter implements Arrayable
      * @param  array  ...$parameters
      * @return static
      */
-    public static function make(...$parameters): self
+    public static function make(...$parameters): static
     {
         return new static(...$parameters);
     }

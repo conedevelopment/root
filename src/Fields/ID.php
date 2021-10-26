@@ -31,7 +31,7 @@ class ID extends Field
      * @param  bool  $value
      * @return $this
      */
-    public function uuid(bool $value = true): self
+    public function uuid(bool $value = true): static
     {
         $this->uuid = $value;
 

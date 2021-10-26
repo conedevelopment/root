@@ -27,7 +27,7 @@ abstract class SelectFilter extends Filter
      *
      * @return void
      */
-    public function multiple(bool $value = true): self
+    public function multiple(bool $value = true): static
     {
         $this->multiple = $value;
 

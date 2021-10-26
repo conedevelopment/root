@@ -19,7 +19,7 @@ class Text extends Field
      * @param  int  $value
      * @return $this
      */
-    public function size(int $value): self
+    public function size(int $value): static
     {
         return $this->setAttribute('size', $value);
     }
@@ -30,7 +30,7 @@ class Text extends Field
      * @param  int  $value
      * @return $this
      */
-    public function minlength(int $value): self
+    public function minlength(int $value): static
     {
         return $this->setAttribute('minlength', $value);
     }
@@ -41,7 +41,7 @@ class Text extends Field
      * @param  int  $value
      * @return $this
      */
-    public function maxlength(int $value): self
+    public function maxlength(int $value): static
     {
         return $this->setAttribute('maxlength', $value);
     }
@@ -52,7 +52,7 @@ class Text extends Field
      * @param  string  $value
      * @return $this
      */
-    public function placeholder(string $value): self
+    public function placeholder(string $value): static
     {
         return $this->setAttribute('placeholder', $value);
     }
@@ -63,7 +63,7 @@ class Text extends Field
      * @param  string  $value
      * @return $this
      */
-    public function type(string $value): self
+    public function type(string $value): static
     {
         return $this->setAttribute('type', $value);
     }

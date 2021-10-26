@@ -9,7 +9,7 @@ interface Medium
      *
      * @return $this
      */
-    public function convert(): self;
+    public function convert(): static;
 
     /**
      * Get the path to the conversion.

@@ -28,7 +28,7 @@ class Select extends Field
      * @param  array|\Closure  $value
      * @return $this
      */
-    public function options(array|Closure $value): self
+    public function options(array|Closure $value): static
     {
         if (is_array($value)) {
             $value = static function () use ($value): array {

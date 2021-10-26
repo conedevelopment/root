@@ -19,7 +19,7 @@ class Number extends Field
      * @param  int  $value
      * @return $this
      */
-    public function min(int $value): self
+    public function min(int $value): static
     {
         return $this->setAttribute('min', $value);
     }
@@ -30,7 +30,7 @@ class Number extends Field
      * @param  int  $value
      * @return $this
      */
-    public function max(int $value): self
+    public function max(int $value): static
     {
         return $this->setAttribute('max', $value);
     }

@@ -16,7 +16,7 @@ class Fields extends Collection
      * @param  string  $action
      * @return static
      */
-    public function filterVisibleFor(Request $request, string $action): self
+    public function filterVisibleFor(Request $request, string $action): static
     {
         return $this->filter(static function (Field $field) use ($request, $action): bool {
                         return $field->visible($request, $action);

@@ -28,7 +28,7 @@ class Date extends Field
      * @param  string  $value
      * @return $this
      */
-    public function timezone(?string $value = null): self
+    public function timezone(?string $value = null): static
     {
         $this->timezone = $value;
 

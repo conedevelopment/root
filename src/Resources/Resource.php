@@ -141,7 +141,7 @@ class Resource implements Arrayable
      * @param  array  $relations
      * @return $this
      */
-    public function with(array $relations): self
+    public function with(array $relations): static
     {
         $this->with = $relations;
 
@@ -175,7 +175,7 @@ class Resource implements Arrayable
      * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withFields(array|Closure $callback): self
+    public function withFields(array|Closure $callback): static
     {
         if (is_array($callback)) {
             $callback = static function () use ($callback) {
@@ -222,7 +222,7 @@ class Resource implements Arrayable
      * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withFilters(array|Closure $callback): self
+    public function withFilters(array|Closure $callback): static
     {
         if (is_array($callback)) {
             $callback = static function () use ($callback) {
@@ -269,7 +269,7 @@ class Resource implements Arrayable
      * @param  array|\Closure  $callback
      * @return $this
      */
-    public function withActions(array|Closure $callback): self
+    public function withActions(array|Closure $callback): static
     {
         if (is_array($callback)) {
             $callback = static function () use ($callback) {

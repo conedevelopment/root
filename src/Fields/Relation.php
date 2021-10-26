@@ -73,7 +73,7 @@ abstract class Relation extends Field
      * @param  bool  $value
      * @return $this
      */
-    public function nullable(bool $value = true): self
+    public function nullable(bool $value = true): static
     {
         $this->nullable = $value;
 
@@ -86,7 +86,7 @@ abstract class Relation extends Field
      * @param  string  $value
      * @return $this
      */
-    public function display(string $value): self
+    public function display(string $value): static
     {
         $this->displayKeyName = $value;
 
@@ -99,7 +99,7 @@ abstract class Relation extends Field
      * @param  bool  $value
      * @return $this
      */
-    public function lazy(bool $value = true): self
+    public function lazy(bool $value = true): static
     {
         $this->lazy = $value;
 
@@ -158,7 +158,7 @@ abstract class Relation extends Field
      * @param  \Closure  $callback
      * @return $this
      */
-    public function withQuery(Closure $callback): self
+    public function withQuery(Closure $callback): static
     {
         $this->queryResolver = $callback;
 

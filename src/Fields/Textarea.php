@@ -17,7 +17,7 @@ class Textarea extends Field
      * @param  int  $value
      * @return $this
      */
-    public function rows(int $value): self
+    public function rows(int $value): static
     {
         return $this->setAttribute('rows', $value);
     }
@@ -28,7 +28,7 @@ class Textarea extends Field
      * @param  int  $value
      * @return $this
      */
-    public function cols(int $value): self
+    public function cols(int $value): static
     {
         return $this->setAttribute('cols', $value);
     }

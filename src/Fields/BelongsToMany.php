@@ -36,7 +36,7 @@ class BelongsToMany extends BelongsTo
      * @param  \Closre|array  $callback
      * @return $this
      */
-    public function withPivotFields(array|Closure $callback): self
+    public function withPivotFields(array|Closure $callback): static
     {
         if (is_array($callback)) {
             $this->pivotFieldsResolver = static function () use ($callback): array {

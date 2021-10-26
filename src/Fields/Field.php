@@ -59,7 +59,7 @@ class Field implements Arrayable
     ];
 
     /**
-     * The visibility map.
+     * The visibility resolver callback.
      *
      * @var \Closure|null
      */
@@ -99,7 +99,7 @@ class Field implements Arrayable
      * @param  array  ...$parameters
      * @return static
      */
-    public static function make(...$parameters): self
+    public static function make(...$parameters): static
     {
         return new static(...$parameters);
     }
@@ -130,7 +130,7 @@ class Field implements Arrayable
      * @param  array  $attributes
      * @return $this
      */
-    public function setAttributes(array $attributes): self
+    public function setAttributes(array $attributes): static
     {
         $this->attributes = array_replace($this->attributes, $attributes);
 
@@ -167,7 +167,7 @@ class Field implements Arrayable
      * @param  mixed  $value
      * @return $this
      */
-    public function setAttribute(string $key, mixed $value): self
+    public function setAttribute(string $key, mixed $value): static
     {
         $this->attributes[$key] = $value;
 
@@ -180,7 +180,7 @@ class Field implements Arrayable
      * @param  string  $key
      * @return $this
      */
-    public function removeAttribute(string $key): self
+    public function removeAttribute(string $key): static
     {
         unset($this->attributes[$key]);
 
@@ -193,7 +193,7 @@ class Field implements Arrayable
      * @param  array  $keys
      * @return $this
      */
-    public function removeAttributes(array $keys): self
+    public function removeAttributes(array $keys): static
     {
         foreach ($keys as $key) {
             $this->removeAttribute($key);
@@ -207,7 +207,7 @@ class Field implements Arrayable
      *
      * @return $this
      */
-    public function clearAttributes(): self
+    public function clearAttributes(): static
     {
         $this->attributes = [];
 
@@ -220,7 +220,7 @@ class Field implements Arrayable
      * @param  string  $value
      * @return $this
      */
-    public function label(string $value): self
+    public function label(string $value): static
     {
         return $this->setAttribute('label', $value);
     }
@@ -231,7 +231,7 @@ class Field implements Arrayable
      * @param  string  $value
      * @return $this
      */
-    public function name(string $value): self
+    public function name(string $value): static
     {
         return $this->setAttribute('name', $value);
     }
@@ -242,7 +242,7 @@ class Field implements Arrayable
      * @param  string  $value
      * @return $this
      */
-    public function id(string $value): self
+    public function id(string $value): static
     {
         return $this->setAttribute('id', $value);
     }
@@ -253,7 +253,7 @@ class Field implements Arrayable
      * @param  bool  $value
      * @return $this
      */
-    public function readonly(bool $value = true): self
+    public function readonly(bool $value = true): static
     {
         return $this->setAttribute('readonly', $value);
     }
@@ -264,7 +264,7 @@ class Field implements Arrayable
      * @param  bool  $value
      * @return $this
      */
-    public function disabled(bool $value = true): self
+    public function disabled(bool $value = true): static
     {
         return $this->setAttribute('disabled', $value);
     }
@@ -275,7 +275,7 @@ class Field implements Arrayable
      * @param  bool  $value
      * @return $this
      */
-    public function required(bool $value = true): self
+    public function required(bool $value = true): static
     {
         return $this->setAttribute('required', $value);
     }
@@ -286,7 +286,7 @@ class Field implements Arrayable
      * @param  bool  $value
      * @return $this
      */
-    public function sortable(bool $value = true): self
+    public function sortable(bool $value = true): static
     {
         $this->sortable = $value;
 
@@ -299,7 +299,7 @@ class Field implements Arrayable
      * @param  bool  $value
      * @return $this
      */
-    public function searchable(bool $value = true): self
+    public function searchable(bool $value = true): static
     {
         $this->searchable = $value;
 
@@ -312,7 +312,7 @@ class Field implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    public function default(Closure $callback): self
+    public function default(Closure $callback): static
     {
         $this->defaultResolver = $callback;
 
@@ -343,7 +343,7 @@ class Field implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    public function format(Closure $callback): self
+    public function format(Closure $callback): static
     {
         $this->formatResolver = $callback;
 
@@ -389,7 +389,7 @@ class Field implements Arrayable
      * @param  array|Closure  $rule
      * @return $this
      */
-    public function rules(array|Closure $rules): self
+    public function rules(array|Closure $rules): static
     {
         if ($rules instanceof Closure) {
             $this->rulesResolver = $rules;
@@ -424,7 +424,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnIndex(?Closure $callback = null): self
+    public function hiddenOnIndex(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::INDEX
@@ -440,7 +440,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnCreate(?Closure $callback = null): self
+    public function hiddenOnCreate(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::CREATE
@@ -456,7 +456,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnShow(?Closure $callback = null): self
+    public function hiddenOnShow(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::SHOW
@@ -472,7 +472,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnUpdate(?Closure $callback = null): self
+    public function hiddenOnUpdate(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::UPDATE
@@ -488,7 +488,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnIndex(?Closure $callback = null): self
+    public function visibleOnIndex(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action === Resource::INDEX
@@ -504,7 +504,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnCreate(?Closure $callback = null): self
+    public function visibleOnCreate(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::CREATE
@@ -520,7 +520,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnShow(?Closure $callback = null): self
+    public function visibleOnShow(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::SHOW
@@ -536,7 +536,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnUpdate(?Closure $callback = null): self
+    public function visibleOnUpdate(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return $action !== Resource::SHOW
@@ -552,7 +552,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnDisplay(?Closure $callback = null): self
+    public function hiddenOnDisplay(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return ! in_array($action, [Resource::INDEX, Resource::SHOW])
@@ -568,7 +568,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function hiddenOnForm(?Closure $callback = null): self
+    public function hiddenOnForm(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return ! in_array($action, [Resource::UPDATE, Resource::CREATE])
@@ -584,7 +584,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnDisplay(?Closure $callback = null): self
+    public function visibleOnDisplay(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return in_array($action, [Resource::INDEX, Resource::SHOW])
@@ -600,7 +600,7 @@ class Field implements Arrayable
      * @param  \Closure|null  $callback
      * @return $this
      */
-    public function visibleOnForm(?Closure $callback = null): self
+    public function visibleOnForm(?Closure $callback = null): static
     {
         $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
             return in_array($action, [Resource::CREATE, Resource::UPDATE])
@@ -608,6 +608,32 @@ class Field implements Arrayable
         };
 
         return $this;
+    }
+
+    /**
+     * Set a custom visibility resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function visibleOn(Closure $callback): static
+    {
+        $this->visibilityResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Set a custom visibility resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function hiddenOn(Closure $callback): static
+    {
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+            return ! call_user_func_array($callback, [$request, $action]);
+        });
     }
 
     /**

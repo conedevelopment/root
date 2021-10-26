@@ -17,9 +17,9 @@ trait InteractsWithProxy
     /**
      * Resolve and get the proxy instance.
      *
-     * @return self
+     * @return static
      */
-    public static function proxy(): self
+    public static function proxy(): static
     {
         static $proxy;
 

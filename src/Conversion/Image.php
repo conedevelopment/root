@@ -137,7 +137,7 @@ class Image
      * @param  bool  $crop
      * @return $this
      */
-    public function resize(?int $width = null, ?int $height = null, bool $crop = false): self
+    public function resize(?int $width = null, ?int $height = null, bool $crop = false): static
     {
         $x = $y = 0;
         [$originalWidth, $originalHeight] = getimagesize($this->medium->getAbsolutePath());
