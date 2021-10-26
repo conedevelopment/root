@@ -411,11 +411,8 @@ class Field implements Arrayable
      */
     public function visible(Request $request, string $action): bool
     {
-        if (! is_null($this->visibilityResolver)) {
-            return call_user_func_array($this->visibilityResolver, [$request, $action]);
-        }
-
-        return true;
+        return is_null($this->visibilityResolver)
+            || call_user_func_array($this->visibilityResolver, [$request, $action]);
     }
 
     /**
@@ -426,12 +423,11 @@ class Field implements Arrayable
      */
     public function hiddenOnIndex(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::INDEX
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::INDEX
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
+        });
 
-        return $this;
     }
 
     /**
@@ -442,12 +438,10 @@ class Field implements Arrayable
      */
     public function hiddenOnCreate(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::CREATE
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::CREATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -458,12 +452,10 @@ class Field implements Arrayable
      */
     public function hiddenOnShow(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::SHOW
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::SHOW
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -474,12 +466,10 @@ class Field implements Arrayable
      */
     public function hiddenOnUpdate(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::UPDATE
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::UPDATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -490,12 +480,10 @@ class Field implements Arrayable
      */
     public function visibleOnIndex(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
             return $action === Resource::INDEX
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -506,12 +494,10 @@ class Field implements Arrayable
      */
     public function visibleOnCreate(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::CREATE
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::CREATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -522,12 +508,10 @@ class Field implements Arrayable
      */
     public function visibleOnShow(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::SHOW
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::SHOW
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -538,12 +522,10 @@ class Field implements Arrayable
      */
     public function visibleOnUpdate(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return $action !== Resource::SHOW
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+            return $action === Resource::UPDATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -554,12 +536,10 @@ class Field implements Arrayable
      */
     public function hiddenOnDisplay(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return ! in_array($action, [Resource::INDEX, Resource::SHOW])
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return in_array($action, [Resource::INDEX, Resource::SHOW])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -570,12 +550,10 @@ class Field implements Arrayable
      */
     public function hiddenOnForm(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
-            return ! in_array($action, [Resource::UPDATE, Resource::CREATE])
+        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+            return in_array($action, [Resource::UPDATE, Resource::CREATE])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -586,12 +564,10 @@ class Field implements Arrayable
      */
     public function visibleOnDisplay(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
             return in_array($action, [Resource::INDEX, Resource::SHOW])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -602,12 +578,10 @@ class Field implements Arrayable
      */
     public function visibleOnForm(?Closure $callback = null): static
     {
-        $this->visibilityResolver = static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
             return in_array($action, [Resource::CREATE, Resource::UPDATE])
-                && (is_null($callback) || call_user_func_array($callback, [$request]));;
-        };
-
-        return $this;
+                && (is_null($callback) || call_user_func_array($callback, [$request]));
+        });
     }
 
     /**
