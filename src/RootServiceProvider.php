@@ -56,9 +56,16 @@ class RootServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerComposers();
 
-        (Models\User::proxy())::registerResource();
+        Root::running(static function (): void {
+            (Models\User::proxy())::registerResource();
+        });
     }
 
+    /**
+     * Register the routes.
+     *
+     * @return void
+     */
     protected function registerRoutes(): void
     {
         $this->app->booted(function (): void {
@@ -79,7 +86,7 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerComposers(): void
     {
-        $this->app['view']->composer('app', function (View $view): void {
+        $this->app['view']->composer('root::app', function (View $view): void {
             $view->with('user', $this->app['request']->user());
 
             $view->with('translations', (object) $this->app['translator']->getLoader()->load(
