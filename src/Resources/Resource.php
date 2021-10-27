@@ -314,6 +314,29 @@ class Resource implements Arrayable
     }
 
     /**
+     * Get the abilities.
+     *
+     * @return array
+     */
+    public function getAbilities(): array
+    {
+        return [
+            'global' => ['viewAny', 'create'],
+            'scoped' => ['view', 'update', 'delete', 'restore', 'forceDelete'],
+        ];
+    }
+
+    /**
+     * Get the policy.
+     *
+     * @return mixed
+     */
+    public function getPolicy(): mixed
+    {
+        return Gate::getPolicyFor($this->getModel());
+    }
+
+    /**
      * Map the abilities.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -321,11 +344,11 @@ class Resource implements Arrayable
      */
     public function mapAbilities(Request $request): array
     {
-        $policy = Gate::getPolicyFor($this->getModel());
+        $policy = $this->getPolicy();
 
-        $abilities = ['viewAny', 'create'];
+        $abilities = $this->getAbilities();
 
-        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
+        return array_reduce($abilities['global'], function (array $stack, $ability) use ($request, $policy): array {
             return array_merge($stack, [
                 $ability => is_null($policy) || $request->user()?->can($ability, $this->getModel()),
             ]);

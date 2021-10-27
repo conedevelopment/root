@@ -6,7 +6,6 @@ use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Facades\Resource as Registry;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 trait InteractsWithResource
@@ -39,11 +38,11 @@ trait InteractsWithResource
      */
     public function mapResourceAbilities(Request $request, Resource $resource): array
     {
-        $policy = Gate::getPolicyFor(static::class);
+        $policy = $resource->getPolicy();
 
-        $abilities = ['view', 'update', 'delete', 'restore', 'forceDelete'];
+        $abilities = $resource->getAbilities();
 
-        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
+        return array_reduce($abilities['scoped'], function (array $stack, $ability) use ($request, $policy): array {
             return array_merge($stack, [
                 $ability => is_null($policy) || $request->user()?->can($ability, $this),
             ]);
