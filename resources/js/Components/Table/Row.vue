@@ -1,8 +1,10 @@
 <template>
     <tr>
-        <td v-for="field in item.fields" :key="`${item.id}-${field.name}`">
-            {{ field.formatted_value }}
-        </td>
+        <td
+            v-for="field in item.fields"
+            :key="`${item.id}-${field.name}`"
+            v-html="field.formatted_value"
+        ></td>
     </tr>
 </template>
 

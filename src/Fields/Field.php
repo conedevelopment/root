@@ -48,6 +48,13 @@ class Field implements Arrayable
     protected ?Closure $defaultResolver = null;
 
     /**
+     * The template resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $templateResolver = null;
+
+    /**
      * The validation rules.
      *
      * @var array
@@ -369,6 +376,35 @@ class Field implements Arrayable
     }
 
     /**
+     * Set the template resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function template(Closure $callback): static
+    {
+        $this->templateResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolver the template.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return string|null
+     */
+    public function resolveTemplate(Request $request, Model $model): ?string
+    {
+        if (is_null($this->templateResolver)) {
+            return $this->resolveFormat($request, $model);
+        }
+
+        return call_user_func_array($this->templateResolver, [$request, $model]);
+    }
+
+    /**
      * Hydrate the model.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -674,7 +710,7 @@ class Field implements Arrayable
     public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'formatted_value' => $this->resolveFormat($request, $model),
+            'formatted_value' => $this->resolveTemplate($request, $model),
             'searchable' => $this->searchable,
             'sortable' => $this->sortable,
             'value' => $this->resolveDefault($request, $model),
