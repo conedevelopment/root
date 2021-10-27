@@ -1,22 +1,21 @@
 <template>
     <div>
-        <table>
-            <thead>
-                <tr></tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in query.data" :key="item.id">
-                    <td v-for="field in item.fields" :key="`${item.id}-${field.name}`">
-                        {{ field.formatted_value }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <Table
+            :query="query"
+            :filters="filters"
+            :actions="actions"
+        ></Table>
     </div>
 </template>
 
 <script>
+    import Table from './../../Components/Table/Table';
+
     export default {
+        components: {
+            Table,
+        },
+
         props: {
             query: {
                 type: Object,
