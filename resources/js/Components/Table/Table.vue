@@ -2,21 +2,19 @@
     <table>
         <Head :columns="columns"></Head>
         <tbody>
-            <tr v-for="item in query.data" :key="item.id">
-                <td v-for="field in item.fields" :key="`${item.id}-${field.name}`">
-                    {{ field.formatted_value }}
-                </td>
-            </tr>
+            <Row v-for="item in query.data" :key="item.id" :item="item"></Row>
         </tbody>
     </table>
 </template>
 
 <script>
     import Head from './Head';
+    import Row from './Row';
 
     export default {
         components: {
             Head,
+            Row,
         },
 
         props: {

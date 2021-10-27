@@ -69,10 +69,7 @@ class ResourceController extends Controller
 
         $model = $resource->handleStore($request);
 
-        return Redirect::route(
-            'root.resource.show',
-            [$resource->getKey(), $model]
-        );
+        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
 
     /**
@@ -123,10 +120,7 @@ class ResourceController extends Controller
 
         $model = $resource->handleUpdate($request, $id);
 
-        return Redirect::route(
-            'root.resource.show',
-            [$resource->getKey(), $model]
-        );
+        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
 
     /**
@@ -143,9 +137,6 @@ class ResourceController extends Controller
 
         $resource->handleDestroy($request, $id);
 
-        return Redirect::route(
-            'root.resource.index',
-            [$resource->getKey()]
-        );
+        return Redirect::route('root.resource.index', $resource->getKey());
     }
 }
