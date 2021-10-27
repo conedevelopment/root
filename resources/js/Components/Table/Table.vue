@@ -1,8 +1,12 @@
 <template>
     <table>
-        <Head :columns="columns"></Head>
+        <Head></Head>
         <tbody>
-            <Row v-for="item in query.data" :key="item.id" :item="item"></Row>
+            <Row
+                v-for="item in query.data"
+                :key="item.id"
+                :item="item"
+            ></Row>
         </tbody>
     </table>
 </template>
@@ -32,18 +36,10 @@
             },
         },
 
-        computed: {
-            columns() {
-                const fields = this.query.data?.[0]?.fields || [];
-
-                return fields.map((field) => {
-                    return {
-                        label: field.label,
-                        name: field.name,
-                        sortable: field.sortable,
-                    };
-                });
-            },
+        data() {
+            return {
+                selection: [],
+            };
         },
     }
 </script>
