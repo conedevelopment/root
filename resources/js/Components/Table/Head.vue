@@ -7,6 +7,7 @@
             <th v-for="column in columns" :key="column.name" scope="col">
                 {{ column.label }}
             </th>
+            <th scope="col">&nbsp;</th>
         </tr>
     </thead>
 </template>

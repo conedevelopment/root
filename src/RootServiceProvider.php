@@ -54,6 +54,7 @@ class RootServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
         $this->registerRoutes();
+        $this->registerCommands();
         $this->registerComposers();
 
         Root::running(static function (): void {
@@ -77,6 +78,22 @@ class RootServiceProvider extends ServiceProvider
                     $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
                 });
         });
+    }
+
+    /**
+     * Register commands.
+     *
+     * @return void
+     */
+    protected function registerCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\Commands\ActionMake::class,
+                Console\Commands\Install::class,
+                Console\Commands\Publish::class,
+            ]);
+        }
     }
 
     /**

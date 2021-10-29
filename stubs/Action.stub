@@ -1,0 +1,36 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Actions\Action;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Redirect;
+
+class DummyClass extends Action
+{
+    /**
+     * Create a new action instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Support\Collection  $models
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function handle(Request $request, Collection $models): RedirectResponse
+    {
+        //
+
+        return Redirect::back()->with('message', __('Action performed!'));
+    }
+}

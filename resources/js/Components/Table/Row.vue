@@ -8,6 +8,7 @@
             :key="`${item.id}-${field.name}`"
             v-html="field.formatted_value"
         ></td>
+        <td></td>
     </tr>
 </template>
 
