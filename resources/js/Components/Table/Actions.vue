@@ -34,7 +34,7 @@
             submit() {
                 this.form.transform((data) => ({
                     ...data,
-                    selection: this.$parent.selection,
+                    models: this.$parent.selection,
                 })).post(`${this.$parent.query.path}/actions/${this.action}`);
             },
         },

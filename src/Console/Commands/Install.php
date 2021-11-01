@@ -3,6 +3,8 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class Install extends Command
 {
@@ -29,7 +31,7 @@ class Install extends Command
     {
         $status = $this->call('migrate');
 
-        //
+        File::ensureDirectoryExists(Storage::disk('local')->path('chunks'));
 
         return $status;
     }

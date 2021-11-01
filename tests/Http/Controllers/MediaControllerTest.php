@@ -85,7 +85,7 @@ class MediaControllerTest extends TestCase
         $this->actingAs($this->admin)
             ->patch(URL::route('root.media.update', $this->medium), [])
             ->assertOk()
-            ->assertExactJson(['updated' => true]);
+            ->assertExactJson($this->medium->refresh()->toArray());
     }
 
     /** @test */

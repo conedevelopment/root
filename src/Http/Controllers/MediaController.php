@@ -15,16 +15,6 @@ use Illuminate\Support\Facades\Storage;
 class MediaController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        File::ensureDirectoryExists(Storage::disk('local')->path('chunks'));
-    }
-
-    /**
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -60,7 +50,7 @@ class MediaController extends Controller
             return new JsonResponse(['uploaded' => true]);
         }
 
-        $medium = Medium::proxy()::createFrom($path);
+        $medium = (Medium::proxy())::createFrom($path);
 
         MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
                 ->dispatch($medium, $path);
@@ -90,7 +80,7 @@ class MediaController extends Controller
     {
         $medium->update($request->validated());
 
-        return new JsonResponse(['updated' => true]);
+        return new JsonResponse($medium);
     }
 
     /**

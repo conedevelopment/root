@@ -8,12 +8,25 @@
             :key="`${item.id}-${field.name}`"
             v-html="field.formatted_value"
         ></td>
-        <td></td>
+        <td>
+            <Link v-if="item.abilities.view" :href="item.urls.show">
+                Show
+            </Link>
+            <Link v-if="item.abilities.update" :href="item.urls.edit">
+                Edit
+            </Link>
+        </td>
     </tr>
 </template>
 
 <script>
+    import { Link } from '@inertiajs/inertia-vue3';
+
     export default {
+        components: {
+            Link,
+        },
+
         props: {
             item: {
                 type: Object,
