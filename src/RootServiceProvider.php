@@ -104,11 +104,11 @@ class RootServiceProvider extends ServiceProvider
     protected function registerComposers(): void
     {
         $this->app['view']->composer('root::app', function (View $view): void {
-            $view->with('user', $this->app['request']->user());
-
-            $view->with('translations', (object) $this->app['translator']->getLoader()->load(
-                $this->app->getLocale(), '*', '*'
-            ));
+            $view->with('root', [
+                'resources' => Support\Facades\Resource::toArray(),
+                'translations' => (object) $this->app['translator']->getLoader()->load($this->app->getLocale(), '*', '*'),
+                'user' => $this->app['request']->user(),
+            ]);
         });
     }
 }

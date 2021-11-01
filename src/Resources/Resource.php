@@ -101,6 +101,16 @@ class Resource implements Arrayable
     }
 
     /**
+     * Get the model name.
+     *
+     * @return string
+     */
+    public function getModelName(): string
+    {
+        return Str::of($this->getModel())->classBasename();
+    }
+
+    /**
      * Get the model instance.
      *
      * @return \Illuminate\Database\Eloquent\Model
@@ -365,6 +375,7 @@ class Resource implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
+            'model_name' => $this->getModelName(),
             'urls' => App::call([$this, 'mapUrls']),
             'abilities' => App::call([$this, 'mapAbilities']),
         ];

@@ -20,6 +20,7 @@
     @include('root::icons')
 
     {{-- Scripts --}}
+    <script>window.Root = @json($root);</script>
     <script src="{{ URL::asset('vendor/root/app.js') }}" defer></script>
 </body>
 </html>
