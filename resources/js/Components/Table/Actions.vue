@@ -34,6 +34,7 @@
                 this.form.transform((data) => ({
                     ...data,
                     models: this.$parent.selection,
+                    all: false,
                 })).post(`${this.$parent.query.path}/action`);
             },
         },

@@ -26,12 +26,11 @@ class ResourceController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function index(Request $request, string $key): Response
+    public function index(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
         return Inertia::render(
             'Resource/Index',
@@ -43,12 +42,11 @@ class ResourceController extends Controller
      * Show the form for creating a new resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function create(Request $request, string $key): Response
+    public function create(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
         return Inertia::render(
             'Resource/Create',
@@ -60,12 +58,11 @@ class ResourceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request, string $key): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
         $model = $resource->handleStore($request);
 
@@ -76,16 +73,15 @@ class ResourceController extends Controller
      * Display the specified resource.
      *
      * @param \Illuminate\Http\Request  $request
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(Request $request, string $key, string $id): Response
+    public function show(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
         return Inertia::render(
             'Resource/Show',
-            $resource->toShow($request, $id)
+            $resource->toShow($request)
         );
     }
 
@@ -93,16 +89,15 @@ class ResourceController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param \Illuminate\Http\Request  $request
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(Request $request, string $key, string $id): Response
+    public function edit(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
         return Inertia::render(
             'Resource/Edit',
-            $resource->toEdit($request, $id)
+            $resource->toEdit($request)
         );
     }
 
@@ -110,15 +105,13 @@ class ResourceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $key, string $id): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
-        $model = $resource->handleUpdate($request, $id);
+        $model = $resource->handleUpdate($request);
 
         return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
@@ -127,15 +120,13 @@ class ResourceController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request, string $key, string $id): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolveFromRequest($request);
 
-        $resource->handleDestroy($request, $id);
+        $resource->handleDestroy($request);
 
         return Redirect::route('root.resource.index', $resource->getKey());
     }
