@@ -87,7 +87,7 @@ class Resource implements Arrayable
      */
     public function getKey(): string
     {
-        return Str::of($this->getModel())->classBasename()->lower()->plural()->kebab();
+        return Str::of($this->getModel())->classBasename()->plural()->kebab();
     }
 
     /**
@@ -97,7 +97,7 @@ class Resource implements Arrayable
      */
     public function getName(): string
     {
-        return Str::of($this->getModel())->classBasename()->plural();
+        return Str::of($this->getModel())->classBasename()->headline()->plural();
     }
 
     /**
@@ -199,12 +199,12 @@ class Resource implements Arrayable
     }
 
     /**
-     * Collect the resolved fields.
+     * Resolve fields.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Cone\Root\Support\Collections\Fields
      */
-    protected function collectFields(Request $request): Fields
+    public function resolveFields(Request $request): Fields
     {
         $fields = Fields::make($this->fields($request));
 
@@ -246,12 +246,12 @@ class Resource implements Arrayable
     }
 
     /**
-     * Collect the resolved filters.
+     * Resolve filters.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Cone\Root\Support\Collections\Filters
      */
-    protected function collectFilters(Request $request): Filters
+    public function resolveFilters(Request $request): Filters
     {
         $filters = Filters::make($this->filters($request));
 
@@ -293,12 +293,12 @@ class Resource implements Arrayable
     }
 
     /**
-     * Collect the resolved actions.
+     * Resolve the actions.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Cone\Root\Support\Collections\Actions
      */
-    protected function collectActions(Request $request): Actions
+    public function resolveActions(Request $request): Actions
     {
         $actions = Actions::make($this->actions($request));
 
@@ -389,9 +389,9 @@ class Resource implements Arrayable
      */
     public function toIndex(Request $request): array
     {
-        $filters = $this->collectFilters($request);
+        $filters = $this->resolveFilters($request);
 
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::INDEX);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::INDEX);
 
         $query = $filters->apply($this->query(), $request)
                     ->latest()
@@ -406,7 +406,7 @@ class Resource implements Arrayable
         return array_merge($this->toArray(), [
             'query' => $query,
             'filters' => $filters,
-            'actions' => $this->collectActions($request)->filterVisibleFor($request, static::INDEX),
+            'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::INDEX),
         ]);
     }
 
@@ -418,7 +418,7 @@ class Resource implements Arrayable
      */
     public function toCreate(Request $request): array
     {
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
 
         return array_merge($this->toArray(), [
             'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
@@ -434,13 +434,13 @@ class Resource implements Arrayable
      */
     public function toShow(Request $request, string $id): array
     {
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::SHOW);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::SHOW);
 
         $model = $this->resolveRouteBinding($id);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceDisplay($request, $this, $fields),
-            'actions' => $this->collectActions($request)->filterVisibleFor($request, static::SHOW),
+            'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::SHOW),
         ]);
     }
 
@@ -453,7 +453,7 @@ class Resource implements Arrayable
      */
     public function toEdit(Request $request, string $id): array
     {
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
         $model = $this->resolveRouteBinding($id);
 
@@ -470,7 +470,7 @@ class Resource implements Arrayable
      */
     public function handleStore(Request $request): Model
     {
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
 
         $model = $this->getModelInstance()->newInstance();
 
@@ -496,7 +496,7 @@ class Resource implements Arrayable
      */
     public function handleUpdate(Request $request, string $id): Model
     {
-        $fields = $this->collectFields($request)->filterVisibleFor($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
         $model = $this->resolveRouteBinding($id);
 

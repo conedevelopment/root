@@ -47,7 +47,17 @@ abstract class Filter implements Arrayable
      */
     public function getKey(): string
     {
-        return Str::of(static::class)->classBasename()->lower();
+        return Str::of(static::class)->classBasename()->kebab();
+    }
+
+    /**
+     * Get the name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return Str::of(static::class)->classBasename()->headline();
     }
 
     /**
@@ -70,6 +80,7 @@ abstract class Filter implements Arrayable
     {
         return [
            'key' => $this->getKey(),
+           'name' => $this->getName(),
            'default' => App::call([$this, 'default']),
         ];
     }

@@ -13,7 +13,7 @@ Route::get('/', DashboardController::class)->name('dashboard');
 Route::apiResource('media', MediaController::class);
 
 // Action
-Route::post('/{resource}/actions/{action}', ActionController::class)->name('resource.action');
+Route::post('/{resource}/action', ActionController::class)->name('resource.action');
 
 // Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');
