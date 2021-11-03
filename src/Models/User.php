@@ -10,7 +10,6 @@ use Cone\Root\Resources\UserResource;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Cone\Root\Traits\InteractsWithResource;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +21,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable implements Contract, MustVerifyEmail, Resourceable
+class User extends Authenticatable implements Contract, Resourceable
 {
     use Filterable;
     use HasFactory;

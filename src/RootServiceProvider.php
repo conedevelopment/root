@@ -2,8 +2,10 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Http\Middleware\Authenticate;
 use Cone\Root\Http\Middleware\HandleRootRequests;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -53,12 +55,25 @@ class RootServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
-        $this->registerRoutes();
+        $this->registerAuth();
         $this->registerCommands();
         $this->registerComposers();
+        $this->registerRoutes();
 
         Root::running(static function (): void {
             (Models\User::proxy())::registerResource();
+        });
+    }
+
+    /**
+     * Register the default authorization.
+     *
+     * @return void
+     */
+    protected function registerAuth(): void
+    {
+        Gate::define('viewRoot', static function (Models\User $user): bool {
+            return true;
         });
     }
 
@@ -73,7 +88,21 @@ class RootServiceProvider extends ServiceProvider
             $this->app['router']
                 ->as('root.')
                 ->prefix('root')
-                ->middleware(['web', /*'auth', 'verified',*/ HandleRootRequests::class])
+                ->middleware(['web'])
+                ->group(function (): void {
+                    $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
+                });
+
+            $this->app['router']
+                ->as('root.')
+                ->prefix('root')
+                ->middleware([
+                    'web',
+                    Authenticate::class,
+                    'verified:root.verification.show',
+                    'can:viewRoot',
+                    HandleRootRequests::class,
+                ])
                 ->group(function (): void {
                     $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
                 });
