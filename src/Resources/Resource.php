@@ -12,6 +12,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
@@ -520,13 +521,12 @@ class Resource implements Arrayable
     {
         $model = $this->resolveRouteBinding($request->route('id'));
 
-        // Implement forceDelete
-
-        $model->delete();
+        if (class_uses_recursive(SoftDeletes::class) && $model->trashed()) {
+            $model->forceDelete();
+        } else {
+            $model->delete();
+        }
 
         return $model;
     }
-
-    // toAction()
-    // toExtract()
 }
