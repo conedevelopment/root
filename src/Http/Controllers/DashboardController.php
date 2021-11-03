@@ -10,16 +10,6 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request

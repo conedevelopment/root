@@ -33,4 +33,15 @@ class DummyClass extends Action
 
         return Redirect::back()->with('message', __('Action performed!'));
     }
+
+    /**
+     * Define the fields for the action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [];
+    }
 }
