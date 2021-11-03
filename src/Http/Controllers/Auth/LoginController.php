@@ -3,7 +3,7 @@
 namespace Cone\Root\Http\Controllers\Auth;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Http\Requests\LoginRequest;
+use Cone\Root\Http\Requests\Auth\LoginRequest;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\View\View as ViewResponse;
