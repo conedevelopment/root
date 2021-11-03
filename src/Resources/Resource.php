@@ -170,6 +170,18 @@ class Resource implements Arrayable
     }
 
     /**
+     * Apply the filters on a new eloquent query instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Support\Collections\Filters  $filters
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filteredQuery(Request $request, Filters $filters): Builder
+    {
+        return $filters->apply($this->query(), $request);
+    }
+
+    /**
      * Define the fields for the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -394,7 +406,7 @@ class Resource implements Arrayable
 
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::INDEX);
 
-        $query = $filters->apply($this->query(), $request)
+        $query = $this->filteredQuery($request, $filters)
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()

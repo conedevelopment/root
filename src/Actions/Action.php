@@ -72,12 +72,12 @@ abstract class Action implements Arrayable
     }
 
     /**
-     * Collect the resolved fields.
+     * Resolve the fields.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Cone\Root\Support\Collections\Fields
      */
-    protected function collectFields(Request $request): Fields
+    public function resolveFields(Request $request): Fields
     {
         return Fields::make($this->fields($request));
     }

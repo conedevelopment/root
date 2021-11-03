@@ -12,9 +12,6 @@ Route::get('/', DashboardController::class)->name('dashboard');
 // Media
 Route::apiResource('media', MediaController::class);
 
-// Action
-Route::post('/{resource}/action', ActionController::class)->name('resource.action');
-
 // Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');
 Route::get('/{resource}/create', [ResourceController::class, 'create'])->name('resource.create');

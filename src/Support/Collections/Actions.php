@@ -3,8 +3,10 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Actions\Action;
+use Cone\Root\Exceptions\ActionResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Actions extends Collection
 {
@@ -21,5 +23,43 @@ class Actions extends Collection
                         return $item->visible($request, $action);
                     })
                     ->values();
+    }
+
+    /**
+     * Resolve the action by its key.
+     *
+     * @param  string  $key
+     * @return \Cone\Root\Actions\Action
+     *
+     * @throws \Cone\Root\Exceptions\ActionResolutionException
+     */
+    public function resolve(string $key): Action
+    {
+        $action = $this->first(static function (Action $action) use ($key): bool {
+            return $action->getKey() === $key;
+        });
+
+        if (is_null($action)) {
+            throw new ActionResolutionException("Unable to resolve action with key [{$key}].");
+        }
+
+        return $action;
+    }
+
+    /**
+     * Resolve the action using the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Actions\Action
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function resolveFromRequest(Request $request): Action
+    {
+        try {
+            return $this->resolve($request->input('_action'));
+        } catch (ActionResolutionException $exception) {
+            throw new NotFoundHttpException($exception->getMessage());
+        }
     }
 }

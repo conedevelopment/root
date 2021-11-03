@@ -1,12 +1,12 @@
 <template>
     <form @submit.prevent="submit" @reset.prevent>
-        <select v-model="form.action">
+        <select v-model="form._action">
             <option :value="null" disabled>Action</option>
             <option v-for="action in actions" :key="action.key" :value="action.key">
                 {{ action.name }}
             </option>
         </select>
-        <button type="submit" :disabled="form.processing || form.action === null">
+        <button type="submit" :disabled="form.processing || form._action === null">
             Run
         </button>
     </form>
@@ -24,7 +24,7 @@
         data() {
             return {
                 form: this.$inertia.form(window.location.pathname + '-actions', {
-                    action: null,
+                    _action: null,
                 }),
             };
         },
