@@ -144,7 +144,7 @@ class Resource implements Arrayable
         $model = $this->getModelInstance()->resolveRouteBinding($id);
 
         if (is_null($model)) {
-            throw new ModelNotFoundException();
+            throw (new ModelNotFoundException())->setModel($this->getModel(), $id);
         }
 
         return $model;
@@ -562,11 +562,13 @@ class Resource implements Arrayable
      * Handle the action request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function handleAction(Request $request): RedirectResponse
     {
-        $action = $this->resolveActions($request)->resolveFromRequest($request);
+        $action = $this->resolveActions($request)
+                    ->filterVisibleFor($request, $request->boolean('individual') ? static::SHOW : static::INDEX)
+                    ->resolveFromRequest($request);
 
         return $action->perform($request, $this);
     }
