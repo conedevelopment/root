@@ -442,13 +442,14 @@ class Resource implements Arrayable
      * Get the show representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
      * @return array
      */
-    public function toShow(Request $request): array
+    public function toShow(Request $request, string $id): array
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::SHOW);
 
-        $model = $this->resolveRouteBinding($request->route('id'));
+        $model = $this->resolveRouteBinding($id);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceDisplay($request, $this, $fields),
@@ -460,13 +461,14 @@ class Resource implements Arrayable
      * Get the edit representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
      * @return array
      */
-    public function toEdit(Request $request): array
+    public function toEdit(Request $request, string $id): array
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
-        $model = $this->resolveRouteBinding($request->route('id'));
+        $model = $this->resolveRouteBinding($id);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
@@ -502,13 +504,14 @@ class Resource implements Arrayable
      * Handle the update request.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
      * @param  \Illuminate\Database\Eloquent\Model
      */
-    public function handleUpdate(Request $request): Model
+    public function handleUpdate(Request $request, string $id): Model
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
-        $model = $this->resolveRouteBinding($request->route('id'));
+        $model = $this->resolveRouteBinding($id);
 
         $request->validate(
             $fields->mapToValidate($request, $model, static::UPDATE)->toArray()
@@ -527,11 +530,12 @@ class Resource implements Arrayable
      * Handle the destroy request.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
      * @param  \Illuminate\Database\Eloquent\Model
      */
-    public function handleDestroy(Request $request): Model
+    public function handleDestroy(Request $request, string $id): Model
     {
-        $model = $this->resolveRouteBinding($request->route('id'));
+        $model = $this->resolveRouteBinding($id);
 
         if (class_uses_recursive(SoftDeletes::class) && $model->trashed()) {
             $model->forceDelete();
