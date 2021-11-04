@@ -1,5 +1,6 @@
-@extends('layouts.auth')
+@extends('root::auth.layout')
 
+{{-- Content --}}
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -10,7 +11,7 @@
                     <div class="card-body">
                         {{ __('Please confirm your password before continuing.') }}
 
-                        <form method="POST" action="{{ URLroute('password.confirm') }}">
+                        <form method="POST" action="{{ URL::route('root.password.confirm') }}">
                             @csrf
 
                             <div class="form-group row">

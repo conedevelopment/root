@@ -1,14 +1,15 @@
-@extends('layouts.auth')
+@extends('root::auth.layout')
 
 {{-- Title --}}
-@section('title', __('Jelszó helyreállítás'))
+@section('title', __('Password reset'))
 
+{{-- Content --}}
 @section('content')
-    <form method="POST" action="{{ URL::route('password.email') }}">
+    <form method="POST" action="{{ URL::route('root.password.email') }}">
         @csrf
         <div class="form-group-wrapper">
             <div class="form-group">
-                <label class="form-group__label" for="email">{{ __('Email cím') }}</label>
+                <label class="form-group__label" for="email">{{ __('Email') }}</label>
                 <input
                     id="email"
                     type="email"
@@ -28,17 +29,8 @@
 
             <div class="form-group form-group--btn">
                 <button type="submit" class="btn btn--secondary">
-                    {{ __('Jelszó visszaállító link küldése') }}
+                    {{ __('Send reset link') }}
                 </button>
             </div>
         </div>
-@endsection
-
-@section('footer')
-    <a href="{{ URL::route('login') }}">
-        {{ __('Bejelentkezés') }}
-    </a>
-    <a href="{{ Config::get('kep.site_url') }}">
-        {{ __('Vissza az oldalra') }}
-    </a>
 @endsection

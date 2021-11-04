@@ -1,18 +1,18 @@
-@extends('layouts.auth')
+@extends('root::auth.layout')
 
 {{-- Title --}}
-@section('title', __('Jelszó helyreállítás'))
+@section('title', __('Reset password'))
 
 {{-- Content --}}
 @section('content')
-    <form method="POST" action="{{ URL::route('password.reset') }}">
+    <form method="POST" action="{{ URL::route('root.password.reset') }}">
         @csrf
 
         <input type="hidden" name="token" value="{{ $token }}">
 
         <div class="form-group-wrapper">
             <div class="form-group">
-                <label class="form-group__label" for="email">{{ __('Email cím') }}</label>
+                <label class="form-group__label" for="email">{{ __('Email') }}</label>
                 <input
                     id="email"
                     type="email"
@@ -31,7 +31,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-group__label" for="password">{{ __('Új jelszó') }}</label>
+                <label class="form-group__label" for="password">{{ __('New password') }}</label>
                 <input
                     id="password"
                     type="password"
@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-group__label" for="password-confirm">{{ __('Új jelszó még egyszer') }}</label>
+                <label class="form-group__label" for="password-confirm">{{ __('New password confirmation') }}</label>
                 <input
                     id="password-confirm"
                     type="password"
@@ -60,19 +60,9 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn--secondary">
-                    {{ __('Új jelszó beállítása') }}
+                    {{ __('Reset password') }}
                 </button>
             </div>
         </div>
     </form>
-@endsection
-
-{{-- Footer --}}
-@section('footer')
-    <a href="{{ URL::route('login') }}">
-        {{ __('Bejelentkezés') }}
-    </a>
-    <a href="{{ Config::get('kep.site_url') }}">
-        {{ __('Vissza az oldalra') }}
-    </a>
 @endsection

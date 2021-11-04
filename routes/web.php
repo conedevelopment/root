@@ -1,6 +1,5 @@
 <?php
 
-use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Controllers\DashboardController;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Controllers\ResourceController;
