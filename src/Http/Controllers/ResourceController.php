@@ -2,139 +2,113 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Exceptions\ResourceResolutionException;
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Facades\Resource as Registry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourceController extends Controller
 {
     /**
-     * The request instance.
-     *
-     * @var \Illuminate\Http\Request  $request
-     */
-    protected Request $request;
-
-    /**
-     * The resource instance.
-     *
-     * @var \Cone\Root\Resources\Resource
-     */
-    protected Resource $resource;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function __construct(Request $request)
-    {
-        try {
-            $this->resource = Registry::resolve($request->route('resource'));
-        } catch (ResourceResolutionException $exception) {
-            throw new NotFoundHttpException($exception->getMessage());
-        }
-
-        $this->request = $request;
-
-        if (! is_null($this->resource->getPolicy())) {
-            $this->authorizeResource($this->resource->getModel());
-        }
-    }
-
-    /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function index(): Response
+    public function index(Request $request, string $key): Response
     {
-        return Inertia::render(
-            'Resource/Index',
-            $this->resource->toIndex($this->request)
-        );
+        $resource = Registry::resolve($key);
+
+        return $resource->toIndex($request);
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function create(): Response
+    public function create(Request $request, string $key): Response
     {
-        return Inertia::render(
-            'Resource/Create',
-            $this->resource->toCreate($this->request)
-        );
+        $resource = Registry::resolve($key);
+
+        return $resource->toCreate($request);
     }
 
     /**
      * Store a newly created resource in storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(): RedirectResponse
+    public function store(Request $request, string $key): RedirectResponse
     {
-        $model = $this->resource->handleStore($this->request);
+        $resource = Registry::resolve($key);
 
-        return Redirect::route('root.resource.show', [$this->resource->getKey(), $model]);
+        return $resource->handleStore($request);
     }
 
     /**
      * Display the specified resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(): Response
+    public function show(Request $request, string $key, string $id): Response
     {
-        return Inertia::render(
-            'Resource/Show',
-            $this->resource->toShow($this->request, $this->request->route('id'))
-        );
+        $resource = Registry::resolve($key);
+
+        return $resource->toShow($request, $id);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(): Response
+    public function edit(Request $request, string $key, string $id): Response
     {
-        return Inertia::render(
-            'Resource/Edit',
-            $this->resource->toEdit($this->request, $this->request->route('id'))
-        );
+        $resource = Registry::resolve($key);
+
+        return $resource->toEdit($request, $id);
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(): RedirectResponse
+    public function update(Request $request, string $key, string $id): RedirectResponse
     {
-        $model = $this->resource->handleUpdate($this->request, $this->request->route('id'));
+        $resource = Registry::resolve($key);
 
-        return Redirect::route('root.resource.show', [$this->resource->getKey(), $model]);
+        return $resource->handleUpdate($request, $id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(): RedirectResponse
+    public function destroy(Request $request, string $key, string $id): RedirectResponse
     {
-        $this->resource->handleDestroy($this->request, $this->request->route('id'));
+        $resource = Registry::resolve($key);
 
-        return Redirect::route('root.resource.index', $this->resource->getKey());
+        return $resource->handleDestroy($request, $id);
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
 abstract class Action implements Arrayable
@@ -36,9 +37,26 @@ abstract class Action implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Support\Collection  $models
+     * @return void
+     */
+    abstract public function handle(Request $request, Collection $models): void;
+
+    /**
+     * Perform the action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
      * @return \Illuminate\Http\RedirectResponse
      */
-    abstract public function handle(Request $request, Collection $models): RedirectResponse;
+    public function perform(Request $request, Resource $resource): RedirectResponse
+    {
+        $models = $resource->filteredQuery($request, $resource->resolveFilters($request))
+                            ->findMany($request->input('models', []));
+
+        $this->handle($request, $models);
+
+        return Redirect::back()->with('message', __('Action performed!'));
+    }
 
     /**
      * Get the key for the filter.

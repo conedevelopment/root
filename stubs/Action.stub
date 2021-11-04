@@ -25,13 +25,11 @@ class DummyClass extends Action
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Support\Collection  $models
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
      */
-    public function handle(Request $request, Collection $models): RedirectResponse
+    public function handle(Request $request, Collection $models): void
     {
         //
-
-        return Redirect::back()->with('message', __('Action performed!'));
     }
 
     /**

@@ -13,11 +13,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class Resource implements Arrayable
 {
@@ -398,9 +402,9 @@ class Resource implements Arrayable
      * Get the index representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * @return \Inertia\Response
      */
-    public function toIndex(Request $request): array
+    public function toIndex(Request $request): Response
     {
         $filters = $this->resolveFilters($request);
 
@@ -416,26 +420,32 @@ class Resource implements Arrayable
                         });
                     });
 
-        return array_merge($this->toArray(), [
-            'query' => $query,
-            'filters' => $filters,
-            'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::INDEX),
-        ]);
+        return Inertia::render(
+            'Resource/Index',
+            array_merge($this->toArray(), [
+                'query' => $query,
+                'filters' => $filters,
+                'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::INDEX),
+            ])
+        );
     }
 
     /**
      * Get the create representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * @return \Inertia\Response
      */
-    public function toCreate(Request $request): array
+    public function toCreate(Request $request): Response
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
 
-        return array_merge($this->toArray(), [
-            'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
-        ]);
+        return Inertia::render(
+            'Resource/Create',
+            array_merge($this->toArray(), [
+                'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
+            ])
+        );
     }
 
     /**
@@ -443,18 +453,19 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @return array
+     * @return \Inertia\Response
      */
-    public function toShow(Request $request, string $id): array
+    public function toShow(Request $request, string $id): Response
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::SHOW);
 
-        $model = $this->resolveRouteBinding($id);
-
-        return array_merge($this->toArray(), [
-            'model' => $model->toResourceDisplay($request, $this, $fields),
-            'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::SHOW),
-        ]);
+        return Inertia::render(
+            'Resource/Show',
+            array_merge($this->toArray(), [
+                'model' => $this->resolveRouteBinding($id)->toResourceDisplay($request, $this, $fields),
+                'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::SHOW),
+            ])
+        );
     }
 
     /**
@@ -462,26 +473,27 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @return array
+     * @return \Inertia\Response
      */
-    public function toEdit(Request $request, string $id): array
+    public function toEdit(Request $request, string $id): Response
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
-        $model = $this->resolveRouteBinding($id);
-
-        return array_merge($this->toArray(), [
-            'model' => $model->toResourceForm($request, $this, $fields),
-        ]);
+        return Inertia::render(
+            'Resource/Edit',
+            array_merge($this->toArray(), [
+                'model' => $this->resolveRouteBinding($id)->toResourceForm($request, $this, $fields),
+            ])
+        );
     }
 
     /**
      * Handle the store request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Http\RedirectResponse
      */
-    public function handleStore(Request $request): Model
+    public function handleStore(Request $request): RedirectResponse
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
 
@@ -497,7 +509,7 @@ class Resource implements Arrayable
 
         $model->save();
 
-        return $model;
+        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
     }
 
     /**
@@ -505,9 +517,9 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Http\RedirectResponse
      */
-    public function handleUpdate(Request $request, string $id): Model
+    public function handleUpdate(Request $request, string $id): RedirectResponse
     {
         $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
 
@@ -523,7 +535,7 @@ class Resource implements Arrayable
 
         $model->save();
 
-        return $model;
+        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
     }
 
     /**
@@ -531,9 +543,9 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @param  \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Http\RedirectResponse
      */
-    public function handleDestroy(Request $request, string $id): Model
+    public function handleDestroy(Request $request, string $id): RedirectResponse
     {
         $model = $this->resolveRouteBinding($id);
 
@@ -543,6 +555,6 @@ class Resource implements Arrayable
             $model->delete();
         }
 
-        return $model;
+        return Redirect::route('root.resource.index', $this->getKey());
     }
 }
