@@ -15,6 +15,7 @@ Route::apiResource('media', MediaController::class);
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');
 Route::get('/{resource}/create', [ResourceController::class, 'create'])->name('resource.create');
 Route::post('/{resource}', [ResourceController::class, 'store'])->name('resource.store');
+Route::post('/{resource}/action', [ResourceController::class, 'action'])->name('resource.action');
 Route::get('/{resource}/{id}', [ResourceController::class, 'show'])->name('resource.show');
 Route::get('/{resource}/{id}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
 Route::patch('/{resource}/{id}', [ResourceController::class, 'update'])->name('resource.update');

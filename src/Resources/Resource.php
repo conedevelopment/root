@@ -491,7 +491,7 @@ class Resource implements Arrayable
      * Handle the store request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function handleStore(Request $request): RedirectResponse
     {
@@ -517,7 +517,7 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @param  \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function handleUpdate(Request $request, string $id): RedirectResponse
     {
@@ -543,7 +543,7 @@ class Resource implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
-     * @param  \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function handleDestroy(Request $request, string $id): RedirectResponse
     {
@@ -556,5 +556,18 @@ class Resource implements Arrayable
         }
 
         return Redirect::route('root.resource.index', $this->getKey());
+    }
+
+    /**
+     * Handle the action request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\RedirectResponse
+     */
+    public function handleAction(Request $request): RedirectResponse
+    {
+        $action = $this->resolveActions($request)->resolveFromRequest($request);
+
+        return $action->perform($request, $this);
     }
 }

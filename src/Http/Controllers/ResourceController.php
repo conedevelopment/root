@@ -111,4 +111,18 @@ class ResourceController extends Controller
 
         return $resource->handleDestroy($request, $id);
     }
+
+    /**
+     * Perform the action on the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function action(Request $request, string $key): RedirectResponse
+    {
+        $resource = Registry::resolve($key);
+
+        return $resource->handleAction($request);
+    }
 }

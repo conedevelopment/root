@@ -57,7 +57,7 @@ class Actions extends Collection
     public function resolveFromRequest(Request $request): Action
     {
         try {
-            return $this->resolve($request->input('_action'));
+            return $this->resolve($request->input(Action::PARAMETER_NAME));
         } catch (ActionResolutionException $exception) {
             throw new NotFoundHttpException($exception->getMessage());
         }

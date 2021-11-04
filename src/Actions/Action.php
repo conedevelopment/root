@@ -15,6 +15,13 @@ use Illuminate\Support\Str;
 abstract class Action implements Arrayable
 {
     /**
+     * The request parameter name.
+     *
+     * @var string
+     */
+    public const PARAMETER_NAME = '_action';
+
+    /**
      * The visibility resolver callback.
      *
      * @var \Closure|null
@@ -233,6 +240,7 @@ abstract class Action implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
+            'parameter_name' => static::PARAMETER_NAME,
         ];
     }
 }
