@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Actions :actions="actions"></Actions>
+        <Actions :actions="actions" :models="selection"></Actions>
         <table>
             <Head></Head>
             <tbody>

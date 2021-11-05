@@ -2,31 +2,27 @@
 
 namespace Cone\Root\Actions;
 
-use Closure;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable
+abstract class Action implements Arrayable, Responsable
 {
+    use ResolvesVisibility;
+
     /**
      * The request parameter name.
      *
      * @var string
      */
     public const PARAMETER_NAME = '_action';
-
-    /**
-     * The visibility resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $visibilityResolver = null;
 
     /**
      * Make a new action instance.
@@ -53,16 +49,16 @@ abstract class Action implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function perform(Request $request, Resource $resource): RedirectResponse
+    public function perform(Request $request, Resource $resource): Response
     {
         $models = $resource->filteredQuery($request, $resource->resolveFilters($request))
                             ->findMany($request->input('models', []));
 
         $this->handle($request, $models);
 
-        return Redirect::back()->with('message', __('Action performed!'));
+        return $this->toResponse($request);
     }
 
     /**
@@ -108,129 +104,6 @@ abstract class Action implements Arrayable
     }
 
     /**
-     * Determine if the field is visible for the given request and action.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $action
-     * @return bool
-     */
-    public function visible(Request $request, string $action): bool
-    {
-        return is_null($this->visibilityResolver)
-            || call_user_func_array($this->visibilityResolver, [$request, $action]);
-    }
-
-    /**
-     * Set the visibility hidden on index.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function hiddenOnIndex(?Closure $callback = null): static
-    {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
-            return $action === Resource::INDEX
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set the visibility hidden on show.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function hiddenOnShow(?Closure $callback = null): static
-    {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
-            return $action === Resource::SHOW
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set the visibility visible on index.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function visibleOnIndex(?Closure $callback = null): static
-    {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
-            return $action === Resource::INDEX
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set the visibility visible on show.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function visibleOnShow(?Closure $callback = null): static
-    {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
-            return $action === Resource::SHOW
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set the visibility hidden on index or show.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function hiddenOnDisplay(?Closure $callback = null): static
-    {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
-            return in_array($action, [Resource::INDEX, Resource::SHOW])
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set the visibility visible on index or show.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
-     */
-    public function visibleOnDisplay(?Closure $callback = null): static
-    {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
-            return in_array($action, [Resource::INDEX, Resource::SHOW])
-                && (is_null($callback) || call_user_func_array($callback, [$request]));
-        });
-    }
-
-    /**
-     * Set a custom visibility resolver.
-     *
-     * @param  \Closure  $callback
-     * @return $this
-     */
-    public function visibleOn(Closure $callback): static
-    {
-        $this->visibilityResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Set a custom visibility resolver.
-     *
-     * @param  \Closure  $callback
-     * @return $this
-     */
-    public function hiddenOn(Closure $callback): static
-    {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
-            return ! call_user_func_array($callback, [$request, $action]);
-        });
-    }
-
-    /**
      * Get the instance as an array.
      *
      * @return array
@@ -240,7 +113,17 @@ abstract class Action implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'parameter_name' => static::PARAMETER_NAME,
         ];
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function toResponse($request): Response
+    {
+        return Redirect::back()->with('message', __('Action performed!'));
     }
 }

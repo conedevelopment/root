@@ -6,7 +6,7 @@
                 {{ action.name }}
             </option>
         </select>
-        <button type="submit" :disabled="form.processing || form._action === null">
+        <button type="submit" :disabled="form.processing || form._action === null || models.length === 0">
             Run
         </button>
     </form>
@@ -17,7 +17,11 @@
         props: {
             actions: {
                 type: Array,
-                required: true,
+                default: () => [],
+            },
+            models: {
+                type: Array,
+                default: () => [],
             },
         },
 
@@ -30,10 +34,10 @@
         },
 
         methods: {
-            submit() {
+            submit(event) {
                 this.form.transform((data) => ({
                     ...data,
-                    models: this.$parent.selection,
+                    models: this.models,
                     all: false,
                 })).post(`${this.$parent.query.path}/action`);
             },
