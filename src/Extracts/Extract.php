@@ -7,11 +7,14 @@ use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class Extract implements Arrayable
+abstract class Extract implements Arrayable, Responsable
 {
     /**
      * Get the key.
@@ -125,5 +128,18 @@ abstract class Extract implements Arrayable
            'key' => $this->getKey(),
            'name' => $this->getName(),
         ];
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function toResponse($request): Response
+    {
+        return Inertia::render('Resouce/Index', [
+            //
+        ])->toResponse($request);
     }
 }

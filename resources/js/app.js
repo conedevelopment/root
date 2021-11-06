@@ -1,4 +1,4 @@
-import { createApp, h } from 'vue';
+import { createApp, resolveComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import FormHandler from './Components/Form/Handler';
 import FormInput from './Components/Form/Input';

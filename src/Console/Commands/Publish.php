@@ -34,14 +34,10 @@ class Publish extends Command
     {
         if ($this->option('mix')) {
             $this->mix();
-
-            $this->info('The webpack.mix.js file has been updated.');
         }
 
         if ($this->option('packages')) {
             $this->packages();
-
-            $this->info('The packages.json file has been updated.');
         }
 
         return $this->call('vendor:publish', array_merge(
@@ -58,13 +54,13 @@ class Publish extends Command
      */
     protected function packages(): void
     {
-        $pressPackages = json_decode(file_get_contents(__DIR__.'/../../../package.json'), true);
+        $rootPackages = json_decode(file_get_contents(__DIR__.'/../../../package.json'), true);
 
         if (file_exists($this->laravel->basePath('package.json'))) {
             $packages = json_decode(file_get_contents($this->laravel->basePath('package.json')), true);
 
             $packages['dependencies'] = array_replace(
-                $packages['dependencies'] ?? [], $pressPackages['dependencies']
+                $packages['dependencies'] ?? [], $rootPackages['dependencies']
             );
 
             ksort($packages['dependencies']);
@@ -72,8 +68,10 @@ class Publish extends Command
 
         file_put_contents(
             $this->laravel->basePath('package.json'),
-            json_encode($packages ?? $pressPackages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
+            json_encode($packages ?? $rootPackages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
         );
+
+        $this->info('The "packages.json" file has been updated.');
     }
 
     /**
@@ -87,7 +85,7 @@ class Publish extends Command
             return;
         }
 
-        $script = file_get_contents(__DIR__.'/../../../resources/stubs/webpack.mix.js');
+        $script = file_get_contents(__DIR__.'/../../../stubs/webpack.mix.js');
 
         if (! Str::contains(file_get_contents($this->laravel->basePath('webpack.mix.js')), $script)) {
             file_put_contents(
@@ -96,5 +94,7 @@ class Publish extends Command
                 FILE_APPEND
             );
         }
+
+        $this->info('The "webpack.mix.js" file has been updated.');
     }
 }
