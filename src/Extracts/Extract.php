@@ -130,7 +130,7 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Create an HTTP response that represents the object.
+     * Get the index representation of the extract.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
@@ -138,8 +138,11 @@ abstract class Extract implements Arrayable
      */
     public function toIndex(Request $request, Resource $resource): Response
     {
-        return Inertia::render('Resouce/Index', [
-            //
-        ]);
+        return Inertia::render(
+            'Resouce/Index',
+            array_merge($this->toArray(), [
+                //
+            ])
+        );
     }
 }
