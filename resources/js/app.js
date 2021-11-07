@@ -5,7 +5,13 @@ import FormInput from './Components/Form/Input';
 import FormSelect from './Components/Form/Select';
 
 createInertiaApp({
-    resolve: (name) => require(`./Pages/${name}`),
+    resolve: (name) => {
+        try {
+            return require(`./Pages/${name}`);
+        } catch (error) {
+            return resolveComponent(name);
+        }
+    },
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
 

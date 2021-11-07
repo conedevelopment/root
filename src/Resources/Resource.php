@@ -102,7 +102,7 @@ class Resource implements Arrayable
      */
     public function getName(): string
     {
-        return Str::of($this->getModel())->classBasename()->plural();
+        return Str::of($this->getModel())->classBasename()->headline()->plural();
     }
 
     /**
