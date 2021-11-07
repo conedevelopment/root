@@ -40,11 +40,12 @@ abstract class Extract implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Filters  $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Request $request, Resource $resource): Builder
+    public function query(Request $request, Resource $resource, Filters $filters): Builder
     {
-        return $resource->query();
+        return $resource->filteredQuery($request, $filters);
     }
 
     /**
@@ -67,7 +68,13 @@ abstract class Extract implements Arrayable
      */
     public function resolveFields(Request $request, Resource $resource): Fields
     {
-        return $resource->resolveFields($request)->merge($this->filters($request));
+        $fields = $this->fields($request);
+
+        if (empty($actions)) {
+            return $resource->resolveFields($request);
+        }
+
+        return Fields::make($fields);
     }
 
     /**
@@ -90,7 +97,13 @@ abstract class Extract implements Arrayable
      */
     public function resolveFilters(Request $request, Resource $resource): Filters
     {
-        return $resource->resolveFilters($request)->merge($this->filters($request));
+        $filters = $this->filters($request);
+
+        if (empty($actions)) {
+            return $resource->resolveFilters($request);
+        }
+
+        return Filters::make($filters);
     }
 
     /**
@@ -113,7 +126,13 @@ abstract class Extract implements Arrayable
      */
     public function resolveActions(Request $request, Resource $resource): Actions
     {
-        return $resource->resolveActions($request)->merge($this->actions($request));
+        $actions = $this->actions($request);
+
+        if (empty($actions)) {
+            return $resource->resolveActions($request);
+        }
+
+        return Actions::make($actions);
     }
 
     /**
@@ -138,6 +157,10 @@ abstract class Extract implements Arrayable
      */
     public function toIndex(Request $request, Resource $resource): Response
     {
+        $filters = $this->resolveFilters($request, $resource);
+
+        //
+
         return Inertia::render(
             'Resouce/Index',
             array_merge($this->toArray(), [
