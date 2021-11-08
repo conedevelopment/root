@@ -78,7 +78,7 @@ abstract class Action implements Arrayable, Responsable
      */
     public function getName(): string
     {
-        return Str::of(static::class)->classBasename();
+        return Str::of(static::class)->classBasename()->headline();
     }
 
     /**

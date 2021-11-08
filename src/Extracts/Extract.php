@@ -8,6 +8,7 @@ use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -164,8 +165,24 @@ abstract class Extract implements Arrayable
         return Inertia::render(
             'Resouce/Index',
             array_merge($this->toArray(), [
-                //
+                'filters' => $filters->toArray(),
             ])
         );
+    }
+
+    /**
+     * Handle the action request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function handleAction(Request $request, Resource $resource): RedirectResponse
+    {
+        $action = $this->resolveActions($request, $resource)
+                    ->filterVisible($request)
+                    ->resolveFromRequest($request);
+
+        return $action->perform($request, $resource);
     }
 }

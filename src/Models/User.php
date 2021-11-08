@@ -148,6 +148,16 @@ class User extends Authenticatable implements Contract, Resourceable
     }
 
     /**
+     * Get the Root representation of the model.
+     *
+     * @return array
+     */
+    public function toRoot(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Get the resource representation of the model.
      *
      * @return \Cone\Root\Resources\Resource

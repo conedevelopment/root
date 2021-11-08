@@ -463,7 +463,7 @@ class Resource implements Arrayable
     {
         $filters = $this->resolveFilters($request);
 
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::INDEX);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::INDEX);
 
         $query = $this->filteredQuery($request, $filters)
                     ->latest()
@@ -478,9 +478,9 @@ class Resource implements Arrayable
         return Inertia::render(
             'Resource/Index',
             array_merge($this->toArray(), [
-                'query' => $query,
-                'filters' => $filters,
-                'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::INDEX),
+                'query' => $query->toArray(),
+                'filters' => $filters->toArray(),
+                'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
             ])
         );
     }
@@ -493,7 +493,7 @@ class Resource implements Arrayable
      */
     public function toCreate(Request $request): Response
     {
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
 
         return Inertia::render(
             'Resource/Create',
@@ -512,13 +512,13 @@ class Resource implements Arrayable
      */
     public function toShow(Request $request, string $id): Response
     {
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::SHOW);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::SHOW);
 
         return Inertia::render(
             'Resource/Show',
             array_merge($this->toArray(), [
                 'model' => $this->resolveRouteBinding($id)->toResourceDisplay($request, $this, $fields),
-                'actions' => $this->resolveActions($request)->filterVisibleFor($request, static::SHOW),
+                'actions' => $this->resolveActions($request)->filterVisible($request, static::SHOW)->toArray(),
             ])
         );
     }
@@ -532,7 +532,7 @@ class Resource implements Arrayable
      */
     public function toEdit(Request $request, string $id): Response
     {
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
 
         return Inertia::render(
             'Resource/Edit',
@@ -550,7 +550,7 @@ class Resource implements Arrayable
      */
     public function handleStore(Request $request): RedirectResponse
     {
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
 
         $model = $this->getModelInstance()->newInstance();
 
@@ -576,7 +576,7 @@ class Resource implements Arrayable
      */
     public function handleUpdate(Request $request, string $id): RedirectResponse
     {
-        $fields = $this->resolveFields($request)->filterVisibleFor($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
 
         $model = $this->resolveRouteBinding($id);
 
@@ -622,7 +622,7 @@ class Resource implements Arrayable
     public function handleAction(Request $request): RedirectResponse
     {
         $action = $this->resolveActions($request)
-                    ->filterVisibleFor($request, $request->boolean('individual') ? static::SHOW : static::INDEX)
+                    ->filterVisible($request, $request->boolean('individual') ? static::SHOW : static::INDEX)
                     ->resolveFromRequest($request);
 
         return $action->perform($request, $this);

@@ -136,7 +136,7 @@ class RootServiceProvider extends ServiceProvider
             $view->with('root', [
                 'resources' => Support\Facades\Resource::toArray(),
                 'translations' => (object) $this->app['translator']->getLoader()->load($this->app->getLocale(), '*', '*'),
-                'user' => $this->app['request']->user(),
+                'user' => $this->app['request']->user()->toRoot(),
             ]);
         });
     }

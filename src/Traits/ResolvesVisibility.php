@@ -19,10 +19,10 @@ trait ResolvesVisibility
      * Determine if the field is visible for the given request and action.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $action
+     * @param  string|null  $action
      * @return bool
      */
-    public function visible(Request $request, string $action): bool
+    public function visible(Request $request, ?string $action = null): bool
     {
         return is_null($this->visibilityResolver)
             || call_user_func_array($this->visibilityResolver, [$request, $action]);
@@ -36,7 +36,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnIndex(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::INDEX
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -50,7 +50,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnCreate(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::CREATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -64,7 +64,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnShow(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::SHOW
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -78,7 +78,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnUpdate(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::UPDATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -92,7 +92,7 @@ trait ResolvesVisibility
      */
     public function visibleOnIndex(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::INDEX
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -106,7 +106,7 @@ trait ResolvesVisibility
      */
     public function visibleOnCreate(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::CREATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -120,7 +120,7 @@ trait ResolvesVisibility
      */
     public function visibleOnShow(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::SHOW
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -134,7 +134,7 @@ trait ResolvesVisibility
      */
     public function visibleOnUpdate(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return $action === Resource::UPDATE
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -148,7 +148,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnDisplay(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return in_array($action, [Resource::INDEX, Resource::SHOW])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -162,7 +162,7 @@ trait ResolvesVisibility
      */
     public function hiddenOnForm(?Closure $callback = null): static
     {
-        return $this->hiddenOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->hiddenOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return in_array($action, [Resource::UPDATE, Resource::CREATE])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -176,7 +176,7 @@ trait ResolvesVisibility
      */
     public function visibleOnDisplay(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return in_array($action, [Resource::INDEX, Resource::SHOW])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -190,7 +190,7 @@ trait ResolvesVisibility
      */
     public function visibleOnForm(?Closure $callback = null): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return in_array($action, [Resource::CREATE, Resource::UPDATE])
                 && (is_null($callback) || call_user_func_array($callback, [$request]));
         });
@@ -217,7 +217,7 @@ trait ResolvesVisibility
      */
     public function hiddenOn(Closure $callback): static
     {
-        return $this->visibleOn(static function (Request $request, string $action) use ($callback): bool {
+        return $this->visibleOn(static function (Request $request, ?string $action = null) use ($callback): bool {
             return ! call_user_func_array($callback, [$request, $action]);
         });
     }

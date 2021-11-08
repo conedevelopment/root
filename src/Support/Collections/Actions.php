@@ -14,10 +14,10 @@ class Actions extends Collection
      * Filter the actions that are visible for the given request and action.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $action
+     * @param  string|null  $action
      * @return static
      */
-    public function filterVisibleFor(Request $request, string $action): static
+    public function filterVisible(Request $request, ?string $action = null): static
     {
         return $this->filter(static function (Action $item) use ($request, $action): bool {
                         return $item->visible($request, $action);

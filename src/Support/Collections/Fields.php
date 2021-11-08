@@ -13,10 +13,10 @@ class Fields extends Collection
      * Filter the field that are visible for the given request and action.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $action
+     * @param  string|null  $action
      * @return static
      */
-    public function filterVisibleFor(Request $request, string $action): static
+    public function filterVisible(Request $request, ?string $action = null): static
     {
         return $this->filter(static function (Field $field) use ($request, $action): bool {
                         return $field->visible($request, $action);
