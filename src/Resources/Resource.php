@@ -5,6 +5,7 @@ namespace Cone\Root\Resources;
 use Closure;
 use Cone\Root\Fields\Field;
 use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -64,6 +65,13 @@ class Resource implements Arrayable
      * @var \Closure|null
      */
     protected ?Closure $actionsResolver = null;
+
+    /**
+     * The extracts resolver.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $extractsResolver = null;
 
     /**
      * Create a new resource instance.
@@ -324,6 +332,53 @@ class Resource implements Arrayable
         }
 
         return $actions;
+    }
+
+    /**
+     * Define the extracts for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function extracts(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Set the extracts resolver.
+     *
+     * @param  array|\Closure  $callback
+     * @return $this
+     */
+    public function withExtracts(array|Closure $callback): static
+    {
+        if (is_array($callback)) {
+            $callback = static function () use ($callback) {
+                return $callback;
+            };
+        }
+
+        $this->extractsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the extracts.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Support\Collections\Extracts
+     */
+    public function resolveExtracts(Request $request): Extracts
+    {
+        $extracts = Extracts::make($this->extracts($request));
+
+        if (! is_null($this->extractsResolver)) {
+            $extracts = $extracts->merge(call_user_func_array($this->extractsResolver, [$request]));
+        }
+
+        return $extracts;
     }
 
     /**
