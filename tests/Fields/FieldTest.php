@@ -57,12 +57,82 @@ class FieldTest extends TestCase
     /** @test */
     public function a_feild_removes_attributes()
     {
-        $this->assertTrue(true);
+        $this->field->setAttribute('max', 30);
+
+        $this->assertTrue($this->field->hasAttribute('max'));
+
+        $this->field->removeAttribute('max');
+
+        $this->assertFalse($this->field->hasAttribute('max'));
     }
 
     /** @test */
     public function a_field_clears_attributes()
     {
-        $this->assertTrue(true);
+        $this->assertNotEmpty($this->field->getAttributes());
+
+        $this->field->clearAttributes();
+
+        $this->assertEmpty($this->field->getAttributes());
+    }
+
+    /** @test */
+    public function a_field_handles_label()
+    {
+        $this->field->label('Test');
+
+        $this->assertSame('Test', $this->field->label);
+    }
+
+    /** @test */
+    public function a_field_handles_name()
+    {
+        $this->field->name('test');
+
+        $this->assertSame('test', $this->field->name);
+    }
+
+    /** @test */
+    public function a_field_handles_id()
+    {
+        $this->field->id('test');
+
+        $this->assertSame('test', $this->field->id);
+    }
+
+    /** @test */
+    public function a_field_handles_readonly()
+    {
+        $this->field->readonly();
+
+        $this->assertTrue($this->field->readonly);
+
+        $this->field->readonly(false);
+
+        $this->assertFalse($this->field->readonly);
+    }
+
+    /** @test */
+    public function a_field_handles_disabled()
+    {
+        $this->field->disabled();
+
+        $this->assertTrue($this->field->disabled);
+
+        $this->field->disabled(false);
+
+        $this->assertFalse($this->field->disabled);
+    }
+
+    /** @test */
+    public function a_field_handles_required()
+    {
+        $this->field->required();
+
+        $this->assertTrue($this->field->required);
+
+        $this->field->required(false);
+
+        $this->assertFalse($this->field->required);
     }
 }
