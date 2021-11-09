@@ -27,6 +27,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
+        Interfaces\Registries\AssetRegistry::class => Registries\AssetRegistry::class,
         Interfaces\Registries\ResourceRegistry::class => Registries\ResourceRegistry::class,
     ];
 

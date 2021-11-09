@@ -4,6 +4,7 @@ namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Fields\Field;
+use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
@@ -24,7 +25,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class Resource implements Arrayable
+class Resource implements Arrayable, Item
 {
     public const INDEX = 'index';
     public const SHOW = 'show';

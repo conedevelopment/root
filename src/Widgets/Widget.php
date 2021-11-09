@@ -14,7 +14,7 @@ abstract class Widget implements Arrayable
      *
      * @var string
      */
-    protected string $component = '';
+    protected string $component = 'Widget';
 
     /**
      * Get the key.
