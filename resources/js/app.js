@@ -1,8 +1,6 @@
 import { createApp, resolveComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
-import FormHandler from './Components/Form/Handler';
-import FormInput from './Components/Form/Input';
-import FormSelect from './Components/Form/Select';
+import Root from './Plugins/Root';
 
 createInertiaApp({
     resolve: (name) => {
@@ -15,11 +13,8 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
 
-        app.component('FormHandler', FormHandler);
-        app.component('FormInput', FormInput);
-        app.component('FormSelect', FormSelect);
-
         app.use(plugin);
+        app.use(Root);
 
         document.dispatchEvent(new CustomEvent('root:booting', { detail: app }));
 

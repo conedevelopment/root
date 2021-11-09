@@ -1,0 +1,18 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Widgets\Widget;
+
+class DummyClass extends Widget
+{
+    /**
+     * Create a new widget instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+}
