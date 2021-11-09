@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Registries;
 
-class AssetRegistry extends Registry
+use Cone\Root\Interfaces\Registries\AssetRegistry as Contract;
+
+class AssetRegistry extends Registry implements Contract
 {
     //
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Registries;
+namespace Cone\Root\Interfaces\Registries;
 
 interface AssetRegistry
 {
