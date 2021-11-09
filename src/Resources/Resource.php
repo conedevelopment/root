@@ -9,7 +9,6 @@ use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -470,10 +469,8 @@ class Resource implements Arrayable, Item
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
-                    ->tap(function (LengthAwarePaginator $paginator) use ($request, $fields) {
-                        $paginator->getCollection()->transform(function (Model $model) use ($request, $fields): array {
-                            return $model->toResourceDisplay($request, $this, $fields);
-                        });
+                    ->through(function (Model $model) use ($request, $fields): array {
+                        return $model->toResourceDisplay($request, $this, $fields);
                     });
 
         return Inertia::render(
