@@ -144,7 +144,7 @@ class Medium extends Model implements Contract
             'width' => isset($width) ? $width : null,
             'height' => isset($height) ? $height : null,
             'disk' => Config::get('root.media.disk', 'public'),
-            'size' => round(filesize($path) / 1024),
+            'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
         ]);
     }
