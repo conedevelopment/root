@@ -3,12 +3,11 @@
 namespace Cone\Root\Support;
 
 use Cone\Root\Interfaces\Registries\Item;
-use Illuminate\Contracts\Support\Arrayable;
 
-class Asset implements Arrayable, Item
+class Asset implements Item
 {
-    protected const SCRIPT = 'script';
-    protected const STYLE = 'style';
+    public const SCRIPT = 'script';
+    public const STYLE = 'style';
 
     /**
      * The asset key.
@@ -41,18 +40,38 @@ class Asset implements Arrayable, Item
      */
     public function __construct(string $key, string $type, string $path)
     {
-        $this->key;
-        $this->type;
-        $this->path;
+        $this->key = $key;
+        $this->type = $type;
+        $this->path = $path;
     }
 
     /**
-     * Get the instance as an array.
+     * Get the key.
      *
-     * @return array
+     * @return string
      */
-    public function toArray(): array
+    public function getKey(): string
     {
-        return [];
+        return $this->key;
+    }
+
+    /**
+     * Get the type.
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Get the path.
+     *
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }
