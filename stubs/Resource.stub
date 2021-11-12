@@ -1,0 +1,28 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+
+class DummyClass extends Resource
+{
+    /**
+     * The model class.
+     *
+     * @var string
+     */
+    protected string $model = '';
+
+    /**
+     * Define the fields for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [];
+    }
+}

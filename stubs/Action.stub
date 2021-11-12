@@ -3,10 +3,8 @@
 namespace DummyNamespace;
 
 use Cone\Root\Actions\Action;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Redirect;
 
 class DummyClass extends Action
 {

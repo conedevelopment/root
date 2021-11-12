@@ -160,12 +160,15 @@ abstract class Extract implements Arrayable
     {
         $filters = $this->resolveFilters($request, $resource);
 
+        $fields = $this->resolveFields($request, $resource)->filterVisible($request);
+
         //
 
         return Inertia::render(
             'Resouce/Index',
             array_merge($this->toArray(), [
                 'filters' => $filters->toArray(),
+                'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
             ])
         );
     }

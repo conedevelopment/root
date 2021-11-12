@@ -4,28 +4,28 @@ namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 
-class ActionMake extends GeneratorCommand
+class ResourceMake extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'root:action';
+    protected $name = 'root:resource';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new action class';
+    protected $description = 'Create a new resource class';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Action';
+    protected $type = 'Resource';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +34,7 @@ class ActionMake extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__.'/../../../stubs/Action.stub';
+        return __DIR__.'/../../../stubs/Resource.stub';
     }
 
     /**
@@ -45,6 +45,6 @@ class ActionMake extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace.'\\Root\\Actions';
+        return $rootNamespace.'\\Root\\Resources';
     }
 }
