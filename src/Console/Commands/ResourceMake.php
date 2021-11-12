@@ -3,6 +3,8 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class ResourceMake extends GeneratorCommand
 {
@@ -46,5 +48,48 @@ class ResourceMake extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\\Root\\Resources';
+    }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    protected function buildClass($name): string
+    {
+        return str_replace(
+            ['DummyModelClassNamespaced', 'DummyModelClass'],
+            [$this->qualifyModel($this->getModelClass()), $this->getModelClass()],
+            parent::buildClass($name)
+        );
+    }
+
+    /**
+     * Get the model class.
+     *
+     * @return string
+     */
+    protected function getModelClass(): string
+    {
+        if (! $model = $this->option('model')) {
+            $model = str_replace('Resource', '', class_basename(static::class));
+        }
+
+        return $model;
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['model', null, InputOption::VALUE_OPTIONAL, 'The model class'],
+        ];
     }
 }

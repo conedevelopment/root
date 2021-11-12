@@ -122,6 +122,7 @@ class RootServiceProvider extends ServiceProvider
                 Console\Commands\ActionMake::class,
                 Console\Commands\Install::class,
                 Console\Commands\Publish::class,
+                Console\Commands\ResourceMake::class,
             ]);
         }
     }

@@ -4,7 +4,7 @@ namespace DummyNamespace;
 
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use DummyModelClassNamespaced;
 
 class DummyClass extends Resource
 {
@@ -13,7 +13,7 @@ class DummyClass extends Resource
      *
      * @var string
      */
-    protected string $model = '';
+    protected string $model = DummyModelClass::class;
 
     /**
      * Define the fields for the resource.
