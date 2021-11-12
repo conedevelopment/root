@@ -3,7 +3,6 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class ResourceMake extends GeneratorCommand
@@ -55,13 +54,11 @@ class ResourceMake extends GeneratorCommand
      *
      * @param  string  $name
      * @return string
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function buildClass($name): string
     {
         return str_replace(
-            ['DummyModelClassNamespaced', 'DummyModelClass'],
+            ['QualifiedDummyModelClass', 'DummyModelClass'],
             [$this->qualifyModel($this->getModelClass()), $this->getModelClass()],
             parent::buildClass($name)
         );

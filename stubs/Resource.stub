@@ -4,7 +4,7 @@ namespace DummyNamespace;
 
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
-use DummyModelClassNamespaced;
+use QualifiedDummyModelClass;
 
 class DummyClass extends Resource
 {
