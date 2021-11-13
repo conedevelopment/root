@@ -8,6 +8,7 @@ use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -162,13 +163,20 @@ abstract class Extract implements Arrayable
 
         $fields = $this->resolveFields($request, $resource)->filterVisible($request);
 
-        //
+        $query = $this->query($request, $resource, $filters)
+                    ->latest()
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->through(function (Model $model) use ($request, $fields): array {
+                        return $model->toResourceDisplay($request, $this, $fields);
+                    });
 
         return Inertia::render(
             'Resouce/Index',
             array_merge($this->toArray(), [
-                'filters' => $filters->toArray(),
                 'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
+                'filters' => $filters->toArray(),
+                'query' => $query->toArray(),
             ])
         );
     }

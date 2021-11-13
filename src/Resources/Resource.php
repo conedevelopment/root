@@ -476,9 +476,9 @@ class Resource implements Arrayable, Item
         return Inertia::render(
             'Resource/Index',
             array_merge($this->toArray(), [
-                'query' => $query->toArray(),
-                'filters' => $filters->toArray(),
                 'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
+                'filters' => $filters->toArray(),
+                'query' => $query->toArray(),
             ])
         );
     }
