@@ -34,4 +34,28 @@ class AssetRegistry extends Registry implements Contract
 
         $this->register($asset->getKey(), $asset);
     }
+
+    /**
+     * Get the registered scripts.
+     *
+     * @return array
+     */
+    public function scripts(): array
+    {
+        return array_filter($this->items, static function (Asset $asset): bool {
+            return $asset->getType() === Asset::SCRIPT;
+        });
+    }
+
+    /**
+     * Get the registered styles.
+     *
+     * @return array
+     */
+    public function styles(): array
+    {
+        return array_filter($this->items, static function (Asset $asset): bool {
+            return $asset->getType() === Asset::STYLE;
+        });
+    }
 }

@@ -123,6 +123,7 @@ class RootServiceProvider extends ServiceProvider
                 Console\Commands\Install::class,
                 Console\Commands\Publish::class,
                 Console\Commands\ResourceMake::class,
+                Console\Commands\WidgetMake::class,
             ]);
         }
     }
