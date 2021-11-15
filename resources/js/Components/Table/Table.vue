@@ -1,6 +1,8 @@
 <template>
     <div>
-        <Actions :actions="actions" :models="selection"></Actions>
+        <Actions v-if="actions.length > 0" :actions="actions" :models="selection"></Actions>
+        <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
+        <Filters v-if="filters.length > 0" :filters="filters"></Filters>
         <table>
             <Head></Head>
             <tbody>
@@ -16,12 +18,16 @@
 
 <script>
     import Actions from './Actions';
+    import Extracts from './Extracts';
+    import Filters from './Filters';
     import Head from './Head';
     import Row from './Row';
 
     export default {
         components: {
             Actions,
+            Extracts,
+            Filters,
             Head,
             Row,
         },
@@ -33,11 +39,15 @@
             },
             filters: {
                 type: Array,
-                required: true,
+                default: () => [],
             },
             actions: {
                 type: Array,
-                required: true,
+                default: () => [],
+            },
+            extracts: {
+                type: Array,
+                default: () => [],
             },
         },
 

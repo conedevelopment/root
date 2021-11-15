@@ -4,6 +4,7 @@
             :query="query"
             :filters="filters"
             :actions="actions"
+            :extracts="extracts"
         ></Table>
     </div>
 </template>
@@ -26,6 +27,10 @@
                 required: true,
             },
             actions: {
+                type: Array,
+                required: true,
+            },
+            extracts: {
                 type: Array,
                 required: true,
             },

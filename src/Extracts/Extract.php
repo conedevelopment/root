@@ -18,6 +18,17 @@ use Inertia\Response;
 abstract class Extract implements Arrayable
 {
     /**
+     * Make a new extract instance.
+     *
+     * @param  array  ...$parameters
+     * @return static
+     */
+    public static function make(...$parameters): static
+    {
+        return new static(...$parameters);
+    }
+
+    /**
      * Get the key.
      *
      * @return string

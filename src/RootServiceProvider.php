@@ -120,6 +120,7 @@ class RootServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\Commands\ActionMake::class,
+                Console\Commands\ExtractMake::class,
                 Console\Commands\Install::class,
                 Console\Commands\Publish::class,
                 Console\Commands\ResourceMake::class,

@@ -477,6 +477,7 @@ class Resource implements Arrayable, Item
             'Resource/Index',
             array_merge($this->toArray(), [
                 'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
+                'extracts' => $this->resolveExtracts($request)->toArray(),
                 'filters' => $filters->toArray(),
                 'query' => $query->toArray(),
             ])

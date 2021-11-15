@@ -1,0 +1,42 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Extracts\Extract;
+use Illuminate\Http\Request;
+
+class DummyClass extends Extract
+{
+    /**
+     * Define the fields for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the filters for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function filters(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the actions for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [];
+    }
+}
