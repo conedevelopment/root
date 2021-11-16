@@ -13,7 +13,7 @@ class Select extends Field
      *
      * @var string
      */
-    protected string $component = 'FormSelect';
+    protected string $component = 'Select';
 
     /**
      * The option resolver callback.

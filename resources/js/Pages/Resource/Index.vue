@@ -1,21 +1,32 @@
 <template>
     <div>
-        <Table
-            :actions="actions"
-            :extracts="extracts"
-            :filters="filters"
-            :query="query"
-            :urls="urls"
-        ></Table>
+        <div class="widgets">
+            <Widget
+                v-for="widget in widgets"
+                :key="widget.key"
+                v-bind="widget"
+            ></Widget>
+        </div>
+        <div class="table">
+            <Table
+                :actions="actions"
+                :extracts="extracts"
+                :filters="filters"
+                :query="query"
+                :urls="urls"
+            ></Table>
+        </div>
     </div>
 </template>
 
 <script>
     import Table from './../../Components/Table/Table';
+    import Widget from './../../Components/Widgets/Handler';
 
     export default {
         components: {
             Table,
+            Widget,
         },
 
         props: {
@@ -36,6 +47,10 @@
                 default: () => [],
             },
             extracts: {
+                type: Array,
+                default: () => [],
+            },
+            widgets: {
                 type: Array,
                 default: () => [],
             },

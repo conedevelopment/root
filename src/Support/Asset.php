@@ -3,6 +3,8 @@
 namespace Cone\Root\Support;
 
 use Cone\Root\Interfaces\Registries\Item;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 class Asset implements Item
 {
@@ -31,18 +33,27 @@ class Asset implements Item
     protected string $path;
 
     /**
+     * The asset URL.
+     *
+     * @var string|null
+     */
+    protected ?string $url = null;
+
+    /**
      * Create a new asset instance.
      *
      * @param  string  $key
      * @param  string  $type
      * @param  string  $path
+     * @param  string|null  $url
      * @return void
      */
-    public function __construct(string $key, string $type, string $path)
+    public function __construct(string $key, string $type, string $path, ?string $url = null)
     {
         $this->key = $key;
-        $this->type = $type;
         $this->path = $path;
+        $this->type = $type;
+        $this->url = $url;
     }
 
     /**
@@ -73,5 +84,25 @@ class Asset implements Item
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    /**
+     * Get the URL.
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        if (! is_null($this->url)) {
+            return $this->url;
+        }
+
+        $path = $this->getPath();
+
+        if (str_contains($path, App::resourcePath())) {
+            return URL::asset(sprintf('%s/%s', basename(dirname($path)), basename($path)));
+        }
+
+        return URL::asset(sprintf('vendor/%s/%s', $this->getKey(), basename($path)));
     }
 }

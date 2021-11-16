@@ -1,7 +1,14 @@
 import { h, resolveComponent } from 'vue';
+import Input from './Input';
+import Select from './Select';
 
 export default {
     name: 'FormHandler',
+
+    components: {
+        Input,
+        Select,
+    },
 
     props: {
         modelValue: {
@@ -13,7 +20,7 @@ export default {
         },
         component: {
             type: String,
-            default: 'FormInput',
+            default: 'Input',
         },
     },
 

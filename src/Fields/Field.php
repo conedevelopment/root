@@ -80,7 +80,7 @@ class Field implements Arrayable
      *
      * @var string
      */
-    protected string $component = 'FormInput';
+    protected string $component = 'Input';
 
     /**
      * Create a new field instance.

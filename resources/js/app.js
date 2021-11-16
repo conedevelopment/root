@@ -16,10 +16,10 @@ createInertiaApp({
         app.use(plugin);
         app.use(Root);
 
-        document.dispatchEvent(new CustomEvent('root:booting', { detail: app }));
+        document.dispatchEvent(new CustomEvent('root:booting', { detail: { app } }));
 
         app.mount(el);
 
-        document.dispatchEvent(new CustomEvent('root:booted', { detail: app }));
+        document.dispatchEvent(new CustomEvent('root:booted', { detail: { app } }));
     },
 });

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void register(string $key, \Cone\Root\Support\Asset $item)
+ * @method static void script(string $key, string $path, string|null  $url)
+ * @method static void style(string $key, string $path, string|null  $url)
  * @method static array scripts()
  * @method static array styles()
  *

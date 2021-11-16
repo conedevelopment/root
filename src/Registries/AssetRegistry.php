@@ -12,11 +12,12 @@ class AssetRegistry extends Registry implements Contract
      *
      * @param  string  $key
      * @param  string  $path
+     * @param  string|null  $url
      * @return void
      */
-    public function script(string $key, string $path): void
+    public function script(string $key, string $path, ?string $url = null): void
     {
-        $asset = new Asset($key, Asset::SCRIPT, $path);
+        $asset = new Asset($key, Asset::SCRIPT, $path, $url);
 
         $this->register($asset->getKey(), $asset);
     }
@@ -26,11 +27,12 @@ class AssetRegistry extends Registry implements Contract
      *
      * @param  string  $key
      * @param  string  $path
+     * @param  string|null  $url
      * @return void
      */
-    public function style(string $key, string $path): void
+    public function style(string $key, string $path, ?string $url = null): void
     {
-        $asset = new Asset($key, Asset::STYLE, $path);
+        $asset = new Asset($key, Asset::STYLE, $path, $url);
 
         $this->register($asset->getKey(), $asset);
     }

@@ -536,6 +536,7 @@ class Resource implements Arrayable, Item
                 'extracts' => $this->resolveExtracts($request)->toArray(),
                 'filters' => $filters->toArray(),
                 'query' => $query->toArray(),
+                'widgets' => $this->resolveWidgets($request)->filterVisible($request, static::INDEX)->toArray(),
             ])
         );
     }

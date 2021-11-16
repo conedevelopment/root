@@ -20,7 +20,12 @@
     @include('root::icons')
 
     {{-- Scripts --}}
-    <script>window.Root = @json($root);</script>
+    <script>
+        window.Root = @json($root);
+    </script>
+    @foreach (Cone\Root\Support\Facades\Asset::scripts() as $key => $script)
+        <script id="{{ $key }}" src="{{ $script->getUrl() }}"></script>
+    @endforeach
     <script src="{{ URL::asset('vendor/root/app.js') }}" defer></script>
 </body>
 </html>

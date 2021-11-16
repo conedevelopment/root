@@ -43,7 +43,7 @@ abstract class Relation extends Field
      *
      * @var string
      */
-    protected string $component = 'FormSelect';
+    protected string $component = 'Select';
 
     /**
      * The query resolver callback.
