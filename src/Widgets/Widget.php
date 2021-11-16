@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Widgets;
 
+use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -9,6 +10,8 @@ use Illuminate\Support\Str;
 
 abstract class Widget implements Arrayable
 {
+    use ResolvesVisibility;
+
     /**
      * The Vue component.
      *

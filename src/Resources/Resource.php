@@ -9,6 +9,7 @@ use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
+use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -72,6 +73,13 @@ class Resource implements Arrayable, Item
      * @var \Closure|null
      */
     protected ?Closure $extractsResolver = null;
+
+    /**
+     * The widgets resolver.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $widgetsResolver = null;
 
     /**
      * Create a new resource instance.
@@ -379,6 +387,53 @@ class Resource implements Arrayable, Item
         }
 
         return $extracts;
+    }
+
+    /**
+     * Define the widgets for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function widgets(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Set the widgets resolver.
+     *
+     * @param  array|\Closure  $callback
+     * @return $this
+     */
+    public function withWidgets(array|Closure $callback): static
+    {
+        if (is_array($callback)) {
+            $callback = static function () use ($callback) {
+                return $callback;
+            };
+        }
+
+        $this->widgetsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the widgets.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Support\Collections\Widgets
+     */
+    public function resolveWidgets(Request $request): Widgets
+    {
+        $widgets = Widgets::make($this->widgets($request));
+
+        if (! is_null($this->widgetsResolver)) {
+            $widgets = $widgets->merge(call_user_func_array($this->widgetsResolver, [$request]));
+        }
+
+        return $widgets;
     }
 
     /**
