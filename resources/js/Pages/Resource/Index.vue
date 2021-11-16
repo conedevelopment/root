@@ -1,10 +1,11 @@
 <template>
     <div>
         <Table
-            :query="query"
-            :filters="filters"
             :actions="actions"
             :extracts="extracts"
+            :filters="filters"
+            :query="query"
+            :urls="urls"
         ></Table>
     </div>
 </template>
@@ -22,17 +23,21 @@
                 type: Object,
                 required: true,
             },
+            urls: {
+                type: Object,
+                required: true,
+            },
             filters: {
                 type: Array,
-                required: true,
+                default: () => [],
             },
             actions: {
                 type: Array,
-                required: true,
+                default: () => [],
             },
             extracts: {
                 type: Array,
-                required: true,
+                default: () => [],
             },
         },
     }

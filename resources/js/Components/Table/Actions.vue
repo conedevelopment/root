@@ -15,6 +15,10 @@
 <script>
     export default {
         props: {
+            url: {
+                type: String,
+                required: true,
+            },
             actions: {
                 type: Array,
                 default: () => [],
@@ -24,6 +28,8 @@
                 default: () => [],
             },
         },
+
+        emits: ['update:models'],
 
         data() {
             return {
@@ -39,7 +45,11 @@
                     ...data,
                     models: this.models,
                     all: false,
-                })).post(`${this.$parent.query.path}/action`);
+                })).post(this.url, {
+                    onSuccess: () => {
+                        this.$emit('update:models', []);
+                    },
+                });
             },
         },
     }

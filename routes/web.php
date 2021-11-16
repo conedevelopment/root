@@ -1,6 +1,7 @@
 <?php
 
 use Cone\Root\Http\Controllers\DashboardController;
+use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,10 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Media
 Route::apiResource('media', MediaController::class);
+
+// Extracts
+Route::get('/{resource}/extracts/{extract}', [ExtractController::class, 'index'])->name('resource.extract.index');
+Route::post('/{resource}/extracts/{extract}', [ExtractController::class, 'action'])->name('resource.extract.action');
 
 // Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');

@@ -1,6 +1,11 @@
 <template>
     <div>
-        <Actions v-if="actions.length > 0" :actions="actions" :models="selection"></Actions>
+        <Actions
+            v-if="actions.length > 0"
+            :actions="actions"
+            v-model:models="selection"
+            :url="urls.action"
+        ></Actions>
         <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
         <Filters v-if="filters.length > 0" :filters="filters"></Filters>
         <table>
@@ -34,6 +39,10 @@
 
         props: {
             query: {
+                type: Object,
+                required: true,
+            },
+            urls: {
                 type: Object,
                 required: true,
             },

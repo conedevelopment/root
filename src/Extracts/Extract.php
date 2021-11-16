@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -81,13 +82,13 @@ abstract class Extract implements Arrayable
      */
     public function resolveFields(Request $request, Resource $resource): Fields
     {
-        $fields = $this->fields($request);
+        $fields = Fields::make($this->fields($request));
 
-        if (empty($actions)) {
+        if ($fields->isEmpty()) {
             return $resource->resolveFields($request);
         }
 
-        return Fields::make($fields);
+        return $fields;
     }
 
     /**
@@ -110,13 +111,13 @@ abstract class Extract implements Arrayable
      */
     public function resolveFilters(Request $request, Resource $resource): Filters
     {
-        $filters = $this->filters($request);
+        $filters = Filters::make($this->filters($request));
 
-        if (empty($actions)) {
+        if ($filters->isEmpty()) {
             return $resource->resolveFilters($request);
         }
 
-        return Filters::make($filters);
+        return $filters;
     }
 
     /**
@@ -139,13 +140,28 @@ abstract class Extract implements Arrayable
      */
     public function resolveActions(Request $request, Resource $resource): Actions
     {
-        $actions = $this->actions($request);
+        $actions = Actions::make($this->actions($request));
 
-        if (empty($actions)) {
+        if ($actions->isEmpty()) {
             return $resource->resolveActions($request);
         }
 
-        return Actions::make($actions);
+        return $actions;
+    }
+
+    /**
+     * Map the URLs.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return array
+     */
+    public function mapUrls(Request $request, Resource $resource): array
+    {
+        return [
+            'index' => URL::route('root.resource.extract.index', [$resource->getKey(), $this->getKey()]),
+            'action' => URL::route('root.resource.extract.action', [$resource->getKey(), $this->getKey()]),
+        ];
     }
 
     /**
@@ -178,16 +194,17 @@ abstract class Extract implements Arrayable
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
-                    ->through(function (Model $model) use ($request, $fields): array {
-                        return $model->toResourceDisplay($request, $this, $fields);
+                    ->through(function (Model $model) use ($request, $resource, $fields): array {
+                        return $model->toResourceDisplay($request, $resource, $fields);
                     });
 
         return Inertia::render(
-            'Resouce/Index',
+            'Resource/Index',
             array_merge($this->toArray(), [
                 'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
                 'filters' => $filters->toArray(),
                 'query' => $query->toArray(),
+                'urls' => $this->mapUrls($request, $resource),
             ])
         );
     }

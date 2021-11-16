@@ -3,7 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Support\Facades\Resource as Registry;
+use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -19,7 +19,7 @@ class ResourceController extends Controller
      */
     public function index(Request $request, string $key): Response
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->toIndex($request);
     }
@@ -33,7 +33,7 @@ class ResourceController extends Controller
      */
     public function create(Request $request, string $key): Response
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->toCreate($request);
     }
@@ -47,7 +47,7 @@ class ResourceController extends Controller
      */
     public function store(Request $request, string $key): RedirectResponse
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->handleStore($request);
     }
@@ -62,7 +62,7 @@ class ResourceController extends Controller
      */
     public function show(Request $request, string $key, string $id): Response
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->toShow($request, $id);
     }
@@ -77,7 +77,7 @@ class ResourceController extends Controller
      */
     public function edit(Request $request, string $key, string $id): Response
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->toEdit($request, $id);
     }
@@ -92,7 +92,7 @@ class ResourceController extends Controller
      */
     public function update(Request $request, string $key, string $id): RedirectResponse
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->handleUpdate($request, $id);
     }
@@ -107,7 +107,7 @@ class ResourceController extends Controller
      */
     public function destroy(Request $request, string $key, string $id): RedirectResponse
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->handleDestroy($request, $id);
     }
@@ -121,7 +121,7 @@ class ResourceController extends Controller
      */
     public function action(Request $request, string $key): RedirectResponse
     {
-        $resource = Registry::resolve($key);
+        $resource = Resource::resolve($key);
 
         return $resource->handleAction($request);
     }

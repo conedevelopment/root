@@ -392,6 +392,7 @@ class Resource implements Arrayable, Item
         return [
             'index' => URL::route('root.resource.index', $this->getKey()),
             'create' => URL::route('root.resource.create', $this->getKey()),
+            'action' => URL::route('root.resource.action', $this->getKey()),
         ];
     }
 
