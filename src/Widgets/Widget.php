@@ -4,11 +4,13 @@ namespace Cone\Root\Widgets;
 
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable
+abstract class Widget implements Arrayable, Renderable
 {
     use ResolvesVisibility;
 
@@ -72,17 +74,39 @@ abstract class Widget implements Arrayable
     }
 
     /**
+     * Determine if the component should be async.
+     *
+     * @return bool
+     */
+    public function async(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get the evaluated contents of the object.
+     *
+     * @return string
+     */
+    public function render(): string
+    {
+        return View::make('root::widget', App::call([$this, 'data']))->render();
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
      */
     public function toArray(): array
     {
-        return [
-            'component' => $this->getComponent(),
-            'data' => App::call([$this, 'data']),
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-        ];
+        return array_merge(
+            [
+                'component' => $this->getComponent(),
+                'key' => $this->getKey(),
+                'name' => $this->getName(),
+            ],
+            $this->async() ? ['data' => App::call([$this, 'data'])] : ['template' => $this->render()]
+        );
     }
 }

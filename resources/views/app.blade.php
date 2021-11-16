@@ -9,7 +9,7 @@
     {{-- Styles --}}
     <link href="{{ URL::asset('vendor/root/app.css') }}" rel="stylesheet">
     @foreach (Cone\Root\Support\Facades\Asset::styles() as $key => $style)
-        <link id="{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">
+        <link id="style-{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">
     @endforeach
 
     {{-- Title --}}

@@ -3,6 +3,7 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Input\InputOption;
 
 class WidgetMake extends GeneratorCommand
 {
@@ -46,5 +47,18 @@ class WidgetMake extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\\Root\\Widgets';
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['async', null, InputOption::VALUE_OPTIONAL, 'Make the widget async'],
+            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component name'],
+        ];
     }
 }
