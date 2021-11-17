@@ -22,7 +22,14 @@ abstract class Widget implements Arrayable, Renderable
     protected string $component = 'Widget';
 
     /**
-     * Make a new extract instance.
+     * The Blade templte.
+     *
+     * @var string
+     */
+    protected string $template = 'root::widget';
+
+    /**
+     * Make a new widget instance.
      *
      * @param  array  ...$parameters
      * @return static
@@ -63,6 +70,16 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
+     * Get the Blade template.
+     *
+     * @return string
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    /**
      * Get the data.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -90,7 +107,7 @@ abstract class Widget implements Arrayable, Renderable
      */
     public function render(): string
     {
-        return View::make('root::widget', App::call([$this, 'data']))->render();
+        return View::make($this->getTemplate(), App::call([$this, 'data']))->render();
     }
 
     /**

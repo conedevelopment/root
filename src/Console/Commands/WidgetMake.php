@@ -50,6 +50,76 @@ class WidgetMake extends GeneratorCommand
     }
 
     /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function buildClass($name): string
+    {
+        $class = parent::buildClass($name);
+
+        $class = $this->replaceAsync($class);
+
+        $class = $this->replaceComponent($class);
+
+        return $this->replaceTemplate($class);
+    }
+
+    /**
+     * Replace the async related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceAsync(string $class): string
+    {
+        if ($this->option('async')) {
+            $class = str_replace(['{{async}}', '{{/async}}'], '', $class);
+        }
+
+        return preg_replace('/{{async}}.*{{\/async}}/s', '', $class);
+    }
+
+    /**
+     * Replace the component related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceComponent(string $class): string
+    {
+        if ($component = $this->option('component')) {
+            return str_replace(
+                [PHP_EOL.'{{component}}', '{{/component}}', 'DummyComponent'],
+                ['', '', $component],
+                $class
+            );
+        }
+
+        return preg_replace('/\n{{component}}.*{{\/component}}/s', '', $class);
+    }
+
+    /**
+     * Replace the template related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceTemplate(string $class): string
+    {
+        if ($template = $this->option('template')) {
+            return str_replace(
+                [PHP_EOL.'{{template}}', '{{/template}}', 'DummyTemplate'],
+                ['', '', $template],
+                $class
+            );
+        }
+
+        return preg_replace('/{{template}}.*{{\/template}}/s', '', $class);
+    }
+
+    /**
      * Get the console command options.
      *
      * @return array
@@ -57,8 +127,9 @@ class WidgetMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['async', null, InputOption::VALUE_OPTIONAL, 'Make the widget async'],
-            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component name'],
+            ['async', null, InputOption::VALUE_NONE, 'Mark the widget as async'],
+            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+            ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
         ];
     }
 }
