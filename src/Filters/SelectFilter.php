@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\App;
 abstract class SelectFilter extends Filter
 {
     /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component = 'SelectFilter';
+
+    /**
      * Indicates if mulitple options can be selected.
      *
      * @var bool
@@ -25,6 +32,7 @@ abstract class SelectFilter extends Filter
     /**
      * Set the multiple attribute.
      *
+     * @param  bool  $value
      * @return void
      */
     public function multiple(bool $value = true): static
@@ -42,7 +50,8 @@ abstract class SelectFilter extends Filter
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-           'options' => App::call([$this, 'options']),
+            'multiple' => $this->multiple,
+            'options' => App::call([$this, 'options']),
         ]);
     }
 }

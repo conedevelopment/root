@@ -57,8 +57,8 @@ class FilterMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['input', null, InputOption::VALUE_NONE, 'Mark the filter as input'],
-            ['select', null, InputOption::VALUE_NONE, 'Mark the filter as select'],
+            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
+            ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
         ];
     }
 }

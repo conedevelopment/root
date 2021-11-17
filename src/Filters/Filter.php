@@ -11,6 +11,13 @@ use Illuminate\Support\Str;
 abstract class Filter implements Arrayable
 {
     /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component;
+
+    /**
      * Make a new filter instance.
      *
      * @param  array  ...$parameters
@@ -61,6 +68,16 @@ abstract class Filter implements Arrayable
     }
 
     /**
+     * Get the Vue component.
+     *
+     * @return string
+     */
+    public function getComponent(): string
+    {
+        return $this->component;
+    }
+
+    /**
      * The default value of the filter.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -79,9 +96,10 @@ abstract class Filter implements Arrayable
     public function toArray(): array
     {
         return [
-           'key' => $this->getKey(),
-           'name' => $this->getName(),
-           'default' => App::call([$this, 'default']),
+            'component' => $this->getComponent(),
+            'default' => App::call([$this, 'default']),
+            'key' => $this->getKey(),
+            'name' => $this->getName(),
         ];
     }
 }
