@@ -34,13 +34,6 @@ class MoveFile implements ShouldQueue
     public string $path;
 
     /**
-     * Preserve the original file.
-     *
-     * @var bool
-     */
-    public bool $preserve = false;
-
-    /**
      * Delete the job if its models no longer exist.
      *
      * @var bool
@@ -52,14 +45,12 @@ class MoveFile implements ShouldQueue
      *
      * @param  \Cone\Root\Models\Medium  $medium
      * @param  string  $path
-     * @param  bool  $preserve
      * @return void
      */
-    public function __construct(Medium $medium, string $path, bool $preserve = false)
+    public function __construct(Medium $medium, string $path)
     {
         $this->path = $path;
         $this->medium = $medium;
-        $this->preserve = $preserve;
     }
 
     /**
@@ -69,13 +60,13 @@ class MoveFile implements ShouldQueue
      */
     public function handle(): void
     {
-        Storage::disk($this->medium->disk)->put(
-            $this->medium->getPath(), File::get($this->path)
+        Storage::disk($this->medium->disk)->makeDirectory(
+            dirname($this->medium->getPath())
         );
 
-        if (! $this->preserve && ! filter_var($this->path, FILTER_VALIDATE_URL)) {
-            File::delete($this->path);
-        }
+        Storage::disk($this->medium->disk)->move(
+            $this->path, $this->medium->getPath()
+        );
     }
 
     /**
@@ -88,9 +79,7 @@ class MoveFile implements ShouldQueue
     {
         $this->medium->delete();
 
-        if (! filter_var($this->path, FILTER_VALIDATE_URL)) {
-            File::delete($this->path);
-        }
+        File::delete($this->path);
     }
 }
 

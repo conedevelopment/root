@@ -33,8 +33,8 @@ class GdDriver extends Driver
 
             $image->save();
 
-            Storage::disk($medium->disk)->put(
-                $medium->getPath($conversion), File::get($image->getPath())
+            Storage::disk($medium->disk)->move(
+                $image->getPath(), $medium->getPath($conversion)
             );
 
             $image->destroy();

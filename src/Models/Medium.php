@@ -214,10 +214,6 @@ class Medium extends Model implements Contract
      */
     public function getPath(?string $conversion = null, bool $absolute = false): string
     {
-        if (! in_array($this->disk, ['local', 'public'])) {
-            return $this->getUrl($conversion);
-        }
-
         $path = "{$this->id}/{$this->file_name}";
 
         $path = is_null($conversion) ? $path : substr_replace(
