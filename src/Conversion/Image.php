@@ -227,7 +227,7 @@ class Image
                 $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
                 break;
             default:
-            throw new Exception("The file type [{$this->type}] is not supported.");
+                throw new Exception("The file type [{$this->type}] is not supported.");
         }
     }
 
@@ -238,7 +238,6 @@ class Image
      */
     public function destroy(): void
     {
-        unlink($this->path);
         imagedestroy($this->resource);
     }
 }
