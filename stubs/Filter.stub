@@ -1,0 +1,11 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Filters\DummyFilter;
+use Illuminate\Http\Request;
+
+class DummyClass extends DummyFilter
+{
+    //
+}

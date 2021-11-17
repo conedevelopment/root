@@ -110,7 +110,7 @@ class WidgetMake extends GeneratorCommand
     {
         if ($template = $this->option('template')) {
             return str_replace(
-                [PHP_EOL.'{{template}}', '{{/template}}', 'DummyTemplate'],
+                ['{{template}}', '{{/template}}', 'DummyTemplate'],
                 ['', '', $template],
                 $class
             );
