@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Cone\Root\Fields\Field;
+
+class DummyClass extends Field
+{
+    //
+}

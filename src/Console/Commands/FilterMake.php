@@ -61,7 +61,28 @@ class FilterMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
+        $class = $this->replaceComponent($class);
+
         return $this->replaceMultiple($class);
+    }
+
+    /**
+     * Replace the component related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceComponent(string $class): string
+    {
+        if ($component = $this->option('component')) {
+            return str_replace(
+                [PHP_EOL.'{{component}}', '{{/component}}', 'DummyComponent'],
+                ['', '', $component],
+                $class
+            );
+        }
+
+        return preg_replace('/\s{{component}}.*{{\/component}}/s', '', $class);
     }
 
     /**
@@ -73,10 +94,10 @@ class FilterMake extends GeneratorCommand
     protected function replaceMultiple(string $class): string
     {
         if ($this->option('multiple')) {
-            $class = str_replace([PHP_EOL.'{{multiple}}', '{{/multiple}}'], '', $class);
+            $class = str_replace(['{{multiple}}', '{{/multiple}}'], '', $class);
         }
 
-        return preg_replace('/\s{{multiple}}.*{{\/multiple}}/s', '', $class);
+        return preg_replace('/{{multiple}}.*{{\/multiple}}/s', '', $class);
     }
 
     /**
@@ -87,8 +108,9 @@ class FilterMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
+            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
             ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
+            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
         ];
     }
 }

@@ -1,5 +1,11 @@
 <template>
-
+    <div>
+        <FilterHandler
+            v-for="filter in filters"
+            :key="filter.key"
+            v-bind="filter"
+        ></FilterHandler>
+    </div>
 </template>
 
 <script>

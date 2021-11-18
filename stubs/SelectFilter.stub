@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class DummyClass extends SelectFilter
 {
+{{component}}
+    /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component = 'DummyComponent';
+{{/component}}
 {{multiple}}
     /**
      * Indicates if mulitple options can be selected.
