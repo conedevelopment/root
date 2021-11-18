@@ -35,7 +35,9 @@ class FilterMake extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__.'/../../../stubs/Filter.stub';
+        return $this->option('type') === 'select'
+            ? __DIR__.'/../../../stubs/SelectFilter.stub'
+            : __DIR__.'/../../../stubs/InputFilter.stub';
     }
 
     /**
@@ -47,6 +49,34 @@ class FilterMake extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\\Root\\Filters';
+    }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function buildClass($name): string
+    {
+        $class = parent::buildClass($name);
+
+        return $this->replaceMultiple($class);
+    }
+
+    /**
+     * Replace the multiple related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceMultiple(string $class): string
+    {
+        if ($this->option('multiple')) {
+            $class = str_replace([PHP_EOL.'{{multiple}}', '{{/multiple}}'], '', $class);
+        }
+
+        return preg_replace('/\s{{multiple}}.*{{\/multiple}}/s', '', $class);
     }
 
     /**

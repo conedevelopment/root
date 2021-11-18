@@ -121,6 +121,7 @@ class RootServiceProvider extends ServiceProvider
             $this->commands([
                 Console\Commands\ActionMake::class,
                 Console\Commands\ExtractMake::class,
+                Console\Commands\FilterMake::class,
                 Console\Commands\Install::class,
                 Console\Commands\Publish::class,
                 Console\Commands\ResourceMake::class,
