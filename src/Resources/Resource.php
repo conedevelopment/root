@@ -513,9 +513,9 @@ class Resource implements Arrayable, Item
      * Get the index representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response
+     * @return array
      */
-    public function toIndex(Request $request): Response
+    public function toIndex(Request $request): array
     {
         $filters = $this->resolveFilters($request);
 
@@ -529,82 +529,136 @@ class Resource implements Arrayable, Item
                         return $model->toResourceDisplay($request, $this, $fields);
                     });
 
-        return Inertia::render(
-            'Resource/Index',
-            array_merge($this->toArray(), [
-                'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
-                'extracts' => $this->resolveExtracts($request)->toArray(),
-                'filters' => $filters->toArray(),
-                'query' => $query->toArray(),
-                'widgets' => $this->resolveWidgets($request)->filterVisible($request, static::INDEX)->toArray(),
-            ])
-        );
+        return array_merge($this->toArray(), [
+            'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
+            'extracts' => $this->resolveExtracts($request)->toArray(),
+            'filters' => $filters->toArray(),
+            'query' => $query->toArray(),
+            'widgets' => $this->resolveWidgets($request)->filterVisible($request, static::INDEX)->toArray(),
+        ]);
+    }
+
+    /**
+     * Get the index response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Inertia\Response
+     */
+    public function toIndexResponse(Request $request): Response
+    {
+        if ($request->user()->cannot('viewAny', $this->getModel())) {
+            //
+        }
+
+        return Inertia::render('Resource/Index', $this->toIndex($request));
     }
 
     /**
      * Get the create representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response
+     * @return array
      */
-    public function toCreate(Request $request): Response
+    public function toCreate(Request $request): array
     {
         $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
 
-        return Inertia::render(
-            'Resource/Create',
-            array_merge($this->toArray(), [
-                'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
-            ])
-        );
+        return array_merge($this->toArray(), [
+            'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
+        ]);
+    }
+
+    /**
+     * Get the create response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Inertia\Response
+     */
+    public function toCreateResponse(Request $request): Response
+    {
+        if ($request->user()->cannot('create', $this->getModel())) {
+            //
+        }
+
+        return Inertia::render('Resource/Create', $this->toCreate($request));
     }
 
     /**
      * Get the show representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Inertia\Response
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
      */
-    public function toShow(Request $request, string $id): Response
+    public function toShow(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)->filterVisible($request, static::SHOW);
 
-        return Inertia::render(
-            'Resource/Show',
-            array_merge($this->toArray(), [
-                'model' => $this->resolveRouteBinding($id)->toResourceDisplay($request, $this, $fields),
-                'actions' => $this->resolveActions($request)->filterVisible($request, static::SHOW)->toArray(),
-            ])
-        );
+        return array_merge($this->toArray(), [
+            'model' => $model->toResourceDisplay($request, $this, $fields),
+            'actions' => $this->resolveActions($request)->filterVisible($request, static::SHOW)->toArray(),
+        ]);
+    }
+
+    /**
+     * Get the show response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Inertia\Response
+     */
+    public function toShowResponse(Request $request, string $id): Response
+    {
+        $model = $this->resolveRouteBinding($id);
+
+        if ($request->user()->cannot('view', $model)) {
+            //
+        }
+
+        return Inertia::render('Resource/Show', $this->toShow($request, $model));
     }
 
     /**
      * Get the edit representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Inertia\Response
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
      */
-    public function toEdit(Request $request, string $id): Response
+    public function toEdit(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
 
-        return Inertia::render(
-            'Resource/Edit',
-            array_merge($this->toArray(), [
-                'model' => $this->resolveRouteBinding($id)->toResourceForm($request, $this, $fields),
-            ])
-        );
+        return array_merge($this->toArray(), [
+            'model' => $model->toResourceForm($request, $this, $fields),
+        ]);
+    }
+
+    /**
+     * Get the edit response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Inertia\Response
+     */
+    public function toEditResponse(Request $request, string $id): Response
+    {
+        $model = $this->resolveRouteBinding($id);
+
+        if ($request->user()->cannot('update', $model)) {
+            //
+        }
+
+        return Inertia::render('Resource/Edit', $this->toEdit($request, $model));
     }
 
     /**
      * Handle the store request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function handleStore(Request $request): RedirectResponse
+    public function handleStore(Request $request): Model
     {
         $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
 
@@ -620,6 +674,23 @@ class Resource implements Arrayable, Item
 
         $model->save();
 
+        return $model;
+    }
+
+    /**
+     * Get the store response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toStoreResponse(Request $request): RedirectResponse
+    {
+        if ($request->user()->cannot('create', $this->getModel())) {
+            //
+        }
+
+        $model = $this->handleStore($request);
+
         return Redirect::route('root.resource.show', [$this->getKey(), $model]);
     }
 
@@ -627,14 +698,12 @@ class Resource implements Arrayable, Item
      * Handle the update request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function handleUpdate(Request $request, string $id): RedirectResponse
+    public function handleUpdate(Request $request, Model $model): Model
     {
         $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
-
-        $model = $this->resolveRouteBinding($id);
 
         $request->validate(
             $fields->mapToValidate($request, $model, static::UPDATE)->toArray()
@@ -646,25 +715,63 @@ class Resource implements Arrayable, Item
 
         $model->save();
 
-        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
+        return $model;
+    }
+
+    /**
+     * Get the update response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toUpdateResponse(Request $request, string $id): RedirectResponse
+    {
+        $model = $this->resolveRouteBinding($id);
+
+        if ($request->user()->cannot('update', $this->getModel())) {
+            //
+        }
+
+        $this->handleUpdate($request, $model);
+
+        return Redirect::to('root.resource.show', [$this->getKey(), $model]);
     }
 
     /**
      * Handle the destroy request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function handleDestroy(Request $request, string $id): RedirectResponse
+    public function handleDestroy(Request $request, Model $model): Model
     {
-        $model = $this->resolveRouteBinding($id);
-
         if (class_uses_recursive(SoftDeletes::class) && $model->trashed()) {
             $model->forceDelete();
         } else {
             $model->delete();
         }
+
+        return $model;
+    }
+
+    /**
+     * Get the destroy response of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  stirng  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toDestroyResponse(Request $request, string $id): RedirectResponse
+    {
+        $model = $this->resolveRouteBinding($id);
+
+        if ($request->user()->cannot('delete', $this->getModel())) {
+            //
+        }
+
+        $this->handleDestroy($request, $model);
 
         return Redirect::route('root.resource.index', $this->getKey());
     }

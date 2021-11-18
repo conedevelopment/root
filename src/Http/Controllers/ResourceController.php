@@ -21,7 +21,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toIndex($request);
+        return $resource->toIndexResponse($request);
     }
 
     /**
@@ -35,7 +35,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toCreate($request);
+        return $resource->toCreateResponse($request);
     }
 
     /**
@@ -49,7 +49,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->handleStore($request);
+        return $resource->toStoreResponse($request);
     }
 
     /**
@@ -64,7 +64,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toShow($request, $id);
+        return $resource->toShowResponse($request, $id);
     }
 
     /**
@@ -79,7 +79,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->toEdit($request, $id);
+        return $resource->toEditResponse($request, $id);
     }
 
     /**
@@ -94,7 +94,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->handleUpdate($request, $id);
+        return $resource->toUpdateResponse($request, $id);
     }
 
     /**
@@ -109,7 +109,7 @@ class ResourceController extends Controller
     {
         $resource = Resource::resolve($key);
 
-        return $resource->handleDestroy($request, $id);
+        return $resource->toDestroyResponse($request, $id);
     }
 
     /**
