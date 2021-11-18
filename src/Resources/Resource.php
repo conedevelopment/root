@@ -729,7 +729,7 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        if ($request->user()->cannot('update', $this->getModel())) {
+        if ($request->user()->cannot('update', $model)) {
             //
         }
 
@@ -767,7 +767,9 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        if ($request->user()->cannot('delete', $this->getModel())) {
+        $action = class_uses_recursive(SoftDeletes::class) && $model->trashed() ? 'forceDelete' : 'delete';
+
+        if ($request->user()->cannot($action, $model)) {
             //
         }
 
