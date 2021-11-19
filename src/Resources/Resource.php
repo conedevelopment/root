@@ -546,8 +546,8 @@ class Resource implements Arrayable, Item
      */
     public function toIndexResponse(Request $request): Response
     {
-        if ($request->user()->cannot('viewAny', $this->getModel())) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('viewAny', $this->getModel())) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         return Inertia::render('Resource/Index', $this->toIndex($request));
@@ -576,8 +576,8 @@ class Resource implements Arrayable, Item
      */
     public function toCreateResponse(Request $request): Response
     {
-        if ($request->user()->cannot('create', $this->getModel())) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('create', $this->getModel())) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         return Inertia::render('Resource/Create', $this->toCreate($request));
@@ -611,8 +611,8 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        if ($request->user()->cannot('view', $model)) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('view', $model)) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         return Inertia::render('Resource/Show', $this->toShow($request, $model));
@@ -645,8 +645,8 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        if ($request->user()->cannot('update', $model)) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('update', $model)) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         return Inertia::render('Resource/Edit', $this->toEdit($request, $model));
@@ -685,8 +685,8 @@ class Resource implements Arrayable, Item
      */
     public function toStoreResponse(Request $request): RedirectResponse
     {
-        if ($request->user()->cannot('create', $this->getModel())) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('create', $this->getModel())) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         $model = $this->handleStore($request);
@@ -729,8 +729,8 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        if ($request->user()->cannot('update', $model)) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot('update', $model)) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         $this->handleUpdate($request, $model);
@@ -767,10 +767,10 @@ class Resource implements Arrayable, Item
     {
         $model = $this->resolveRouteBinding($id);
 
-        $action = class_uses_recursive(SoftDeletes::class) && $model->trashed() ? 'forceDelete' : 'delete';
+        $action = (class_uses_recursive(SoftDeletes::class) && $model->trashed()) ? 'forceDelete' : 'delete';
 
-        if ($request->user()->cannot($action, $model)) {
-            //
+        if ($this->getPolicy() && $request->user()->cannot($action, $model)) {
+            abort(RedirectResponse::HTTP_FORBIDDEN);
         }
 
         $this->handleDestroy($request, $model);

@@ -24,7 +24,7 @@ class ExtractController extends Controller
 
         $extract = $resource->resolveExtracts($request)->resolve($key);
 
-        return $extract->toIndex($request, $resource);
+        return $extract->toIndexResponse($request, $resource);
     }
 
     /**

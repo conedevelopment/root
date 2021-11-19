@@ -6,6 +6,7 @@ use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
+use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -150,6 +151,35 @@ abstract class Extract implements Arrayable
     }
 
     /**
+     * Define the widgets for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function widgets(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Resolve the widgets.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return \Cone\Root\Support\Collections\Widgets
+     */
+    public function resolveWidgets(Request $request, Resource $resource): Widgets
+    {
+        $widgets = Widgets::make($this->widgets($request));
+
+        if ($widgets->isEmpty()) {
+            return $resource->resolveWidgets($request);
+        }
+
+        return $widgets;
+    }
+
+    /**
      * Map the URLs.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -182,9 +212,9 @@ abstract class Extract implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Inertia\Response
+     * @return array
      */
-    public function toIndex(Request $request, Resource $resource): Response
+    public function toIndex(Request $request, Resource $resource): array
     {
         $filters = $this->resolveFilters($request, $resource);
 
@@ -194,19 +224,29 @@ abstract class Extract implements Arrayable
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
-                    ->through(function (Model $model) use ($request, $resource, $fields): array {
+                    ->through(static function (Model $model) use ($request, $resource, $fields): array {
                         return $model->toResourceDisplay($request, $resource, $fields);
                     });
 
-        return Inertia::render(
-            'Resource/Index',
-            array_merge($this->toArray(), [
-                'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
-                'filters' => $filters->toArray(),
-                'query' => $query->toArray(),
-                'urls' => $this->mapUrls($request, $resource),
-            ])
-        );
+        return array_merge($this->toArray(), [
+            'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
+            'filters' => $filters->toArray(),
+            'query' => $query->toArray(),
+            'urls' => $this->mapUrls($request, $resource),
+            'widgets' => $this->resolveWidgets($request, $resource)->filterVisible($request)->toArray(),
+        ]);
+    }
+
+    /**
+     * Get the index representation of the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return \Inertia\Response
+     */
+    public function toIndexResponse(Request $request, Resource $resource): Response
+    {
+        return Inertia::render('Resource/Index', $this->toIndex($request, $resource));
     }
 
     /**

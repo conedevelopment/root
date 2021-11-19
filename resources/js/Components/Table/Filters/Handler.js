@@ -15,11 +15,22 @@ export default {
             type: String,
             default: 'SelectFilter',
         },
+        value: {
+            default: null,
+        },
     },
 
     inheritAttrs: false,
 
+    emits: ['change'],
+
     render() {
-        return h(resolveComponent(this.component), this.$attrs, this.$slots);
+        return h(resolveComponent(this.component), {
+            ...this.$attrs,
+            modelValue: this.value,
+            'onUpdate:modelValue': (value) => {
+                this.$emit('change', value);
+            },
+        }, this.$slots);
     },
 }

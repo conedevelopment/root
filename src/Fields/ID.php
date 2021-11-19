@@ -15,7 +15,7 @@ class ID extends Field
     {
         parent::__construct($label, $name);
 
-        $this->visibleOnDisplay();
+        $this->hiddenOnForm();
     }
 
     /**
