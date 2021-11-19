@@ -23,9 +23,16 @@ class Date extends Field
     protected ?string $timezone = null;
 
     /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'DateTime';
+
+    /**
      * Set the timezone.
      *
-     * @param  string  $value
+     * @param  string|null  $value
      * @return $this
      */
     public function timezone(?string $value = null): static
