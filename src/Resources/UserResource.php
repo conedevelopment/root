@@ -26,12 +26,10 @@ class UserResource extends Resource
 
             Text::make(__('Email'), 'email')
                 ->type('email')
-                ->rules(static function (Request $request, Model $model): array {
-                    return [
-                        '*' => ['required', 'string', 'email', 'max:256'],
-                        static::CREATE => ['unique:users'],
-                        static::UPDATE => [Rule::unique('users')->ignoreModel($model)],
-                    ];
+                ->rules(['required', 'string', 'email', 'max:256'])
+                ->createRules(['unique:users'])
+                ->updateRules(static function (Request $request, Model $model): array {
+                    return [Rule::unique('users')->ignoreModel($model)];
                 }),
         ];
     }

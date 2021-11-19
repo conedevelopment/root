@@ -735,7 +735,7 @@ class Resource implements Arrayable, Item
 
         $this->handleUpdate($request, $model);
 
-        return Redirect::to('root.resource.show', [$this->getKey(), $model]);
+        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
     }
 
     /**

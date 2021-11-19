@@ -435,6 +435,32 @@ class Field implements Arrayable
     }
 
     /**
+     * Set the create validation rules.
+     *
+     * @param  array|Closure  $rule
+     * @return $this
+     */
+    public function createRules(array|Closure $rules): static
+    {
+        $this->rules[Resource::CREATE] = $rules;
+
+        return $this;
+    }
+
+    /**
+     * Set the update validation rules.
+     *
+     * @param  array|Closure  $rule
+     * @return $this
+     */
+    public function updateRules(array|Closure $rules): static
+    {
+        $this->rules[Resource::UPDATE] = $rules;
+
+        return $this;
+    }
+
+    /**
      * Set the given attribute.
      *
      * @param  string  $key
@@ -532,8 +558,6 @@ class Field implements Arrayable
      */
     public function toValidate(Request $request, Model $model, string $action = '*'): array
     {
-        $rules = $this->rules;
-
         $resolved = is_null($this->rulesResolver)
             ? []
             : call_user_func_array($this->rulesResolver, [$request, $model]);
@@ -542,7 +566,9 @@ class Field implements Arrayable
             $resolved = ['*' => $resolved];
         }
 
-        $rules = array_merge_recursive($rules, $resolved);
+        $rules = array_map(static function (array|Closure $rule) use ($request, $model): array {
+            return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
+        }, array_merge_recursive($this->rules, $resolved));
 
         return array_unique(
             $action === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$action] ?? [])
