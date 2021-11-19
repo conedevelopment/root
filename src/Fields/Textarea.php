@@ -9,7 +9,7 @@ class Textarea extends Field
      *
      * @var string
      */
-    protected string $component = 'FormTextarea';
+    protected string $component = 'Textarea';
 
     /**
      * Set the rows attribute.

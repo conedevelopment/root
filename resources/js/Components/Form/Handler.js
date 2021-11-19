@@ -1,13 +1,17 @@
 import { h, resolveComponent } from 'vue';
+import Editor from './Editor';
 import Input from './Input';
 import Select from './Select';
+import Textarea from './Textarea';
 
 export default {
     name: 'FormHandler',
 
     components: {
+        Editor,
         Input,
         Select,
+        Textarea,
     },
 
     props: {

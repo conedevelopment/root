@@ -32,11 +32,11 @@ abstract class Relation extends Field
     protected bool $lazy = false;
 
     /**
-     * The display key name.
+     * The display resolver callback.
      *
-     * @var string
+     * @var \Closure|null
      */
-    protected string $displayKeyName = 'id';
+    protected ?Closure $displayResolver = null;
 
     /**
      * The Vue compoent.
@@ -65,6 +65,8 @@ abstract class Relation extends Field
         parent::__construct($label, $name);
 
         $this->relation = $relation ?: Str::camel($label);
+
+        $this->display('id');
     }
 
     /**
@@ -86,9 +88,15 @@ abstract class Relation extends Field
      * @param  string  $value
      * @return $this
      */
-    public function display(string $value): static
+    public function display(string|Closure $value): static
     {
-        $this->displayKeyName = $value;
+        if ($value instanceof Closure) {
+            $this->displayResolver = $value;
+        } else {
+            $this->displayResolver = static function (Request $request, Model $model) use ($value) {
+                return $model->getAttribute($value);
+            };
+        }
 
         return $this;
     }
@@ -118,11 +126,13 @@ abstract class Relation extends Field
         if (is_null($this->formatter)) {
             $default = parent::resolveDefault($request, $model);
 
-            $this->formatResolver = function () use ($default): mixed {
+            $this->formatResolver = function () use ($request, $default): mixed {
                 if ($default instanceof Model) {
-                    return $default->getAttribute($this->displayKeyName);
+                    return call_user_func_array($this->displayResolver, [$request, $default]);
                 } elseif ($default instanceof Collection) {
-                    return $default->map->getAttribute($this->displayKeyName)->join(', ');
+                    return $default->map(function (Model $model) use ($request): mixed {
+                        return call_user_func_array($this->displayResolver, [$request, $model]);
+                    })->join(', ');
                 }
 
                 return $default;
@@ -185,8 +195,8 @@ abstract class Relation extends Field
         }
 
         return $query->get()
-                    ->mapWithKeys(function (Model $model): array {
-                        return [$model->getKey() => $model->getAttribute($this->displayKeyName)];
+                    ->mapWithKeys(function (Model $model) use ($request): array {
+                        return [$model->getKey() => call_user_func_array($this->displayResolver, [$request, $model])];
                     })
                     ->toArray();
     }
