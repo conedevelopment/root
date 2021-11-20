@@ -394,7 +394,9 @@ class Field implements Arrayable
     public function resolveTemplate(Request $request, Model $model): ?string
     {
         if (is_null($this->templateResolver)) {
-            return $this->resolveFormat($request, $model);
+            $value = $this->resolveFormat($request, $model);
+
+            return is_array($value) ? json_encode($value) : $value;
         }
 
         return call_user_func_array($this->templateResolver, [$request, $model]);

@@ -1,7 +1,8 @@
 <template>
-    <div></div>
+    <div>
+        <div ref="input" class="editor" spellcheck="false"></div>
+    </div>
 </template>
-
 
 <script>
     import Quill from 'quill';
