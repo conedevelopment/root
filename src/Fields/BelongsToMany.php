@@ -33,18 +33,18 @@ class BelongsToMany extends BelongsTo
     /**
      * Set the pivot fields resolver.
      *
-     * @param  \Closre|array  $callback
+     * @param  \Closre|array  $value
      * @return $this
      */
-    public function withPivotFields(array|Closure $callback): static
+    public function withPivotFields(array|Closure $value): static
     {
-        if (is_array($callback)) {
-            $this->pivotFieldsResolver = static function () use ($callback): array {
-                return $callback;
+        if (is_array($value)) {
+            $value = static function () use ($value): array {
+                return $value;
             };
-        } else {
-            $this->pivotFieldsResolver = $callback;
         }
+
+        $this->pivotFieldsResolver = $value;
 
         return $this;
     }

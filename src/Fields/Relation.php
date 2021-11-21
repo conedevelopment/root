@@ -91,13 +91,13 @@ abstract class Relation extends Field
      */
     public function display(string|Closure $value): static
     {
-        if ($value instanceof Closure) {
-            $this->displayResolver = $value;
-        } else {
-            $this->displayResolver = static function (Request $request, Model $model) use ($value) {
+        if (is_string($value)) {
+            $value = static function (Request $request, Model $model) use ($value) {
                 return $model->getAttribute($value);
             };
         }
+
+        $this->displayResolver = $value;
 
         return $this;
     }
