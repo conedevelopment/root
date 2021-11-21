@@ -3,8 +3,6 @@
 namespace DummyNamespace;
 
 use Cone\Root\Extracts\Extract;
-use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Collections\Filters;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -14,13 +12,12 @@ class DummyClass extends Extract
      * Get the query for the extract.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  \Cone\Root\Support\Collections\Filters  $filters
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Request $request, Resource $resource, Filters $filters): Builder
+    public function query(Request $request, Builder $query): Builder
     {
-        return parent::query($request, $resource, $filters);
+        return parent::query($request, $query);
     }
 
     /**
@@ -52,6 +49,17 @@ class DummyClass extends Extract
      * @return array
      */
     public function actions(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the widgets for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function widgets(Request $request): array
     {
         return [];
     }

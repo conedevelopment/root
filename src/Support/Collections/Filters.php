@@ -12,11 +12,11 @@ class Filters extends Collection
     /**
      * Apply the filters on the query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Builder $query, Request $request): Builder
+    public function apply(Request $request, Builder $query): Builder
     {
         $this->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());

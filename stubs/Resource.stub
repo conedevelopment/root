@@ -27,6 +27,39 @@ class DummyClass extends Resource
     }
 
     /**
+     * Define the filters for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function filters(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the actions for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the extracts for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function extracts(Request $request): array
+    {
+        return [];
+    }
+
+    /**
      * Define the widgets for the resource.
      *
      * @param  \Illuminate\Http\Request  $request

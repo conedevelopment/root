@@ -54,13 +54,12 @@ abstract class Extract implements Arrayable
      * Get the query for the extract.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  \Cone\Root\Support\Collections\Filters  $filters
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Request $request, Resource $resource, Filters $filters): Builder
+    public function query(Request $request, Builder $query): Builder
     {
-        return $resource->filteredQuery($request, $filters);
+        return $query;
     }
 
     /**
@@ -220,7 +219,9 @@ abstract class Extract implements Arrayable
 
         $fields = $this->resolveFields($request, $resource)->filterVisible($request);
 
-        $query = $this->query($request, $resource, $filters)
+        $query = $this->query($request, $resource->query());
+
+        $query = $filters->apply($request, $query)
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
