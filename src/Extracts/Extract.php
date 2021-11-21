@@ -189,8 +189,8 @@ abstract class Extract implements Arrayable
     public function mapUrls(Request $request, Resource $resource): array
     {
         return [
-            'index' => URL::route('root.resource.extract.index', [$resource->getKey(), $this->getKey()]),
             'action' => URL::route('root.resource.extract.action', [$resource->getKey(), $this->getKey()]),
+            'index' => URL::route('root.resource.extract.index', [$resource->getKey(), $this->getKey()]),
         ];
     }
 

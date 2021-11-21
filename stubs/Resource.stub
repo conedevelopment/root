@@ -25,4 +25,15 @@ class DummyClass extends Resource
     {
         return [];
     }
+
+    /**
+     * Define the widgets for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function widgets(Request $request): array
+    {
+        return [];
+    }
 }

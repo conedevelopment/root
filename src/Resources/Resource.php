@@ -10,6 +10,7 @@ use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -216,18 +217,18 @@ class Resource implements Arrayable, Item
     /**
      * Set the fields resolver.
      *
-     * @param  array|\Closure  $callback
+     * @param  array|\Closure  $fields
      * @return $this
      */
-    public function withFields(array|Closure $callback): static
+    public function withFields(array|Closure $fields): static
     {
-        if (is_array($callback)) {
-            $callback = static function () use ($callback) {
-                return $callback;
+        if (is_array($fields)) {
+            $fields = static function (Request $request, Fields $collection) use ($fields): Fields {
+                return $collection->merge($fields);
             };
         }
 
-        $this->fieldsResolver = $callback;
+        $this->fieldsResolver = $fields;
 
         return $this;
     }
@@ -243,7 +244,7 @@ class Resource implements Arrayable, Item
         $fields = Fields::make($this->fields($request));
 
         if (! is_null($this->fieldsResolver)) {
-            $fields = $fields->merge(call_user_func_array($this->fieldsResolver, [$request]));
+            return call_user_func_array($this->fieldsResolver, [$request, $fields]);
         }
 
         return $fields;
@@ -263,18 +264,18 @@ class Resource implements Arrayable, Item
     /**
      * Set the filters resolver.
      *
-     * @param  array|\Closure  $callback
+     * @param  array|\Closure  $filters
      * @return $this
      */
-    public function withFilters(array|Closure $callback): static
+    public function withFilters(array|Closure $filters): static
     {
-        if (is_array($callback)) {
-            $callback = static function () use ($callback) {
-                return $callback;
+        if (is_array($filters)) {
+            $filters = static function (Request $request, Filters $collection) use ($filters): Filters {
+                return $collection->merge($filters);
             };
         }
 
-        $this->filtersResolver = $callback;
+        $this->filtersResolver = $filters;
 
         return $this;
     }
@@ -290,7 +291,7 @@ class Resource implements Arrayable, Item
         $filters = Filters::make($this->filters($request));
 
         if (! is_null($this->filtersResolver)) {
-            $filters = $filters->merge(call_user_func_array($this->filtersResolver, [$request]));
+            return call_user_func_array($this->filtersResolver, [$request, $filters]);
         }
 
         return $filters;
@@ -310,18 +311,18 @@ class Resource implements Arrayable, Item
     /**
      * Set the actions resolver.
      *
-     * @param  array|\Closure  $callback
+     * @param  array|\Closure  $actions
      * @return $this
      */
-    public function withActions(array|Closure $callback): static
+    public function withActions(array|Closure $actions): static
     {
-        if (is_array($callback)) {
-            $callback = static function () use ($callback) {
-                return $callback;
+        if (is_array($actions)) {
+            $actions = static function (Request $request, Actions $collection) use ($actions): Actions {
+                return $collection->merge($actions);
             };
         }
 
-        $this->actionsResolver = $callback;
+        $this->actionsResolver = $actions;
 
         return $this;
     }
@@ -337,7 +338,7 @@ class Resource implements Arrayable, Item
         $actions = Actions::make($this->actions($request));
 
         if (! is_null($this->actionsResolver)) {
-            $actions = $actions->merge(call_user_func_array($this->actionsResolver, [$request]));
+            return call_user_func_array($this->actionsResolver, [$request, $actions]);
         }
 
         return $actions;
@@ -357,18 +358,18 @@ class Resource implements Arrayable, Item
     /**
      * Set the extracts resolver.
      *
-     * @param  array|\Closure  $callback
+     * @param  array|\Closure  $extracts
      * @return $this
      */
-    public function withExtracts(array|Closure $callback): static
+    public function withExtracts(array|Closure $extracts): static
     {
-        if (is_array($callback)) {
-            $callback = static function () use ($callback) {
-                return $callback;
+        if (is_array($extracts)) {
+            $extracts = static function (Request $request, Extracts $collection) use ($extracts): Extracts {
+                return $collection->merge($extracts);
             };
         }
 
-        $this->extractsResolver = $callback;
+        $this->extractsResolver = $extracts;
 
         return $this;
     }
@@ -384,7 +385,7 @@ class Resource implements Arrayable, Item
         $extracts = Extracts::make($this->extracts($request));
 
         if (! is_null($this->extractsResolver)) {
-            $extracts = $extracts->merge(call_user_func_array($this->extractsResolver, [$request]));
+            return call_user_func_array($this->extractsResolver, [$request, $extracts]);
         }
 
         return $extracts;
@@ -404,18 +405,18 @@ class Resource implements Arrayable, Item
     /**
      * Set the widgets resolver.
      *
-     * @param  array|\Closure  $callback
+     * @param  array|\Closure  $widgets
      * @return $this
      */
-    public function withWidgets(array|Closure $callback): static
+    public function withWidgets(array|Closure $widgets): static
     {
-        if (is_array($callback)) {
-            $callback = static function () use ($callback) {
-                return $callback;
+        if (is_array($widgets)) {
+            $widgets = static function (Request $request, Widgets $collection) use ($widgets): Widgets {
+                return $collection->merge($widgets);
             };
         }
 
-        $this->widgetsResolver = $callback;
+        $this->widgetsResolver = $widgets;
 
         return $this;
     }
@@ -431,7 +432,7 @@ class Resource implements Arrayable, Item
         $widgets = Widgets::make($this->widgets($request));
 
         if (! is_null($this->widgetsResolver)) {
-            $widgets = $widgets->merge(call_user_func_array($this->widgetsResolver, [$request]));
+            return call_user_func_array($this->widgetsResolver, [$request, $widgets]);
         }
 
         return $widgets;
@@ -446,9 +447,9 @@ class Resource implements Arrayable, Item
     public function mapUrls(Request $request): array
     {
         return [
-            'index' => URL::route('root.resource.index', $this->getKey()),
-            'create' => URL::route('root.resource.create', $this->getKey()),
             'action' => URL::route('root.resource.action', $this->getKey()),
+            'create' => URL::route('root.resource.create', $this->getKey()),
+            'index' => URL::route('root.resource.index', $this->getKey()),
         ];
     }
 

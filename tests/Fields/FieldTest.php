@@ -135,4 +135,13 @@ class FieldTest extends TestCase
 
         $this->assertFalse($this->field->required);
     }
+
+    // a field can be sortable
+    // a field can be searchable
+    // a field has default value
+    // a field has formatted value
+    // a field hydrates model
+    // a field has validation rules (*, create, update, toValidate)
+    // a field has display representation
+    // a field has input representation
 }
