@@ -1,7 +1,7 @@
 <template>
     <thead>
         <tr v-if="columns.length > 0">
-            <th scope="col">
+            <th v-if="$parent.actions.length > 0" scope="col">
                 <input ref="input" type="checkbox" v-model="selected">
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">

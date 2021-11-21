@@ -4,6 +4,7 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -184,11 +185,13 @@ abstract class Relation extends Field
      */
     protected function resolveOptions(Request $request, Model $model): array
     {
-        if (! method_exists($model, $this->relation)) {
+        $relation = call_user_func([$model, $this->relation]);
+
+        if (! $relation instanceof EloquentRelation) {
             return [];
         }
 
-        $query = call_user_func([$model, $this->relation])->getModel()->newQuery();
+        $query = $relation->getModel()->newQuery();
 
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$query, $request, $model]);

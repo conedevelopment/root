@@ -1,6 +1,6 @@
 <template>
     <tr :class="{ 'is-selected': selected }">
-        <th scope="row">
+        <th v-if="$parent.actions.length > 0" scope="row">
             <input type="checkbox" v-model="selected">
         </th>
         <td
