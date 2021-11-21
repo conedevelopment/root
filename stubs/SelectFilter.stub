@@ -27,14 +27,14 @@ class DummyClass extends SelectFilter
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Builder $query, Request $request, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        return parent::apply($query, $request, $value);
+        return parent::apply($request, $query, $value);
     }
 
     /**

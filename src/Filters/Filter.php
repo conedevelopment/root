@@ -31,12 +31,12 @@ abstract class Filter implements Arrayable
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Builder $query, Request $request, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         $name = $this->getKey();
 
