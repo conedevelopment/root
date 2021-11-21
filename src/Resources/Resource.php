@@ -84,6 +84,7 @@ class Resource implements Arrayable, Item
     /**
      * Create a new resource instance.
      *
+     * @param  string  $model
      * @return void
      */
     public function __construct(string $model)
@@ -150,7 +151,7 @@ class Resource implements Arrayable, Item
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  string  $value
+     * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Model|null
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -595,8 +596,8 @@ class Resource implements Arrayable, Item
         $fields = $this->resolveFields($request)->filterVisible($request, static::SHOW);
 
         return array_merge($this->toArray(), [
-            'model' => $model->toResourceDisplay($request, $this, $fields),
             'actions' => $this->resolveActions($request)->filterVisible($request, static::SHOW)->toArray(),
+            'model' => $model->toResourceDisplay($request, $this, $fields),
         ]);
     }
 

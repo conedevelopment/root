@@ -530,9 +530,12 @@ class Field implements Arrayable
             $resolved = ['*' => $resolved];
         }
 
-        $rules = array_map(static function (array|Closure $rule) use ($request, $model): array {
-            return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
-        }, array_merge_recursive($this->rules, $resolved));
+        $rules = array_map(
+            static function (array|Closure $rule) use ($request, $model): array {
+                return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
+            },
+            array_merge_recursive($this->rules, $resolved)
+        );
 
         return array_unique(
             $action === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$action] ?? [])

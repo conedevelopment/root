@@ -192,7 +192,7 @@ class Medium extends Model implements Contract
      */
     public function convertable(): bool
     {
-        return $this->isImage && $this->mime_type !== 'image/svg+xml';
+        return $this->isImage && ! Str::is('image/svg*', $this->mime_type);
     }
 
     /**
