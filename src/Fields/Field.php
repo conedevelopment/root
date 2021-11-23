@@ -290,6 +290,16 @@ class Field implements Arrayable
     }
 
     /**
+     * Determine if the field is sortable.
+     *
+     * @return bool
+     */
+    public function isSortable(): bool
+    {
+        return $this->sortable;
+    }
+
+    /**
      * Set the searachable attribute.
      *
      * @param  bool  $value
@@ -300,6 +310,16 @@ class Field implements Arrayable
         $this->searchable = $value;
 
         return $this;
+    }
+
+    /**
+     * Determine if the field is searchable.
+     *
+     * @return bool
+     */
+    public function isSearchable(): bool
+    {
+        return $this->searchable;
     }
 
     /**
@@ -490,8 +510,8 @@ class Field implements Arrayable
     {
         return array_merge($this->toArray(), [
             'formatted_value' => $this->resolveFormat($request, $model),
-            'searchable' => $this->searchable,
-            'sortable' => $this->sortable,
+            'searchable' => $this->isSearchable(),
+            'sortable' => $this->isSortable(),
             'value' => $this->resolveDefault($request, $model),
         ]);
     }

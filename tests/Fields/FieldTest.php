@@ -3,17 +3,21 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Models\User;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
 
 class FieldTest extends TestCase
 {
-    protected $field;
+    protected $field, $model;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->field = new Field('Name');
+
+        $this->model = User::factory()->make();
     }
 
     /** @test */
@@ -136,12 +140,123 @@ class FieldTest extends TestCase
         $this->assertFalse($this->field->required);
     }
 
-    // a field can be sortable
-    // a field can be searchable
-    // a field has default value
-    // a field has formatted value
-    // a field hydrates model
-    // a field has validation rules (*, create, update, toValidate)
-    // a field has display representation
-    // a field has input representation
+    /** @test */
+    public function a_field_has_default_value()
+    {
+        $this->assertSame(
+            $this->model->name,
+            $this->field->resolveDefault($this->app['request'], $this->model)
+        );
+
+        $this->field->default(function ($request, $model, $value) {
+            return '__fake__';
+        });
+
+        $this->assertSame(
+            '__fake__',
+            $this->field->resolveDefault($this->app['request'], $this->model)
+        );
+    }
+
+    /** @test */
+    public function a_field_has_formatted_value()
+    {
+        $this->assertSame(
+            $this->model->name,
+            $this->field->resolveFormat($this->app['request'], $this->model)
+        );
+
+        $this->field->format(function ($request, $model, $value) {
+            return strtoupper($value);
+        });
+
+        $this->assertSame(
+            strtoupper($this->model->name),
+            $this->field->resolveFormat($this->app['request'], $this->model)
+        );
+    }
+
+    /** @test */
+    public function a_field_hydrates_model()
+    {
+        $this->assertNotSame('Root User', $this->model->name);
+
+        $this->field->hydrate(
+            $this->app['request'], $this->model, 'Root User'
+        );
+
+        $this->model->save();
+
+        $this->assertSame('Root User', $this->model->name);
+    }
+
+    /** @test */
+    public function a_field_has_validation_rules()
+    {
+        $this->field->rules(['required'])
+                    ->createRules(['unique:users'])
+                    ->updateRules(['unique:users,'.$this->model->id]);
+
+        $this->assertSame(
+            ['required'],
+            $this->field->toValidate($this->app['request'], $this->model)
+        );
+
+        $this->assertSame(
+            ['required', 'unique:users'],
+            $this->field->toValidate($this->app['request'], $this->model, Resource::CREATE)
+        );
+
+        $this->assertSame(
+            ['required', 'unique:users,'.$this->model->id],
+            $this->field->toValidate($this->app['request'], $this->model, Resource::UPDATE)
+        );
+    }
+
+    /** @test */
+    public function a_field_has_display_representation()
+    {
+        $this->assertSame(
+            array_merge($this->field->getAttributes(), [
+                'formatted_value' => $this->model->name,
+                'searchable' => $this->field->isSearchable(),
+                'sortable' => $this->field->isSortable(),
+                'value' => $this->model->name,
+            ]),
+            $this->field->toDisplay($this->app['request'], $this->model)
+        );
+    }
+
+    /** @test */
+    public function a_field_has_input_representation()
+    {
+        $this->assertSame(
+            array_merge($this->field->getAttributes(), [
+                'component' => $this->field->getComponent(),
+                'formatted_value' => $this->model->name,
+                'value' => $this->model->name,
+            ]),
+            $this->field->toInput($this->app['request'], $this->model)
+        );
+    }
+
+    /** @test */
+    public function a_field_can_be_searchable()
+    {
+        $this->assertFalse($this->field->isSearchable());
+
+        $this->field->searchable();
+
+        $this->assertTrue($this->field->isSearchable());
+    }
+
+    /** @test */
+    public function a_field_can_be_sortable()
+    {
+        $this->assertFalse($this->field->isSortable());
+
+        $this->field->sortable();
+
+        $this->assertTrue($this->field->isSortable());
+    }
 }
