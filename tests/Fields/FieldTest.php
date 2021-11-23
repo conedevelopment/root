@@ -195,7 +195,7 @@ class FieldTest extends TestCase
     {
         $this->field->rules(['required'])
                     ->createRules(['unique:users'])
-                    ->updateRules(['unique:users,'.$this->model->id]);
+                    ->updateRules(['unique:users,1']);
 
         $this->assertSame(
             ['required'],
@@ -208,7 +208,7 @@ class FieldTest extends TestCase
         );
 
         $this->assertSame(
-            ['required', 'unique:users,'.$this->model->id],
+            ['required', 'unique:users,1'],
             $this->field->toValidate($this->app['request'], $this->model, Resource::UPDATE)
         );
     }
