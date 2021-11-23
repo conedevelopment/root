@@ -81,7 +81,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_label()
+    public function a_field_has_label_attribute()
     {
         $this->field->label('Test');
 
@@ -89,7 +89,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_name()
+    public function a_field_has_name_attribute()
     {
         $this->field->name('test');
 
@@ -97,7 +97,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_id()
+    public function a_field_has_id_attribute()
     {
         $this->field->id('test');
 
@@ -105,7 +105,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_readonly()
+    public function a_field_has_readonly_attribute()
     {
         $this->field->readonly();
 
@@ -117,7 +117,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_disabled()
+    public function a_field_has_disabled_attribute()
     {
         $this->field->disabled();
 
@@ -129,7 +129,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_handles_required()
+    public function a_field_has_required_attribute()
     {
         $this->field->required();
 

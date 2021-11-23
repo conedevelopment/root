@@ -37,4 +37,14 @@ class ID extends Field
 
         return $this;
     }
+
+    /**
+     * Determine if the field is UUID.
+     *
+     * @return bool
+     */
+    public function isUuid(): bool
+    {
+        return $this->uuid;
+    }
 }
