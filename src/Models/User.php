@@ -7,7 +7,6 @@ use Cone\Root\Interfaces\Models\User as Contract;
 use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Resources\UserResource;
-use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Cone\Root\Traits\InteractsWithResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +22,6 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable implements Contract, Resourceable
 {
-    use Filterable;
     use HasFactory;
     use InteractsWithProxy;
     use InteractsWithResource;
