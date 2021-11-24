@@ -45,26 +45,4 @@ class Text extends Field
     {
         return $this->setAttribute('maxlength', $value);
     }
-
-    /**
-     * Set the placeholder attribute.
-     *
-     * @param  string  $value
-     * @return $this
-     */
-    public function placeholder(string $value): static
-    {
-        return $this->setAttribute('placeholder', $value);
-    }
-
-    /**
-     * Set the type attribute.
-     *
-     * @param  string  $value
-     * @return $this
-     */
-    public function type(string $value): static
-    {
-        return $this->setAttribute('type', $value);
-    }
 }

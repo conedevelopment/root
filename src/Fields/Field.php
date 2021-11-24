@@ -277,6 +277,28 @@ class Field implements Arrayable
     }
 
     /**
+     * Set the type attribute.
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function type(string $value): static
+    {
+        return $this->setAttribute('type', $value);
+    }
+
+    /**
+     * Set the placeholder attribute.
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function placeholder(string $value): static
+    {
+        return $this->setAttribute('placeholder', $value);
+    }
+
+    /**
      * Set the sortable attribute.
      *
      * @param  bool  $value
@@ -402,7 +424,7 @@ class Field implements Arrayable
     /**
      * Set the validation rules.
      *
-     * @param  array|Closure  $rule
+     * @param  array|\Closure  $rule
      * @return $this
      */
     public function rules(array|Closure $rules): static
@@ -421,7 +443,7 @@ class Field implements Arrayable
     /**
      * Set the create validation rules.
      *
-     * @param  array|Closure  $rule
+     * @param  array|\Closure  $rule
      * @return $this
      */
     public function createRules(array|Closure $rules): static
@@ -434,7 +456,7 @@ class Field implements Arrayable
     /**
      * Set the update validation rules.
      *
-     * @param  array|Closure  $rule
+     * @param  array|\Closure  $rule
      * @return $this
      */
     public function updateRules(array|Closure $rules): static

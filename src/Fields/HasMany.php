@@ -2,19 +2,11 @@
 
 namespace Cone\Root\Fields;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class BelongsToMany extends BelongsTo
+class HasMany extends Relation
 {
-    /**
-     * The pivot fields resolver.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $pivotFieldsResolver = null;
-
     /**
      * Hydrate the model.
      *
@@ -25,28 +17,13 @@ class BelongsToMany extends BelongsTo
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($value): void {
-            call_user_func([$model, $this->relation])->sync($value);
+        $relation = call_user_func([$model, $this->relation]);
+
+        $models = $relation->getRelated()->newQuery()->findMany((array) $value);
+
+        $model->saved(static function () use ($relation, $models): void {
+            $relation->saveMany($models);
         });
-    }
-
-    /**
-     * Set the pivot fields resolver.
-     *
-     * @param  array|\Closre  $value
-     * @return $this
-     */
-    public function withPivotFields(array|Closure $value): static
-    {
-        if (is_array($value)) {
-            $value = static function () use ($value): array {
-                return $value;
-            };
-        }
-
-        $this->pivotFieldsResolver = $value;
-
-        return $this;
     }
 
     /**

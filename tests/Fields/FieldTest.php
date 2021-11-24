@@ -141,6 +141,26 @@ class FieldTest extends TestCase
     }
 
     /** @test */
+    public function a_field_has_type_attribute()
+    {
+        $this->assertNull($this->field->type);
+
+        $this->field->type('text');
+
+        $this->assertSame('text', $this->field->type);
+    }
+
+    /** @test */
+    public function a_field_has_placeholder_attribute()
+    {
+        $this->assertNull($this->field->placeholder);
+
+        $this->field->placeholder('Root');
+
+        $this->assertSame('Root', $this->field->placeholder);
+    }
+
+    /** @test */
     public function a_field_has_default_value()
     {
         $this->assertSame(
