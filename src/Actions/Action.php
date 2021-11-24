@@ -7,6 +7,7 @@ use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
@@ -49,11 +50,12 @@ abstract class Action implements Arrayable, Responsable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function perform(Request $request, Resource $resource): Response
+    public function perform(Request $request, Resource $resource): RedirectResponse
     {
-        $models = $resource->filteredQuery($request, $resource->resolveFilters($request))
+        $models = $resource->resolveFilters($request)
+                            ->apply($request, $resource->query())
                             ->findMany($request->input('models', []));
 
         $this->handle($request, $models);

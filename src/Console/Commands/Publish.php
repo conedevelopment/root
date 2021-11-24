@@ -14,9 +14,9 @@ class Publish extends Command
      * @var string
      */
     protected $signature = 'root:publish {--force : Overwrite any existing files}
-                                          {--mix : Update the "webpack.mix.js" file}
-                                          {--packages : Update the "packages.json" file}
-                                          {--tag=* : One or many tags that have assets you want to publish}';
+                                        {--mix : Update the "webpack.mix.js" file}
+                                        {--packages : Update the "packages.json" file}
+                                        {--tag=* : One or many tags that have assets you want to publish}';
 
     /**
      * The console command description.
