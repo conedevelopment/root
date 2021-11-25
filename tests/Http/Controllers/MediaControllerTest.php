@@ -32,24 +32,6 @@ class MediaControllerTest extends TestCase
     }
 
     /** @test */
-    public function an_admin_can_index_media()
-    {
-        $this->actingAs($this->admin)
-            ->get(URL::route('root.media.index'))
-            ->assertOk()
-            ->assertJson(Medium::query()->latest()->cursorPaginate()->toArray());
-    }
-
-    /** @test */
-    public function an_admin_can_show_medium()
-    {
-        $this->actingAs($this->admin)
-            ->get(URL::route('root.media.show', $this->medium))
-            ->assertOk()
-            ->assertJson($this->medium->toArray());
-    }
-
-    /** @test */
     public function an_admin_can_store_medium_as_image()
     {
         $this->actingAs($this->admin)
@@ -77,15 +59,6 @@ class MediaControllerTest extends TestCase
             ->assertJson(['name' => 'test']);
 
         $this->assertDatabaseHas('root_media', ['name' => 'test']);
-    }
-
-    /** @test */
-    public function an_admin_can_update_medium()
-    {
-        $this->actingAs($this->admin)
-            ->patch(URL::route('root.media.update', $this->medium), [])
-            ->assertOk()
-            ->assertExactJson($this->medium->refresh()->toArray());
     }
 
     /** @test */

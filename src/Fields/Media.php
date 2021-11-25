@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Fields;
 
-class Media extends Field
+class Media extends MorphToMany
 {
     /**
      * The Vue compoent.

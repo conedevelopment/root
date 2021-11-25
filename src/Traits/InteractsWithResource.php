@@ -42,11 +42,15 @@ trait InteractsWithResource
 
         $abilities = $resource->getAbilities();
 
-        return array_reduce($abilities['scoped'], function (array $stack, $ability) use ($request, $policy): array {
-            return array_merge($stack, [
-                $ability => is_null($policy) || $request->user()?->can($ability, $this),
-            ]);
-        }, []);
+        return array_reduce(
+            $abilities['scoped'],
+            function (array $stack, string $ability) use ($request, $policy): array {
+                return array_merge($stack, [
+                    $ability => is_null($policy) || $request->user()->can($ability, $this),
+                ]);
+            },
+            []
+        );
     }
 
     /**

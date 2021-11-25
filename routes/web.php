@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', DashboardController::class)->name('dashboard');
 
 // Media
-Route::apiResource('media', MediaController::class);
+Route::apiResource('media', MediaController::class)->only(['store', 'destroy']);
 
 // Extracts
 Route::get('/{resource}/extracts/{extract}', [ExtractController::class, 'index'])->name('resource.extract.index');

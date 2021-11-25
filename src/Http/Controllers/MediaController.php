@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\MediumStoreRequest as StoreRequest;
-use Cone\Root\Http\Requests\MediumUpdateRequest as UpdateRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
@@ -56,31 +55,6 @@ class MediaController extends Controller
                 ->dispatch($medium, $path);
 
         return new JsonResponse($medium, JsonResponse::HTTP_CREATED);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(Medium $medium): JsonResponse
-    {
-        return new JsonResponse($medium);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\MediumUpdateRequest  $request
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(UpdateRequest $request, Medium $medium): JsonResponse
-    {
-        $medium->update($request->validated());
-
-        return new JsonResponse($medium);
     }
 
     /**

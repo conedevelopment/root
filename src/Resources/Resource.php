@@ -228,10 +228,14 @@ class Resource implements Arrayable, Item
      */
     public function resolveFields(Request $request): Fields
     {
-        $fields = Fields::make($this->fields($request));
+        static $fields;
 
-        if (! is_null($this->fieldsResolver)) {
-            return call_user_func_array($this->fieldsResolver, [$request, $fields]);
+        if (! isset($fields)) {
+            $fields = Fields::make($this->fields($request));
+
+            if (! is_null($this->fieldsResolver)) {
+                $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
+            }
         }
 
         return $fields;
@@ -275,10 +279,14 @@ class Resource implements Arrayable, Item
      */
     public function resolveFilters(Request $request): Filters
     {
-        $filters = Filters::make($this->filters($request));
+        static $filters;
 
-        if (! is_null($this->filtersResolver)) {
-            return call_user_func_array($this->filtersResolver, [$request, $filters]);
+        if (! isset($filters)) {
+            $filters = Filters::make($this->filters($request));
+
+            if (! is_null($this->filtersResolver)) {
+                $filters = call_user_func_array($this->filtersResolver, [$request, $filters]);
+            }
         }
 
         return $filters;
@@ -322,10 +330,14 @@ class Resource implements Arrayable, Item
      */
     public function resolveActions(Request $request): Actions
     {
-        $actions = Actions::make($this->actions($request));
+        static $actions;
 
-        if (! is_null($this->actionsResolver)) {
-            return call_user_func_array($this->actionsResolver, [$request, $actions]);
+        if (! isset($actions)) {
+            $actions = Actions::make($this->actions($request));
+
+            if (! is_null($this->actionsResolver)) {
+                $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
+            }
         }
 
         return $actions;
@@ -369,10 +381,14 @@ class Resource implements Arrayable, Item
      */
     public function resolveExtracts(Request $request): Extracts
     {
-        $extracts = Extracts::make($this->extracts($request));
+        static $extracts;
 
-        if (! is_null($this->extractsResolver)) {
-            return call_user_func_array($this->extractsResolver, [$request, $extracts]);
+        if (! isset($extracts)) {
+            $extracts = Extracts::make($this->extracts($request));
+
+            if (! is_null($this->extractsResolver)) {
+                $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
+            }
         }
 
         return $extracts;
@@ -416,10 +432,14 @@ class Resource implements Arrayable, Item
      */
     public function resolveWidgets(Request $request): Widgets
     {
-        $widgets = Widgets::make($this->widgets($request));
+        static $widgets;
 
-        if (! is_null($this->widgetsResolver)) {
-            return call_user_func_array($this->widgetsResolver, [$request, $widgets]);
+        if (! isset($widgets)) {
+            $widgets = Widgets::make($this->widgets($request));
+
+            if (! is_null($this->widgetsResolver)) {
+                $widgets = call_user_func_array($this->widgetsResolver, [$request, $widgets]);
+            }
         }
 
         return $widgets;
