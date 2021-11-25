@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Cone\Root\Http\Middleware\Authenticate;
 use Cone\Root\Http\Middleware\HandleRootRequests;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -41,6 +42,12 @@ class RootServiceProvider extends ServiceProvider
         if (! $this->app->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__.'/../config/root.php', 'root');
         }
+
+        $this->app->booted(static function (Application $app): void {
+            if (str_starts_with($app['request']->getRequestUri(), '/root')) {
+                Root::run($app['request']);
+            }
+        });
     }
 
     /**

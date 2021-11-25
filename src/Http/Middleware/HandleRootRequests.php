@@ -2,11 +2,8 @@
 
 namespace Cone\Root\Http\Middleware;
 
-use Closure;
-use Cone\Root\Root;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use Symfony\Component\HttpFoundation\Response;
 
 class HandleRootRequests extends Middleware
 {
@@ -30,19 +27,5 @@ class HandleRootRequests extends Middleware
                 return $request->session()->token();
             },
         ]);
-    }
-
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        Root::run($request);
-
-        return parent::handle($request, $next);
     }
 }
