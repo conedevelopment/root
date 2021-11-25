@@ -194,7 +194,7 @@ abstract class Relation extends Field
         $query = $relation->getModel()->newQuery();
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$query, $request, $model]);
+            call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query->get()
