@@ -30,7 +30,7 @@ abstract class Relation extends Field
      *
      * @var bool
      */
-    protected bool $lazy = false;
+    protected bool $async = false;
 
     /**
      * The display resolver callback.
@@ -103,14 +103,14 @@ abstract class Relation extends Field
     }
 
     /**
-     * Set the lazy attribute.
+     * Set the async attribute.
      *
      * @param  bool  $value
      * @return $this
      */
-    public function lazy(bool $value = true): static
+    public function async(bool $value = true): static
     {
-        $this->lazy = $value;
+        $this->async = $value;
 
         return $this;
     }
@@ -214,7 +214,7 @@ abstract class Relation extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'lazy' => $this->lazy,
+            'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->resolveOptions($request, $model),
         ]);
