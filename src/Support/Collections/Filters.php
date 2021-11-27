@@ -21,7 +21,7 @@ class Filters extends Collection
         $this->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());
         })->each(static function (Filter $filter) use ($query, $request): void {
-            $filter->apply($query, $request, $request->input($filter->getKey()));
+            $filter->apply($request, $query, $request->input($filter->getKey()));
         });
 
         return $query;
