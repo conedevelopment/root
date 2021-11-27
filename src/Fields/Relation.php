@@ -3,8 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -177,6 +177,26 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the related model's eloquent query.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function resolveQuery(Request $request, Model $model): Builder
+    {
+        $relation = call_user_func([$model, $this->relation]);
+
+        $query = $relation->getModel()->newQuery();
+
+        if (! is_null($this->queryResolver)) {
+            call_user_func_array($this->queryResolver, [$request, $query]);
+        }
+
+        return $query;
+    }
+
+    /**
      * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -185,19 +205,8 @@ abstract class Relation extends Field
      */
     protected function resolveOptions(Request $request, Model $model): array
     {
-        $relation = call_user_func([$model, $this->relation]);
-
-        if (! $relation instanceof EloquentRelation) {
-            return [];
-        }
-
-        $query = $relation->getModel()->newQuery();
-
-        if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query, $model]);
-        }
-
-        return $query->get()
+        return $this->resolveQuery($request, $model)
+                    ->get()
                     ->mapWithKeys(function (Model $model) use ($request): array {
                         return [$model->getKey() => call_user_func_array($this->displayResolver, [$request, $model])];
                     })

@@ -17,6 +17,13 @@ class BelongsToMany extends BelongsTo
     protected ?Closure $pivotFieldsResolver = null;
 
     /**
+     * The cache store.
+     *
+     * @var array
+     */
+    protected array $cache = [];
+
+    /**
      * Hydrate the model.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -58,17 +65,17 @@ class BelongsToMany extends BelongsTo
      */
     public function resolvePivotFields(Request $request): Fields
     {
-        static $fields;
+        if (! isset($this->cache['pivot_fields'])) {
+            $fields = Fields::make();
 
-        if (! isset($fields)) {
-            if (is_null($this->pivotFieldsResolver)) {
-                $fields = Fields::make();
-            } else {
-                $fields = call_user_func_array($this->pivotFieldsResolver, [$request]);
+            if (! is_null($this->pivotFieldsResolver)) {
+                $fields = $fields->merge(call_user_func_array($this->pivotFieldsResolver, [$request]));
             }
+
+            $this->cache['pivot_fields'] = $fields;
         }
 
-        return $fields;
+        return $this->cache['pivot_fields'];
     }
 
     /**
