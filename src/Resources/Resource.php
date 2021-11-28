@@ -4,6 +4,7 @@ namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Fields\Field;
+use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
@@ -15,15 +16,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class Resource implements Arrayable, Item
 {
@@ -461,9 +459,8 @@ class Resource implements Arrayable, Item
     public function mapUrls(Request $request): array
     {
         return [
-            'action' => URL::route('root.resource.action', $this->getKey()),
-            'create' => URL::route('root.resource.create', $this->getKey()),
-            'index' => URL::route('root.resource.index', $this->getKey()),
+            'create' => URL::route("root.{$this->getKey()}.create"),
+            'index' => URL::route("root.{$this->getKey()}.index"),
         ];
     }
 
@@ -555,21 +552,6 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Get the index response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response
-     */
-    public function toIndexResponse(Request $request): Response
-    {
-        if ($this->getPolicy() && $request->user()->cannot('viewAny', $this->getModel())) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        return Inertia::render('Resource/Index', $this->toIndex($request));
-    }
-
-    /**
      * Get the create representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -582,21 +564,6 @@ class Resource implements Arrayable, Item
         return array_merge($this->toArray(), [
             'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
         ]);
-    }
-
-    /**
-     * Get the create response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response
-     */
-    public function toCreateResponse(Request $request): Response
-    {
-        if ($this->getPolicy() && $request->user()->cannot('create', $this->getModel())) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        return Inertia::render('Resource/Create', $this->toCreate($request));
     }
 
     /**
@@ -617,24 +584,6 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Get the show response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Inertia\Response
-     */
-    public function toShowResponse(Request $request, string $id): Response
-    {
-        $model = $this->resolveRouteBinding($id);
-
-        if ($this->getPolicy() && $request->user()->cannot('view', $model)) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        return Inertia::render('Resource/Show', $this->toShow($request, $model));
-    }
-
-    /**
      * Get the edit representation of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -648,24 +597,6 @@ class Resource implements Arrayable, Item
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
         ]);
-    }
-
-    /**
-     * Get the edit response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Inertia\Response
-     */
-    public function toEditResponse(Request $request, string $id): Response
-    {
-        $model = $this->resolveRouteBinding($id);
-
-        if ($this->getPolicy() && $request->user()->cannot('update', $model)) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        return Inertia::render('Resource/Edit', $this->toEdit($request, $model));
     }
 
     /**
@@ -694,23 +625,6 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Get the store response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function toStoreResponse(Request $request): RedirectResponse
-    {
-        if ($this->getPolicy() && $request->user()->cannot('create', $this->getModel())) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        $model = $this->handleStore($request);
-
-        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
-    }
-
-    /**
      * Handle the update request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -735,26 +649,6 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Get the update response of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function toUpdateResponse(Request $request, string $id): RedirectResponse
-    {
-        $model = $this->resolveRouteBinding($id);
-
-        if ($this->getPolicy() && $request->user()->cannot('update', $model)) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        $this->handleUpdate($request, $model);
-
-        return Redirect::route('root.resource.show', [$this->getKey(), $model]);
-    }
-
-    /**
      * Handle the destroy request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -773,39 +667,15 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Get the destroy response of the resource.
+     * Register the resource routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  stirng  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
      */
-    public function toDestroyResponse(Request $request, string $id): RedirectResponse
+    public function routes(Request $request): void
     {
-        $model = $this->resolveRouteBinding($id);
-
-        $action = (class_uses_recursive(SoftDeletes::class) && $model->trashed()) ? 'forceDelete' : 'delete';
-
-        if ($this->getPolicy() && $request->user()->cannot($action, $model)) {
-            abort(RedirectResponse::HTTP_FORBIDDEN);
-        }
-
-        $this->handleDestroy($request, $model);
-
-        return Redirect::route('root.resource.index', $this->getKey());
-    }
-
-    /**
-     * Handle the action request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function handleAction(Request $request): RedirectResponse
-    {
-        $action = $this->resolveActions($request)
-                    ->filterVisible($request, $request->boolean('individual') ? static::SHOW : static::INDEX)
-                    ->resolveFromRequest($request);
-
-        return $action->perform($request, $this);
+        Route::group(['resource' => $this->getKey()], function () use ($request): void {
+            Route::resource($this->getKey(), ResourceController::class)->names([]);
+        });
     }
 }

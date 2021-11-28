@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\MediumStoreRequest as StoreRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
@@ -34,10 +33,10 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Cone\Root\Http\Requests\MediumStoreRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $file = $request->file('file');
 

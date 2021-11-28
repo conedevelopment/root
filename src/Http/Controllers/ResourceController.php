@@ -6,6 +6,8 @@ use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 use Inertia\Response;
 
 class ResourceController extends Controller
@@ -14,115 +16,165 @@ class ResourceController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function index(Request $request, string $key): Response
+    public function index(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toIndexResponse($request);
+        if ($resource->getPolicy()) {
+            $this->authorize('viewAny', $resource->getModel());
+        }
+
+        return Inertia::render(
+            'Resource/Index',
+            $resource->toIndex($request)
+        );
     }
 
     /**
      * Show the form for creating a new resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function create(Request $request, string $key): Response
+    public function create(Request $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toCreateResponse($request);
+        if ($resource->getPolicy()) {
+            $this->authorize('create', $resource->getModel());
+        }
+
+        return Inertia::render(
+            'Resource/Create',
+            $resource->toCreate($request)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request, string $key): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toStoreResponse($request);
+        if ($resource->getPolicy()) {
+            $this->authorize('create', $resource->getModel());
+        }
+
+        $model = $resource->handleStore($request);
+
+        return Redirect::route("root.{$resource->getKey()}.show", $model);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(Request $request, string $key, string $id): Response
+    public function show(Request $request, string $id): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toShowResponse($request, $id);
+        $model = $resource->resolveRouteBinding($id);
+
+        if ($resource->getPolicy()) {
+            $this->authorize('view', $model);
+        }
+
+        return Inertia::render(
+            'Resource/Show',
+            $resource->toShow($request, $model)
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(Request $request, string $key, string $id): Response
+    public function edit(Request $request, string $id): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toEditResponse($request, $id);
+        $model = $resource->resolveRouteBinding($id);
+
+        if ($resource->getPolicy()) {
+            $this->authorize('update', $model);
+        }
+
+        return Inertia::render(
+            'Resource/Edit',
+            $resource->toEdit($request, $model)
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $key, string $id): RedirectResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toUpdateResponse($request, $id);
+        $model = $resource->resolveRouteBinding($id);
+
+        if ($resource->getPolicy()) {
+            $this->authorize('update', $model);
+        }
+
+        $resource->handleStore($request);
+
+        return Redirect::route("root.{$resource->getKey()}.show", $model);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
      * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request, string $key, string $id): RedirectResponse
+    public function destroy(Request $request, string $id): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = Resource::resolve(
+            $request->route()->action['resource']
+        );
 
-        return $resource->toDestroyResponse($request, $id);
-    }
+        $model = $resource->resolveRouteBinding($id);
 
-    /**
-     * Perform the action on the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function action(Request $request, string $key): RedirectResponse
-    {
-        $resource = Resource::resolve($key);
+        if ($resource->getPolicy()) {
+            $this->authorize(
+                (class_uses_recursive(SoftDeletes::class) && $model->trashed()) ? 'forceDelete' : 'delete',
+                $model
+            );
+        }
 
-        return $resource->handleAction($request);
+        $resource->handleDestroy($request, $model);
+
+        return Redirect::route("root.{$resource->getKey()}.index");
     }
 }

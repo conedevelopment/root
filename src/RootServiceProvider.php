@@ -44,7 +44,7 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(static function (Application $app): void {
-            if (str_starts_with($app['request']->getRequestUri(), '/root')) {
+            if ($app->runningInConsole() || str_starts_with($app['request']->getRequestUri(), '/root')) {
                 Root::run($app['request']);
             }
         });

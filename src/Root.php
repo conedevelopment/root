@@ -3,7 +3,10 @@
 namespace Cone\Root;
 
 use Closure;
+use Cone\Root\Http\Middleware\Authenticate;
+use Cone\Root\Http\Middleware\HandleRootRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 abstract class Root
 {
@@ -53,5 +56,25 @@ abstract class Root
     public static function flush(): void
     {
         static::$callbacks = [];
+    }
+
+    /**
+     * Register Root routes.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public static function routes(Closure $callback): void
+    {
+        Route::as('root.')
+            ->prefix('root')
+            ->middleware([
+                'web',
+                Authenticate::class,
+                'verified:root.verification.show',
+                'can:viewRoot',
+                HandleRootRequests::class,
+            ])
+            ->group($callback);
     }
 }
