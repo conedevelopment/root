@@ -3,13 +3,17 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field
+abstract class Relation extends Field implements Routable
 {
     /**
      * The relation name on the model.
@@ -33,13 +37,6 @@ abstract class Relation extends Field
     protected bool $async = false;
 
     /**
-     * The display resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $displayResolver = null;
-
-    /**
      * The Vue compoent.
      *
      * @var string
@@ -47,11 +44,25 @@ abstract class Relation extends Field
     protected string $component = 'Select';
 
     /**
+     * The display resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $displayResolver = null;
+
+    /**
      * The query resolver callback.
      *
      * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
+
+    /**
+     * The URI for the field.
+     *
+     * @var string|null
+     */
+    protected ?string $uri = null;
 
     /**
      * Create a new relation field instance.
@@ -225,7 +236,30 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
             'nullable' => $this->nullable,
-            'options' => $this->resolveOptions($request, $model),
+            'options' => $this->async ? [] : $this->resolveOptions($request, $model),
+            'url' => $this->uri ? URL::to($this->uri) : $this->uri,
         ]);
+    }
+
+    /**
+     * Register the routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|null  $uri
+     * @return void
+     */
+    public function routes(Request $request, ?string $uri = null): void
+    {
+        if (! $this->async) {
+            return;
+        }
+
+        $this->uri = "{$uri}/{$this->name}";
+
+        if (! App::routesAreCached()) {
+            Route::get($this->name, static function (Request $request): void {
+                //
+            });
+        }
     }
 }

@@ -3,9 +3,11 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 
 class Fields extends Collection
 {
@@ -69,5 +71,23 @@ class Fields extends Collection
                 })
                 ->filter()
                 ->toBase();
+    }
+
+    /**
+     * Register the field routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|null  $uri
+     * @return void
+     */
+    public function routes(Request $request, ?string $uri = null): void
+    {
+        Route::prefix('fields')->group(function () use ($request, $uri): void {
+            $this->each(static function (Field $field) use ($request, $uri): void {
+                if ($field instanceof Routable) {
+                    $field->routes($request, "{$uri}/fields");
+                }
+            });
+        });
     }
 }

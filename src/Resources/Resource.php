@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Registries\Item;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
@@ -674,8 +675,16 @@ class Resource implements Arrayable, Item
      */
     public function routes(Request $request): void
     {
-        Route::group(['resource' => $this->getKey()], function () use ($request): void {
-            Route::resource($this->getKey(), ResourceController::class)->names([]);
+        $key = $this->getKey();
+
+        Route::group(['resource' => $key], function () use ($request, $key): void {
+            Route::prefix($key)->group(function () use ($request, $key): void {
+                $this->resolveFields($request)->routes($request, "root/{$key}");
+            });
+
+            if (! App::routesAreCached()) {
+                Route::resource($key, ResourceController::class);
+            }
         });
     }
 }

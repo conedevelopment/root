@@ -22,11 +22,9 @@ class ResourceRegistry extends Registry implements Contract
     {
         parent::register($key, $item);
 
-        if (! App::routesAreCached()) {
-            Root::routes(static function () use ($item) {
-                App::call([$item, 'routes']);
-            });
-        }
+        Root::routes(static function () use ($item) {
+            App::call([$item, 'routes']);
+        });
     }
 
     /**
