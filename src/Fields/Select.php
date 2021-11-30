@@ -48,7 +48,7 @@ class Select extends Field
      * @param  \illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    protected function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         if (is_null($this->optionsResolver)) {
             return [];

@@ -214,7 +214,7 @@ abstract class Relation extends Field implements Routable
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    protected function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         return $this->resolveQuery($request, $model)
                     ->get()
@@ -256,10 +256,12 @@ abstract class Relation extends Field implements Routable
 
         $this->uri = "{$uri}/{$this->name}";
 
-        if (! App::routesAreCached()) {
-            Route::get($this->name, static function (Request $request): void {
-                //
-            });
+        if (App::routesAreCached()) {
+            return;
         }
+
+        Route::get($this->name, static function (Request $request): void {
+            //
+        });
     }
 }

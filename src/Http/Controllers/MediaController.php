@@ -45,7 +45,7 @@ class MediaController extends Controller
         File::append($path, $file->get());
 
         if ($request->has('is_last') && ! $request->boolean('is_last')) {
-            return new JsonResponse(['uploaded' => true]);
+            return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 
         $medium = (Medium::proxy())::createFrom($path);
@@ -66,6 +66,6 @@ class MediaController extends Controller
     {
         $medium->delete();
 
-        return new JsonResponse(['deleted' => true]);
+        return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
     }
 }

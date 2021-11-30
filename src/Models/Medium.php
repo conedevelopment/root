@@ -123,12 +123,12 @@ class Medium extends Model implements Contract
     }
 
     /**
-     * Create a new medium from the given path.
+     * Make a new medium instance from the given path.
      *
      * @param  string  $path
      * @return static
      */
-    public static function createFrom(string $path): static
+    public static function makeFrom(string $path): static
     {
         $name = preg_replace('/[\w]{5}__/iu', '', basename($path, '.chunk'));
 
@@ -138,7 +138,7 @@ class Medium extends Model implements Contract
             [$width, $height] = getimagesize($path);
         }
 
-        return static::create([
+        return static::make([
             'file_name' => $name,
             'mime_type' => $type,
             'width' => isset($width) ? $width : null,
@@ -147,6 +147,21 @@ class Medium extends Model implements Contract
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
         ]);
+    }
+
+    /**
+     * Create a new medium from the given path.
+     *
+     * @param  string  $path
+     * @return static
+     */
+    public static function createFrom(string $path): static
+    {
+        $medium = static::makeFrom($path);
+
+        $medium->save();
+
+        return $medium;
     }
 
     /**
