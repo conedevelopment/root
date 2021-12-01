@@ -1,6 +1,26 @@
 <?php
 
+use Cone\Root\Http\Middleware\Authenticate;
+use Cone\Root\Http\Middleware\HandleRootRequests;
+
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware
+    |--------------------------------------------------------------------------
+    |
+    | You can specify the middleware for the Root routes.
+    |
+    */
+
+    'middleware' => [
+        'web',
+        Authenticate::class,
+        'verified:root.verification.show',
+        'can:viewRoot',
+        HandleRootRequests::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------

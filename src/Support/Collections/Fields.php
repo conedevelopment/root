@@ -15,13 +15,12 @@ class Fields extends Collection
      * Filter the field that are visible for the given request and action.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $action
      * @return static
      */
-    public function filterVisible(Request $request, ?string $action = null): static
+    public function filterVisible(Request $request): static
     {
-        return $this->filter(static function (Field $field) use ($request, $action): bool {
-                        return $field->visible($request, $action);
+        return $this->filter(static function (Field $field) use ($request): bool {
+                        return $field->visible($request);
                     })
                     ->values();
     }
@@ -61,13 +60,12 @@ class Fields extends Collection
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $action
      * @return \Illuminate\Support\Collection
      */
-    public function mapToValidate(Request $request, Model $model, string $action = '*'): Collection
+    public function mapToValidate(Request $request, Model $model): Collection
     {
-        return $this->mapWithKeys(static function (Field $field) use ($request, $model, $action): array {
-                    return [$field->name => $field->toValidate($request, $model, $action)];
+        return $this->mapWithKeys(static function (Field $field) use ($request, $model): array {
+                    return [$field->name => $field->toValidate($request, $model)];
                 })
                 ->filter()
                 ->toBase();

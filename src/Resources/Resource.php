@@ -5,8 +5,11 @@ namespace Cone\Root\Resources;
 use Closure;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ResourceController;
+use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\IndexRequest;
+use Cone\Root\Http\Requests\ShowRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Interfaces\Registries\Item;
-use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
@@ -26,11 +29,6 @@ use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Item
 {
-    public const INDEX = 'index';
-    public const SHOW = 'show';
-    public const UPDATE = 'update';
-    public const CREATE = 'create';
-
     /**
      * The model class.
      *
@@ -526,14 +524,14 @@ class Resource implements Arrayable, Item
     /**
      * Get the index representation of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\IndexRequest  $request
      * @return array
      */
-    public function toIndex(Request $request): array
+    public function toIndex(IndexRequest $request): array
     {
         $filters = $this->resolveFilters($request);
 
-        $fields = $this->resolveFields($request)->filterVisible($request, static::INDEX);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         $query = $filters->apply($request, $this->query())
                     ->latest()
@@ -544,23 +542,23 @@ class Resource implements Arrayable, Item
                     });
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->filterVisible($request, static::INDEX)->toArray(),
+            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
             'extracts' => $this->resolveExtracts($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
-            'widgets' => $this->resolveWidgets($request)->filterVisible($request, static::INDEX)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->filterVisible($request)->toArray(),
         ]);
     }
 
     /**
      * Get the create representation of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\CreateRequest  $request
      * @return array
      */
-    public function toCreate(Request $request): array
+    public function toCreate(CreateRequest $request): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         return array_merge($this->toArray(), [
             'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
@@ -570,16 +568,16 @@ class Resource implements Arrayable, Item
     /**
      * Get the show representation of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toShow(Request $request, Model $model): array
+    public function toShow(ShowRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request, static::SHOW);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->filterVisible($request, static::SHOW)->toArray(),
+            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
             'model' => $model->toResourceDisplay($request, $this, $fields),
         ]);
     }
@@ -587,13 +585,13 @@ class Resource implements Arrayable, Item
     /**
      * Get the edit representation of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toEdit(Request $request, Model $model): array
+    public function toEdit(UpdateRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
@@ -603,17 +601,17 @@ class Resource implements Arrayable, Item
     /**
      * Handle the store request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\CreateRequest  $request
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function handleStore(Request $request): Model
+    public function handleStore(CreateRequest $request): Model
     {
-        $fields = $this->resolveFields($request)->filterVisible($request, static::CREATE);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         $model = $this->getModelInstance()->newInstance();
 
         $request->validate(
-            $fields->mapToValidate($request, $model, static::CREATE)->toArray()
+            $fields->mapToValidate($request, $model)->toArray()
         );
 
         $fields->each(static function (Field $field) use ($request, $model): void {
@@ -628,16 +626,16 @@ class Resource implements Arrayable, Item
     /**
      * Handle the update request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function handleUpdate(Request $request, Model $model): Model
+    public function handleUpdate(UpdateRequest $request, Model $model): Model
     {
-        $fields = $this->resolveFields($request)->filterVisible($request, static::UPDATE);
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         $request->validate(
-            $fields->mapToValidate($request, $model, static::UPDATE)->toArray()
+            $fields->mapToValidate($request, $model)->toArray()
         );
 
         $fields->each(static function (Field $field) use ($request, $model): void {

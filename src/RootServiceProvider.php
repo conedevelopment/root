@@ -2,8 +2,7 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Middleware\Authenticate;
-use Cone\Root\Http\Middleware\HandleRootRequests;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
@@ -48,6 +47,10 @@ class RootServiceProvider extends ServiceProvider
                 Root::run($app['request']);
             }
         });
+
+        $this->app->resolving(RootRequest::class, static function (RootRequest $request, Application $app): void {
+            RootRequest::createFrom($app['request'], $request);
+        });
     }
 
     /**
@@ -62,6 +65,10 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+
+        $this->app['router']->middlewareGroup(
+            'root', $this->app['config']->get('root.middleware', [])
+        );
 
         $this->registerAuth();
         $this->registerCommands();
@@ -104,13 +111,7 @@ class RootServiceProvider extends ServiceProvider
             $this->app['router']
                 ->as('root.')
                 ->prefix('root')
-                ->middleware([
-                    'web',
-                    Authenticate::class,
-                    'verified:root.verification.show',
-                    'can:viewRoot',
-                    HandleRootRequests::class,
-                ])
+                ->middleware(['root'])
                 ->group(function (): void {
                     $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
                 });

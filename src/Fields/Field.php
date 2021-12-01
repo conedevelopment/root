@@ -3,7 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Resources\Resource;
+use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -57,8 +58,8 @@ class Field implements Arrayable
      */
     protected array $rules = [
         '*' => [],
-        Resource::CREATE => [],
-        Resource::UPDATE => [],
+        'create' => [],
+        'update' => [],
     ];
 
     /**
@@ -448,7 +449,7 @@ class Field implements Arrayable
      */
     public function createRules(array|Closure $rules): static
     {
-        $this->rules[Resource::CREATE] = $rules;
+        $this->rules['create'] = $rules;
 
         return $this;
     }
@@ -461,7 +462,7 @@ class Field implements Arrayable
      */
     public function updateRules(array|Closure $rules): static
     {
-        $this->rules[Resource::UPDATE] = $rules;
+        $this->rules['update'] = $rules;
 
         return $this;
     }
@@ -562,8 +563,14 @@ class Field implements Arrayable
      * @param  string  $action
      * @return array
      */
-    public function toValidate(Request $request, Model $model, string $action = '*'): array
+    public function toValidate(Request $request, Model $model): array
     {
+        $key = match(get_class($request)) {
+            CreateRequest::class => 'create',
+            UpdateRequest::class => 'update',
+            default => '*',
+        };
+
         $resolved = is_null($this->rulesResolver)
             ? []
             : call_user_func_array($this->rulesResolver, [$request, $model]);
@@ -580,7 +587,7 @@ class Field implements Arrayable
         );
 
         return array_unique(
-            $action === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$action] ?? [])
+            $key === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$key] ?? [])
         );
     }
 }

@@ -3,6 +3,8 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
@@ -224,12 +226,12 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             ['required', 'unique:users'],
-            $this->field->toValidate($this->app['request'], $this->model, Resource::CREATE)
+            $this->field->toValidate(new CreateRequest(), $this->model)
         );
 
         $this->assertSame(
             ['required', 'unique:users,1'],
-            $this->field->toValidate($this->app['request'], $this->model, Resource::UPDATE)
+            $this->field->toValidate(new UpdateRequest(), $this->model)
         );
     }
 

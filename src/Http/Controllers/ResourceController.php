@@ -3,9 +3,12 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Support\Facades\Resource;
+use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\IndexRequest;
+use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Requests\ShowRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -15,14 +18,12 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
      * @return \Inertia\Response
      */
-    public function index(Request $request): Response
+    public function index(IndexRequest $request): Response
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
@@ -37,14 +38,12 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @return \Inertia\Response
      */
-    public function create(Request $request): Response
+    public function create(CreateRequest $request): Response
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
@@ -59,14 +58,12 @@ class ResourceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
@@ -80,15 +77,13 @@ class ResourceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(Request $request, string $id): Response
+    public function show(ShowRequest $request, string $id): Response
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         $model = $resource->resolveRouteBinding($id);
 
@@ -105,15 +100,13 @@ class ResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(Request $request, string $id): Response
+    public function edit(UpdateRequest $request, string $id): Response
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         $model = $resource->resolveRouteBinding($id);
 
@@ -130,15 +123,13 @@ class ResourceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(UpdateRequest $request, string $id): RedirectResponse
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         $model = $resource->resolveRouteBinding($id);
 
@@ -154,15 +145,13 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request, string $id): RedirectResponse
+    public function destroy(RootRequest $request, string $id): RedirectResponse
     {
-        $resource = Resource::resolve(
-            $request->route()->action['resource']
-        );
+        $resource = $request->resource();
 
         $model = $resource->resolveRouteBinding($id);
 
