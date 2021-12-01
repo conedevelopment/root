@@ -237,7 +237,7 @@ abstract class Relation extends Field implements Routable
             'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->uri ? URL::to($this->uri) : $this->uri,
+            'url' => $this->async ? URL::to($this->getUri()) : null,
         ]);
     }
 
@@ -245,23 +245,35 @@ abstract class Relation extends Field implements Routable
      * Register the routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
      * @return void
      */
-    public function routes(Request $request, ?string $uri = null): void
+    public function routes(Request $request): void
     {
-        if (! $this->async) {
-            return;
+        if ($this->async) {
+            Route::get($this->name, static function (Request $request): void {
+                //
+            });
         }
+    }
 
-        $this->uri = "{$uri}/{$this->name}";
+    /**
+     * Set the URI attribute.
+     *
+     * @param  string  $uri
+     * @return void
+     */
+    public function setUri(string $uri): void
+    {
+        $this->uri = $uri;
+    }
 
-        if (App::routesAreCached()) {
-            return;
-        }
-
-        Route::get($this->name, static function (Request $request): void {
-            //
-        });
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
     }
 }

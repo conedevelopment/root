@@ -3,9 +3,9 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Http\Requests\ExtractRequest;
+use Cone\Root\Http\Requests\ActionRequest;
 
-class ExtractController extends Controller
+class ActionController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -13,7 +13,7 @@ class ExtractController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(ExtractRequest $request)
+    public function __invoke(ActionRequest $request)
     {
         $resource = $request->resource();
 

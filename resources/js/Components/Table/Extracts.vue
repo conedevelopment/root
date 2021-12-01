@@ -20,7 +20,11 @@
 
         methods: {
             submit(event) {
-                this.$inertia.visit(`${this.$parent.query.path}/extracts/${event.target.value}`);
+                const extract = this.extracts.find((extract) => {
+                    return extract.key = event.target.value;
+                });
+
+                this.$inertia.visit(extract.url);
             },
         },
     }

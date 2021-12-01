@@ -677,7 +677,10 @@ class Resource implements Arrayable, Item
 
         Route::group(['resource' => $key], function () use ($request, $key): void {
             Route::prefix($key)->group(function () use ($request, $key): void {
-                $this->resolveFields($request)->routes($request, "root/{$key}");
+                $uri = "root/{$key}";
+
+                $this->resolveFields($request)->routes($request, $uri);
+                $this->resolveExtracts($request)->routes($request, $uri);
             });
 
             if (! App::routesAreCached()) {

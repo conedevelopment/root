@@ -1,12 +1,12 @@
 <template>
     <form @submit.prevent="submit" @reset.prevent>
-        <select v-model="form._action">
+        <select v-model="_action">
             <option :value="null" disabled>Action</option>
             <option v-for="action in actions" :key="action.key" :value="action.key">
                 {{ action.name }}
             </option>
         </select>
-        <button type="submit" :disabled="form.processing || form._action === null || models.length === 0">
+        <button type="submit" :disabled="form.processing || _action === null || models.length === 0">
             Run
         </button>
     </form>
@@ -15,10 +15,6 @@
 <script>
     export default {
         props: {
-            url: {
-                type: String,
-                required: true,
-            },
             actions: {
                 type: Array,
                 default: () => [],
@@ -33,19 +29,22 @@
 
         data() {
             return {
-                form: this.$inertia.form(window.location.pathname + '-actions', {
-                    _action: null,
-                }),
+                _action: null,
+                form: this.$inertia.form(window.location.pathname + '-actions', {}),
             };
         },
 
         methods: {
-            submit(event) {
+            submit() {
+                const action = this.actions.find((action) => {
+                    return action.key = this._action;
+                });
+
                 this.form.transform((data) => ({
                     ...data,
                     models: this.models,
                     all: false,
-                })).post(this.url, {
+                })).post(action.url, {
                     onSuccess: () => {
                         this.$emit('update:models', []);
                     },

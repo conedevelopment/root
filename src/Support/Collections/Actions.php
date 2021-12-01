@@ -6,21 +6,21 @@ use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\ActionResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
 
 class Actions extends Collection
 {
     /**
-     * Filter the actions that are visible for the given request and action.
+     * Filter the actions that are visible for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $action
      * @return static
      */
-    public function filterVisible(Request $request, ?string $action = null): static
+    public function filterVisible(Request $request): static
     {
-        return $this->filter(static function (Action $item) use ($request, $action): bool {
-                        return $item->visible($request, $action);
+        return $this->filter(static function (Action $item) use ($request): bool {
+                        return $item->visible($request);
                     })
                     ->values();
     }
@@ -47,19 +47,22 @@ class Actions extends Collection
     }
 
     /**
-     * Resolve the action using the given request.
+     * Register the extract routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Actions\Action
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @param  string|null  $uri
+     * @return void
      */
-    public function resolveFromRequest(Request $request): Action
+    public function routes(Request $request, ?string $uri = null): void
     {
-        try {
-            return $this->resolve($request->input(Action::PARAMETER_NAME));
-        } catch (ActionResolutionException $exception) {
-            throw new NotFoundHttpException($exception->getMessage());
-        }
+        Route::prefix('actions')->group(function () use ($request, $uri): void {
+            $this->each(static function (Action $action) use ($request, $uri): void {
+                if (! App::routesAreCached()) {
+                    $action->routes($request);
+                }
+
+                $action->setUri("{$uri}/actions/{$action->getKey()}");
+            });
+        });
     }
 }

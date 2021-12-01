@@ -2,28 +2,37 @@
 
 namespace Cone\Root\Actions;
 
-use Cone\Root\Resources\Resource;
+use Cone\Root\Http\Controllers\ActionController;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, Responsable
+abstract class Action implements Arrayable, Routable
 {
     use ResolvesVisibility;
 
     /**
-     * The request parameter name.
+     * The cache store.
      *
-     * @var string
+     * @var array
      */
-    public const PARAMETER_NAME = '_action';
+    protected array $cache = [];
+
+    /**
+     * The URI for the field.
+     *
+     * @var string|null
+     */
+    protected ?string $uri = null;
 
     /**
      * Make a new action instance.
@@ -49,18 +58,17 @@ abstract class Action implements Arrayable, Responsable
      * Perform the action.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function perform(Request $request, Resource $resource): RedirectResponse
+    public function perform(Request $request, Builder $query): RedirectResponse
     {
-        $models = $resource->resolveFilters($request)
-                            ->apply($request, $resource->query())
-                            ->findMany($request->input('models', []));
+        $this->handle(
+            $request,
+            $query->findMany($request->input('models', []))
+        );
 
-        $this->handle($request, $models);
-
-        return $this->toResponse($request);
+        return Redirect::back();
     }
 
     /**
@@ -102,7 +110,11 @@ abstract class Action implements Arrayable, Responsable
      */
     public function resolveFields(Request $request): Fields
     {
-        return Fields::make($this->fields($request));
+        if (! isset($this->cache['fields'])) {
+            $this->cache['fields'] = Fields::make($this->fields($request));
+        }
+
+        return $this->cache['fields'];
     }
 
     /**
@@ -115,17 +127,39 @@ abstract class Action implements Arrayable, Responsable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
+            'url' => URL::to($this->uri),
         ];
     }
 
     /**
-     * Create an HTTP response that represents the object.
+     * Register the routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return void
      */
-    public function toResponse($request): Response
+    public function routes(Request $request): void
     {
-        return Redirect::back()->with('message', __('Action performed!'));
+        Route::post($this->getKey(), ActionController::class);
+    }
+
+    /**
+     * Set the URI attribute.
+     *
+     * @param  string  $uri
+     * @return void
+     */
+    public function setUri(string $uri): void
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
     }
 }

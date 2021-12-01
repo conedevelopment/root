@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Extracts;
 
-use Cone\Root\Resources\Resource;
+use Cone\Root\Http\Controllers\ExtractController;
+use Cone\Root\Http\Requests\ExtractRequest;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -10,15 +12,27 @@ use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response;
 
-abstract class Extract implements Arrayable
+abstract class Extract implements Arrayable, Routable
 {
+    /**
+     * The cache store.
+     *
+     * @var array
+     */
+    protected array $cache = [];
+
+    /**
+     * The URI for the field.
+     *
+     * @var string|null
+     */
+    protected ?string $uri = null;
+
     /**
      * Make a new extract instance.
      *
@@ -74,21 +88,18 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Resolve the filters.
+     * Resolve the fields.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
      * @return \Cone\Root\Support\Collections\Fields
      */
-    public function resolveFields(Request $request, Resource $resource): Fields
+    public function resolveFields(Request $request): Fields
     {
-        $fields = Fields::make($this->fields($request));
-
-        if ($fields->isEmpty()) {
-            return $resource->resolveFields($request);
+        if (! isset($this->cache['fields'])) {
+            $this->cache['fields'] = Fields::make($this->fields($request));
         }
 
-        return $fields;
+        return $this->cache['fields'];
     }
 
     /**
@@ -106,18 +117,15 @@ abstract class Extract implements Arrayable
      * Resolve the filters.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
      * @return \Cone\Root\Support\Collections\Filters
      */
-    public function resolveFilters(Request $request, Resource $resource): Filters
+    public function resolveFilters(Request $request): Filters
     {
-        $filters = Filters::make($this->filters($request));
-
-        if ($filters->isEmpty()) {
-            return $resource->resolveFilters($request);
+        if (! isset($this->cache['filters'])) {
+            $this->cache['filters'] = Filters::make($this->filters($request));
         }
 
-        return $filters;
+        return $this->cache['filters'];
     }
 
     /**
@@ -135,18 +143,15 @@ abstract class Extract implements Arrayable
      * Resolve the actions.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
      * @return \Cone\Root\Support\Collections\Actions
      */
-    public function resolveActions(Request $request, Resource $resource): Actions
+    public function resolveActions(Request $request): Actions
     {
-        $actions = Actions::make($this->actions($request));
-
-        if ($actions->isEmpty()) {
-            return $resource->resolveActions($request);
+        if (! isset($this->cache['actions'])) {
+            $this->cache['actions'] = Actions::make($this->actions($request));
         }
 
-        return $actions;
+        return $this->cache['actions'];
     }
 
     /**
@@ -164,33 +169,15 @@ abstract class Extract implements Arrayable
      * Resolve the widgets.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
      * @return \Cone\Root\Support\Collections\Widgets
      */
-    public function resolveWidgets(Request $request, Resource $resource): Widgets
+    public function resolveWidgets(Request $request): Widgets
     {
-        $widgets = Widgets::make($this->widgets($request));
-
-        if ($widgets->isEmpty()) {
-            return $resource->resolveWidgets($request);
+        if (! isset($this->cache['widgets'])) {
+            $this->cache['widgets'] = Widgets::make($this->widgets($request));
         }
 
-        return $widgets;
-    }
-
-    /**
-     * Map the URLs.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return array
-     */
-    public function mapUrls(Request $request, Resource $resource): array
-    {
-        return [
-            'action' => URL::route('root.resource.extract.action', [$resource->getKey(), $this->getKey()]),
-            'index' => URL::route('root.resource.extract.index', [$resource->getKey(), $this->getKey()]),
-        ];
+        return $this->cache['widgets'];
     }
 
     /**
@@ -203,21 +190,23 @@ abstract class Extract implements Arrayable
         return [
            'key' => $this->getKey(),
            'name' => $this->getName(),
+           'url' => URL::to($this->getUri()),
         ];
     }
 
     /**
      * Get the index representation of the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Http\Requests\ExtractRequest  $request
      * @return array
      */
-    public function toIndex(Request $request, Resource $resource): array
+    public function toIndex(ExtractRequest $request): array
     {
-        $filters = $this->resolveFilters($request, $resource);
+        $resource = $request->resource();
 
-        $fields = $this->resolveFields($request, $resource)->filterVisible($request);
+        $filters = $this->resolveFilters($request);
+
+        $fields = $this->resolveFields($request)->filterVisible($request);
 
         $query = $this->query($request, $resource->query());
 
@@ -230,39 +219,42 @@ abstract class Extract implements Arrayable
                     });
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request, $resource)->filterVisible($request)->toArray(),
+            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
-            'urls' => $this->mapUrls($request, $resource),
-            'widgets' => $this->resolveWidgets($request, $resource)->filterVisible($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->filterVisible($request)->toArray(),
         ]);
     }
 
     /**
-     * Get the index representation of the extract.
+     * Register the routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Inertia\Response
+     * @return void
      */
-    public function toIndexResponse(Request $request, Resource $resource): Response
+    public function routes(Request $request): void
     {
-        return Inertia::render('Resource/Index', $this->toIndex($request, $resource));
+        Route::get($this->getKey(), ExtractController::class);
     }
 
     /**
-     * Handle the action request.
+     * Set the URI attribute.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string  $uri
+     * @return void
      */
-    public function handleAction(Request $request, Resource $resource): RedirectResponse
+    public function setUri(string $uri): void
     {
-        $action = $this->resolveActions($request, $resource)
-                    ->filterVisible($request)
-                    ->resolveFromRequest($request);
+        $this->uri = $uri;
+    }
 
-        return $action->perform($request, $resource);
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
     }
 }

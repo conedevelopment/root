@@ -7,6 +7,7 @@ use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 class Fields extends Collection
@@ -83,7 +84,11 @@ class Fields extends Collection
         Route::prefix('fields')->group(function () use ($request, $uri): void {
             $this->each(static function (Field $field) use ($request, $uri): void {
                 if ($field instanceof Routable) {
-                    $field->routes($request, "{$uri}/fields");
+                    if (! App::routesAreCached()) {
+                        $field->routes($request);
+                    }
+
+                    $field->setUri("{$uri}/fields/{$field->name}");
                 }
             });
         });

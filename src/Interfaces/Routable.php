@@ -10,8 +10,22 @@ interface Routable
      * Register the routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
      * @return void
      */
-    public function routes(Request $request, ?string $uri = null): void;
+    public function routes(Request $request): void;
+
+    /**
+     * Set the URI attribute
+     *
+     * @param  string  $uri
+     * @return void
+     */
+    public function setUri(string $uri): void;
+
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string;
 }
