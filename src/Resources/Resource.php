@@ -681,6 +681,8 @@ class Resource implements Arrayable, Item
 
                 $this->resolveFields($request)->routes($request, $uri);
                 $this->resolveExtracts($request)->routes($request, $uri);
+                $this->resolveActions($request)->routes($request, $uri);
+                $this->resolveWidgets($request)->routes($request, $uri);
             });
 
             if (! App::routesAreCached()) {

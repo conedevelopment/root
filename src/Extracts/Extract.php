@@ -243,7 +243,7 @@ abstract class Extract implements Arrayable, Routable
      * @param  string  $uri
      * @return void
      */
-    public function setUri(string $uri): void
+    public function setUri(?string $uri = null): void
     {
         $this->uri = $uri;
     }

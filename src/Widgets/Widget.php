@@ -2,17 +2,33 @@
 
 namespace Cone\Root\Widgets;
 
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Renderable
+abstract class Widget implements Arrayable, Renderable, Routable
 {
     use ResolvesVisibility;
+
+    /**
+     * The cache store.
+     *
+     * @var array
+     */
+    protected array $cache = [];
+
+    /**
+     * Indicates if the options should be lazily populated.
+     *
+     * @var bool
+     */
+    protected bool $async = false;
 
     /**
      * The Vue component.
@@ -27,6 +43,13 @@ abstract class Widget implements Arrayable, Renderable
      * @var string
      */
     protected string $template = 'root::widget';
+
+    /**
+     * The URI for the field.
+     *
+     * @var string|null
+     */
+    protected ?string $uri = null;
 
     /**
      * Make a new widget instance.
@@ -91,13 +114,52 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
-     * Determine if the component should be async.
+     * Set the async attribute.
      *
-     * @return bool
+     * @param  bool  $value
+     * @return $this
      */
-    public function async(): bool
+    public function async(bool $value = true): static
     {
-        return false;
+        $this->async = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the URI attribute.
+     *
+     * @param  string  $uri
+     * @return void
+     */
+    public function setUri(?string $uri = null): void
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Register the routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function routes(Request $request): void
+    {
+        if ($this->async) {
+            Route::get($this->getKey(), function (): string {
+                return $this->render();
+            });
+        }
     }
 
     /**
@@ -117,13 +179,11 @@ abstract class Widget implements Arrayable, Renderable
      */
     public function toArray(): array
     {
-        return array_merge(
-            [
-                'component' => $this->getComponent(),
-                'key' => $this->getKey(),
-                'name' => $this->getName(),
-            ],
-            $this->async() ? ['data' => App::call([$this, 'data'])] : ['template' => $this->render()]
-        );
+        return [
+            'component' => $this->getComponent(),
+            'key' => $this->getKey(),
+            'name' => $this->getName(),
+            'template' => $this->async ? null : $this->render(),
+        ];
     }
 }

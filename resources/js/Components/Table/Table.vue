@@ -3,7 +3,6 @@
         <Actions
             v-if="actions.length > 0"
             :actions="actions"
-            :url="urls.action"
             v-model:models="selection"
         ></Actions>
         <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>

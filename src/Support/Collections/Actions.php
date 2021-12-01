@@ -47,7 +47,7 @@ class Actions extends Collection
     }
 
     /**
-     * Register the extract routes.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string|null  $uri

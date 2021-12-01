@@ -7,20 +7,12 @@ use Illuminate\Http\Request;
 interface Routable
 {
     /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void;
-
-    /**
      * Set the URI attribute
      *
-     * @param  string  $uri
+     * @param  string|null  $uri
      * @return void
      */
-    public function setUri(string $uri): void;
+    public function setUri(?string $uri = null): void;
 
     /**
      * Get the URI attribute.
@@ -28,4 +20,12 @@ interface Routable
      * @return string|null
      */
     public function getUri(): ?string;
+
+    /**
+     * Register the routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function routes(Request $request): void;
 }
