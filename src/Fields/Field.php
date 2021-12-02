@@ -5,6 +5,7 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ use Illuminate\Support\Str;
 
 class Field implements Arrayable
 {
+    use Authorizable;
     use ResolvesVisibility;
 
     /**

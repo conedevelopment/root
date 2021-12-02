@@ -9,6 +9,7 @@ use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Traits\Authorizable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,8 @@ use Illuminate\Support\Str;
 
 abstract class Extract implements Arrayable, Routable
 {
+    use Authorizable;
+
     /**
      * The cache store.
      *
@@ -181,6 +184,38 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
+     * Set the URI attribute.
+     *
+     * @param  string|null  $uri
+     * @return void
+     */
+    public function setUri(?string $uri = null): void
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Register the routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function routes(Request $request): void
+    {
+        Route::get($this->getKey(), ExtractController::class);
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -224,37 +259,5 @@ abstract class Extract implements Arrayable, Routable
             'query' => $query->toArray(),
             'widgets' => $this->resolveWidgets($request)->filterVisible($request)->toArray(),
         ]);
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        Route::get($this->getKey(), ExtractController::class);
-    }
-
-    /**
-     * Set the URI attribute.
-     *
-     * @param  string  $uri
-     * @return void
-     */
-    public function setUri(?string $uri = null): void
-    {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
     }
 }

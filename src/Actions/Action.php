@@ -5,6 +5,7 @@ namespace Cone\Root\Actions;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,7 @@ use Illuminate\Support\Str;
 
 abstract class Action implements Arrayable, Routable
 {
+    use Authorizable;
     use ResolvesVisibility;
 
     /**
@@ -118,34 +120,9 @@ abstract class Action implements Arrayable, Routable
     }
 
     /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return [
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-            'url' => URL::to($this->uri),
-        ];
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        Route::post($this->getKey(), ActionController::class);
-    }
-
-    /**
      * Set the URI attribute.
      *
-     * @param  string  $uri
+     * @param  string|null  $uri
      * @return void
      */
     public function setUri(?string $uri = null): void
@@ -161,5 +138,30 @@ abstract class Action implements Arrayable, Routable
     public function getUri(): ?string
     {
         return $this->uri;
+    }
+
+    /**
+     * Register the routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function routes(Request $request): void
+    {
+        Route::post($this->getKey(), ActionController::class);
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'key' => $this->getKey(),
+            'name' => $this->getName(),
+            'url' => URL::to($this->getUri()),
+        ];
     }
 }

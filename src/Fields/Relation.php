@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -225,20 +224,24 @@ abstract class Relation extends Field implements Routable
     }
 
     /**
-     * Get the input representation of the field.
+     * Set the URI attribute.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * @param  string|null  $uri
+     * @return void
      */
-    public function toInput(Request $request, Model $model): array
+    public function setUri(?string $uri = null): void
     {
-        return array_merge(parent::toInput($request, $model), [
-            'async' => $this->async,
-            'nullable' => $this->nullable,
-            'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? URL::to($this->getUri()) : null,
-        ]);
+        $this->uri = $uri;
+    }
+
+    /**
+     * Get the URI attribute.
+     *
+     * @return string|null
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
     }
 
     /**
@@ -257,23 +260,19 @@ abstract class Relation extends Field implements Routable
     }
 
     /**
-     * Set the URI attribute.
+     * Get the input representation of the field.
      *
-     * @param  string  $uri
-     * @return void
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
      */
-    public function setUri(?string $uri = null): void
+    public function toInput(Request $request, Model $model): array
     {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
+        return array_merge(parent::toInput($request, $model), [
+            'async' => $this->async,
+            'nullable' => $this->nullable,
+            'options' => $this->async ? [] : $this->resolveOptions($request, $model),
+            'url' => $this->async ? URL::to($this->getUri()) : null,
+        ]);
     }
 }

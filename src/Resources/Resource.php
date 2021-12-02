@@ -15,6 +15,7 @@ use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Traits\Authorizable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,8 @@ use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Item
 {
+    use Authorizable;
+
     /**
      * The model class.
      *

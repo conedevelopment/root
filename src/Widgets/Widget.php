@@ -3,6 +3,7 @@
 namespace Cone\Root\Widgets;
 
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
@@ -14,6 +15,7 @@ use Illuminate\Support\Str;
 
 abstract class Widget implements Arrayable, Renderable, Routable
 {
+    use Authorizable;
     use ResolvesVisibility;
 
     /**
@@ -129,7 +131,7 @@ abstract class Widget implements Arrayable, Renderable, Routable
     /**
      * Set the URI attribute.
      *
-     * @param  string  $uri
+     * @param  string|null  $uri
      * @return void
      */
     public function setUri(?string $uri = null): void
