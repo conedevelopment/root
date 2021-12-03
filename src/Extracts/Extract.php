@@ -39,6 +39,19 @@ abstract class Extract implements Arrayable
     }
 
     /**
+     * Handle the event when the object is resolved.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->resolveFields($request)->resolved($request);
+        $this->resolveActions($request)->resolved($request);
+        $this->resolveWidgets($request)->resolved($request);
+    }
+
+    /**
      * Get the key.
      *
      * @return string

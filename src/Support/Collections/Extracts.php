@@ -43,4 +43,17 @@ class Extracts extends Collection
 
         return $extract;
     }
+
+    /**
+     * Call the resolved callbacks on the extracts.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->each(static function (Extract $extract) use ($request): void {
+            $extract->resolved($request);
+        });
+    }
 }

@@ -48,6 +48,17 @@ abstract class Action implements Arrayable
     abstract public function handle(Request $request, Collection $models): void;
 
     /**
+     * Handle the event when the object is resolved.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->resolveFields($request)->resolved($request);
+    }
+
+    /**
      * Perform the action.
      *
      * @param  \Illuminate\Http\Request  $request

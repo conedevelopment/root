@@ -21,4 +21,17 @@ class Widgets extends Collection
                     })
                     ->values();
     }
+
+    /**
+     * Call the resolved callbacks on the widgets.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->each(static function (Widget $widget) use ($request): void {
+            $widget->resolved($request);
+        });
+    }
 }

@@ -24,6 +24,17 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
+     * Handle the event when the object is resolved.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->resolvePivotFields($request)->resolved($request);
+    }
+
+    /**
      * Hydrate the model.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -68,4 +68,17 @@ class Fields extends Collection
                 ->filter()
                 ->toBase();
     }
+
+    /**
+     * Call the resolved callbacks on the fields.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->each(static function (Field $field) use ($request): void {
+            $field->resolved($request);
+        });
+    }
 }

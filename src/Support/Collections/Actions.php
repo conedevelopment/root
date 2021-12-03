@@ -43,4 +43,17 @@ class Actions extends Collection
 
         return $action;
     }
+
+    /**
+     * Call the resolved callbacks on the actions.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->each(static function (Action $action) use ($request): void {
+            $action->resolved($request);
+        });
+    }
 }

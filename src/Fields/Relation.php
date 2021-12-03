@@ -3,12 +3,10 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -228,7 +226,7 @@ abstract class Relation extends Field
             'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? URL::to($this->getUri()) : null,
+            'url' => null,
         ]);
     }
 }
