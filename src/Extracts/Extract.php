@@ -2,39 +2,30 @@
 
 namespace Cone\Root\Extracts;
 
-use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Resolvable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-abstract class Extract implements Arrayable, Routable
+abstract class Extract implements Arrayable
 {
     use Authorizable;
+    use Resolvable;
 
     /**
-     * The cache store.
+     * The resolved store.
      *
      * @var array
      */
-    protected array $cache = [];
-
-    /**
-     * The URI for the field.
-     *
-     * @var string|null
-     */
-    protected ?string $uri = null;
+    protected array $resolved = [];
 
     /**
      * Make a new extract instance.
@@ -98,11 +89,11 @@ abstract class Extract implements Arrayable, Routable
      */
     public function resolveFields(Request $request): Fields
     {
-        if (! isset($this->cache['fields'])) {
-            $this->cache['fields'] = Fields::make($this->fields($request));
+        if (! isset($this->resolved['fields'])) {
+            $this->resolved['fields'] = Fields::make($this->fields($request));
         }
 
-        return $this->cache['fields'];
+        return $this->resolved['fields'];
     }
 
     /**
@@ -124,11 +115,11 @@ abstract class Extract implements Arrayable, Routable
      */
     public function resolveFilters(Request $request): Filters
     {
-        if (! isset($this->cache['filters'])) {
-            $this->cache['filters'] = Filters::make($this->filters($request));
+        if (! isset($this->resolved['filters'])) {
+            $this->resolved['filters'] = Filters::make($this->filters($request));
         }
 
-        return $this->cache['filters'];
+        return $this->resolved['filters'];
     }
 
     /**
@@ -150,11 +141,11 @@ abstract class Extract implements Arrayable, Routable
      */
     public function resolveActions(Request $request): Actions
     {
-        if (! isset($this->cache['actions'])) {
-            $this->cache['actions'] = Actions::make($this->actions($request));
+        if (! isset($this->resolved['actions'])) {
+            $this->resolved['actions'] = Actions::make($this->actions($request));
         }
 
-        return $this->cache['actions'];
+        return $this->resolved['actions'];
     }
 
     /**
@@ -176,43 +167,11 @@ abstract class Extract implements Arrayable, Routable
      */
     public function resolveWidgets(Request $request): Widgets
     {
-        if (! isset($this->cache['widgets'])) {
-            $this->cache['widgets'] = Widgets::make($this->widgets($request));
+        if (! isset($this->resolved['widgets'])) {
+            $this->resolved['widgets'] = Widgets::make($this->widgets($request));
         }
 
-        return $this->cache['widgets'];
-    }
-
-    /**
-     * Set the URI attribute.
-     *
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function setUri(?string $uri = null): void
-    {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        Route::get($this->getKey(), ExtractController::class);
+        return $this->resolved['widgets'];
     }
 
     /**
@@ -225,7 +184,7 @@ abstract class Extract implements Arrayable, Routable
         return [
            'key' => $this->getKey(),
            'name' => $this->getName(),
-           'url' => URL::to($this->getUri()),
+           'url' => null,
         ];
     }
 
@@ -241,7 +200,7 @@ abstract class Extract implements Arrayable, Routable
 
         $filters = $this->resolveFilters($request);
 
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         $query = $this->query($request, $resource->query());
 
@@ -254,10 +213,10 @@ abstract class Extract implements Arrayable, Routable
                     });
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
+            'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
-            'widgets' => $this->resolveWidgets($request)->filterVisible($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }
 }

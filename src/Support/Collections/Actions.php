@@ -17,7 +17,7 @@ class Actions extends Collection
      * @param  \Illuminate\Http\Request  $request
      * @return static
      */
-    public function filterVisible(Request $request): static
+    public function available(Request $request): static
     {
         return $this->filter(static function (Action $item) use ($request): bool {
                         return $item->visible($request);
@@ -44,25 +44,5 @@ class Actions extends Collection
         }
 
         return $action;
-    }
-
-    /**
-     * Register the action routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function routes(Request $request, ?string $uri = null): void
-    {
-        Route::prefix('actions')->group(function () use ($request, $uri): void {
-            $this->each(static function (Action $action) use ($request, $uri): void {
-                if (! App::routesAreCached()) {
-                    $action->routes($request);
-                }
-
-                $action->setUri("{$uri}/actions/{$action->getKey()}");
-            });
-        });
     }
 }

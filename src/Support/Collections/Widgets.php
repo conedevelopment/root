@@ -16,31 +16,11 @@ class Widgets extends Collection
      * @param  \Illuminate\Http\Request  $request
      * @return static
      */
-    public function filterVisible(Request $request): static
+    public function available(Request $request): static
     {
         return $this->filter(static function (Widget $widget) use ($request): bool {
                         return $widget->visible($request);
                     })
                     ->values();
-    }
-
-    /**
-     * Register the widget routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function routes(Request $request, ?string $uri = null): void
-    {
-        Route::prefix('widgets')->group(function () use ($request, $uri): void {
-            $this->each(static function (Widget $widget) use ($request, $uri): void {
-                if (! App::routesAreCached()) {
-                    $widget->routes($request);
-                }
-
-                $widget->setUri("{$uri}/widgets/{$widget->getKey()}");
-            });
-        });
     }
 }

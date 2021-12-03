@@ -24,8 +24,8 @@ trait InteractsWithResource
         }
 
         return [
-            'edit' => URL::route("root.{$resource->getKey()}.edit", $this),
-            'show' => URL::route("root.{$resource->getKey()}.show", $this),
+            'edit' => URL::route('root.resource.edit', [$resource->getKey(), $this]),
+            'show' => URL::route('root.resource.show', [$resource->getKey(), $this]),
         ];
     }
 

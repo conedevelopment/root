@@ -17,11 +17,11 @@ class BelongsToMany extends BelongsTo
     protected ?Closure $pivotFieldsResolver = null;
 
     /**
-     * The cache store.
+     * The resolved store.
      *
      * @var array
      */
-    protected array $cache = [];
+    protected array $resolved = [];
 
     /**
      * Hydrate the model.
@@ -65,17 +65,17 @@ class BelongsToMany extends BelongsTo
      */
     public function resolvePivotFields(Request $request): Fields
     {
-        if (! isset($this->cache['pivot_fields'])) {
+        if (! isset($this->resolved['pivot_fields'])) {
             $fields = Fields::make();
 
             if (! is_null($this->pivotFieldsResolver)) {
                 $fields = $fields->merge(call_user_func_array($this->pivotFieldsResolver, [$request]));
             }
 
-            $this->cache['pivot_fields'] = $fields;
+            $this->resolved['pivot_fields'] = $fields;
         }
 
-        return $this->cache['pivot_fields'];
+        return $this->resolved['pivot_fields'];
     }
 
     /**
@@ -88,7 +88,7 @@ class BelongsToMany extends BelongsTo
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'fields' => $this->resolvePivotFields($request)->filterVisible($request)->toArray(),
+            'fields' => $this->resolvePivotFields($request)->available($request)->toArray(),
             'multiple' => true,
         ]);
     }

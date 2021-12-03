@@ -18,7 +18,7 @@ class Fields extends Collection
      * @param  \Illuminate\Http\Request  $request
      * @return static
      */
-    public function filterVisible(Request $request): static
+    public function available(Request $request): static
     {
         return $this->filter(static function (Field $field) use ($request): bool {
                         return $field->visible($request);
@@ -70,27 +70,5 @@ class Fields extends Collection
                 })
                 ->filter()
                 ->toBase();
-    }
-
-    /**
-     * Register the field routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function routes(Request $request, ?string $uri = null): void
-    {
-        Route::prefix('fields')->group(function () use ($request, $uri): void {
-            $this->each(static function (Field $field) use ($request, $uri): void {
-                if ($field instanceof Routable) {
-                    if (! App::routesAreCached()) {
-                        $field->routes($request);
-                    }
-
-                    $field->setUri("{$uri}/fields/{$field->name}");
-                }
-            });
-        });
     }
 }

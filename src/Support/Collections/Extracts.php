@@ -4,10 +4,7 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Exceptions\ExtractResolutionException;
 use Cone\Root\Extracts\Extract;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 
 class Extracts extends Collection
 {
@@ -30,25 +27,5 @@ class Extracts extends Collection
         }
 
         return $extract;
-    }
-
-    /**
-     * Register the extract routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function routes(Request $request, ?string $uri = null): void
-    {
-        Route::prefix('extracts')->group(function () use ($request, $uri): void {
-            $this->each(static function (Extract $extract) use ($request, $uri): void {
-                if (! App::routesAreCached()) {
-                    $extract->routes($request);
-                }
-
-                $extract->setUri("{$uri}/extracts/{$extract->getKey()}");
-            });
-        });
     }
 }

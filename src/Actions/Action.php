@@ -2,10 +2,9 @@
 
 namespace Cone\Root\Actions;
 
-use Cone\Root\Http\Controllers\ActionController;
-use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Resolvable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,28 +12,20 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-abstract class Action implements Arrayable, Routable
+abstract class Action implements Arrayable
 {
     use Authorizable;
+    use Resolvable;
     use ResolvesVisibility;
 
     /**
-     * The cache store.
+     * The resolved store.
      *
      * @var array
      */
-    protected array $cache = [];
-
-    /**
-     * The URI for the field.
-     *
-     * @var string|null
-     */
-    protected ?string $uri = null;
+    protected array $resolved = [];
 
     /**
      * Make a new action instance.
@@ -112,43 +103,11 @@ abstract class Action implements Arrayable, Routable
      */
     public function resolveFields(Request $request): Fields
     {
-        if (! isset($this->cache['fields'])) {
-            $this->cache['fields'] = Fields::make($this->fields($request));
+        if (! isset($this->resolved['fields'])) {
+            $this->resolved['fields'] = Fields::make($this->fields($request));
         }
 
-        return $this->cache['fields'];
-    }
-
-    /**
-     * Set the URI attribute.
-     *
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function setUri(?string $uri = null): void
-    {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        Route::post($this->getKey(), ActionController::class);
+        return $this->resolved['fields'];
     }
 
     /**
@@ -161,7 +120,7 @@ abstract class Action implements Arrayable, Routable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => URL::to($this->getUri()),
+            'url' => null,
         ];
     }
 }

@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field implements Routable
+abstract class Relation extends Field
 {
     /**
      * The relation name on the model.
@@ -55,13 +54,6 @@ abstract class Relation extends Field implements Routable
      * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
-
-    /**
-     * The URI for the field.
-     *
-     * @var string|null
-     */
-    protected ?string $uri = null;
 
     /**
      * Create a new relation field instance.
@@ -221,42 +213,6 @@ abstract class Relation extends Field implements Routable
                         return [$model->getKey() => call_user_func_array($this->displayResolver, [$request, $model])];
                     })
                     ->toArray();
-    }
-
-    /**
-     * Set the URI attribute.
-     *
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function setUri(?string $uri = null): void
-    {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        if ($this->async) {
-            Route::get($this->name, static function (Request $request): void {
-                //
-            });
-        }
     }
 
     /**

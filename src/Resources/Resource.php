@@ -4,7 +4,6 @@ namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Fields\Field;
-use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
@@ -24,7 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -82,11 +80,11 @@ class Resource implements Arrayable, Item
     protected ?Closure $widgetsResolver = null;
 
     /**
-     * The cache store.
+     * The resolved store.
      *
      * @var array
      */
-    protected array $cache = [];
+    protected array $resolved = [];
 
     /**
      * Create a new resource instance.
@@ -235,17 +233,17 @@ class Resource implements Arrayable, Item
      */
     public function resolveFields(Request $request): Fields
     {
-        if (! isset($this->cache['fields'])) {
+        if (! isset($this->resolved['fields'])) {
             $fields = Fields::make($this->fields($request));
 
             if (! is_null($this->fieldsResolver)) {
                 $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
             }
 
-            $this->cache['fields'] = $fields;
+            $this->resolved['fields'] = $fields;
         }
 
-        return $this->cache['fields'];
+        return $this->resolved['fields'];
     }
 
     /**
@@ -286,17 +284,17 @@ class Resource implements Arrayable, Item
      */
     public function resolveFilters(Request $request): Filters
     {
-        if (! isset($this->cache['filters'])) {
+        if (! isset($this->resolved['filters'])) {
             $filters = Filters::make($this->filters($request));
 
             if (! is_null($this->filtersResolver)) {
                 $filters = call_user_func_array($this->filtersResolver, [$request, $filters]);
             }
 
-            $this->cache['filters'] = $filters;
+            $this->resolved['filters'] = $filters;
         }
 
-        return $this->cache['filters'];
+        return $this->resolved['filters'];
     }
 
     /**
@@ -337,17 +335,17 @@ class Resource implements Arrayable, Item
      */
     public function resolveActions(Request $request): Actions
     {
-        if (! isset($this->cache['actions'])) {
+        if (! isset($this->resolved['actions'])) {
             $actions = Actions::make($this->actions($request));
 
             if (! is_null($this->actionsResolver)) {
                 $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
             }
 
-            $this->cache['actions'] = $actions;
+            $this->resolved['actions'] = $actions;
         }
 
-        return $this->cache['actions'];
+        return $this->resolved['actions'];
     }
 
     /**
@@ -388,17 +386,17 @@ class Resource implements Arrayable, Item
      */
     public function resolveExtracts(Request $request): Extracts
     {
-        if (! isset($this->cache['extracts'])) {
+        if (! isset($this->resolved['extracts'])) {
             $extracts = Extracts::make($this->extracts($request));
 
             if (! is_null($this->extractsResolver)) {
                 $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
             }
 
-            $this->cache['extracts'] = $extracts;
+            $this->resolved['extracts'] = $extracts;
         }
 
-        return $this->cache['extracts'];
+        return $this->resolved['extracts'];
     }
 
     /**
@@ -439,17 +437,17 @@ class Resource implements Arrayable, Item
      */
     public function resolveWidgets(Request $request): Widgets
     {
-        if (! isset($this->cache['widgets'])) {
+        if (! isset($this->resolved['widgets'])) {
             $widgets = Widgets::make($this->widgets($request));
 
             if (! is_null($this->widgetsResolver)) {
                 $widgets = call_user_func_array($this->widgetsResolver, [$request, $widgets]);
             }
 
-            $this->cache['widgets'] = $widgets;
+            $this->resolved['widgets'] = $widgets;
         }
 
-        return $this->cache['widgets'];
+        return $this->resolved['widgets'];
     }
 
     /**
@@ -461,8 +459,8 @@ class Resource implements Arrayable, Item
     public function mapUrls(Request $request): array
     {
         return [
-            'create' => URL::route("root.{$this->getKey()}.create"),
-            'index' => URL::route("root.{$this->getKey()}.index"),
+            'create' => URL::route('root.resource.create', $this->getKey()),
+            'index' => URL::route('root.resource.index', $this->getKey()),
         ];
     }
 
@@ -527,14 +525,14 @@ class Resource implements Arrayable, Item
     /**
      * Get the index representation of the resource.
      *
-     * @param  \Cone\Root\Http\IndexRequest  $request
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
      * @return array
      */
     public function toIndex(IndexRequest $request): array
     {
         $filters = $this->resolveFilters($request);
 
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         $query = $filters->apply($request, $this->query())
                     ->latest()
@@ -545,23 +543,23 @@ class Resource implements Arrayable, Item
                     });
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
+            'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'extracts' => $this->resolveExtracts($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
-            'widgets' => $this->resolveWidgets($request)->filterVisible($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }
 
     /**
      * Get the create representation of the resource.
      *
-     * @param  \Cone\Root\Http\CreateRequest  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @return array
      */
     public function toCreate(CreateRequest $request): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
             'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
@@ -571,16 +569,16 @@ class Resource implements Arrayable, Item
     /**
      * Get the show representation of the resource.
      *
-     * @param  \Cone\Root\Http\ShowRequest  $request
+     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
     public function toShow(ShowRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->filterVisible($request)->toArray(),
+            'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'model' => $model->toResourceDisplay($request, $this, $fields),
         ]);
     }
@@ -588,13 +586,13 @@ class Resource implements Arrayable, Item
     /**
      * Get the edit representation of the resource.
      *
-     * @param  \Cone\Root\Http\UpdateRequest  $request
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
     public function toEdit(UpdateRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
@@ -604,12 +602,12 @@ class Resource implements Arrayable, Item
     /**
      * Handle the store request.
      *
-     * @param  \Cone\Root\Http\CreateRequest  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function handleStore(CreateRequest $request): Model
     {
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         $model = $this->getModelInstance()->newInstance();
 
@@ -629,13 +627,13 @@ class Resource implements Arrayable, Item
     /**
      * Handle the update request.
      *
-     * @param  \Cone\Root\Http\UpdateRequest  $request
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function handleUpdate(UpdateRequest $request, Model $model): Model
     {
-        $fields = $this->resolveFields($request)->filterVisible($request);
+        $fields = $this->resolveFields($request)->available($request);
 
         $request->validate(
             $fields->mapToValidate($request, $model)->toArray()
@@ -669,28 +667,12 @@ class Resource implements Arrayable, Item
     }
 
     /**
-     * Register the resource routes.
+     * Handle the resource registered event.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    public function routes(Request $request): void
+    public function registered(Request $request): void
     {
-        $key = $this->getKey();
-
-        Route::group(['resource' => $key], function () use ($request, $key): void {
-            Route::prefix($key)->group(function () use ($request, $key): void {
-                $uri = "root/{$key}";
-
-                $this->resolveFields($request)->routes($request, $uri);
-                $this->resolveExtracts($request)->routes($request, $uri);
-                $this->resolveActions($request)->routes($request, $uri);
-                $this->resolveWidgets($request)->routes($request, $uri);
-            });
-
-            if (! App::routesAreCached()) {
-                Route::resource($key, ResourceController::class);
-            }
-        });
+        //
     }
 }

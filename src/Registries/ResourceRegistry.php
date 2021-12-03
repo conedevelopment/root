@@ -3,12 +3,27 @@
 namespace Cone\Root\Registries;
 
 use Cone\Root\Exceptions\ResourceResolutionException;
+use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Interfaces\Registries\ResourceRegistry as Contract;
 use Cone\Root\Resources\Resource;
 use Illuminate\Support\Facades\App;
 
 class ResourceRegistry extends Registry implements Contract
 {
+    /**
+     * Register an item into the registry.
+     *
+     * @param  string  $key
+     * @param  \Cone\Root\Interfaces\Registries\Item  $item
+     * @return void
+     */
+    public function register(string $key, Item $item): void
+    {
+        parent::register($key, $item);
+
+        App::call([$item, 'registered']);
+    }
+
     /**
      * Resolve the resource by its key.
      *
@@ -24,17 +39,5 @@ class ResourceRegistry extends Registry implements Contract
         }
 
         return $this->get($key);
-    }
-
-    /**
-     * Register the resource routes.
-     *
-     * @return void
-     */
-    public function routes(): void
-    {
-        foreach ($this->items as $item) {
-            App::call([$item, 'routes']);
-        }
     }
 }

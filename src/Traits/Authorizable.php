@@ -33,7 +33,7 @@ trait Authorizable
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    public function resolveAuthroziation(Request $request): bool
+    public function authorized(Request $request): bool
     {
         return is_null($this->authorizationResolver)
             || call_user_func_array($this->authorizationResolver, [$request]);

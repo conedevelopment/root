@@ -2,11 +2,8 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Controllers\MediaController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 
 class Media extends MorphToMany
 {
@@ -34,21 +31,5 @@ class Media extends MorphToMany
     public function resolveOptions(Request $request, Model $model): array
     {
         return [];
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function routes(Request $request, ?string $uri = null): void
-    {
-        $this->uri = "{$uri}/{$this->name}";
-
-        if (! App::routesAreCached()) {
-            Route::apiResource($this->name, MediaController::class)->only(['index', 'store', 'destroy']);
-        }
     }
 }

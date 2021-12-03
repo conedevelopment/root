@@ -2,28 +2,21 @@
 
 namespace Cone\Root\Widgets;
 
-use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Resolvable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Renderable, Routable
+abstract class Widget implements Arrayable, Renderable
 {
     use Authorizable;
+    use Resolvable;
     use ResolvesVisibility;
-
-    /**
-     * The cache store.
-     *
-     * @var array
-     */
-    protected array $cache = [];
 
     /**
      * Indicates if the options should be lazily populated.
@@ -45,13 +38,6 @@ abstract class Widget implements Arrayable, Renderable, Routable
      * @var string
      */
     protected string $template = 'root::widget';
-
-    /**
-     * The URI for the field.
-     *
-     * @var string|null
-     */
-    protected ?string $uri = null;
 
     /**
      * Make a new widget instance.
@@ -126,42 +112,6 @@ abstract class Widget implements Arrayable, Renderable, Routable
         $this->async = $value;
 
         return $this;
-    }
-
-    /**
-     * Set the URI attribute.
-     *
-     * @param  string|null  $uri
-     * @return void
-     */
-    public function setUri(?string $uri = null): void
-    {
-        $this->uri = $uri;
-    }
-
-    /**
-     * Get the URI attribute.
-     *
-     * @return string|null
-     */
-    public function getUri(): ?string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * Register the routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function routes(Request $request): void
-    {
-        if ($this->async) {
-            Route::get($this->getKey(), function (): string {
-                return $this->render();
-            });
-        }
     }
 
     /**
