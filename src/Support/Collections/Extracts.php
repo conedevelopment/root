@@ -4,10 +4,25 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Exceptions\ExtractResolutionException;
 use Cone\Root\Extracts\Extract;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class Extracts extends Collection
 {
+    /**
+     * Filter the extracts that are available for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function available(Request $request): static
+    {
+        return $this->filter(static function (Extract $extract) use ($request): bool {
+                        return $extract->authorized($request);
+                    })
+                    ->values();
+    }
+
     /**
      * Resolve the extract by its key.
      *

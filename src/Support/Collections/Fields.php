@@ -3,17 +3,14 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
-use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 
 class Fields extends Collection
 {
     /**
-     * Filter the field that are visible for the given request and action.
+     * Filter the fields that are available for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return static
@@ -21,7 +18,7 @@ class Fields extends Collection
     public function available(Request $request): static
     {
         return $this->filter(static function (Field $field) use ($request): bool {
-                        return $field->visible($request);
+                        return $field->authorized($request) && $field->visible($request);
                     })
                     ->values();
     }

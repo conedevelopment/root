@@ -6,21 +6,19 @@ use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\ActionResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 
 class Actions extends Collection
 {
     /**
-     * Filter the actions that are visible for the given request.
+     * Filter the actions that are available for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return static
      */
     public function available(Request $request): static
     {
-        return $this->filter(static function (Action $item) use ($request): bool {
-                        return $item->visible($request);
+        return $this->filter(static function (Action $action) use ($request): bool {
+                        return $action->authorized($request) && $action->visible($request);
                     })
                     ->values();
     }

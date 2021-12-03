@@ -5,8 +5,6 @@ namespace Cone\Root\Support\Collections;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
 
 class Widgets extends Collection
 {
@@ -19,7 +17,7 @@ class Widgets extends Collection
     public function available(Request $request): static
     {
         return $this->filter(static function (Widget $widget) use ($request): bool {
-                        return $widget->visible($request);
+                        return $widget->authorized($request) && $widget->visible($request);
                     })
                     ->values();
     }
