@@ -10,6 +10,20 @@ use Illuminate\Support\Collection;
 class Filters extends Collection
 {
     /**
+     * Filter the filters that are available for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function available(Request $request): static
+    {
+        return $this->filter(static function (Filter $filter) use ($request): bool {
+                        return $filter->authorized($request);
+                    })
+                    ->values();
+    }
+
+    /**
      * Apply the filters on the query.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -25,5 +39,18 @@ class Filters extends Collection
         });
 
         return $query;
+    }
+
+    /**
+     * Call the resolved callbacks on the filters.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request): void
+    {
+        $this->each(static function (Filter $filter) use ($request): void {
+            $filter->resolved($request);
+        });
     }
 }

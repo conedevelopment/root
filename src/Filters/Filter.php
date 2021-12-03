@@ -3,6 +3,7 @@
 namespace Cone\Root\Filters;
 
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Resolvable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 abstract class Filter implements Arrayable
 {
     use Authorizable;
+    use Resolvable;
 
     /**
      * The Vue component.
