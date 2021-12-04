@@ -2,13 +2,13 @@
 
 namespace Cone\Root\Http\Controllers;
 
+use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -20,12 +20,11 @@ class ResourceController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Cone\Root\Http\Requests\IndexRequest  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function index(IndexRequest $request, string $key): Response
+    public function index(IndexRequest $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
@@ -41,12 +40,11 @@ class ResourceController extends Controller
      * Show the form for creating a new resource.
      *
      * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  string  $key
      * @return \Inertia\Response
      */
-    public function create(CreateRequest $request, string $key): Response
+    public function create(CreateRequest $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
@@ -62,35 +60,44 @@ class ResourceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  string  $key
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateRequest $request, string $key): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
 
-        $model = $resource->handleStore($request);
+        $fields = $resource->resolveFields($request)->available($request);
 
-        return Redirect::route('root.resource.show', [$key, $model]);
+        $model = $resource->getModelInstance()->newInstance();
+
+        $request->validate(
+            $fields->mapToValidate($request, $model)->toArray()
+        );
+
+        $fields->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrate($request, $model, $request->input($field->name));
+        });
+
+        $model->save();
+
+        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, string $key, string $id): Response
+    public function show(ShowRequest $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($id);
+        $model = $resource->resolveRouteBinding($request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('view', $model);
@@ -106,15 +113,13 @@ class ResourceController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, string $key, string $id): Response
+    public function edit(UpdateRequest $request): Response
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($id);
+        $model = $resource->resolveRouteBinding($request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
@@ -130,48 +135,53 @@ class ResourceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, string $key, string $id): RedirectResponse
+    public function update(UpdateRequest $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($id);
+        $model = $resource->resolveRouteBinding($request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
-        $resource->handleUpdate($request, $model);
+        $fields = $resource->resolveFields($request)->available($request);
 
-        return Redirect::route('root.resource.show', [$key, $model]);
+        $request->validate(
+            $fields->mapToValidate($request, $model)->toArray()
+        );
+
+        $fields->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrate($request, $model, $request->input($field->name));
+        });
+
+        $model->save();
+
+        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $key
-     * @param  string  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(RootRequest $request, string $key, string $id): RedirectResponse
+    public function destroy(RootRequest $request): RedirectResponse
     {
-        $resource = Resource::resolve($key);
+        $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($id);
+        $model = $resource->resolveRouteBinding($request->route('id'));
+
+        $trashed = class_uses_recursive(SoftDeletes::class) && $model->trashed();
 
         if ($resource->getPolicy()) {
-            $this->authorize(
-                (class_uses_recursive(SoftDeletes::class) && $model->trashed()) ? 'forceDelete' : 'delete',
-                $model
-            );
+            $this->authorize($trashed ? 'forceDelete' : 'delete', $model);
         }
 
-        $resource->handleDestroy($request, $model);
+        $trashed ? $model->forceDelete() : $model->delete();
 
-        return Redirect::route('root.resource.index', $key);
+        return Redirect::route('root.resource.index', $resource->getKey());
     }
 }

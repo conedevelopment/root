@@ -3,7 +3,6 @@
 namespace Cone\Root\Resources;
 
 use Closure;
-use Cone\Root\Fields\Field;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
@@ -19,7 +18,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
@@ -597,73 +595,6 @@ class Resource implements Arrayable, Item
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
         ]);
-    }
-
-    /**
-     * Handle the store request.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function handleStore(CreateRequest $request): Model
-    {
-        $fields = $this->resolveFields($request)->available($request);
-
-        $model = $this->getModelInstance()->newInstance();
-
-        $request->validate(
-            $fields->mapToValidate($request, $model)->toArray()
-        );
-
-        $fields->each(static function (Field $field) use ($request, $model): void {
-            $field->hydrate($request, $model, $request->input($field->name));
-        });
-
-        $model->save();
-
-        return $model;
-    }
-
-    /**
-     * Handle the update request.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function handleUpdate(UpdateRequest $request, Model $model): Model
-    {
-        $fields = $this->resolveFields($request)->available($request);
-
-        $request->validate(
-            $fields->mapToValidate($request, $model)->toArray()
-        );
-
-        $fields->each(static function (Field $field) use ($request, $model): void {
-            $field->hydrate($request, $model, $request->input($field->name));
-        });
-
-        $model->save();
-
-        return $model;
-    }
-
-    /**
-     * Handle the destroy request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function handleDestroy(Request $request, Model $model): Model
-    {
-        if (class_uses_recursive(SoftDeletes::class) && $model->trashed()) {
-            $model->forceDelete();
-        } else {
-            $model->delete();
-        }
-
-        return $model;
     }
 
     /**
