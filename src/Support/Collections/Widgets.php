@@ -34,7 +34,7 @@ class Widgets extends Collection
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Widget $widget) use ($request, $resource, $key): void {
-            $widget->resolved($request, $resource, sprintf('%s.widgets.%s', $key, $widget->getKey()));
+            $widget->resolved($request, $resource, sprintf('%s/widgets/%s', $key, $widget->getKey()));
         });
     }
 }

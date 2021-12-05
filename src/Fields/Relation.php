@@ -229,7 +229,7 @@ abstract class Relation extends Field
             'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? URL::to(sprintf('root/%s', str_replace('.', '/', $this->resolvedAs))) : null,
+            'url' => $this->async ? URL::to("root/{$this->resolvedAs}") : null,
         ]);
     }
 
@@ -249,7 +249,7 @@ abstract class Relation extends Field
             $resource->setReference($key, $this);
 
             if (! App::routesAreCached()) {
-                $this->routes(str_replace('.', '/', $key));
+                $this->routes($key);
             }
         }
     }

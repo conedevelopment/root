@@ -43,12 +43,17 @@ class Media extends MorphToMany
      */
     protected function routes(string $path): void
     {
+        $defaults = [
+            'resource' => explode('/', $path, 2)[0],
+            'reference' => $path,
+        ];
+
         Route::prefix('root')
             ->middleware(['root'])
-            ->group(static function () use ($path): void {
-                Route::get($path, [MediaController::class, 'index']);
-                Route::post($path, [MediaController::class, 'store']);
-                Route::delete($path, [MediaController::class, 'destroy']);
+            ->group(static function () use ($path, $defaults): void {
+                Route::get($path, [MediaController::class, 'index'])->setDefaults($defaults);
+                Route::post($path, [MediaController::class, 'store'])->setDefaults($defaults);
+                Route::delete($path, [MediaController::class, 'destroy'])->setDefaults($defaults);
             });
     }
 }

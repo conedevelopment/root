@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Extracts;
 
+use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Actions;
@@ -14,12 +15,17 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Extract implements Arrayable
 {
     use Authorizable;
-    use Resolvable;
+    use Resolvable {
+        Resolvable::resolved as defaultResolved;
+    }
 
     /**
      * The resolved store.
@@ -47,9 +53,33 @@ abstract class Extract implements Arrayable
      */
     public function resolved(Request $request, Resource $resource, string $key): void
     {
+        $this->defaultResolved($request, $resource, $key);
+
+        $resource->setReference($key, $this);
+
+        if (! App::routesAreCached()) {
+            $this->routes($key);
+        }
+
         $this->resolveFields($request)->resolved($request, $resource, $key);
         $this->resolveActions($request)->resolved($request, $resource, $key);
         $this->resolveWidgets($request)->resolved($request, $resource, $key);
+    }
+
+    /**
+     * Regsiter the routes for the extract.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function routes(string $path): void
+    {
+        Route::get("root/{$path}", ExtractController::class)
+            ->middleware('root')
+            ->setDefaults([
+                'resource' => explode('/', $path, 2)[0],
+                'reference' => $path,
+            ]);
     }
 
     /**
@@ -198,7 +228,7 @@ abstract class Extract implements Arrayable
         return [
            'key' => $this->getKey(),
            'name' => $this->getName(),
-           'url' => null,
+           'url' => URL::to("root/{$this->resolvedAs}"),
         ];
     }
 

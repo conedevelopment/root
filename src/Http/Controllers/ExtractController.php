@@ -4,19 +4,26 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Requests\ExtractRequest;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExtractController extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\ExtractRequest  $request
+     * @return \Inertia\Response
      */
-    public function __invoke(ExtractRequest $request)
+    public function __invoke(ExtractRequest $request): Response
     {
         $resource = $request->resource();
 
-        //
+        $extract = $resource->getReference($request->route('reference'));
+
+        return Inertia::render(
+            'Resource/Index',
+            $extract->toIndex($request)
+        );
     }
 }

@@ -56,7 +56,7 @@ class Actions extends Collection
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Action $action) use ($request, $resource, $key): void {
-            $action->resolved($request, $resource, sprintf('%s.actions.%s', $key, $action->getKey()));
+            $action->resolved($request, $resource, sprintf('%s/actions/%s', $key, $action->getKey()));
         });
     }
 }

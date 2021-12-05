@@ -81,7 +81,7 @@ class Fields extends Collection
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Field $field) use ($request, $resource, $key): void {
-            $field->resolved($request, $resource, sprintf('%s.fields.%s', $key, $field->getKey()));
+            $field->resolved($request, $resource, sprintf('%s/fields/%s', $key, $field->getKey()));
         });
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Actions;
 
+use Cone\Root\Http\Controllers\ActionController;
+use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
@@ -12,14 +14,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Action implements Arrayable
 {
     use Authorizable;
-    use Resolvable;
     use ResolvesVisibility;
+    use Resolvable {
+        Resolvable::resolved as defaultResolved;
+    }
 
     /**
      * The resolved store.
@@ -58,17 +65,41 @@ abstract class Action implements Arrayable
      */
     public function resolved(Request $request, Resource $resource, string $key): void
     {
+        $this->defaultResolved($request, $resource, $key);
+
+        $resource->setReference($key, $this);
+
+        if (! App::routesAreCached()) {
+            $this->routes($key);
+        }
+
         $this->resolveFields($request)->resolved($request, $resource, $key);
+    }
+
+    /**
+     * Regsiter the routes for the action.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function routes(string $path): void
+    {
+        Route::post("root/{$path}", ActionController::class)
+            ->middleware('root')
+            ->setDefaults([
+                'resource' => explode('/', $path, 2)[0],
+                'reference' => $path,
+            ]);
     }
 
     /**
      * Perform the action.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function perform(Request $request, Builder $query): RedirectResponse
+    public function perform(ActionRequest $request, Builder $query): RedirectResponse
     {
         $this->handle(
             $request,
@@ -134,7 +165,7 @@ abstract class Action implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => null,
+            'url' => URL::to("root/{$this->resolvedAs}"),
         ];
     }
 }

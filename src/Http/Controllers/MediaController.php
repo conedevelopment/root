@@ -2,12 +2,11 @@
 
 namespace Cone\Root\Http\Controllers;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
-use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,16 +15,14 @@ class MediaController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(RootRequest $request): JsonResponse
     {
-        $key = str_replace(['root/', '/'], ['', '.'], trim($request->path(), '/'));
+        $resource = $request->resource();
 
-        $resource = Resource::resolve(explode('.', $key, 2)[0]);
-
-        $field = $resource->getReference($key);
+        $field = $resource->getReference($request->route('reference'));
 
         $media = $field->resolveQuery($request, $resource->getModelInstance())
                     ->filter($request)
@@ -39,10 +36,10 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(RootRequest $request): JsonResponse
     {
         $file = $request->file('file');
 
@@ -54,7 +51,9 @@ class MediaController extends Controller
             return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 
-        $medium = (Medium::proxy())::createFrom($path);
+        $medium = $request->user()->uploads()->save(
+            (Medium::proxy())::makeFrom($path)
+        );
 
         MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
                 ->dispatch($medium, $path);
@@ -65,10 +64,10 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request): JsonResponse
+    public function destroy(RootRequest $request): JsonResponse
     {
         // $medium->delete();
 
