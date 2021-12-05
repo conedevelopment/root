@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\MediaController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class Media extends MorphToMany
 {
@@ -31,5 +33,22 @@ class Media extends MorphToMany
     public function resolveOptions(Request $request, Model $model): array
     {
         return [];
+    }
+
+    /**
+     * Regsiter the routes for the async component.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function routes(string $path): void
+    {
+        Route::prefix('root')
+            ->middleware(['root'])
+            ->group(static function () use ($path): void {
+                Route::get($path, [MediaController::class, 'index']);
+                Route::post($path, [MediaController::class, 'store']);
+                Route::delete($path, [MediaController::class, 'destroy']);
+            });
     }
 }

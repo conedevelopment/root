@@ -4,6 +4,7 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Exceptions\ExtractResolutionException;
 use Cone\Root\Extracts\Extract;
+use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -48,12 +49,14 @@ class Extracts extends Collection
      * Call the resolved callbacks on the extracts.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->each(static function (Extract $extract) use ($request): void {
-            $extract->resolved($request);
+        $this->each(static function (Extract $extract) use ($request, $resource, $key): void {
+            $extract->resolved($request, $resource, sprintf('%s.extracts.%s', $key, $extract->getKey()));
         });
     }
 }

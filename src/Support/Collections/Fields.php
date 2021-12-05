@@ -3,6 +3,7 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -73,12 +74,14 @@ class Fields extends Collection
      * Call the resolved callbacks on the fields.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->each(static function (Field $field) use ($request): void {
-            $field->resolved($request);
+        $this->each(static function (Field $field) use ($request, $resource, $key): void {
+            $field->resolved($request, $resource, sprintf('%s.fields.%s', $key, $field->getKey()));
         });
     }
 }

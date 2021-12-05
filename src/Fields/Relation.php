@@ -3,10 +3,13 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -226,7 +229,39 @@ abstract class Relation extends Field
             'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => null,
+            'url' => $this->async ? URL::to(sprintf('root/%s', str_replace('.', '/', $this->resolvedAs))) : null,
         ]);
+    }
+
+    /**
+     * Handle the event when the object is resolved.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
+     * @return void
+     */
+    public function resolved(Request $request, Resource $resource, string $key): void
+    {
+        parent::resolved($request, $resource, $key);
+
+        if ($this->async) {
+            $resource->setReference($key, $this);
+
+            if (! App::routesAreCached()) {
+                $this->routes(str_replace('.', '/', $key));
+            }
+        }
+    }
+
+    /**
+     * Regsiter the routes for the async component.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function routes(string $path): void
+    {
+        //
     }
 }

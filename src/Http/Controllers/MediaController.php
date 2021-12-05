@@ -5,6 +5,7 @@ namespace Cone\Root\Http\Controllers;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
+use Cone\Root\Support\Facades\Resource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -20,8 +21,13 @@ class MediaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $media = Medium::proxy()
-                    ->newQuery()
+        $key = str_replace(['root/', '/'], ['', '.'], trim($request->path(), '/'));
+
+        $resource = Resource::resolve(explode('.', $key, 2)[0]);
+
+        $field = $resource->getReference($key);
+
+        $media = $field->resolveQuery($request, $resource->getModelInstance())
                     ->filter($request)
                     ->latest()
                     ->cursorPaginate($request->input('per_page'))
@@ -59,12 +65,12 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Cone\Root\Models\Medium  $medium
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Medium $medium): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
-        $medium->delete();
+        // $medium->delete();
 
         return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
     }

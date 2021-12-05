@@ -15,6 +15,8 @@ class RootRequest extends Request
      */
     public function resource(): Resource
     {
-        return Registry::resolve($this->route('resource'));
+        return Registry::resolve(
+            $this->route('resource') ?: ($this->route()->action['resource'] ?? null)
+        );
     }
 }

@@ -14,6 +14,7 @@ use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\StoresReferences;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,7 @@ use Illuminate\Support\Str;
 class Resource implements Arrayable, Item
 {
     use Authorizable;
+    use StoresReferences;
 
     /**
      * The model class.
@@ -142,13 +144,7 @@ class Resource implements Arrayable, Item
      */
     public function getModelInstance(): Model
     {
-        static $instance;
-
-        if (! isset($instance)) {
-            $instance = new ($this->getModel());
-        }
-
-        return $instance;
+        return new ($this->getModel());
     }
 
     /**
@@ -528,7 +524,7 @@ class Resource implements Arrayable, Item
      */
     public function toIndex(IndexRequest $request): array
     {
-        $filters = $this->resolveFilters($request);
+        $filters = $this->resolveFilters($request)->available($request);
 
         $fields = $this->resolveFields($request)->available($request);
 
@@ -560,7 +556,7 @@ class Resource implements Arrayable, Item
         $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
-            'model' => $this->getModelInstance()->newInstance()->toResourceForm($request, $this, $fields),
+            'model' => $this->getModelInstance()->toResourceForm($request, $this, $fields),
         ]);
     }
 
@@ -600,10 +596,14 @@ class Resource implements Arrayable, Item
     /**
      * Handle the resource registered event.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return void
      */
     public function registered(Request $request): void
     {
-        //
+        $this->resolveActions($request)->resolved($request, $this, $this->getKey());
+        $this->resolveExtracts($request)->resolved($request, $this, $this->getKey());
+        $this->resolveFields($request)->resolved($request, $this, $this->getKey());
+        $this->resolveWidgets($request)->resolved($request, $this, $this->getKey());
     }
 }

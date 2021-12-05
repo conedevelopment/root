@@ -3,6 +3,7 @@
 namespace Cone\Root\Extracts;
 
 use Cone\Root\Http\Requests\ExtractRequest;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -44,11 +45,11 @@ abstract class Extract implements Arrayable
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->resolveFields($request)->resolved($request);
-        $this->resolveActions($request)->resolved($request);
-        $this->resolveWidgets($request)->resolved($request);
+        $this->resolveFields($request)->resolved($request, $resource, $key);
+        $this->resolveActions($request)->resolved($request, $resource, $key);
+        $this->resolveWidgets($request)->resolved($request, $resource, $key);
     }
 
     /**
@@ -211,7 +212,7 @@ abstract class Extract implements Arrayable
     {
         $resource = $request->resource();
 
-        $filters = $this->resolveFilters($request);
+        $filters = $this->resolveFilters($request)->available($request);
 
         $fields = $this->resolveFields($request)->available($request);
 

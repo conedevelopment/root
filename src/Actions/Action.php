@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Actions;
 
+use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Resolvable;
@@ -51,11 +52,13 @@ abstract class Action implements Arrayable
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->resolveFields($request)->resolved($request);
+        $this->resolveFields($request)->resolved($request, $resource, $key);
     }
 
     /**

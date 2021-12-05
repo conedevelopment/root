@@ -4,6 +4,7 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\ActionResolutionException;
+use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -48,12 +49,14 @@ class Actions extends Collection
      * Call the resolved callbacks on the actions.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->each(static function (Action $action) use ($request): void {
-            $action->resolved($request);
+        $this->each(static function (Action $action) use ($request, $resource, $key): void {
+            $action->resolved($request, $resource, sprintf('%s.actions.%s', $key, $action->getKey()));
         });
     }
 }

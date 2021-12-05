@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -27,11 +28,15 @@ class BelongsToMany extends BelongsTo
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->resolvePivotFields($request)->resolved($request);
+        parent::resolved($request, $resource, $key);
+
+        $this->resolvePivotFields($request)->resolved($request, $resource, $key);
     }
 
     /**
