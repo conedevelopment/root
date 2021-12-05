@@ -1,5 +1,5 @@
 <template>
-    <div v-html="template"></div>
+    <div v-html="content"></div>
 </template>
 
 <script>
@@ -7,7 +7,38 @@
         props: {
             template: {
                 type: String,
-                required: true,
+                default: null,
+            },
+            async: {
+                type: String,
+                default: null,
+            },
+            url: {
+                type: String,
+                default: null,
+            }
+        },
+
+        inheritAttrs: false,
+
+        mounted() {
+            if (this.async) {
+                this.fetch();
+            }
+        },
+
+        data() {
+            return {
+                content: this.template,
+            };
+        },
+
+        methods: {
+            fetch() {
+                this.$http.get(this.url)
+                    .then((response) => {
+                        this.content = response.data;
+                    });
             },
         },
     }

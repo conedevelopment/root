@@ -5,6 +5,7 @@ namespace Cone\Root\Extracts;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -74,12 +75,12 @@ abstract class Extract implements Arrayable
      */
     protected function routes(string $path): void
     {
-        Route::get("root/{$path}", ExtractController::class)
-            ->middleware('root')
-            ->setDefaults([
+        Root::routes(static function () use ($path): void {
+            Route::get($path, ExtractController::class)->setDefaults([
                 'resource' => explode('/', $path, 2)[0],
                 'reference' => $path,
             ]);
+        });
     }
 
     /**

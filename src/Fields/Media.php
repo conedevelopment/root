@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Controllers\MediaController;
+use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,12 +49,10 @@ class Media extends MorphToMany
             'reference' => $path,
         ];
 
-        Route::prefix('root')
-            ->middleware(['root'])
-            ->group(static function () use ($path, $defaults): void {
-                Route::get($path, [MediaController::class, 'index'])->setDefaults($defaults);
-                Route::post($path, [MediaController::class, 'store'])->setDefaults($defaults);
-                Route::delete($path, [MediaController::class, 'destroy'])->setDefaults($defaults);
-            });
+        Root::routes(static function () use ($path, $defaults): void {
+            Route::get($path, [MediaController::class, 'index'])->setDefaults($defaults);
+            Route::post($path, [MediaController::class, 'store'])->setDefaults($defaults);
+            Route::delete($path, [MediaController::class, 'destroy'])->setDefaults($defaults);
+        });
     }
 }

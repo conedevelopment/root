@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 abstract class Root
 {
@@ -53,5 +54,16 @@ abstract class Root
     public static function flush(): void
     {
         static::$callbacks = [];
+    }
+
+    /**
+     * Register the root routes.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public static function routes(Closure $callback): void
+    {
+        Route::prefix('root')->middleware(['root'])->group($callback);
     }
 }

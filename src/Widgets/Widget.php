@@ -2,6 +2,9 @@
 
 namespace Cone\Root\Widgets;
 
+use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Resolvable;
 use Cone\Root\Traits\ResolvesVisibility;
@@ -9,14 +12,18 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 abstract class Widget implements Arrayable, Renderable
 {
     use Authorizable;
-    use Resolvable;
     use ResolvesVisibility;
+    use Resolvable {
+        Resolvable::resolved as defaultResolved;
+    }
 
     /**
      * Indicates if the options should be lazily populated.
@@ -48,6 +55,47 @@ abstract class Widget implements Arrayable, Renderable
     public static function make(...$parameters): static
     {
         return new static(...$parameters);
+    }
+
+    /**
+     * Handle the event when the object is resolved.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function resolved(Request $request, Resource $resource, string $key): void
+    {
+        $this->defaultResolved($request, $resource, $key);
+
+        if ($this->async) {
+            $resource->setReference($key, $this);
+
+            if (! App::routesAreCached()) {
+                $this->routes($key);
+            }
+        }
+    }
+
+    /**
+     * Regsiter the routes for the widget.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function routes(string $path): void
+    {
+        Root::routes(static function () use ($path): void {
+            Route::get($path, static function (RootRequest $request): string {
+                $resource = $request->resource();
+
+                $widget = $resource->getReference($request->route('reference'));
+
+                return $widget->render();
+            })->setDefaults([
+                'resource' => explode('/', $path, 2)[0],
+                'reference' => $path,
+            ]);
+        });
     }
 
     /**
@@ -132,10 +180,12 @@ abstract class Widget implements Arrayable, Renderable
     public function toArray(): array
     {
         return [
+            'async' => $this->async,
             'component' => $this->getComponent(),
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->async ? null : $this->render(),
+            'url' => $this->async ? URL::to("root/{$this->resolvedAs}") : null,
         ];
     }
 }
