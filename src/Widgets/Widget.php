@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Widgets;
 
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
@@ -85,16 +85,7 @@ abstract class Widget implements Arrayable, Renderable
     protected function routes(string $path): void
     {
         Root::routes(static function () use ($path): void {
-            Route::get($path, static function (RootRequest $request): string {
-                $resource = $request->resource();
-
-                $widget = $resource->getReference($request->route('reference'));
-
-                return $widget->render();
-            })->setDefaults([
-                'resource' => explode('/', $path, 2)[0],
-                'reference' => $path,
-            ]);
+            Route::get($path, WidgetController::class)->withReference($path);
         });
     }
 

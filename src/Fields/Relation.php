@@ -3,7 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Builder;
@@ -266,16 +266,7 @@ abstract class Relation extends Field
     protected function routes(string $path): void
     {
         Root::routes(static function () use ($path): void {
-            Route::get($path, static function (RootRequest $request): string {
-                $resource = $request->resource();
-
-                $field = $resource->getReference($request->route('reference'));
-
-                return $field->resolveOptions($request, $resource->getModelInstance());
-            })->setDefaults([
-                'resource' => explode('/', $path, 2)[0],
-                'reference' => $path,
-            ]);
+            Route::get($path, RelationController::class)->withReference($path);
         });
     }
 }
