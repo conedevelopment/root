@@ -27,7 +27,7 @@ trait StoresReferences
      * Get the value of the given key.
      *
      * @param  string  $key
-     * @return void
+     * @return mixed
      */
     public function getReference(string $key): mixed
     {
