@@ -47,10 +47,10 @@ class Filters extends Collection
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string|null  $key
+     * @param  string  $key
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, ?string $key = null): void
+    public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Filter $filter) use ($request, $resource, $key): void {
             $filter->resolved($request, $resource, sprintf('%s:%s', $key, $filter->getKey()));
