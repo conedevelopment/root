@@ -18,7 +18,7 @@ class RelationController extends Controller
     {
         $resource = $request->resource();
 
-        $field = $resource->getReference($request->route('reference'));
+        $field = $resource->findResolved($request, $request->route('reference'));
 
         return new JsonResponse(
             $field->resolveOptions($request, $resource->getModelInstance())

@@ -18,7 +18,7 @@ class WidgetController extends Controller
     {
         $resource = $request->resource();
 
-        $widget = $resource->getReference($request->route('reference'));
+        $widget = $resource->findResolved($request, $request->route('reference'));
 
         return new Response($widget->render());
     }

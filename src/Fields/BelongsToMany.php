@@ -36,7 +36,7 @@ class BelongsToMany extends BelongsTo
     {
         parent::resolved($request, $resource, $key);
 
-        $this->resolvePivotFields($request)->resolved($request, $resource, $key);
+        $this->resolvePivotFields($request)->resolved($request, $resource, "{$key}.pivot_fields");
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Filters\Filter;
+use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -45,12 +46,14 @@ class Filters extends Collection
      * Call the resolved callbacks on the filters.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string|null  $key
      * @return void
      */
-    public function resolved(Request $request): void
+    public function resolved(Request $request, Resource $resource, ?string $key = null): void
     {
-        $this->each(static function (Filter $filter) use ($request): void {
-            $filter->resolved($request);
+        $this->each(static function (Filter $filter) use ($request, $resource, $key): void {
+            $filter->resolved($request, $resource, sprintf('%s:%s', $key, $filter->getKey()));
         });
     }
 }

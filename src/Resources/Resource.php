@@ -8,13 +8,13 @@ use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Interfaces\Registries\Item;
+use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\StoresReferences;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -22,13 +22,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Item
 {
     use Authorizable;
-    use StoresReferences;
 
     /**
      * The model class.
@@ -601,9 +601,49 @@ class Resource implements Arrayable, Item
      */
     public function registered(Request $request): void
     {
-        $this->resolveActions($request)->resolved($request, $this, $this->getKey());
-        $this->resolveExtracts($request)->resolved($request, $this, $this->getKey());
-        $this->resolveFields($request)->resolved($request, $this, $this->getKey());
-        $this->resolveWidgets($request)->resolved($request, $this, $this->getKey());
+        $this->resolveActions($request)->resolved($request, $this, 'actions');
+        $this->resolveExtracts($request)->resolved($request, $this, 'extracts');
+        $this->resolveFields($request)->resolved($request, $this, 'fields');
+        $this->resolveWidgets($request)->resolved($request, $this, 'widgets');
+    }
+
+    /**
+     * Register the resource routes.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public function routes(Closure $callback): void
+    {
+        Root::routes(function () use ($callback): void {
+            Route::group(['prefix' => $this->getKey(), 'resource' => $this->getKey()], $callback);
+        });
+    }
+
+    /**
+     * Find a resolved object.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @return object|null
+     */
+    public function findResolved(Request $request, string $key): ?object
+    {
+        $pairs = explode('.', $key);
+
+        return array_reduce($pairs, function (?object $current, string $pair) use ($request): ?object {
+            [$collection, $key] = explode(':', $pair);
+
+            $method = 'resolve'.Str::studly($collection);
+
+            if (is_null($current) || ! method_exists($current, $method)) {
+                return null;
+            }
+
+            return call_user_func_array([$current, $method], [$request])
+                ->first(static function (object $item) use ($key): bool {
+                    return $item->getKey() === $key;
+                });
+        }, $this);
     }
 }

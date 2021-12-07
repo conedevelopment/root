@@ -22,7 +22,7 @@ class MediaController extends Controller
     {
         $resource = $request->resource();
 
-        $field = $resource->getReference($request->route('reference'));
+        $field = $resource->findResolved($request, $request->route('reference'));
 
         $media = $field->resolveQuery($request, $resource->getModelInstance())
                     ->filter($request)

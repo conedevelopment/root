@@ -56,7 +56,7 @@ class Extracts extends Collection
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Extract $extract) use ($request, $resource, $key): void {
-            $extract->resolved($request, $resource, sprintf('%s/extracts/%s', $key, $extract->getKey()));
+            $extract->resolved($request, $resource, sprintf('%s:%s', $key, $extract->getKey()));
         });
     }
 }

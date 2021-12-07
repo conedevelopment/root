@@ -4,16 +4,14 @@ namespace Cone\Root\Widgets;
 
 use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\Resolvable;
 use Cone\Root\Traits\ResolvesVisibility;
+use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
@@ -21,9 +19,7 @@ abstract class Widget implements Arrayable, Renderable
 {
     use Authorizable;
     use ResolvesVisibility;
-    use Resolvable {
-        Resolvable::resolved as defaultResolved;
-    }
+    use ResourceRoutable;
 
     /**
      * Indicates if the options should be lazily populated.
@@ -58,35 +54,19 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
-     * Handle the event when the object is resolved.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public function resolved(Request $request, Resource $resource, string $key): void
-    {
-        $this->defaultResolved($request, $resource, $key);
-
-        if ($this->async) {
-            $resource->setReference($key, $this);
-
-            if (! App::routesAreCached()) {
-                $this->routes($key);
-            }
-        }
-    }
-
-    /**
      * Regsiter the routes for the widget.
      *
-     * @param  string  $path
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $uri
      * @return void
      */
-    protected function routes(string $path): void
+    protected function routes(Resource $resource, string $uri): void
     {
-        Root::routes(static function () use ($path): void {
-            Route::get($path, WidgetController::class)->withReference($path);
-        });
+        if ($this->async) {
+            $resource->routes(function () use ($uri): void {
+                Route::get($uri, WidgetController::class)->resolves($this->resolvedAs);
+            });
+        }
     }
 
     /**
@@ -176,7 +156,7 @@ abstract class Widget implements Arrayable, Renderable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->async ? null : $this->render(),
-            'url' => $this->async ? URL::to("root/{$this->resolvedAs}") : null,
+            'url' => $this->async ? call_user_func($this->urlResolver) : null,
         ];
     }
 }

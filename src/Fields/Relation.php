@@ -5,18 +5,18 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Root;
+use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
+    use ResourceRoutable;
+
     /**
      * The relation name on the model.
      *
@@ -232,41 +232,23 @@ abstract class Relation extends Field
             'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? URL::to("root/{$this->resolvedAs}") : null,
+            'url' => $this->async ? call_user_func($this->urlResolver) : null,
         ]);
-    }
-
-    /**
-     * Handle the event when the object is resolved.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
-     * @return void
-     */
-    public function resolved(Request $request, Resource $resource, string $key): void
-    {
-        parent::resolved($request, $resource, $key);
-
-        if ($this->async) {
-            $resource->setReference($key, $this);
-
-            if (! App::routesAreCached()) {
-                $this->routes($key);
-            }
-        }
     }
 
     /**
      * Regsiter the routes for the async component.
      *
-     * @param  string  $path
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $uri
      * @return void
      */
-    protected function routes(string $path): void
+    protected function routes(Resource $resource, string $uri): void
     {
-        Root::routes(static function () use ($path): void {
-            Route::get($path, RelationController::class)->withReference($path);
-        });
+        if ($this->async) {
+            $resource->routes(function () use ($uri): void {
+                Route::get($uri, RelationController::class)->resolves($this->resolvedAs);
+            });
+        }
     }
 }

@@ -7,25 +7,23 @@ use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\Resolvable;
 use Cone\Root\Traits\ResolvesVisibility;
+use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Action implements Arrayable
 {
     use Authorizable;
     use ResolvesVisibility;
-    use Resolvable {
-        Resolvable::resolved as defaultResolved;
+    use ResourceRoutable {
+        ResourceRoutable::resolved as defaultResolved;
     }
 
     /**
@@ -67,29 +65,21 @@ abstract class Action implements Arrayable
     {
         $this->defaultResolved($request, $resource, $key);
 
-        $resource->setReference($key, $this);
-
-        if (! App::routesAreCached()) {
-            $this->routes($key);
-        }
-
-        $this->resolveFields($request)->resolved($request, $resource, $key);
+        $this->resolveFields($request)->resolved($request, $resource, "{$key}.fields");
     }
 
     /**
      * Regsiter the routes for the action.
      *
-     * @param  string  $path
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $uri
      * @return void
      */
-    protected function routes(string $path): void
+    protected function routes(Resource $resource, string $uri): void
     {
-        Route::post("root/{$path}", ActionController::class)
-            ->middleware('root')
-            ->setDefaults([
-                'resource' => explode('/', $path, 2)[0],
-                'reference' => $path,
-            ]);
+        $resource->routes(function () use ($uri): void {
+            Route::post($uri, ActionController::class)->resolves($this->resolvedAs);
+        });
     }
 
     /**
@@ -165,7 +155,7 @@ abstract class Action implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => URL::to("root/{$this->resolvedAs}"),
+            'url' => call_user_func($this->urlResolver),
         ];
     }
 }

@@ -15,6 +15,13 @@ trait Resolvable
     protected ?string $resolvedAs = null;
 
     /**
+     * The parent resource key.
+     *
+     * @var string|null
+     */
+    protected ?string $resourceKey = null;
+
+    /**
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -25,5 +32,6 @@ trait Resolvable
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->resolvedAs = $key;
+        $this->resourceKey = $resource->getKey();
     }
 }

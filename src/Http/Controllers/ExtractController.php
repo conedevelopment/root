@@ -19,7 +19,7 @@ class ExtractController extends Controller
     {
         $resource = $request->resource();
 
-        $extract = $resource->getReference($request->route('reference'));
+        $extract = $resource->findResolved($request, $request->route('reference'));
 
         return Inertia::render(
             'Resource/Index',

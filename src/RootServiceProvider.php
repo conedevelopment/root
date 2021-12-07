@@ -164,11 +164,8 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerMacros(): void
     {
-        Route::macro('withReference', function (string $path): Route {
-            return $this->setDefaults([
-                'resource' => explode('/', $path, 2)[0],
-                'reference' => $path,
-            ]);
+        Route::macro('resolves', function (string $key): Route {
+            return $this->setDefaults(['reference' => $key]);
         });
     }
 }

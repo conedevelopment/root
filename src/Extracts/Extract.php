@@ -5,27 +5,24 @@ namespace Cone\Root\Extracts;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\Resolvable;
+use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Extract implements Arrayable
 {
     use Authorizable;
-    use Resolvable {
-        Resolvable::resolved as defaultResolved;
+    use ResourceRoutable {
+        ResourceRoutable::resolved as defaultResolved;
     }
 
     /**
@@ -56,30 +53,22 @@ abstract class Extract implements Arrayable
     {
         $this->defaultResolved($request, $resource, $key);
 
-        $resource->setReference($key, $this);
-
-        if (! App::routesAreCached()) {
-            $this->routes($key);
-        }
-
-        $this->resolveFields($request)->resolved($request, $resource, $key);
-        $this->resolveActions($request)->resolved($request, $resource, $key);
-        $this->resolveWidgets($request)->resolved($request, $resource, $key);
+        $this->resolveFields($request)->resolved($request, $resource, "{$key}.fields");
+        $this->resolveActions($request)->resolved($request, $resource, "{$key}.actions");
+        $this->resolveWidgets($request)->resolved($request, $resource, "{$key}.widgets");
     }
 
     /**
      * Regsiter the routes for the extract.
      *
-     * @param  string  $path
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $uri
      * @return void
      */
-    protected function routes(string $path): void
+    protected function routes(Resource $resource, string $uri): void
     {
-        Root::routes(static function () use ($path): void {
-            Route::get($path, ExtractController::class)->setDefaults([
-                'resource' => explode('/', $path, 2)[0],
-                'reference' => $path,
-            ]);
+        $resource->routes(function () use ($uri): void {
+            Route::get($uri, ExtractController::class)->resolves($this->resolvedAs);
         });
     }
 
@@ -229,7 +218,7 @@ abstract class Extract implements Arrayable
         return [
            'key' => $this->getKey(),
            'name' => $this->getName(),
-           'url' => URL::to("root/{$this->resolvedAs}"),
+           'url' => call_user_func($this->urlResolver),
         ];
     }
 

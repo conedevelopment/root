@@ -28,13 +28,13 @@ class Widgets extends Collection
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  string|null  $key
      * @return void
      */
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Widget $widget) use ($request, $resource, $key): void {
-            $widget->resolved($request, $resource, sprintf('%s/widgets/%s', $key, $widget->getKey()));
+            $widget->resolved($request, $resource, sprintf('%s:%s', $key, $widget->getKey()));
         });
     }
 }
