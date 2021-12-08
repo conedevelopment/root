@@ -1,14 +1,21 @@
 import { createApp, resolveComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import Root from './Plugins/Root';
+import Layout from './Components/Layout';
 
 createInertiaApp({
     resolve: (name) => {
+        let page;
+
         try {
-            return require(`./Pages/${name}`);
+            page = require(`./Pages/${name}`).default;
         } catch (error) {
-            return resolveComponent(name);
+            page = resolveComponent(name);
         }
+
+        page.resolveDefaultLayout = () => Layout;
+
+        return page;
     },
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });

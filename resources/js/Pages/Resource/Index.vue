@@ -55,5 +55,9 @@
                 default: () => [],
             },
         },
+
+        layout: function (h, page) {
+            return h(this.resolveDefaultLayout(), () => page);
+        },
     }
 </script>

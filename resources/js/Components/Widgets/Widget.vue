@@ -10,8 +10,8 @@
                 default: null,
             },
             async: {
-                type: String,
-                default: null,
+                type: Boolean,
+                default: false,
             },
             url: {
                 type: String,
