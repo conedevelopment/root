@@ -75,10 +75,10 @@ class WidgetMake extends GeneratorCommand
     protected function replaceAsync(string $class): string
     {
         if ($this->option('async')) {
-            $class = str_replace(['{{async}}', '{{/async}}'], '', $class);
+            $class = str_replace([PHP_EOL.'{{async}}', '{{/async}}'], '', $class);
         }
 
-        return preg_replace('/{{async}}.*{{\/async}}/s', '', $class);
+        return preg_replace('/\n{{async}}.*{{\/async}}/s', '', $class);
     }
 
     /**
@@ -110,13 +110,13 @@ class WidgetMake extends GeneratorCommand
     {
         if ($template = $this->option('template')) {
             return str_replace(
-                ['{{template}}', '{{/template}}', 'DummyTemplate'],
+                [PHP_EOL.'{{template}}', '{{/template}}', 'DummyTemplate'],
                 ['', '', $template],
                 $class
             );
         }
 
-        return preg_replace('/{{template}}.*{{\/template}}/s', '', $class);
+        return preg_replace('/\n{{template}}.*{{\/template}}/s', '', $class);
     }
 
     /**

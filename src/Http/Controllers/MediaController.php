@@ -8,6 +8,7 @@ use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
@@ -23,6 +24,8 @@ class MediaController extends Controller
         $resource = $request->resource();
 
         $field = $resource->findResolved($request, $request->route('reference'));
+
+        Gate::allowIf($field->authorized($request));
 
         $media = $field->resolveQuery($request, $resource->getModelInstance())
                     ->filter($request)
