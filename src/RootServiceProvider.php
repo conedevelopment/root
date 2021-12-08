@@ -89,7 +89,7 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerAuth(): void
     {
-        Gate::define('viewRoot', static function (Models\User $user): bool {
+        Gate::define('viewRoot', static function (): bool {
             return true;
         });
     }
@@ -165,7 +165,7 @@ class RootServiceProvider extends ServiceProvider
     protected function registerMacros(): void
     {
         Route::macro('resolves', function (string $key): Route {
-            return $this->setDefaults(['reference' => $key]);
+            return $this->defaults('reference', $key);
         });
     }
 }

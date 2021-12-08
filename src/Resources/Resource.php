@@ -495,7 +495,7 @@ class Resource implements Arrayable, Item
 
         return array_reduce($abilities['global'], function (array $stack, $ability) use ($request, $policy): array {
             return array_merge($stack, [
-                $ability => is_null($policy) || $request->user()?->can($ability, $this->getModel()),
+                $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
             ]);
         }, []);
     }

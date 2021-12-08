@@ -574,7 +574,6 @@ class Field implements Arrayable
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $action
      * @return array
      */
     public function toValidate(Request $request, Model $model): array

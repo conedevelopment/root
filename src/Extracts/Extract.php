@@ -47,6 +47,8 @@ abstract class Extract implements Arrayable
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $key
      * @return void
      */
     public function resolved(Request $request, Resource $resource, string $key): void
