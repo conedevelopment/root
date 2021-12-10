@@ -1,7 +1,7 @@
 @extends('root::auth.layout')
 
 {{-- Title --}}
-@section('title', __('Bejelentkezés'))
+@section('title', __('Login'))
 
 {{-- Content --}}
 @section('content')
