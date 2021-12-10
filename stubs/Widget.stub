@@ -17,7 +17,7 @@ class DummyClass extends Widget
 {{/component}}
 {{template}}
     /**
-     * The Blade templte.
+     * The Blade template.
      *
      * @var string
      */

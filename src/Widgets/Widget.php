@@ -36,7 +36,7 @@ abstract class Widget implements Arrayable, Renderable
     protected string $component = 'Widget';
 
     /**
-     * The Blade templte.
+     * The Blade template.
      *
      * @var string
      */
