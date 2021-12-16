@@ -6,7 +6,7 @@
                 {{ action.name }}
             </option>
         </select>
-        <button type="submit" :disabled="form.processing || _action === null || models.length === 0">
+        <button type="submit" :disabled="form.processing || _action === null || models.length === 0">
             Run
         </button>
     </form>

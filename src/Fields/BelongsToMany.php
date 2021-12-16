@@ -28,7 +28,7 @@ class BelongsToMany extends BelongsTo
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Resources\Resource  $resource
      * @param  string  $key
      * @return void
      */

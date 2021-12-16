@@ -22,7 +22,7 @@
 
         computed: {
             columns() {
-                const fields = this.$parent.query.data?.[0]?.fields || [];
+                const fields = this.$parent.query.data?.[0]?.fields || [];
 
                 return fields.map((field) => {
                     return {
@@ -35,7 +35,7 @@
             selected: {
                 get() {
                     return this.$parent.selection.length > 0
-                        && this.$parent.selection.length === this.$parent.query.data.length;
+                        && this.$parent.selection.length === this.$parent.query.data.length;
                 },
                 set(value) {
                     value ? this.selectAll() : this.clearSelection();
@@ -43,7 +43,7 @@
             },
             indeterminate() {
                 return this.$parent.selection.length > 0
-                    && this.$parent.selection.length < this.$parent.query.data.length;
+                    && this.$parent.selection.length < this.$parent.query.data.length;
             },
         },
 
