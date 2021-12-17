@@ -118,6 +118,8 @@ abstract class Relation extends Field
     {
         $this->async = $value;
 
+        $this->component = $value ? 'AsyncSelect' : 'Select';
+
         return $this;
     }
 

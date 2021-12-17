@@ -1,4 +1,5 @@
 import { h, resolveComponent } from 'vue';
+import AsyncSelect from './AsyncSelect';
 import Editor from './Editor';
 import Input from './Input';
 import Select from './Select';
@@ -8,6 +9,7 @@ export default {
     name: 'FormHandler',
 
     components: {
+        AsyncSelect,
         Editor,
         Input,
         Select,
@@ -39,14 +41,8 @@ export default {
             modelValue: this.modelValue,
             required: ! [undefined, 'false'].includes(this.$attrs.required),
             'onUpdate:modelValue': (value) => {
-                this.update(value);
+                this.$emit('update:modelValue', value);
             },
         }, this.$slots);
-    },
-
-    methods: {
-        update(value) {
-            this.$emit('update:modelValue', value);
-        },
     },
 }

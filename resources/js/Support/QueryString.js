@@ -3,7 +3,7 @@ export default class QueryString
     /**
      * Create a new query string instance.
      *
-     * @param  {stirng|null}  search
+     * @param  {string|null}  search
      * @param  {object}  defaults
      * @return {void}
      */
