@@ -216,7 +216,9 @@ abstract class Relation extends Field
         return $this->resolveQuery($request, $model)
                     ->get()
                     ->mapWithKeys(function (Model $model) use ($request): array {
-                        return [$model->getKey() => call_user_func_array($this->displayResolver, [$request, $model])];
+                        return [
+                            $model->getKey() => call_user_func_array($this->displayResolver, [$request, $model]),
+                        ];
                     })
                     ->toArray();
     }
@@ -231,7 +233,6 @@ abstract class Relation extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
             'url' => $this->async ? call_user_func($this->urlResolver) : null,

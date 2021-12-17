@@ -17,8 +17,9 @@ class ColorTest extends TestCase
     }
 
     /** @test */
-    public function a_color_field_has_color_type()
+    public function a_color_field_has_defaults()
     {
         $this->assertSame('color', $this->field->type);
+        $this->assertSame('Input', $this->field->getComponent());
     }
 }

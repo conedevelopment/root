@@ -6,7 +6,6 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Models\User;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
 
 class FieldTest extends TestCase
