@@ -16,7 +16,7 @@ class Select extends Field
     protected string $component = 'Select';
 
     /**
-     * The option resolver callback.
+     * The options resolver callback.
      *
      * @var \Closure|null
      */
