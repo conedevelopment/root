@@ -138,7 +138,7 @@ abstract class Registry implements Arrayable, ArrayAccess, IteratorAggregate
      */
     public function toArray(): array
     {
-        return array_map(static function (object $item): mixed {
+        return array_map(static function (Item $item): mixed {
             return $item instanceof Arrayable ? $item->toArray() : $item;
         }, $this->items);
     }
