@@ -10,7 +10,7 @@ use Mockery as m;
 
 class BelongsToTest extends TestCase
 {
-    protected $field, $builder;
+    protected $field;
 
     public function setUp(): void
     {
@@ -31,14 +31,14 @@ class BelongsToTest extends TestCase
         $post = new Post();
 
         $this->assertSame(
-            (new Author())->newQuery()->get()->pluck('id', 'id')->toArray(),
+            Author::query()->get()->pluck('id', 'id')->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
 
         $this->field->display('name');
 
         $this->assertSame(
-            (new Author())->newQuery()->get()->pluck('name', 'id')->toArray(),
+            Author::query()->get()->pluck('name', 'id')->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
     }
