@@ -3,6 +3,8 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\HasMany;
+use Cone\Root\Tests\Author;
+use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
 class HasManyTest extends TestCase
@@ -25,6 +27,18 @@ class HasManyTest extends TestCase
     /** @test */
     public function a_has_many_field_has_options()
     {
-        $this->assertTrue(true);
+        $post = new Author();
+
+        $this->assertSame(
+            Post::query()->get()->pluck('id', 'id')->toArray(),
+            $this->field->resolveOptions($this->app['request'], $post)
+        );
+
+        $this->field->display('title');
+
+        $this->assertSame(
+            Post::query()->get()->pluck('title', 'id')->toArray(),
+            $this->field->resolveOptions($this->app['request'], $post)
+        );
     }
 }

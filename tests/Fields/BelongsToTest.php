@@ -3,10 +3,9 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\BelongsTo;
+use Cone\Root\Tests\Author;
+use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Mockery as m;
 
 class BelongsToTest extends TestCase
 {
@@ -41,34 +40,5 @@ class BelongsToTest extends TestCase
             Author::query()->get()->pluck('name', 'id')->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
-    }
-}
-
-class Author extends Model
-{
-    protected $fillable = ['id', 'name'];
-
-    public function newQuery()
-    {
-        $builder = m::mock(Builder::class);
-
-        $builder->shouldReceive('where')->with('authors.id', '=', 'foreign.value');
-        $builder->shouldReceive('getModel')->andReturn($this);
-        $builder->shouldReceive('get')->andReturn(collect([
-            new static(['id' => 1, 'name' => 'Author One']),
-            new static(['id' => 2, 'name' => 'Author Two']),
-        ]));
-
-        return $builder;
-    }
-}
-
-class Post extends Model
-{
-    public $foreignKey = 'foreign.value';
-
-    public function author()
-    {
-        return $this->belongsTo(Author::class, 'foreignKey');
     }
 }
