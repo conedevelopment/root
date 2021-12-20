@@ -16,7 +16,7 @@ class Author extends Model
         $builder = m::mock(Builder::class);
 
         $builder->shouldReceive('getModel')->andReturn($this);
-        $builder->shouldReceive('get')->andReturn(static::results());
+        $builder->shouldReceive('get')->andReturn($this->results());
 
         return $builder;
     }
@@ -28,12 +28,11 @@ class Author extends Model
         $builder->shouldReceive('where')->with('posts.author_id', '=', null);
         $builder->shouldReceive('whereNotNull');
         $builder->shouldReceive('getModel')->andReturn(new Post());
-        $builder->shouldReceive('get')->andReturn(Post::results());
 
         return new HasMany($builder, $this, 'posts.author_id', 'id');
     }
 
-    public static function results()
+    protected function results()
     {
         return collect([
             new static(['id' => 1, 'name' => 'Author One']),

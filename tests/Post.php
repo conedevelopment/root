@@ -18,7 +18,7 @@ class Post extends Model
         $builder = m::mock(Builder::class);
 
         $builder->shouldReceive('getModel')->andReturn($this);
-        $builder->shouldReceive('get')->andReturn(static::results());
+        $builder->shouldReceive('get')->andReturn($this->results());
 
         return $builder;
     }
@@ -29,12 +29,11 @@ class Post extends Model
 
         $builder->shouldReceive('where')->with('authors.id', '=', 'foreign.value');
         $builder->shouldReceive('getModel')->andReturn(new Author());
-        $builder->shouldReceive('get')->andReturn(Author::results());
 
         return new BelongsTo($builder, $this, 'foreignKey', 'id', 'author');
     }
 
-    public static function results()
+    protected function results()
     {
         return collect([
             new static(['id' => 1, 'title' => 'Post One']),
