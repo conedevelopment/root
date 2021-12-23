@@ -33,6 +33,12 @@ class BelongsToTest extends TestCase
             Author::query()->get()->pluck('id', 'id')->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
+    }
+
+    /** @test */
+    public function a_belongs_to_field_has_customizable_options()
+    {
+        $post = new Post();
 
         $this->field->display('name');
 
@@ -40,5 +46,24 @@ class BelongsToTest extends TestCase
             Author::query()->get()->pluck('name', 'id')->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
+
+        $closure = function ($request, $model) {
+            return strtoupper($model->name);
+        };
+
+        $this->field->display($closure);
+
+        $this->assertSame(
+            Author::query()->get()->mapWithKeys(function ($model) use ($closure) {
+                return [$model->id => $closure($this->app['request'], $model)];
+            })->toArray(),
+            $this->field->resolveOptions($this->app['request'], $post)
+        );
+    }
+
+    /** @test */
+    public function a_belongs_to_field_has_customizable_query()
+    {
+        $this->assertTrue(true);
     }
 }
