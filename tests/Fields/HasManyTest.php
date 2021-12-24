@@ -27,18 +27,11 @@ class HasManyTest extends TestCase
     /** @test */
     public function a_has_many_field_has_options()
     {
-        $post = new Author();
+        $author = new Author();
 
         $this->assertSame(
             Post::query()->get()->pluck('id', 'id')->toArray(),
-            $this->field->resolveOptions($this->app['request'], $post)
-        );
-
-        $this->field->display('title');
-
-        $this->assertSame(
-            Post::query()->get()->pluck('title', 'id')->toArray(),
-            $this->field->resolveOptions($this->app['request'], $post)
+            $this->field->resolveOptions($this->app['request'], $author)
         );
     }
 

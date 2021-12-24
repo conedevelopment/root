@@ -3,7 +3,7 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Select;
-use Cone\Root\Models\User;
+use Cone\Root\Tests\Author;
 use Cone\Root\Tests\TestCase;
 
 class SelectTest extends TestCase
@@ -26,13 +26,15 @@ class SelectTest extends TestCase
     /** @test */
     public function a_select_field_has_options()
     {
-        $this->assertEmpty($this->field->resolveOptions($this->app['request'], new User()));
+        $author = new Author();
+
+        $this->assertEmpty($this->field->resolveOptions($this->app['request'], $author));
 
         $this->field->options(['key' => 'value']);
 
         $this->assertSame(
             ['key' => 'value'],
-            $this->field->resolveOptions($this->app['request'], new User())
+            $this->field->resolveOptions($this->app['request'], $author)
         );
     }
 }
