@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab8122220dae99307355dd87a16f72aa",
+    "content-hash": "9fce077ec089fb2d4b82a1131bd64a5e",
     "packages": [
         {
             "name": "brick/math",
@@ -573,16 +573,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.76.2",
+            "version": "v8.77.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "c67acfdc968f487b6235435080eef62a7e2ed055"
+                "reference": "994dbac5c6da856c77c81a411cff5b7d31519ca8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/c67acfdc968f487b6235435080eef62a7e2ed055",
-                "reference": "c67acfdc968f487b6235435080eef62a7e2ed055",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/994dbac5c6da856c77c81a411cff5b7d31519ca8",
+                "reference": "994dbac5c6da856c77c81a411cff5b7d31519ca8",
                 "shasum": ""
             },
             "require": {
@@ -600,7 +600,7 @@
                 "opis/closure": "^3.6",
                 "php": "^7.3|^8.0",
                 "psr/container": "^1.0",
-                "psr/log": "^1.0 || ^2.0",
+                "psr/log": "^1.0|^2.0",
                 "psr/simple-cache": "^1.0",
                 "ramsey/uuid": "^4.2.2",
                 "swiftmailer/swiftmailer": "^6.3",
@@ -741,7 +741,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-12-15T14:02:14+00:00"
+            "time": "2021-12-21T20:22:29+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -5161,22 +5161,22 @@
         },
         {
             "name": "laravel/laravel",
-            "version": "v8.6.9",
+            "version": "v8.6.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/laravel.git",
-                "reference": "7e78e26c7ce45fe1716b82ecbecd6a808a0e7f8b"
+                "reference": "56a73db2e34f5aa8befffcce40aaaa92e2d7393c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/7e78e26c7ce45fe1716b82ecbecd6a808a0e7f8b",
-                "reference": "7e78e26c7ce45fe1716b82ecbecd6a808a0e7f8b",
+                "url": "https://api.github.com/repos/laravel/laravel/zipball/56a73db2e34f5aa8befffcce40aaaa92e2d7393c",
+                "reference": "56a73db2e34f5aa8befffcce40aaaa92e2d7393c",
                 "shasum": ""
             },
             "require": {
                 "fruitcake/laravel-cors": "^2.0",
                 "guzzlehttp/guzzle": "^7.0.1",
-                "laravel/framework": "^8.65",
+                "laravel/framework": "^8.75",
                 "laravel/sanctum": "^2.11",
                 "laravel/tinker": "^2.5",
                 "php": "^7.3|^8.0"
@@ -5212,9 +5212,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/laravel/tree/v8.6.9"
+                "source": "https://github.com/laravel/laravel/tree/v8.6.10"
             },
-            "time": "2021-12-07T16:10:22+00:00"
+            "time": "2021-12-22T10:07:28+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -7595,7 +7595,7 @@
     "platform": {
         "ext-gd": "*",
         "ext-exif": "*",
-        "php": "^7.4 | ^8.0"
+        "php": "^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
