@@ -9,7 +9,8 @@
         "prod": "yarn run production",
         "production": "mix --production",
         "test": "jest",
-        "lint": "eslint resources/js/"
+        "lint": "eslint resources/js/",
+        "lint-sass": "stylelint resources/sass/"
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.10.1",
