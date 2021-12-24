@@ -8,6 +8,7 @@ use Cone\Root\Resources\Resource;
 use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,17 @@ abstract class Relation extends Field
         $this->relation = $relation ?: Str::camel($label);
 
         $this->display('id');
+    }
+
+    /**
+     * Get the relation instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function getRelation(Model $model): EloquentRelation
+    {
+        return call_user_func([$model, $this->relation]);
     }
 
     /**
@@ -193,9 +205,7 @@ abstract class Relation extends Field
      */
     public function resolveQuery(Request $request, Model $model): Builder
     {
-        $relation = call_user_func([$model, $this->relation]);
-
-        $query = $relation->getModel()->newQuery();
+        $query = $this->getRelation($model)->getModel()->newQuery();
 
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$request, $query]);

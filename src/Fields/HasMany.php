@@ -17,7 +17,7 @@ class HasMany extends Relation
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $relation = call_user_func([$model, $this->relation]);
+        $relation = $this->getRelation($model);
 
         $models = $relation->getRelated()->newQuery()->findMany((array) $value);
 

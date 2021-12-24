@@ -50,7 +50,7 @@ class BelongsToMany extends BelongsTo
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $model->saved(function (Model $model) use ($value): void {
-            call_user_func([$model, $this->relation])->sync($value);
+            $this->getRelation($model)->sync($value);
         });
     }
 

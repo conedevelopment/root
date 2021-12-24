@@ -44,6 +44,12 @@ class MediaController extends Controller
      */
     public function store(RootRequest $request): JsonResponse
     {
+        $resource = $request->resource();
+
+        $field = $resource->findResolved($request, $request->route('reference'));
+
+        Gate::allowIf($field->authorized($request));
+
         $file = $request->file('file');
 
         $path = Storage::disk('local')->path("chunks/{$file->getClientOriginalName()}");
