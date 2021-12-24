@@ -5,7 +5,7 @@ namespace Cone\Root\Tests;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Mockery as m;
+use Mockery;
 
 class Author extends Model
 {
@@ -13,7 +13,9 @@ class Author extends Model
 
     public function newQuery()
     {
-        $builder = m::mock(Builder::class);
+        $builder = Mockery::mock(Builder::class)->makePartial();
+
+        $builder->setQuery(parent::newQuery()->getQuery());
 
         $builder->shouldReceive('getModel')->andReturn($this);
         $builder->shouldReceive('get')->andReturn($this->results());
@@ -23,7 +25,7 @@ class Author extends Model
 
     public function posts()
     {
-        $builder = m::mock(Builder::class);
+        $builder = Mockery::mock(Builder::class)->makePartial();
 
         $builder->shouldReceive('where')->with('posts.author_id', '=', null);
         $builder->shouldReceive('whereNotNull');

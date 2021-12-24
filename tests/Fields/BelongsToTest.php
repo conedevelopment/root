@@ -64,6 +64,20 @@ class BelongsToTest extends TestCase
     /** @test */
     public function a_belongs_to_field_has_customizable_query()
     {
-        $this->assertTrue(true);
+        $post = new Post();
+
+        $this->assertSame(
+            'select * from "authors"',
+            $this->field->resolveQuery($this->app['request'], $post)->getQuery()->toSql()
+        );
+
+        $this->field->withQuery(function ($request, $query) {
+            return $query->where('authors.name', 'Foo');
+        });
+
+        $query = $this->field->resolveQuery($this->app['request'], $post)->getQuery();
+
+        $this->assertSame('select * from "authors" where "authors"."name" = ?', $query->toSql());
+        $this->assertSame(['Foo'], $query->getBindings());
     }
 }
