@@ -25,7 +25,7 @@ class DummyClass extends Widget
 {{/template}}
 {{async}}
     /**
-     * Indicates if the options should be lazily populated.
+     * Indicates if the widget is async.
      *
      * @var bool
      */
