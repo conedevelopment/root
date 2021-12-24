@@ -7,10 +7,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Middleware
+    | Root Path
     |--------------------------------------------------------------------------
     |
-    | You can specify the middleware for the Root routes.
+    | This is the URI path where Root will be accessible from. Feel free
+    | to change this path to anything you like.
+    |
+    */
+
+    'path' => env('ROOT_PATH', 'root'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Root Route Middleware
+    |--------------------------------------------------------------------------
+    |
+    | These middleware will get attached onto each Root route, giving you
+    | the chance to add your own middleware to this list or change any
+    | of the existing middleware.
     |
     */
 
