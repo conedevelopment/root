@@ -23,7 +23,7 @@ abstract class Root
     protected static array $callbacks = [];
 
     /**
-     * Run Press and call the registered callbacks.
+     * Run Root and call the registered callbacks.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return void

@@ -40,7 +40,7 @@ export default class Cookie
     /**
      * Determine if the given cookie exists.
      *
-     * @param  {stirng}  key
+     * @param  {string}  key
      * @return {bool}
      */
     isset(key)

@@ -14,6 +14,11 @@ trait ResourceRoutable
         Resolvable::resolved as baseResolved;
     }
 
+    /**
+     * The URL resolver callback.
+     *
+     * @var \Closure|null
+     */
     protected ?Closure $urlResolver = null;
 
     /**
