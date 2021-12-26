@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
@@ -78,9 +77,7 @@ class ResourceController extends Controller
             $fields->mapToValidate($request, $model)->toArray()
         );
 
-        $fields->each(static function (Field $field) use ($request, $model): void {
-            $field->hydrate($request, $model, $request->input($field->name));
-        });
+        $fields->each->persist($request, $model);
 
         $model->save();
 
@@ -153,9 +150,7 @@ class ResourceController extends Controller
             $fields->mapToValidate($request, $model)->toArray()
         );
 
-        $fields->each(static function (Field $field) use ($request, $model): void {
-            $field->hydrate($request, $model, $request->input($field->name));
-        });
+        $fields->each->persist($request, $model);
 
         $model->save();
 

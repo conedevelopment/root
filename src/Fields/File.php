@@ -15,6 +15,18 @@ class File extends Field
     protected string $component = 'File';
 
     /**
+     * Get the value for hydrating the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function getValueForHydrate(Request $request, Model $model): mixed
+    {
+        return $request->file($this->name);
+    }
+
+    /**
      * Hydrate the model.
      *
      * @param  \Illuminate\Http\Request  $request

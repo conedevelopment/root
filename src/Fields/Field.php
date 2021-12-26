@@ -422,6 +422,32 @@ class Field implements Arrayable
     }
 
     /**
+     * Persist the request value on the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function persist(Request $request, Model $model): void
+    {
+        $this->hydrate(
+            $request, $model, $this->getValueForHydrate($request, $model)
+        );
+    }
+
+    /**
+     * Get the value for hydrating the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function getValueForHydrate(Request $request, Model $model): mixed
+    {
+        return $request->input($this->name);
+    }
+
+    /**
      * Hydrate the model.
      *
      * @param  \Illuminate\Http\Request  $request
