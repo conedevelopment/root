@@ -39,9 +39,9 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
-      - name: Upgrade to Laravel 9
-        if: matrix.laravel == '9.0'
-        run: composer require --no-interaction --no-progress --${{ matrix.stability }} --prefer-dist --with-all-dependencies 'laravel/framework:dev-master as 9.0.0' laravel/laravel:dev-master inertiajs/inertia-laravel:dev-laravel-9
+      # - name: Upgrade to Laravel 9
+      #   if: matrix.laravel == '9.0'
+      #   run: composer require --no-interaction --no-progress --${{ matrix.stability }} --prefer-dist --with-all-dependencies 'laravel/framework:dev-master as 9.0.0' laravel/laravel:dev-master inertiajs/inertia-laravel:dev-laravel-9
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
