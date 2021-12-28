@@ -29,6 +29,6 @@ trait HasMedia
      */
     public function media(): MorphToMany
     {
-        return $this->morphToMany(Medium::class, 'mediable', 'root_mediables');
+        return $this->morphToMany(Medium::getProxiedClass(), 'mediable', 'root_mediables');
     }
 }

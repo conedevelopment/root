@@ -102,20 +102,20 @@ abstract class Relation extends Field
     }
 
     /**
-     * Set the display key name.
+     * Set the display resolver.
      *
-     * @param  string  $value
+     * @param  \Closure|string  $callback
      * @return $this
      */
-    public function display(string|Closure $value): static
+    public function display(Closure|string $callback): static
     {
-        if (is_string($value)) {
-            $value = static function (Request $request, Model $model) use ($value) {
-                return $model->getAttribute($value);
+        if (is_string($callback)) {
+            $callback = static function (Request $request, Model $model) use ($callback) {
+                return $model->getAttribute($callback);
             };
         }
 
-        $this->displayResolver = $value;
+        $this->displayResolver = $callback;
 
         return $this;
     }
@@ -205,7 +205,7 @@ abstract class Relation extends Field
      */
     public function resolveQuery(Request $request, Model $model): Builder
     {
-        $query = $this->getRelation($model)->getModel()->newQuery();
+        $query = $this->getRelation($model)->getRelated()->newQuery();
 
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$request, $query]);
