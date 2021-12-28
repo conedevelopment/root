@@ -25,6 +25,21 @@ class File extends Media
     protected string $component = 'File';
 
     /**
+     * Create a new file field instance.
+     *
+     * @param  string  $label
+     * @param  string|null  $name
+     * @param  string|null  $relation
+     * @return void
+     */
+    public function __construct(string $label, ?string $name = null, ?string $relation = null)
+    {
+        parent::__construct($label, $name, $relation);
+
+        $this->rules = array_merge($this->rules, ['*' => ['file']]);
+    }
+
+    /**
      * Persist the request value on the model.
      *
      * @param  \Illuminate\Http\Request  $request

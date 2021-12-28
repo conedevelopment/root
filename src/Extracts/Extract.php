@@ -238,9 +238,7 @@ abstract class Extract implements Arrayable
 
         $fields = $this->resolveFields($request)->available($request);
 
-        $query = $this->query($request, $resource->query());
-
-        $query = $filters->apply($request, $query)
+        $query = $filters->apply($request, $this->query($request, $resource->query()))
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()

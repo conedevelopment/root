@@ -465,7 +465,7 @@ class Field implements Arrayable
     /**
      * Set the validation rules.
      *
-     * @param  array|\Closure  $rule
+     * @param  array|\Closure  $rules
      * @return $this
      */
     public function rules(array|Closure $rules): static
@@ -484,7 +484,7 @@ class Field implements Arrayable
     /**
      * Set the create validation rules.
      *
-     * @param  array|\Closure  $rule
+     * @param  array|\Closure  $rules
      * @return $this
      */
     public function createRules(array|Closure $rules): static
@@ -497,7 +497,7 @@ class Field implements Arrayable
     /**
      * Set the update validation rules.
      *
-     * @param  array|\Closure  $rule
+     * @param  array|\Closure  $rules
      * @return $this
      */
     public function updateRules(array|Closure $rules): static

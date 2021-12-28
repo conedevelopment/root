@@ -7561,6 +7561,11 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
+sprucecss@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-0.1.0.tgz#d1ea0997096d015f819daaa834416ec46f5d15c7"
+  integrity sha512-zksrAJLY3wnWErIu323Lwr5KvNhbsV3N4Rebu2637cb6HLTBhQgyE7llhg72uKzyCNAd+BYMm9p82LN7vD43iQ==
+
 stable@^0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/stable/-/stable-0.1.8.tgz#836eb3c8382fe2936feaf544631017ce7d47a3cf"
