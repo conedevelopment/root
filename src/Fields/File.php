@@ -2,9 +2,11 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Models\Medium;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class File extends Media
 {
@@ -21,6 +23,28 @@ class File extends Media
      * @var string
      */
     protected string $component = 'File';
+
+    /**
+     * Persist the request value on the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function persist(Request $request, Model $model): void
+    {
+        $media = array_map(static function (UploadedFile $file) use ($request): array {
+            $medium = $request->user()->uploads()->save(
+                (Medium::proxy())::makeFrom($file->getRealPath())
+            );
+
+            $file->storeAs($medium->id, $medium->file_name, $medium->disk);
+
+            return $medium->id;
+        }, $this->getValueForHydrate($request, $model));
+
+        $this->hydrate($request, $model, $media);
+    }
 
     /**
      * Get the value for hydrating the model.
