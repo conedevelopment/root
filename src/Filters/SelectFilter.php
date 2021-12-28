@@ -33,7 +33,7 @@ abstract class SelectFilter extends Filter
      * Set the multiple attribute.
      *
      * @param  bool  $value
-     * @return void
+     * @return $this
      */
     public function multiple(bool $value = true): static
     {

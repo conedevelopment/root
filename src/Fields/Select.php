@@ -45,7 +45,7 @@ class Select extends Field
      * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
     public function resolveOptions(Request $request, Model $model): array
