@@ -63,8 +63,8 @@ class BelongsToMany extends BelongsTo
     public function withPivotFields(array|Closure $fields): static
     {
         if (is_array($fields)) {
-            $fields = static function () use ($fields): array {
-                return $fields;
+            $fields = static function (Request $request, Fields $collection) use ($fields): Fields {
+                return $collection->merge($fields);
             };
         }
 
