@@ -145,9 +145,9 @@ abstract class Relation extends Field
     public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $default = parent::resolveDefault($request, $model);
+            $this->formatResolver = function (Request $request, Model $model): mixed {
+                $default = parent::resolveDefault($request, $model);
 
-            $this->formatResolver = function () use ($request, $default): mixed {
                 if ($default instanceof Model) {
                     return call_user_func_array($this->displayResolver, [$request, $default]);
                 } elseif ($default instanceof Collection) {

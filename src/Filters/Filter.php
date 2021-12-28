@@ -53,7 +53,7 @@ abstract class Filter implements Arrayable
     }
 
     /**
-     * Get the key for the filter.
+     * Get the key.
      *
      * @return string
      */
