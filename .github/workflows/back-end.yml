@@ -41,7 +41,7 @@ jobs:
 
       - name: Upgrade to Laravel 9
         if: matrix.laravel == '9.0'
-        run: composer require --no-interaction --no-progress --${{ matrix.stability }} --prefer-dist --with-all-dependencies 'laravel/framework:dev-master as 9.0.0' laravel/laravel:dev-master inertiajs/inertia-laravel:dev-laravel-9
+        run: composer require --no-interaction --no-progress --${{ matrix.stability }} --prefer-dist --with-all-dependencies 'laravel/framework:dev-master as 9.0.0' laravel/laravel:dev-master inertiajs/inertia-laravel:dev-laravel-9 'symfony/console:^6.0'
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
