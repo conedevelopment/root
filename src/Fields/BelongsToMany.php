@@ -57,18 +57,18 @@ class BelongsToMany extends BelongsTo
     /**
      * Set the pivot fields resolver.
      *
-     * @param  array|\Closre  $value
+     * @param  array|\Closure  $fields
      * @return $this
      */
-    public function withPivotFields(array|Closure $value): static
+    public function withPivotFields(array|Closure $fields): static
     {
-        if (is_array($value)) {
-            $value = static function () use ($value): array {
-                return $value;
+        if (is_array($fields)) {
+            $fields = static function () use ($fields): array {
+                return $fields;
             };
         }
 
-        $this->pivotFieldsResolver = $value;
+        $this->pivotFieldsResolver = $fields;
 
         return $this;
     }
@@ -85,7 +85,7 @@ class BelongsToMany extends BelongsTo
             $fields = Fields::make();
 
             if (! is_null($this->pivotFieldsResolver)) {
-                $fields = $fields->merge(call_user_func_array($this->pivotFieldsResolver, [$request]));
+                $fields = call_user_func_array($this->pivotFieldsResolver, [$request, $fields]);
             }
 
             $this->resolved['pivot_fields'] = $fields;
