@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @property string $label
+ * @property string $name
+ * @property string $id
+ */
 class Field implements Arrayable
 {
     use Authorizable;
