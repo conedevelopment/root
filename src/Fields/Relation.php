@@ -144,7 +144,7 @@ abstract class Relation extends Field
      */
     public function resolveFormat(Request $request, Model $model): mixed
     {
-        if (is_null($this->formatter)) {
+        if (is_null($this->formatResolver)) {
             $default = parent::resolveDefault($request, $model);
 
             $this->formatResolver = function () use ($request, $default): mixed {
