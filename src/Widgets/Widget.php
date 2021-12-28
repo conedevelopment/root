@@ -22,7 +22,7 @@ abstract class Widget implements Arrayable, Renderable
     use ResourceRoutable;
 
     /**
-     * Indicates if the options should be lazily populated.
+     * Indicates if the component is async.
      *
      * @var bool
      */

@@ -33,7 +33,7 @@ abstract class Relation extends Field
     protected bool $nullable = false;
 
     /**
-     * Indicates if the options should be lazily populated.
+     * Indicates if the component is async.
      *
      * @var bool
      */

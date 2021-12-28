@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 class Media extends MorphToMany
 {
     /**
-     * Indicates if the options should be lazily populated.
+     * Indicates if the component is async.
      *
      * @var bool
      */

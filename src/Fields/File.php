@@ -2,11 +2,19 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class File extends Field
+class File extends Media
 {
+    /**
+     * Indicates if the component is async.
+     *
+     * @var bool
+     */
+    protected bool $async = false;
+
     /**
      * The Vue compoent.
      *
@@ -27,17 +35,14 @@ class File extends Field
     }
 
     /**
-     * Hydrate the model.
+     * Regsiter the routes for the async component.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  string  $uri
      * @return void
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    protected function routes(Resource $resource, string $uri): void
     {
-        $model->saving(function (Model $model) use ($value): void {
-            $model->setAttribute($this->name, $value);
-        });
+        //
     }
 }
