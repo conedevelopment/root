@@ -15,7 +15,7 @@ trait CreatesApplication
      */
     public function createApplication(): Application
     {
-        $app = require __DIR__.'/../vendor/laravel/laravel/bootstrap/app.php';
+        $app = require __DIR__.'/../bootstrap/app.php';
 
         $app->booting(static function () use ($app): void {
             $app->register(RootServiceProvider::class);
