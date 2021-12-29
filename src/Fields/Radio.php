@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Fields;
 
-class Checkbox extends Select
+class Radio extends Select
 {
     /**
      * The Vue compoent.
