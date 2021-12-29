@@ -89,9 +89,9 @@ class Field implements Arrayable
      */
     public function __construct(string $label, ?string $name = null)
     {
-        $this->attributes['label'] = $label;
-        $this->attributes['name'] = $name ??= Str::snake(strtolower($label));
-        $this->attributes['id'] = $name;
+        $this->label($label);
+        $this->name($name ??= (string) Str::of($label)->lower()->snake());
+        $this->id($name);
     }
 
     /**

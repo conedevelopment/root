@@ -37,7 +37,7 @@ class UserFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function unverified()
+    public function unverified(): static
     {
         return $this->state(function (array $attributes): array {
             return [
