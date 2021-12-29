@@ -44,7 +44,7 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(static function (Application $app): void {
-            if ($app->runningInConsole() || str_starts_with($app['request']->getRequestUri(), '/root')) {
+            if ($app->runningInConsole() || Root::shouldRun($app['request'])) {
                 Root::run($app['request']);
             }
         });
@@ -66,10 +66,6 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
-
-        $this->app['router']->middlewareGroup(
-            'root', $this->app['config']->get('root.middleware', [])
-        );
 
         $this->registerAuth();
         $this->registerCommands();
@@ -101,22 +97,22 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        $this->app->booted(function (): void {
-            $this->app['router']
-                ->as('root.')
-                ->prefix('root')
-                ->middleware(['web'])
-                ->group(function (): void {
-                    $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
-                });
+        $this->app['router']->middlewareGroup(
+            'root', $this->app['config']->get('root.middleware', [])
+        );
 
-            $this->app['router']
-                ->as('root.')
-                ->prefix('root')
-                ->middleware(['root'])
-                ->group(function (): void {
-                    $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-                });
+        $this->app['router']->group([
+            'as' => 'root.',
+            'prefix' => Root::getPath(),
+            'domain' => Root::getDomain(),
+        ], function (): void {
+            $this->app['router']->group(['middleware' => 'web'], function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
+            });
+
+            $this->app['router']->group(['middleware' => 'root'], function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+            });
         });
     }
 

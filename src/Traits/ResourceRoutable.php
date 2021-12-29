@@ -4,6 +4,7 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Root;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -35,8 +36,8 @@ trait ResourceRoutable
 
         $uri = str_replace(['.', ':'], '/', $this->resolvedAs);
 
-        $this->urlResolver = function () use ($resource, $uri): string {
-            return URL::to(sprintf('root/%s/%s', $resource->getKey(), $uri));
+        $this->urlResolver = static function () use ($resource, $uri): string {
+            return URL::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $uri));
         };
 
         if (! App::routesAreCached()) {

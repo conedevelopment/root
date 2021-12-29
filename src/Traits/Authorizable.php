@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 trait Authorizable
 {
     /**
-     * The authorization resolver.
+     * The authorization resolver callback.
      *
      * @var \Closure|null
      */

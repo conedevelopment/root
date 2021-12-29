@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class BelongsToMany extends BelongsTo
 {
     /**
-     * The pivot fields resolver.
+     * The pivot fields resolver callback.
      *
      * @var \Closure|null
      */

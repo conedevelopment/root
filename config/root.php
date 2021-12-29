@@ -7,6 +7,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Root Domain
+    |--------------------------------------------------------------------------
+    |
+    | This is the subdomain where Root will be accessible from. If this
+    | setting is null, Root will reside under the same domain as the
+    | application.
+    |
+    */
+
+    'domain' => env('ROOT_DOMAIN', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Root Path
     |--------------------------------------------------------------------------
     |

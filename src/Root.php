@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 
 abstract class Root
@@ -21,6 +22,18 @@ abstract class Root
      * @var array
      */
     protected static array $callbacks = [];
+
+    /**
+     * Determine if Root should run on the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public static function shouldRun(Request $request): bool
+    {
+        return $request->getHost() === static::getDomain()
+            || (! empty(static::getPath()) && str_starts_with($request->getRequestUri(), '/'.static::getPath()));
+    }
 
     /**
      * Run Root and call the registered callbacks.
@@ -64,6 +77,29 @@ abstract class Root
      */
     public static function routes(Closure $callback): void
     {
-        Route::prefix('root')->middleware(['root'])->group($callback);
+        Route::domain(static::getDomain())
+            ->prefix(static::getPath())
+            ->middleware(['root'])
+            ->group($callback);
+    }
+
+    /**
+     * Get the Root URI path.
+     *
+     * @return string|null
+     */
+    public static function getPath(): ?string
+    {
+        return Config::get('root.path', 'root');
+    }
+
+    /**
+     * Get the Root domain.
+     *
+     * @return string|null
+     */
+    public static function getDomain(): ?string
+    {
+        return Config::get('root.domain', null);
     }
 }

@@ -45,35 +45,35 @@ class Resource implements Arrayable, Item
     protected array $with = [];
 
     /**
-     * The fields resolver.
+     * The fields resolver callback.
      *
      * @var \Closure|null
      */
     protected ?Closure $fieldsResolver = null;
 
     /**
-     * The filters resolver.
+     * The filters resolver callback.
      *
      * @var \Closure|null
      */
     protected ?Closure $filtersResolver = null;
 
     /**
-     * The actions resolver.
+     * The actions resolver callback.
      *
      * @var \Closure|null
      */
     protected ?Closure $actionsResolver = null;
 
     /**
-     * The extracts resolver.
+     * The extracts resolver callback.
      *
      * @var \Closure|null
      */
     protected ?Closure $extractsResolver = null;
 
     /**
-     * The widgets resolver.
+     * The widgets resolver callback.
      *
      * @var \Closure|null
      */
