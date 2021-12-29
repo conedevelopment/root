@@ -5,6 +5,13 @@ namespace Cone\Root\Fields;
 class ID extends Field
 {
     /**
+     * Indicates if the field is UUID.
+     *
+     * @var bool
+     */
+    protected bool $uuid = false;
+
+    /**
      * Create a new field instance.
      *
      * @param  string  $label
@@ -17,13 +24,6 @@ class ID extends Field
 
         $this->hiddenOnForm();
     }
-
-    /**
-     * Indicates if the field is UUID.
-     *
-     * @var bool
-     */
-    protected bool $uuid = false;
 
     /**
      * Mark the field as UUID.

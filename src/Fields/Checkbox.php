@@ -2,8 +2,15 @@
 
 namespace Cone\Root\Fields;
 
-class Range extends Field
+class Range extends Select
 {
+    /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'Checkbox';
+
     /**
      * Create a new field instance.
      *
@@ -15,6 +22,6 @@ class Range extends Field
     {
         parent::__construct($label, $name);
 
-        $this->type('range');
+        $this->type('checkbox');
     }
 }

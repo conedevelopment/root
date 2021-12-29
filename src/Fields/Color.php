@@ -5,11 +5,16 @@ namespace Cone\Root\Fields;
 class Color extends Field
 {
     /**
-     * The field attributes.
+     * Create a new field instance.
      *
-     * @var array
+     * @param  string  $label
+     * @param  string|null  $name
+     * @return void
      */
-    protected array $attributes = [
-        'type' => 'color',
-    ];
+    public function __construct(string $label, ?string $name = null)
+    {
+        parent::__construct($label, $name);
+
+        $this->type('color');
+    }
 }

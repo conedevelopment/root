@@ -5,13 +5,18 @@ namespace Cone\Root\Fields;
 class Text extends Field
 {
     /**
-     * The field attributes.
+     * Create a new field instance.
      *
-     * @var array
+     * @param  string  $label
+     * @param  string|null  $name
+     * @return void
      */
-    protected array $attributes = [
-        'type' => 'text',
-    ];
+    public function __construct(string $label, ?string $name = null)
+    {
+        parent::__construct($label, $name);
+
+        $this->type('text');
+    }
 
     /**
      * Set the size attribute.

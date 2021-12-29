@@ -36,7 +36,8 @@ class File extends Media
     {
         parent::__construct($label, $name, $relation);
 
-        $this->rules = array_merge($this->rules, ['*' => ['file']]);
+        $this->type('file');
+        $this->rules(['file']);
     }
 
     /**
