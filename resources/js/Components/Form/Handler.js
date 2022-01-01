@@ -2,6 +2,7 @@ import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
 import Editor from './Editor';
 import Input from './Input';
+import Media from './Media';
 import Select from './Select';
 import Textarea from './Textarea';
 
@@ -12,6 +13,7 @@ export default {
         AsyncSelect,
         Editor,
         Input,
+        Media,
         Select,
         Textarea,
     },

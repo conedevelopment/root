@@ -13,8 +13,8 @@
 
         props: {
             modelValue: {
-                type: Array,
-                default: () => [],
+                type: [String, Number, Array],
+                default: null,
             },
             label: {
                 type: String,
