@@ -42,14 +42,14 @@ trait ResourceRoutable
             $this->routes($resource, $uri);
         }
 
-        $uri = sprintf('/%s/%s/%s', Root::getPath(), $resource->getKey(), $uri);
+        $uri = sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $uri);
 
         $this->urlResolver = static function () use ($uri): string {
             return URL::to($uri);
         };
 
         Event::listen(RouteMatched::class, function (RouteMatched $event) use ($uri): void {
-            if ($event->route->uri() === $uri) {
+            if (trim($event->route->uri(), '/') === trim($uri, '/')) {
                 $event->route->setParameter('resolved', $this);
             }
         });
