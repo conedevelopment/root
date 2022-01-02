@@ -78,7 +78,7 @@ abstract class Action implements Arrayable
     protected function routes(Resource $resource, string $uri): void
     {
         $resource->routes(function () use ($uri): void {
-            Route::post($uri, ActionController::class)->resolves($this->resolvedAs);
+            Route::post($uri, ActionController::class);
         });
     }
 

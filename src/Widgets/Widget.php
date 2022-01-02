@@ -64,7 +64,7 @@ abstract class Widget implements Arrayable, Renderable
     {
         if ($this->async) {
             $resource->routes(function () use ($uri): void {
-                Route::get($uri, WidgetController::class)->resolves($this->resolvedAs);
+                Route::get($uri, WidgetController::class);
             });
         }
     }

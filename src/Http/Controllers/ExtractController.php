@@ -17,9 +17,7 @@ class ExtractController extends Controller
      */
     public function __invoke(ExtractRequest $request): Response
     {
-        $resource = $request->resource();
-
-        $extract = $resource->findResolved($request, $request->route('reference'));
+        $extract = $request->route('resolved');
 
         return Inertia::render(
             'Resource/Index',

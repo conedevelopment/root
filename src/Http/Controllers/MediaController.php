@@ -23,7 +23,7 @@ class MediaController extends Controller
     {
         $resource = $request->resource();
 
-        $field = $resource->findResolved($request, $request->route('reference'));
+        $field = $request->route('resolved');
 
         Gate::allowIf($field->authorized($request));
 
@@ -46,7 +46,7 @@ class MediaController extends Controller
     {
         $resource = $request->resource();
 
-        $field = $resource->findResolved($request, $request->route('reference'));
+        $field = $request->route('resolved');
 
         Gate::allowIf($field->authorized($request));
 

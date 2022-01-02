@@ -260,7 +260,7 @@ abstract class Relation extends Field
     {
         if ($this->async) {
             $resource->routes(function () use ($uri): void {
-                Route::get($uri, RelationController::class)->resolves($this->resolvedAs);
+                Route::get($uri, RelationController::class);
             });
         }
     }

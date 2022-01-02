@@ -70,7 +70,7 @@ abstract class Extract implements Arrayable
     protected function routes(Resource $resource, string $uri): void
     {
         $resource->routes(function () use ($uri): void {
-            Route::get($uri, ExtractController::class)->resolves($this->resolvedAs);
+            Route::get($uri, ExtractController::class);
         });
     }
 

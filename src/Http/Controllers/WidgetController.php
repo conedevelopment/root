@@ -16,9 +16,7 @@ class WidgetController extends Controller
      */
     public function __invoke(RootRequest $request): Response
     {
-        $resource = $request->resource();
-
-        $widget = $resource->findResolved($request, $request->route('reference'));
+        $widget = $request->route('resolved');
 
         return new Response($widget->render());
     }

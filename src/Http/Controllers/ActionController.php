@@ -18,7 +18,7 @@ class ActionController extends Controller
     {
         $resource = $request->resource();
 
-        $action = $resource->findResolved($request, $request->route('reference'));
+        $action = $request->route('resolved');
 
         return $action->perform(
             $request, $resource->query()

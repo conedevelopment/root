@@ -5,7 +5,6 @@ namespace Cone\Root;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -71,7 +70,6 @@ class RootServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->registerComposers();
         $this->registerRoutes();
-        $this->registerMacros();
 
         Root::running(static function (): void {
             (Models\User::proxy())::registerResource();
@@ -150,18 +148,6 @@ class RootServiceProvider extends ServiceProvider
                 'translations' => (object) $this->app['translator']->getLoader()->load($this->app->getLocale(), '*', '*'),
                 'user' => $this->app['request']->user()->toRoot(),
             ]);
-        });
-    }
-
-    /**
-     * Register the macros.
-     *
-     * @return void
-     */
-    protected function registerMacros(): void
-    {
-        Route::macro('resolves', function (string $key): Route {
-            return $this->defaults('reference', $key);
         });
     }
 }

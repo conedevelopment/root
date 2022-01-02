@@ -619,31 +619,4 @@ class Resource implements Arrayable, Item
             Route::group(['prefix' => $this->getKey(), 'resource' => $this->getKey()], $callback);
         });
     }
-
-    /**
-     * Find a resolved object.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
-     * @return object|null
-     */
-    public function findResolved(Request $request, string $key): ?object
-    {
-        $pairs = explode('.', $key);
-
-        return array_reduce($pairs, function (?object $current, string $pair) use ($request): ?object {
-            [$collection, $key] = explode(':', $pair);
-
-            $method = 'resolve'.Str::studly($collection);
-
-            if (is_null($current) || ! method_exists($current, $method)) {
-                return null;
-            }
-
-            return call_user_func_array([$current, $method], [$request])
-                ->first(static function (object $item) use ($key): bool {
-                    return $item->getKey() === $key;
-                });
-        }, $this);
-    }
 }

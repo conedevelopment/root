@@ -46,9 +46,9 @@ class Media extends MorphToMany
     protected function routes(Resource $resource, string $uri): void
     {
         $resource->routes(function () use ($uri): void {
-            Route::get($uri, [MediaController::class, 'index'])->resolves($this->resolvedAs);
-            Route::post($uri, [MediaController::class, 'store'])->resolves($this->resolvedAs);
-            Route::delete($uri, [MediaController::class, 'destroy'])->resolves($this->resolvedAs);
+            Route::get($uri, [MediaController::class, 'index']);
+            Route::post($uri, [MediaController::class, 'store']);
+            Route::delete($uri, [MediaController::class, 'destroy']);
         });
     }
 }

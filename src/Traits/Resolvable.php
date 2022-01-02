@@ -8,13 +8,6 @@ use Illuminate\Http\Request;
 trait Resolvable
 {
     /**
-     * The key as the object has been resolved.
-     *
-     * @var string|null
-     */
-    protected ?string $resolvedAs = null;
-
-    /**
      * Handle the event when the object is resolved.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -24,6 +17,6 @@ trait Resolvable
      */
     public function resolved(Request $request, Resource $resource, string $key): void
     {
-        $this->resolvedAs = $key;
+        //
     }
 }

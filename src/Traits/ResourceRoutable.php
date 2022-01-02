@@ -6,7 +6,9 @@ use Closure;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Root;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 
 trait ResourceRoutable
@@ -34,15 +36,23 @@ trait ResourceRoutable
     {
         $this->baseResolved($request, $resource, $key);
 
-        $uri = str_replace(['.', ':'], '/', $this->resolvedAs);
-
-        $this->urlResolver = static function () use ($resource, $uri): string {
-            return URL::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $uri));
-        };
+        $uri = str_replace(['.', ':'], '/', $key);
 
         if (! App::routesAreCached()) {
             $this->routes($resource, $uri);
         }
+
+        $uri = sprintf('/%s/%s/%s', Root::getPath(), $resource->getKey(), $uri);
+
+        $this->urlResolver = static function () use ($uri): string {
+            return URL::to($uri);
+        };
+
+        Event::listen(RouteMatched::class, function (RouteMatched $event) use ($uri): void {
+            if ($event->route->uri() === $uri) {
+                $event->route->setParameter('resolved', $this);
+            }
+        });
     }
 
     /**
