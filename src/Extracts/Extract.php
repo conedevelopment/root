@@ -55,9 +55,9 @@ abstract class Extract implements Arrayable
     {
         $this->defaultResolved($request, $resource, $key);
 
-        $this->resolveFields($request)->resolved($request, $resource, "{$key}.fields");
-        $this->resolveActions($request)->resolved($request, $resource, "{$key}.actions");
-        $this->resolveWidgets($request)->resolved($request, $resource, "{$key}.widgets");
+        $this->resolveFields($request)->resolved($request, $resource, "{$key}/fields");
+        $this->resolveActions($request)->resolved($request, $resource, "{$key}/actions");
+        $this->resolveWidgets($request)->resolved($request, $resource, "{$key}/widgets");
     }
 
     /**

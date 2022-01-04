@@ -36,13 +36,11 @@ trait ResourceRoutable
     {
         $this->baseResolved($request, $resource, $key);
 
-        $uri = str_replace(['.', ':'], '/', $key);
-
         if (! App::routesAreCached()) {
-            $this->routes($resource, $uri);
+            $this->routes($resource, $key);
         }
 
-        $uri = sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $uri);
+        $uri = sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $key);
 
         $this->urlResolver = static function () use ($uri): string {
             return URL::to($uri);

@@ -65,7 +65,7 @@ abstract class Action implements Arrayable
     {
         $this->defaultResolved($request, $resource, $key);
 
-        $this->resolveFields($request)->resolved($request, $resource, "{$key}.fields");
+        $this->resolveFields($request)->resolved($request, $resource, "{$key}/fields");
     }
 
     /**

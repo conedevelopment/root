@@ -53,7 +53,7 @@ class Filters extends Collection
     public function resolved(Request $request, Resource $resource, string $key): void
     {
         $this->each(static function (Filter $filter) use ($request, $resource, $key): void {
-            $filter->resolved($request, $resource, sprintf('%s:%s', $key, $filter->getKey()));
+            $filter->resolved($request, $resource, sprintf('%s/%s', $key, $filter->getKey()));
         });
     }
 }
