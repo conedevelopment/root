@@ -5,7 +5,7 @@ export default class Cookie
      *
      * @param  {string}  key
      * @param  {string} value
-     * @param  {number|null}  expires
+     * @param  {Date|string|null}  expires
      * @param  {string}  path
      * @param  {object}  options
      * @return {void}
@@ -14,7 +14,7 @@ export default class Cookie
     {
         const pairs = Object.assign({
             [key]: value,
-            expires,
+            expires: expires instanceof Date ? expires.toUTCString() : expires,
             path,
         }, options);
 
