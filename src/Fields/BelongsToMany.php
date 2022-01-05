@@ -3,10 +3,10 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
 class BelongsToMany extends BelongsTo
 {
@@ -25,18 +25,19 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
-     * Handle the event when the object is resolved.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        parent::resolved($request, $resource, $key);
+        parent::registerRoutes($request, $router);
 
-        $this->resolvePivotFields($request)->resolved($request, $resource, "{$key}/pivot_fields");
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolvePivotFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**

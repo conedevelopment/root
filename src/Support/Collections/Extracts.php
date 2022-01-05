@@ -4,8 +4,8 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Exceptions\ExtractResolutionException;
 use Cone\Root\Extracts\Extract;
-use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class Extracts extends Collection
@@ -46,17 +46,16 @@ class Extracts extends Collection
     }
 
     /**
-     * Call the resolved callbacks on the extracts.
+     * Register the extract routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->each(static function (Extract $extract) use ($request, $resource, $key): void {
-            $extract->resolved($request, $resource, sprintf('%s/%s', $key, $extract->getKey()));
+        $router->prefix('extracts')->group(function (Router $router) use ($request): void {
+            $this->each->registerRoutes($request, $router);
         });
     }
 }

@@ -4,26 +4,26 @@ namespace Cone\Root\Actions;
 
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Requests\ActionRequest;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
-use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Action implements Arrayable
 {
     use Authorizable;
     use ResolvesVisibility;
-    use ResourceRoutable {
-        ResourceRoutable::resolved as defaultResolved;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
 
     /**
@@ -54,32 +54,30 @@ abstract class Action implements Arrayable
     abstract public function handle(Request $request, Collection $models): void;
 
     /**
-     * Handle the event when the object is resolved.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->defaultResolved($request, $resource, $key);
+        $this->defaultRegisterRoutes($request, $router);
 
-        $this->resolveFields($request)->resolved($request, $resource, "{$key}/fields");
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**
-     * Regsiter the routes for the action.
+     * The routes that should be registerd.
      *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    protected function routes(Resource $resource, string $uri): void
+    public function routes(Router $router): void
     {
-        $resource->routes(function () use ($uri): void {
-            Route::post($uri, ActionController::class);
-        });
+        $router->post($this->getKey(), ActionController::class);
     }
 
     /**
@@ -155,7 +153,7 @@ abstract class Action implements Arrayable
         return [
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => call_user_func($this->urlResolver),
+            'url' => URL::to($this->getUri()),
         ];
     }
 }

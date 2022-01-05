@@ -4,25 +4,25 @@ namespace Cone\Root\Extracts;
 
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\ResourceRoutable;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Extract implements Arrayable
 {
     use Authorizable;
-    use ResourceRoutable {
-        ResourceRoutable::resolved as defaultResolved;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
 
     /**
@@ -44,34 +44,32 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Handle the event when the object is resolved.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->defaultResolved($request, $resource, $key);
+        $this->defaultRegisterRoutes($request, $router);
 
-        $this->resolveFields($request)->resolved($request, $resource, "{$key}/fields");
-        $this->resolveActions($request)->resolved($request, $resource, "{$key}/actions");
-        $this->resolveWidgets($request)->resolved($request, $resource, "{$key}/widgets");
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveActions($request)->registerRoutes($request, $router);
+            $this->resolveWidgets($request)->registerRoutes($request, $router);
+        });
     }
 
     /**
-     * Regsiter the routes for the extract.
+     * The routes that should be registerd.
      *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    protected function routes(Resource $resource, string $uri): void
+    public function routes(Router $router): void
     {
-        $resource->routes(function () use ($uri): void {
-            Route::get($uri, ExtractController::class);
-        });
+        $router->get($this->getKey(), ExtractController::class);
     }
 
     /**
@@ -220,7 +218,7 @@ abstract class Extract implements Arrayable
         return [
            'key' => $this->getKey(),
            'name' => $this->getName(),
-           'url' => call_user_func($this->urlResolver),
+           'url' => URL::to($this->getUri()),
         ];
     }
 

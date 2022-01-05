@@ -3,23 +3,23 @@
 namespace Cone\Root\Widgets;
 
 use Cone\Root\Http\Controllers\WidgetController;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
-use Cone\Root\Traits\ResourceRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 abstract class Widget implements Arrayable, Renderable
 {
     use Authorizable;
+    use RegistersRoutes;
     use ResolvesVisibility;
-    use ResourceRoutable;
 
     /**
      * Indicates if the component is async.
@@ -54,18 +54,15 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
-     * Regsiter the routes for the widget.
+     * The routes that should be registerd.
      *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    protected function routes(Resource $resource, string $uri): void
+    public function routes(Router $router): void
     {
         if ($this->async) {
-            $resource->routes(function () use ($uri): void {
-                Route::get($uri, WidgetController::class);
-            });
+            $router->get($this->getKey(), WidgetController::class);
         }
     }
 
@@ -156,7 +153,7 @@ abstract class Widget implements Arrayable, Renderable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->async ? null : $this->render(),
-            'url' => $this->async ? call_user_func($this->urlResolver) : null,
+            'url' => $this->async ? URL::to($this->getUri()) : null,
         ];
     }
 }

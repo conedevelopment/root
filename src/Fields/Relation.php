@@ -4,19 +4,19 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\RelationController;
-use Cone\Root\Resources\Resource;
-use Cone\Root\Traits\ResourceRoutable;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
-    use ResourceRoutable;
+    use RegistersRoutes;
 
     /**
      * The relation name on the model.
@@ -234,6 +234,19 @@ abstract class Relation extends Field
     }
 
     /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->async) {
+            $router->get($this->getKey(), RelationController::class);
+        }
+    }
+
+    /**
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -245,23 +258,7 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? call_user_func($this->urlResolver) : null,
+            'url' => $this->async ? URL::to($this->getUri()) : null,
         ]);
-    }
-
-    /**
-     * Regsiter the routes for the async component.
-     *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
-     * @return void
-     */
-    protected function routes(Resource $resource, string $uri): void
-    {
-        if ($this->async) {
-            $resource->routes(function () use ($uri): void {
-                Route::get($uri, RelationController::class);
-            });
-        }
     }
 }

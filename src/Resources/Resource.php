@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -601,10 +602,23 @@ class Resource implements Arrayable, Item
      */
     public function registered(Request $request): void
     {
-        $this->resolveActions($request)->resolved($request, $this, 'actions');
-        $this->resolveExtracts($request)->resolved($request, $this, 'extracts');
-        $this->resolveFields($request)->resolved($request, $this, 'fields');
-        $this->resolveWidgets($request)->resolved($request, $this, 'widgets');
+        $this->registerRoutes($request);
+    }
+
+    /**
+     * Register the routes for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function registerRoutes(Request $request): void
+    {
+        $this->routes(function (Router $router) use ($request): void {
+            $this->resolveActions($request)->registerRoutes($request, $router);
+            $this->resolveExtracts($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveWidgets($request)->registerRoutes($request, $router);
+        });
     }
 
     /**

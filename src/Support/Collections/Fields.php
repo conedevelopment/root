@@ -6,6 +6,7 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class Fields extends Collection
@@ -71,17 +72,20 @@ class Fields extends Collection
     }
 
     /**
-     * Call the resolved callbacks on the fields.
+     * Register the field routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->each(static function (Field $field) use ($request, $resource, $key): void {
-            $field->resolved($request, $resource, sprintf('%s/%s', $key, $field->getKey()));
+        $router->prefix('fields')->group(function (Router $router) use ($request): void {
+            $this->each(static function (Field $field) use ($request, $router): void {
+                if (method_exists($field, 'registerRoutes')) {
+                    $field->registerRoutes($request, $router);
+                }
+            });
         });
     }
 }

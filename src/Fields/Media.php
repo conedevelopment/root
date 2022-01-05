@@ -3,10 +3,9 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Controllers\MediaController;
-use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
 
 class Media extends MorphToMany
 {
@@ -37,18 +36,15 @@ class Media extends MorphToMany
     }
 
     /**
-     * Regsiter the routes for the async component.
+     * The routes that should be registerd.
      *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    protected function routes(Resource $resource, string $uri): void
+    public function routes(Router $router): void
     {
-        $resource->routes(function () use ($uri): void {
-            Route::get($uri, [MediaController::class, 'index']);
-            Route::post($uri, [MediaController::class, 'store']);
-            Route::delete($uri, [MediaController::class, 'destroy']);
-        });
+        $router->get($this->getKey(), [MediaController::class, 'index']);
+        $router->post($this->getKey(), [MediaController::class, 'store']);
+        $router->delete($this->getKey(), [MediaController::class, 'destroy']);
     }
 }

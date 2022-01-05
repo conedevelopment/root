@@ -4,8 +4,8 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\ActionResolutionException;
-use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class Actions extends Collection
@@ -46,17 +46,16 @@ class Actions extends Collection
     }
 
     /**
-     * Call the resolved callbacks on the actions.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->each(static function (Action $action) use ($request, $resource, $key): void {
-            $action->resolved($request, $resource, sprintf('%s/%s', $key, $action->getKey()));
+        $router->prefix('actions')->group(function (Router $router) use ($request): void {
+            $this->each->registerRoutes($request, $router);
         });
     }
 }

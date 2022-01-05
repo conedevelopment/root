@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Support\Collections;
 
-use Cone\Root\Resources\Resource;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class Widgets extends Collection
@@ -24,17 +24,16 @@ class Widgets extends Collection
     }
 
     /**
-     * Call the resolved callbacks on the widgets.
+     * Register the action routes.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $key
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function resolved(Request $request, Resource $resource, string $key): void
+    public function registerRoutes(Request $request, Router $router): void
     {
-        $this->each(static function (Widget $widget) use ($request, $resource, $key): void {
-            $widget->resolved($request, $resource, sprintf('%s/%s', $key, $widget->getKey()));
+        $router->prefix('widgets')->group(function (Router $router) use ($request): void {
+            $this->each->registerRoutes($request, $router);
         });
     }
 }
