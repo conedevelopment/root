@@ -3,7 +3,6 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Filters\Filter;
-use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

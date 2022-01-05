@@ -24,7 +24,7 @@ class Widgets extends Collection
     }
 
     /**
-     * Register the action routes.
+     * Register the widget routes.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Routing\Router  $router

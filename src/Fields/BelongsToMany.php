@@ -25,7 +25,7 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
-     * Register the action routes.
+     * Register the field routes.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Routing\Router  $router
