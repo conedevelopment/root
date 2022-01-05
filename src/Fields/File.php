@@ -7,6 +7,7 @@ use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Router;
 
 class File extends Media
 {
@@ -77,11 +78,10 @@ class File extends Media
     /**
      * Regsiter the routes for the async component.
      *
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  string  $uri
+     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    protected function routes(Resource $resource, string $uri): void
+    public function routes(Router $router): void
     {
         //
     }
