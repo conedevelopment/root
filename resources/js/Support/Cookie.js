@@ -51,7 +51,7 @@ export default class Cookie
     /**
      * Remove the given cookie.
      *
-     * @param  {stirng}  key
+     * @param  {string}  key
      * @return {void}
      */
     remove(key)
