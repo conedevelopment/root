@@ -5,7 +5,6 @@ namespace Cone\Root;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -66,26 +65,38 @@ class RootServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
-        $this->registerAuth();
         $this->registerCommands();
         $this->registerComposers();
+        $this->registerPublishes();
         $this->registerRoutes();
-
-        Root::running(static function (): void {
-            (Models\User::proxy())::registerResource();
-        });
     }
 
     /**
-     * Register the default authorization.
+     * Register publishes.
      *
      * @return void
      */
-    protected function registerAuth(): void
+    protected function registerPublishes(): void
     {
-        Gate::define('viewRoot', static function (): bool {
-            return true;
-        });
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/root.php' => $this->app->configPath('root.php'),
+            ], 'root-config');
+
+            $this->publishes([
+                __DIR__.'/../public' => public_path('vendor/root'),
+                __DIR__.'/../resources/js' => $this->app->resourcePath('js/vendor/root'),
+                __DIR__.'/../resources/sass' => $this->app->resourcePath('sass/vendor/root'),
+            ], 'root-assets');
+
+            $this->publishes([
+                __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),
+            ], 'root-views');
+
+            $this->publishes([
+                __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->path('Providers/RootServiceProvider.php'),
+            ], 'root-provider');
+        }
     }
 
     /**

@@ -38,6 +38,8 @@ class Install extends Command
             $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
         }
 
+        $status = $this->call('vendor:publish', ['--tag' => 'root-provider']);
+
         return $status;
     }
 }

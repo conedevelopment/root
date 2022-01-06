@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Providers;
+
+use Cone\Root\Models\User;
+use Cone\Root\Root;
+use Cone\Root\RootApplicationServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
+class RootServiceProvider extends RootApplicationServiceProvider
+{
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        parent::register();
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot(): void
+    {
+        parent::boot();
+
+        Root::running(static function (): void {
+            (User::proxy())::registerResource();
+        });
+    }
+
+    /**
+     * Register the default authorization.
+     *
+     * @return void
+     */
+    protected function registerAuth(): void
+    {
+        Gate::define('viewRoot', static function (): bool {
+            return true;
+        });
+    }
+}
