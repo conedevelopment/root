@@ -6,6 +6,7 @@ use Cone\Root\Exceptions\ResourceResolutionException;
 use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Interfaces\Registries\ResourceRegistry as Contract;
 use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
 class ResourceRegistry extends Registry implements Contract
@@ -39,5 +40,18 @@ class ResourceRegistry extends Registry implements Contract
         }
 
         return $this->get($key);
+    }
+
+    /**
+     * Filter the available resources.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function available(Request $request): array
+    {
+        return array_filter($this->items, static function (Resource $resource) use ($request): bool {
+            return $resource->authorized($request);
+        });
     }
 }

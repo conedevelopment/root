@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static void register(string $key, \Cone\Root\Resources\Resource $item)
  * @method static \Cone\Root\Resources\Resource resolve(string $key)
+ * @method static array available(\Illuminate\Http\Request $request)
  *
  * @see \Cone\Root\Interfaces\Registries\ResourceRegistry
  */

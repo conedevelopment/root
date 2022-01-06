@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Closure;
+use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
@@ -630,7 +631,11 @@ class Resource implements Arrayable, Item
     public function routes(Closure $callback): void
     {
         Root::routes(function () use ($callback): void {
-            Route::group(['prefix' => $this->getKey(), 'resource' => $this->getKey()], $callback);
+            Route::group([
+                'prefix' => $this->getKey(),
+                'resource' => $this->getKey(),
+                'middleware' => [AuthorizeResource::class],
+            ], $callback);
         });
     }
 }

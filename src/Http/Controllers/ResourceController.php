@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
+use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\RootRequest;
@@ -16,6 +17,16 @@ use Inertia\Response;
 
 class ResourceController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(AuthorizeResource::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
