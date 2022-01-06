@@ -138,6 +138,10 @@ abstract class Action implements Arrayable
     {
         if (! isset($this->resolved['fields'])) {
             $this->resolved['fields'] = Fields::make($this->fields($request));
+
+            $this->resolved['fields']->each->authorize(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['fields'];

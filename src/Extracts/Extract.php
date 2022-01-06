@@ -125,6 +125,10 @@ abstract class Extract implements Arrayable
     {
         if (! isset($this->resolved['fields'])) {
             $this->resolved['fields'] = Fields::make($this->fields($request));
+
+            $this->resolved['fields']->each->authorize(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['fields'];
@@ -151,6 +155,10 @@ abstract class Extract implements Arrayable
     {
         if (! isset($this->resolved['filters'])) {
             $this->resolved['filters'] = Filters::make($this->filters($request));
+
+            $this->resolved['filters']->each->authorize(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['filters'];
@@ -177,6 +185,10 @@ abstract class Extract implements Arrayable
     {
         if (! isset($this->resolved['actions'])) {
             $this->resolved['actions'] = Actions::make($this->actions($request));
+
+            $this->resolved['actions']->each->authorize(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['actions'];

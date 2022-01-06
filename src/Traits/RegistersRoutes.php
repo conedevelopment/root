@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Traits;
 
+use Cone\Root\Http\Middleware\AuthorizeResolved;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
@@ -55,7 +56,12 @@ trait RegistersRoutes
         });
 
         if (! App::routesAreCached()) {
-            $this->routes($router);
+            $router->group(
+                ['middleware' => [AuthorizeResolved::class]],
+                function (Router $router): void {
+                    $this->routes($router);
+                }
+            );
         }
     }
 
