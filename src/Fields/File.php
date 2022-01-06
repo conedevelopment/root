@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Models\Medium;
-use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -76,7 +75,7 @@ class File extends Media
     }
 
     /**
-     * Regsiter the routes for the async component.
+     * The routes that should be registerd.
      *
      * @param  \Illuminate\Routing\Router  $router
      * @return void
