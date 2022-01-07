@@ -69,6 +69,7 @@ class RootServiceProvider extends ServiceProvider
         $this->registerComposers();
         $this->registerPublishes();
         $this->registerRoutes();
+        $this->registerMacros();
     }
 
     /**
@@ -166,6 +167,24 @@ class RootServiceProvider extends ServiceProvider
                 ),
                 'user' => $this->app['request']->user()->toRoot(),
             ]);
+        });
+    }
+
+    /**
+     * Register the macros.
+     *
+     * @return void
+     */
+    protected function registerMacros(): void
+    {
+        $this->app['router']->macro('appendGroupStackPrefix', function (string $prefix): void {
+            $attributes = ['prefix' => $prefix];
+
+            if ($this->hasGroupStack()) {
+                $attributes = $this->mergeWithLastGroup($attributes, false);
+            }
+
+            $this->groupStack[] = $attributes;
         });
     }
 }

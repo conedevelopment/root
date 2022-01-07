@@ -3,6 +3,7 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class WidgetMake extends GeneratorCommand
@@ -108,15 +109,9 @@ class WidgetMake extends GeneratorCommand
      */
     protected function replaceTemplate(string $class): string
     {
-        if ($template = $this->option('template')) {
-            return str_replace(
-                [PHP_EOL.'{{template}}', '{{/template}}', 'DummyTemplate'],
-                ['', '', $template],
-                $class
-            );
-        }
+        $template = $this->option('template') ?: 'widgets.'.Str::kebab($this->getNameInput());
 
-        return preg_replace('/\n{{template}}.*{{\/template}}/s', '', $class);
+        return str_replace('DummyTemplate', $template, $class);
     }
 
     /**

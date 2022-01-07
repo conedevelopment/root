@@ -2,10 +2,12 @@
 
 namespace Cone\Root;
 
-use Illuminate\Support\Facades\Gate;
+use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Widgets\Widget;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
-class RootApplicationServiceProvider extends ServiceProvider
+abstract class RootApplicationServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -14,7 +16,9 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton('root.widgets', function (): Widgets {
+            return Widgets::make($this->widgets());
+        });
     }
 
     /**
@@ -24,18 +28,24 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerAuth();
+        $this->gate();
+
+        Root::routes(function (Router $router): void {
+            $this->app->make('root.widgets')->registerRoutes($this->app['request'], $router);
+        }, true);
     }
 
     /**
-     * Register the default authorization.
+     * Register the default authorization gate.
      *
      * @return void
      */
-    protected function registerAuth(): void
-    {
-        Gate::define('viewRoot', static function (): bool {
-            return true;
-        });
-    }
+    abstract protected function gate(): void;
+
+    /**
+     * The dashboard widgets.
+     *
+     * @return array
+     */
+    abstract protected function widgets(): array;
 }

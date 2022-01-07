@@ -615,20 +615,24 @@ class Resource implements Arrayable, Item
     protected function registerRoutes(Request $request): void
     {
         $this->routes(function (Router $router) use ($request): void {
-            $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveExtracts($request)->registerRoutes($request, $router);
+        });
+
+        $this->routes(function (Router $router) use ($request): void {
+            $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
-        });
+        }, true);
     }
 
     /**
      * Register the resource routes.
      *
      * @param  \Closure  $callback
+     * @param  bool  $api
      * @return void
      */
-    public function routes(Closure $callback): void
+    public function routes(Closure $callback, bool $api = false): void
     {
         Root::routes(function () use ($callback): void {
             Route::group([
@@ -636,6 +640,6 @@ class Resource implements Arrayable, Item
                 'resource' => $this->getKey(),
                 'middleware' => [AuthorizeResource::class],
             ], $callback);
-        });
+        }, $api);
     }
 }

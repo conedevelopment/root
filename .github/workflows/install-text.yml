@@ -1,0 +1,54 @@
+name: "Install Root in Laravel"
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+jobs:
+  laravel_install:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["ubuntu-20.04", "windows-latest"]
+        php: ["8.0", "8.1"]
+        stability: ["prefer-stable"]
+        laravel: ["8.0"]
+
+    name: "${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
+
+    runs-on: "${{ matrix.os }}"
+
+    steps:
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+          tools: "composer:v2"
+
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install Root in Laravel"
+        run: |
+          git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
+          cd laravel/
+          sed -i -e 's#"type": "project",#&\n"repositories": [ { "type": "path", "url": "../" } ],#' composer.json
+          composer require --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress conedevelopment/root
+          # APP_ENV is local
+          cp .env.example .env
+          sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
+          sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
+          php artisan key:generate
+          php artisan root:install --seed
+          php artisan root:publish --packages --mix
+
+      - name: "Install front-end dependencies"
+        run: "npm install --production"
+
+      - name: "Build front-end"
+        run: "npm run production"

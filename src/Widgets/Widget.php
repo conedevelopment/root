@@ -40,7 +40,7 @@ abstract class Widget implements Arrayable, Renderable
      *
      * @var string
      */
-    protected string $template = 'root::widget';
+    protected string $template;
 
     /**
      * Make a new widget instance.

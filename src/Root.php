@@ -14,7 +14,7 @@ abstract class Root
      *
      * @var string
      */
-    public const VERSION = '1.0.0';
+    public const VERSION = '0.1.0';
 
     /**
      * The registered callbacks.
@@ -73,12 +73,13 @@ abstract class Root
      * Register the root routes.
      *
      * @param  \Closure  $callback
+     * @param  bool  $api
      * @return void
      */
-    public static function routes(Closure $callback): void
+    public static function routes(Closure $callback, bool $api = false): void
     {
         Route::domain(static::getDomain())
-            ->prefix(static::getPath())
+            ->prefix(static::getPath().($api ? '/api' : ''))
             ->middleware(['root'])
             ->group($callback);
     }
@@ -86,11 +87,11 @@ abstract class Root
     /**
      * Get the Root URI path.
      *
-     * @return string|null
+     * @return string
      */
-    public static function getPath(): ?string
+    public static function getPath(): string
     {
-        return Config::get('root.path', 'root');
+        return (string) Config::get('root.path', 'root');
     }
 
     /**

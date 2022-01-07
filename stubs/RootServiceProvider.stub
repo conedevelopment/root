@@ -34,14 +34,26 @@ class RootServiceProvider extends RootApplicationServiceProvider
     }
 
     /**
-     * Register the default authorization.
+     * Register the default authorization gate.
      *
      * @return void
      */
-    protected function registerAuth(): void
+    protected function gate(): void
     {
         Gate::define('viewRoot', static function (): bool {
             return true;
         });
+    }
+
+    /**
+     * The dashboard widgets.
+     *
+     * @return array
+     */
+    protected function widgets(): array
+    {
+        return [
+            //
+        ];
     }
 }

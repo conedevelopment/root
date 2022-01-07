@@ -7,22 +7,6 @@ use Illuminate\Http\Request;
 
 class DummyClass extends Widget
 {
-{{component}}
-    /**
-     * The Vue component.
-     *
-     * @var string
-     */
-    protected string $component = 'DummyComponent';
-{{/component}}
-{{template}}
-    /**
-     * The Blade template.
-     *
-     * @var string
-     */
-    protected string $template = 'DummyTemplate';
-{{/template}}
 {{async}}
     /**
      * Indicates if the widget is async.
@@ -31,6 +15,21 @@ class DummyClass extends Widget
      */
     protected bool $async = true;
 {{/async}}
+{{component}}
+    /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component = 'DummyComponent';
+{{/component}}
+    /**
+     * The Blade template.
+     *
+     * @var string
+     */
+    protected string $template = 'DummyTemplate';
+
     /**
      * Create a new widget instance.
      *
