@@ -37,7 +37,7 @@ jobs:
         run: |
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
-          jq -r '. |= . + {"repositories": [ { "type": "path", "url": "../" } ]}' < composer.json > composer.json.new
+          jq -r '. |= . + {"repositories": [ { "type": "path", "url": "../" } ]}' composer.json > composer.json.new
           mv -f composer.json.new composer.json
           echo "___"
           cat composer.json
