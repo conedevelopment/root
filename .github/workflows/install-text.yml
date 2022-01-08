@@ -51,6 +51,7 @@ jobs:
         run: |
           npm version
           cat package.json
+          npm cache clean --force
           npm install --production
 
       - name: "Build front-end"
