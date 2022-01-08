@@ -3,7 +3,6 @@
 namespace Cone\Root;
 
 use Cone\Root\Support\Collections\Widgets;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 

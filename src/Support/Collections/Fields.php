@@ -3,7 +3,7 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
-use Cone\Root\Resources\Resource;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -82,7 +82,7 @@ class Fields extends Collection
     {
         $router->prefix('fields')->group(function (Router $router) use ($request): void {
             $this->each(static function (Field $field) use ($request, $router): void {
-                if (method_exists($field, 'registerRoutes')) {
+                if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
                     $field->registerRoutes($request, $router);
                 }
             });
