@@ -50,8 +50,7 @@ jobs:
       - name: "Install front-end dependencies"
         run: |
           npm version
-          npm install --production
-          cat /home/runner/.npm/_logs/*-debug.log
+          npm install --production || cat /home/runner/.npm/_logs/*-debug.log
 
       - name: "Build front-end"
         run: "npm run production"
