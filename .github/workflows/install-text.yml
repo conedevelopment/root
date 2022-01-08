@@ -35,10 +35,11 @@ jobs:
 
       - name: "Install Root in Laravel"
         run: |
+          set -x
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
           sed -i -e 's#"type": "project",#&\n"repositories": [ { "type": "path", "url": "..\\" } ],#' composer.json
-          composer require --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress conedevelopment/root
+          composer -vvv require --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress conedevelopment/root
           # APP_ENV is local
           cp .env.example .env
           sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
