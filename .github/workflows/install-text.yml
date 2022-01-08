@@ -48,7 +48,10 @@ jobs:
           php artisan root:publish --packages --mix
 
       - name: "Install front-end dependencies"
-        run: "npm install --production"
+        run: |
+          npm version
+          npm install --production
+          cat /home/runner/.npm/_logs/*-debug.log
 
       - name: "Build front-end"
         run: "npm run production"
