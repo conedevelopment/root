@@ -35,7 +35,7 @@ jobs:
 
       - name: "Install Root in Laravel"
         run: |
-          set -x
+          echo on
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
           sed -i -e 's#"type": "project",#&\n"repositories": [ { "type": "path", "url": "..\\" } ],#' composer.json
