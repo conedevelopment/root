@@ -37,7 +37,7 @@ jobs:
         run: |
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
-          sed -i -e 's#"type": "project",#&\n"repositories": [ { "type": "path", "url": "../" } ],#' composer.json
+          sed -i -e 's#"type": "project",#&\\n"repositories": [ { "type": "path", "url": "../" } ],#' composer.json
           echo "___"
           cat composer.json
           echo "___"
