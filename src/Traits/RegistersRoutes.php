@@ -25,7 +25,7 @@ trait RegistersRoutes
      */
     public function setUri(string $uri): void
     {
-        $this->uri = sprintf('%s/%s', $uri, $this->getKey());
+        $this->uri = $uri;
     }
 
     /**
@@ -47,7 +47,9 @@ trait RegistersRoutes
      */
     public function registerRoutes(Request $request, Router $router): void
     {
-        $this->setUri($router->getLastGroupPrefix());
+        $this->setUri(
+            sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey())
+        );
 
         $router->matched(function (RouteMatched $event): void {
             if ($event->route->uri() === $this->getUri()) {
@@ -64,6 +66,13 @@ trait RegistersRoutes
             );
         }
     }
+
+    /**
+     * Get the key.
+     *
+     * @return string
+     */
+    abstract public function getKey(): string;
 
     /**
      * The routes that should be registerd.
