@@ -57,7 +57,7 @@ class Install extends Command
 
         $appConfig = file_get_contents($this->laravel->configPath('app.php'));
 
-        if (Str::contains($appConfig, $namespace.'\\Providers\\RootServiceProvider::class')) {
+        if (str_contains($appConfig, $namespace.'\\Providers\\RootServiceProvider::class')) {
             return;
         }
 

@@ -4,7 +4,6 @@ namespace Cone\Root\Console\Commands;
 
 use Cone\Root\RootServiceProvider;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class Publish extends Command
 {
@@ -87,7 +86,7 @@ class Publish extends Command
 
         $script = file_get_contents(__DIR__.'/../../../stubs/webpack.mix.js');
 
-        if (! Str::contains(file_get_contents($this->laravel->basePath('webpack.mix.js')), $script)) {
+        if (! str_contains(file_get_contents($this->laravel->basePath('webpack.mix.js')), $script)) {
             file_put_contents(
                 $this->laravel->basePath('webpack.mix.js'),
                 PHP_EOL.$script,
