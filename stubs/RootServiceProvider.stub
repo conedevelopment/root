@@ -5,6 +5,7 @@ namespace App\Providers;
 use Cone\Root\Models\User;
 use Cone\Root\Root;
 use Cone\Root\RootApplicationServiceProvider;
+use Cone\Root\Widgets\Welcome;
 use Illuminate\Support\Facades\Gate;
 
 class RootServiceProvider extends RootApplicationServiceProvider
@@ -53,7 +54,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function widgets(): array
     {
         return [
-            //
+            Welcome::make(),
         ];
     }
 }

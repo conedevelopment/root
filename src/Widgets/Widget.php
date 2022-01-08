@@ -54,6 +54,14 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
+     * Get the data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    abstract public function data(Request $request): array;
+
+    /**
      * The routes that should be registerd.
      *
      * @param  \Illuminate\Routing\Router  $router
@@ -104,17 +112,6 @@ abstract class Widget implements Arrayable, Renderable
     public function getTemplate(): string
     {
         return $this->template;
-    }
-
-    /**
-     * Get the data.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function data(Request $request): array
-    {
-        return [];
     }
 
     /**
