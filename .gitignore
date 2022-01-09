@@ -7,6 +7,7 @@
 /public/*.js
 /public/*.css
 /public/*.txt
+/public/*.map
 /storage/*.key
 /vendor
 .env
