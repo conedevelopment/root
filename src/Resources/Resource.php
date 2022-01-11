@@ -485,22 +485,23 @@ class Resource implements Arrayable
      * Map the abilities.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return array
      */
-    public function mapAbilities(Request $request, ?Model $model = null): array
+    public function mapAbilities(Request $request): array
     {
         $policy = $this->getPolicy();
 
         $abilities = $this->getAbilities();
 
-        $abilities = is_null($model) ? $abilities['global'] : $abilities['scoped'];
-
-        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
-            return array_merge($stack, [
-                $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
-            ]);
-        }, []);
+        return array_reduce(
+            $abilities['global'],
+            function (array $stack, $ability) use ($request, $policy): array {
+                return array_merge($stack, [
+                    $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
+                ]);
+            },
+            []
+        );
     }
 
     /**
@@ -531,8 +532,10 @@ class Resource implements Arrayable
 
         $fields = $this->resolveFields($request)->available($request);
 
-        $query = $filters->apply($request, $this->query())
-                    ->latest()
+        $query = $this->query()
+                    ->tap(static function (Builder $query) use ($request, $filters): void {
+                        $filters->apply($request, $query)->latest();
+                    })
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request, $fields): array {
@@ -541,7 +544,7 @@ class Resource implements Arrayable
 
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
-            'extracts' => $this->resolveExtracts($request)->toArray(),
+            'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),

@@ -18,6 +18,15 @@ interface Resourceable
     public function mapResourceUrls(Request $request, Resource $resource): array;
 
     /**
+     * Map the resource abilities for the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return array
+     */
+    public function mapResourceAbilities(Request $request, Resource $resource): array;
+
+    /**
      * Get the Root resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
