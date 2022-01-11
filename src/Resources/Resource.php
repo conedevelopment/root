@@ -8,7 +8,6 @@ use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
@@ -28,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Item
+class Resource implements Arrayable
 {
     use Authorizable;
 

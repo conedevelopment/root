@@ -2,11 +2,10 @@
 
 namespace Cone\Root\Support;
 
-use Cone\Root\Interfaces\Registries\Item;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
-class Asset implements Item
+class Asset
 {
     public const SCRIPT = 'script';
     public const STYLE = 'style';
