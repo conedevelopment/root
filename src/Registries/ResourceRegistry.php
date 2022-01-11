@@ -3,7 +3,6 @@
 namespace Cone\Root\Registries;
 
 use Cone\Root\Exceptions\ResourceResolutionException;
-use Cone\Root\Interfaces\Registries\Item;
 use Cone\Root\Interfaces\Registries\ResourceRegistry as Contract;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
@@ -15,10 +14,10 @@ class ResourceRegistry extends Registry implements Contract
      * Register an item into the registry.
      *
      * @param  string  $key
-     * @param  \Cone\Root\Interfaces\Registries\Item  $item
+     * @param  object
      * @return void
      */
-    public function register(string $key, Item $item): void
+    public function register(string $key, object $item): void
     {
         parent::register($key, $item);
 

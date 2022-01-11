@@ -4,7 +4,6 @@ namespace Cone\Root\Registries;
 
 use ArrayAccess;
 use ArrayIterator;
-use Cone\Root\Interfaces\Registries\Item;
 use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 
@@ -21,10 +20,10 @@ abstract class Registry implements Arrayable, ArrayAccess, IteratorAggregate
      * Register an item into the registry.
      *
      * @param  string  $key
-     * @param  \Cone\Root\Interfaces\Registries\Item  $item
+     * @param  object  $item
      * @return void
      */
-    public function register(string $key, Item $item): void
+    public function register(string $key, object $item): void
     {
         $this->offsetSet($key, $item);
     }
@@ -138,7 +137,7 @@ abstract class Registry implements Arrayable, ArrayAccess, IteratorAggregate
      */
     public function toArray(): array
     {
-        return array_map(static function (Item $item): mixed {
+        return array_map(static function (object $item): mixed {
             return $item instanceof Arrayable ? $item->toArray() : $item;
         }, $this->items);
     }
