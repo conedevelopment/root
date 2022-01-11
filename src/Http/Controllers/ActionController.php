@@ -16,12 +16,8 @@ class ActionController extends Controller
      */
     public function __invoke(ActionRequest $request): RedirectResponse
     {
-        $resource = $request->resource();
-
-        $action = $request->route('resolved');
-
-        return $action->perform(
-            $request, $resource->query()
+        return $request->action()->perform(
+            $request, $request->resource()->query()
         );
     }
 }
