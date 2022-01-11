@@ -602,7 +602,7 @@ class Field implements Arrayable
      */
     public function toValidate(Request $request, Model $model): array
     {
-        $key = match(get_class($request)) {
+        $key = match (get_class($request)) {
             CreateRequest::class => 'create',
             UpdateRequest::class => 'update',
             default => '*',

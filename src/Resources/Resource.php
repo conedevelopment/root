@@ -23,7 +23,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -486,15 +485,18 @@ class Resource implements Arrayable
      * Map the abilities.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return array
      */
-    public function mapAbilities(Request $request): array
+    public function mapAbilities(Request $request, ?Model $model = null): array
     {
         $policy = $this->getPolicy();
 
         $abilities = $this->getAbilities();
 
-        return array_reduce($abilities['global'], function (array $stack, $ability) use ($request, $policy): array {
+        $abilities = is_null($model) ? $abilities['global'] : $abilities['scoped'];
+
+        return array_reduce($abilities, function (array $stack, $ability) use ($request, $policy): array {
             return array_merge($stack, [
                 $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
             ]);
@@ -633,8 +635,8 @@ class Resource implements Arrayable
      */
     public function routes(Closure $callback, bool $api = false): void
     {
-        Root::routes(function () use ($callback): void {
-            Route::group([
+        Root::routes(function (Router $router) use ($callback): void {
+            $router->group([
                 'prefix' => $this->getKey(),
                 'resource' => $this->getKey(),
                 'middleware' => [AuthorizeResource::class],

@@ -30,30 +30,6 @@ trait InteractsWithResource
     }
 
     /**
-     * Map the resource abilities for the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return array
-     */
-    public function mapResourceAbilities(Request $request, Resource $resource): array
-    {
-        $policy = $resource->getPolicy();
-
-        $abilities = $resource->getAbilities();
-
-        return array_reduce(
-            $abilities['scoped'],
-            function (array $stack, string $ability) use ($request, $policy): array {
-                return array_merge($stack, [
-                    $ability => is_null($policy) || $request->user()->can($ability, $this),
-                ]);
-            },
-            []
-        );
-    }
-
-    /**
      * Get the resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -65,7 +41,7 @@ trait InteractsWithResource
     {
         return [
             'id' => $this->getKey(),
-            'abilities' => $this->mapResourceAbilities($request, $resource),
+            'abilities' => $resource->mapAbilities($request, $this),
             'fields' => $fields->mapToDisplay($request, $this)->toArray(),
             'urls' => $this->mapResourceUrls($request, $resource),
         ];
