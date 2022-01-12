@@ -97,11 +97,10 @@ abstract class Extract implements Arrayable
     /**
      * Get the query for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Request $request, Builder $query): Builder
+    public function query(Builder $query): Builder
     {
         return $query;
     }
@@ -256,7 +255,7 @@ abstract class Extract implements Arrayable
 
         $fields = $this->resolveFields($request)->available($request);
 
-        $query = $this->query($request, $resource->query())
+        $query = $this->query($resource->query())
                     ->tap(static function (Builder $query) use ($request, $filters): void {
                         $filters->apply($request, $query)->latest();
                     })
