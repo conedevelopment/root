@@ -24,4 +24,20 @@ trait Filterable
 
         return $query;
     }
+
+    /**
+     * Exclude the given models from the query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array|null  $value
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExclude(Builder $query, ?array $value = []): Builder
+    {
+        if (is_null($value) || empty($value)) {
+            return $query;
+        }
+
+        return $query->whereNotIn($query->getModel()->getQualifiedKeyName(), $value);
+    }
 }

@@ -73,6 +73,7 @@
         methods: {
             update() {
                 const value = this.quill.root.innerHTML === '<p><br></p>' ? '' : this.quill.root.innerHTML;
+
                 this.$emit('update:modelValue', value);
             },
             insertMedia(values) {

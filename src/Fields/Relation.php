@@ -207,6 +207,10 @@ abstract class Relation extends Field
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
+        if ($this->async && $query->hasNamedScope('filter')) {
+            $query->filter($request);
+        }
+
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$request, $query]);
         }

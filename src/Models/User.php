@@ -7,6 +7,7 @@ use Cone\Root\Interfaces\Models\User as Contract;
 use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Resources\UserResource;
+use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Cone\Root\Traits\InteractsWithResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,7 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable implements Contract, Resourceable
 {
+    use Filterable;
     use HasFactory;
     use InteractsWithProxy;
     use InteractsWithResource;
@@ -134,11 +136,15 @@ class User extends Authenticatable implements Contract, Resourceable
      * Scope the query only to the given search term.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $value
+     * @param  string|null  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSearch(Builder $query, string $value): Builder
+    public function scopeSearch(Builder $query, ?string $value = null): Builder
     {
+        if (is_null($value)) {
+            return $query;
+        }
+
         return $query->where(static function (Builder $query) use ($value): Builder {
             return $query->where($query->qualifyColumn('name'), 'like', "%{$value}%")
                         ->orWhere($query->qualifyColumn('email'), 'like', "%{$value}%");

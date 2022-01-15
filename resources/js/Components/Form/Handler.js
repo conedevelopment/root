@@ -22,6 +22,9 @@ export default {
         modelValue: {
             default: null,
         },
+        value: {
+            default: null,
+        },
         error: {
             type: String,
             default: null,

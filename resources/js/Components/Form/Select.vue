@@ -2,7 +2,7 @@
     <div>
         <label :for="$attrs.id">{{ label }}</label>
         <select v-bind="$attrs" v-model="value">
-            <option disabled selected>{{ label }}</option>
+            <option :disabled="! nullable" :value="null" selected>{{ label }}</option>
             <option v-for="(option, value) in options" :value="value" :key="value">
                 {{ option }}
             </option>
@@ -33,6 +33,10 @@
             options: {
                 type: Object,
                 required: true,
+            },
+            nullable: {
+                type: Boolean,
+                default: false,
             },
         },
 
