@@ -18,11 +18,9 @@ class RelationController extends Controller
      */
     public function __invoke(RootRequest $request): JsonResponse
     {
-        $resource = $request->resource();
-
         $field = $request->route('resolved');
 
-        $models = $field->resolveQuery($request, $resource->getModelInstance())
+        $models = $field->resolveQuery($request, $request->resource()->getModelInstance())
                         ->tap(static function (Builder $query) use ($request): void {
                             if ($query->hasNamedScope('filter')) {
                                 $query->filter($request);

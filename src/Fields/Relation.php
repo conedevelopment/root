@@ -123,9 +123,9 @@ abstract class Relation extends Field
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return string
+     * @return mixed
      */
-    public function resolveDisplay(Request $request, Model $model): string
+    public function resolveDisplay(Request $request, Model $model): mixed
     {
         if (is_null($this->displayResolver)) {
             $this->display($model->getKeyName());
@@ -165,7 +165,7 @@ abstract class Relation extends Field
                 if ($default instanceof Model) {
                     return $this->resolveDisplay($request, $default);
                 } elseif ($default instanceof Collection) {
-                    return $default->map(function (Model $model) use ($request): string {
+                    return $default->map(function (Model $model) use ($request): mixed {
                         return $this->resolveDisplay($request, $model);
                     })->join(', ');
                 }
