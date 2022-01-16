@@ -4,6 +4,8 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 
 class RelationController extends Controller
@@ -20,8 +22,20 @@ class RelationController extends Controller
 
         $field = $request->route('resolved');
 
-        return new JsonResponse(
-            $field->resolveOptions($request, $resource->getModelInstance())
-        );
+        $models = $field->resolveQuery($request, $resource->getModelInstance())
+                        ->tap(static function (Builder $query) use ($request): void {
+                            if ($query->hasNamedScope('filter')) {
+                                $query->filter($request);
+                            }
+                        })
+                        ->cursorPaginate()
+                        ->through(static function (Model $model) use ($request, $field) {
+                            return [
+                                'id' => $model->getKey(),
+                                'label' => $field->resolveDisplay($request, $model),
+                            ];
+                        });
+
+        return new JsonResponse($models);
     }
 }

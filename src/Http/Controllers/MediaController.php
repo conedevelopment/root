@@ -44,8 +44,6 @@ class MediaController extends Controller
      */
     public function store(RootRequest $request): JsonResponse
     {
-        $resource = $request->resource();
-
         $field = $request->route('resolved');
 
         Gate::allowIf($field->authorized($request));

@@ -73,8 +73,6 @@ abstract class Relation extends Field
         parent::__construct($label, $name);
 
         $this->relation = $relation ?: Str::camel($label);
-
-        $this->display('id');
     }
 
     /**
@@ -121,6 +119,22 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the display format or the query result.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return string
+     */
+    public function resolveDisplay(Request $request, Model $model): string
+    {
+        if (is_null($this->displayResolver)) {
+            $this->display($model->getKeyName());
+        }
+
+        return call_user_func_array($this->displayResolver, [$request, $model]);
+    }
+
+    /**
      * Set the async attribute.
      *
      * @param  bool  $value
@@ -149,10 +163,10 @@ abstract class Relation extends Field
                 $default = parent::resolveDefault($request, $model);
 
                 if ($default instanceof Model) {
-                    return call_user_func_array($this->displayResolver, [$request, $default]);
+                    return $this->resolveDisplay($request, $default);
                 } elseif ($default instanceof Collection) {
-                    return $default->map(function (Model $model) use ($request): mixed {
-                        return call_user_func_array($this->displayResolver, [$request, $model]);
+                    return $default->map(function (Model $model) use ($request): string {
+                        return $this->resolveDisplay($request, $model);
                     })->join(', ');
                 }
 
@@ -207,10 +221,6 @@ abstract class Relation extends Field
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
-        if ($this->async && $query->hasNamedScope('filter')) {
-            $query->filter($request);
-        }
-
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$request, $query]);
         }
@@ -230,9 +240,7 @@ abstract class Relation extends Field
         return $this->resolveQuery($request, $model)
                     ->get()
                     ->mapWithKeys(function (Model $model) use ($request): array {
-                        return [
-                            $model->getKey() => call_user_func_array($this->displayResolver, [$request, $model]),
-                        ];
+                        return [$model->getKey() => $this->resolveDisplay($request, $model)];
                     })
                     ->toArray();
     }

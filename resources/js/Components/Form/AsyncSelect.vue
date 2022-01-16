@@ -18,12 +18,11 @@
                 <div
                     ref="option"
                     v-for="(item, index) in response.data"
-                    :key="index"
+                    v-html="item.label"
+                    :key="item.id"
                     :class="[index === active ? 'active' : '']"
-                    @mousedown="select(index)"
-                >
-                    {{ item }}
-                </div>
+                    @mousedown="select(item.id)"
+                ></div>
                 <div v-if="response.data.length === 0" aria-disabled="true">
                     {{ __('No items found for the given keyword.') }}
                 </div>
@@ -149,7 +148,7 @@
                     search: event.target.value,
                     exclude: Array.isArray(this.modelValue) ? this.modelValue : [this.modelValue],
                 } }).then((response) => {
-                    this.response.data = response.data;
+                    this.response = response.data;
                 }).catch((error) => {
                     //
                 }).finally(() => {
