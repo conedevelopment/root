@@ -27,6 +27,13 @@ abstract class Action implements Arrayable
     }
 
     /**
+     * Indicates if the action is inline (visible on table row).
+     *
+     * @var bool
+     */
+    protected bool $inline = false;
+
+    /**
      * The resolved store.
      *
      * @var array
@@ -98,6 +105,19 @@ abstract class Action implements Arrayable
     }
 
     /**
+     * Set the inline attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function inline(bool $value = true): static
+    {
+        $this->inline = $value;
+
+        return $this;
+    }
+
+    /**
      * Get the key for the filter.
      *
      * @return string
@@ -157,6 +177,7 @@ abstract class Action implements Arrayable
     public function toArray(): array
     {
         return [
+            'inline' => $this->inline,
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'url' => URL::to($this->getUri()),
