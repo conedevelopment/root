@@ -506,51 +506,6 @@ class Field implements Arrayable
     }
 
     /**
-     * Set the given attribute.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function __set(string $key, mixed $value): void
-    {
-        $this->setAttribute($key, $value);
-    }
-
-    /**
-     * Get the given attribute.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function __get(string $key): mixed
-    {
-        return $this->getAttribute($key);
-    }
-
-    /**
-     * Determine if the given attribute exists.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function __isset(string $key): bool
-    {
-        return $this->hasAttribute($key);
-    }
-
-    /**
-     * Remove the given attribute.
-     *
-     * @param  string  $key
-     * @return void
-     */
-    public function __unset(string $key): void
-    {
-        $this->removeAttribute($key);
-    }
-
-    /**
      * Get the instance as an array.
      *
      * @return array
@@ -626,5 +581,50 @@ class Field implements Arrayable
         return array_unique(
             $key === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$key] ?? [])
         );
+    }
+
+    /**
+     * Set the given attribute.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set(string $key, mixed $value): void
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Get the given attribute.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get(string $key): mixed
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
+     * Determine if the given attribute exists.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset(string $key): bool
+    {
+        return $this->hasAttribute($key);
+    }
+
+    /**
+     * Remove the given attribute.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset(string $key): void
+    {
+        $this->removeAttribute($key);
     }
 }
