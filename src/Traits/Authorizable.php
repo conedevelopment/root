@@ -22,9 +22,11 @@ trait Authorizable
      */
     public function mergeAuthorizationResolver(Closure $callback): static
     {
-        $resolver = $this->authorizationResolver ?: static function (): bool {
-            return true;
-        };
+        if (is_null($this->authorizationResolver)) {
+            return $this->authorize($callback);
+        }
+
+        $resolver = $this->authorizationResolver;
 
         return $this->authorize(static function (Request $request) use ($callback, $resolver): bool {
             return call_user_func_array($callback, [$request]) && call_user_func_array($resolver, [$request]);

@@ -2,9 +2,6 @@
 
 namespace Cone\Root\Extracts;
 
-use Cone\Root\Actions\Action;
-use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
@@ -13,7 +10,6 @@ use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
