@@ -2,6 +2,9 @@
 
 namespace Cone\Root\Extracts;
 
+use Cone\Root\Actions\Action;
+use Cone\Root\Fields\Field;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
@@ -10,6 +13,7 @@ use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -127,11 +131,9 @@ abstract class Extract implements Arrayable
         if (! isset($this->resolved['fields'])) {
             $this->resolved['fields'] = Fields::make($this->fields($request));
 
-            if (! $this->authorized($request)) {
-                $this->resolved['fields']->each->authorize(static function (): bool {
-                    return false;
-                });
-            }
+            $this->resolved['fields']->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['fields'];
@@ -159,11 +161,9 @@ abstract class Extract implements Arrayable
         if (! isset($this->resolved['filters'])) {
             $this->resolved['filters'] = Filters::make($this->filters($request));
 
-            if (! $this->authorized($request)) {
-                $this->resolved['filters']->each->authorize(static function (): bool {
-                    return false;
-                });
-            }
+            $this->resolved['filters']->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['filters'];
@@ -191,11 +191,9 @@ abstract class Extract implements Arrayable
         if (! isset($this->resolved['actions'])) {
             $this->resolved['actions'] = Actions::make($this->actions($request));
 
-            if (! $this->authorized($request)) {
-                $this->resolved['actions']->each->authorize(static function (): bool {
-                    return false;
-                });
-            }
+            $this->resolved['actions']->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['actions'];
@@ -222,6 +220,10 @@ abstract class Extract implements Arrayable
     {
         if (! isset($this->resolved['widgets'])) {
             $this->resolved['widgets'] = Widgets::make($this->widgets($request));
+
+            $this->resolved['widgets']->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['widgets'];
