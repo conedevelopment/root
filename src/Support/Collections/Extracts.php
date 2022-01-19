@@ -25,6 +25,17 @@ class Extracts extends Collection
     }
 
     /**
+     * Filter the extracts that are authorized for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function authorized(Request $request): static
+    {
+        return $this->filter->authorized($request)->values();
+    }
+
+    /**
      * Resolve the extract by its key.
      *
      * @param  string  $key

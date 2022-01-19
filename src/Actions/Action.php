@@ -177,7 +177,6 @@ abstract class Action implements Arrayable
     public function toArray(): array
     {
         return [
-            'inline' => $this->inline,
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'url' => URL::to($this->getUri()),

@@ -26,6 +26,28 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the fields that are authorized for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function authorized(Request $request): static
+    {
+        return $this->filter->authorized($request)->values();
+    }
+
+    /**
+     * Filter the fields that are visible for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function visible(Request $request): static
+    {
+        return $this->filter->visible($request)->values();
+    }
+
+    /**
      * Map the fields to display.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -25,6 +25,28 @@ class Actions extends Collection
     }
 
     /**
+     * Filter the actions that are authorized for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function authorized(Request $request): static
+    {
+        return $this->filter->authorized($request)->values();
+    }
+
+    /**
+     * Filter the actions that are visible for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function visible(Request $request): static
+    {
+        return $this->filter->visible($request)->values();
+    }
+
+    /**
      * Resolve the action by its key.
      *
      * @param  string  $key
