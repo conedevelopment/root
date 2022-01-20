@@ -24,17 +24,6 @@ class Filters extends Collection
     }
 
     /**
-     * Filter the filters that are authorized for the given request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return static
-     */
-    public function authorized(Request $request): static
-    {
-        return $this->filter->authorized($request)->values();
-    }
-
-    /**
      * Apply the filters on the query.
      *
      * @param  \Illuminate\Http\Request  $request

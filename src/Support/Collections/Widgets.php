@@ -24,28 +24,6 @@ class Widgets extends Collection
     }
 
     /**
-     * Filter the widgets that are authorized for the given request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return static
-     */
-    public function authorized(Request $request): static
-    {
-        return $this->filter->authorized($request)->values();
-    }
-
-    /**
-     * Filter the widgets that are visible for the given request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return static
-     */
-    public function visible(Request $request): static
-    {
-        return $this->filter->visible($request)->values();
-    }
-
-    /**
      * Register the widget routes.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -155,13 +155,19 @@ class Resource implements Arrayable
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function resolveRouteBinding(string $id): ?Model
+    public function resolveRouteBinding(Request $request, string $key = 'id'): ?Model
     {
-        $model = $this->getModelInstance()->resolveRouteBinding($id);
+        if (($model = $request->route($key)) instanceof Model) {
+            return $model;
+        }
+
+        $model = $this->getModelInstance()->resolveRouteBinding($request->route($key));
 
         if (is_null($model)) {
-            throw (new ModelNotFoundException())->setModel($this->getModel(), $id);
+            throw (new ModelNotFoundException())->setModel($this->getModel(), $request->route($key));
         }
+
+        $request->route()->setParameter($key, $model);
 
         return $model;
     }
@@ -575,7 +581,7 @@ class Resource implements Arrayable
      */
     public function toShow(ShowRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->available($request, $model);
 
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
@@ -592,7 +598,7 @@ class Resource implements Arrayable
      */
     public function toEdit(UpdateRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->available($request, $model);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),

@@ -379,6 +379,10 @@ class Field implements Arrayable
      */
     public function resolveDefault(Request $request, Model $model): mixed
     {
+        if (! $this->authorized($request, $model)) {
+            return null;
+        }
+
         $value = $model->getAttribute($this->name);
 
         if (is_null($this->defaultResolver)) {
