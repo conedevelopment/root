@@ -582,7 +582,7 @@ class Resource implements Arrayable
      */
     public function toShow(ShowRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request, $model);
+        $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
@@ -599,7 +599,7 @@ class Resource implements Arrayable
      */
     public function toEdit(UpdateRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request, $model);
+        $fields = $this->resolveFields($request)->available($request);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),
