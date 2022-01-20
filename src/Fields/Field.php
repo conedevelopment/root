@@ -379,17 +379,25 @@ class Field implements Arrayable
      */
     public function resolveDefault(Request $request, Model $model): mixed
     {
-        if (! $this->authorized($request, $model)) {
-            return null;
-        }
-
-        $value = $model->getAttribute($this->name);
+        $value = $this->getDefaultValue($request, $model);
 
         if (is_null($this->defaultResolver)) {
             return $value;
         }
 
         return call_user_func_array($this->defaultResolver, [$request, $model, $value]);
+    }
+
+    /**
+     * Get the default value from the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function getDefaultValue(Request $request, Model $model): mixed
+    {
+        return $model->getAttribute($this->name);
     }
 
     /**

@@ -150,6 +150,38 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the default value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveDefault(Request $request, Model $model): mixed
+    {
+        $default = parent::resolveDefault($request, $model);
+
+        if ($default instanceof Model) {
+            return $default->getKey();
+        } elseif ($default instanceof Collection) {
+            return $default->map->getKey()->toArray();
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get the default value from the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function getDefaultValue(Request $request, Model $model): mixed
+    {
+        return $model->getAttribute($this->relation);
+    }
+
+    /**
      * Format the value.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -175,26 +207,6 @@ abstract class Relation extends Field
         }
 
         return parent::resolveFormat($request, $model);
-    }
-
-    /**
-     * Resolve the default value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
-     */
-    public function resolveDefault(Request $request, Model $model): mixed
-    {
-        $default = parent::resolveDefault($request, $model);
-
-        if ($default instanceof Model) {
-            return $default->getKey();
-        } elseif ($default instanceof Collection) {
-            return $default->map->getKey()->toArray();
-        }
-
-        return $default;
     }
 
     /**

@@ -109,8 +109,8 @@ class BelongsToMany extends BelongsTo
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'fields' => $this->resolvePivotFields($request)->available($request)->toArray(),
             'multiple' => true,
+            // 'pivot_fields' => [],
         ]);
     }
 }
