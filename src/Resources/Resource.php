@@ -150,12 +150,13 @@ class Resource implements Arrayable
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $key
+     * @return \Illuminate\Database\Eloquent\Model
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function resolveRouteBinding(Request $request, string $key = 'id'): ?Model
+    public function resolveRouteBinding(Request $request, string $key = 'id'): Model
     {
         if (($model = $request->route($key)) instanceof Model) {
             return $model;

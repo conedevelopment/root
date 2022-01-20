@@ -17,10 +17,7 @@ class Filters extends Collection
      */
     public function available(Request $request): static
     {
-        return $this->filter(static function (Filter $filter) use ($request): bool {
-                        return $filter->authorized($request);
-                    })
-                    ->values();
+        return $this->filter->authorized($request)->values();
     }
 
     /**
