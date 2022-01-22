@@ -15,14 +15,15 @@ class Fields extends Collection
      * Filter the fields that are available for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  array ...$parameters
      * @return static
      */
-    public function available(Request $request): static
+    public function available(Request $request, ...$parameters): static
     {
-        return $this->filter(static function (Field $field) use ($request): bool {
-                        return $field->authorized($request) && $field->visible($request);
-                    })
-                    ->values();
+        return $this->filter(static function (Field $field) use ($request, $parameters): bool {
+            return $field->authorized($request, ...$parameters)
+                && $field->visible($request, ...$parameters);
+        })->values();
     }
 
     /**

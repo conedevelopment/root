@@ -89,14 +89,28 @@ class BelongsToMany extends BelongsTo
                 $fields = call_user_func_array($this->pivotFieldsResolver, [$request, $fields]);
             }
 
-            $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
+            $fields->each->mergeAuthorizationResolver(function (Request $request, ...$params): bool {
+                return $this->authorized($request, ...$params);
             });
 
             $this->resolved['pivot_fields'] = $fields;
         }
 
         return $this->resolved['pivot_fields'];
+    }
+
+    /**
+     * Resolve the options for the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function resolveOptions(Request $request, Model $model): array
+    {
+        // Map pivot fields for the related models
+
+        return parent::resolveOptions($request, $model);
     }
 
     /**
@@ -110,7 +124,6 @@ class BelongsToMany extends BelongsTo
     {
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
-            // 'pivot_fields' => [],
         ]);
     }
 }

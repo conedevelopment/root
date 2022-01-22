@@ -537,7 +537,7 @@ class Resource implements Arrayable
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request);
 
         $query = $this->query()
                     ->tap(static function (Builder $query) use ($request, $filters): void {
@@ -546,7 +546,7 @@ class Resource implements Arrayable
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request, $fields): array {
-                        return $model->toResourceDisplay($request, $this, $fields);
+                        return $model->toResourceDisplay($request, $this, $fields->available($request, $model));
                     });
 
         return array_merge($this->toArray(), [
@@ -566,10 +566,12 @@ class Resource implements Arrayable
      */
     public function toCreate(CreateRequest $request): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $model = $this->getModelInstance();
+
+        $fields = $this->resolveFields($request)->available($request, $model);
 
         return array_merge($this->toArray(), [
-            'model' => $this->getModelInstance()->toResourceForm($request, $this, $fields),
+            'model' => $model->toResourceForm($request, $this, $fields),
         ]);
     }
 
@@ -582,7 +584,7 @@ class Resource implements Arrayable
      */
     public function toShow(ShowRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->available($request, $model);
 
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
@@ -599,7 +601,7 @@ class Resource implements Arrayable
      */
     public function toEdit(UpdateRequest $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->available($request, $model);
 
         return array_merge($this->toArray(), [
             'model' => $model->toResourceForm($request, $this, $fields),

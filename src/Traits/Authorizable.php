@@ -28,8 +28,9 @@ trait Authorizable
 
         $resolver = $this->authorizationResolver;
 
-        return $this->authorize(static function (Request $request) use ($callback, $resolver): bool {
-            return call_user_func_array($callback, [$request]) && call_user_func_array($resolver, [$request]);
+        return $this->authorize(static function (Request $request, ...$params) use ($callback, $resolver): bool {
+            return call_user_func_array($callback, [$request, ...$params])
+                && call_user_func_array($resolver, [$request, ...$params]);
         });
     }
 
@@ -50,11 +51,12 @@ trait Authorizable
      * Resolve the authorization.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  array  ...$parameters
      * @return bool
      */
-    public function authorized(Request $request): bool
+    public function authorized(Request $request, ...$parameters): bool
     {
         return is_null($this->authorizationResolver)
-            || call_user_func_array($this->authorizationResolver, [$request]);
+            || call_user_func_array($this->authorizationResolver, [$request, ...$parameters]);
     }
 }
