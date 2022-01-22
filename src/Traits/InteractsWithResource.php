@@ -3,7 +3,6 @@
 namespace Cone\Root\Traits;
 
 use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Facades\Resource as Registry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -58,15 +57,17 @@ trait InteractsWithResource
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toResourceDisplay(Request $request, Resource $resource, Fields $fields): array
+    public function toResourceDisplay(Request $request, Resource $resource): array
     {
         return [
-            'id' => $this->getKey(),
             'abilities' => $this->mapResourceAbilities($request, $resource),
-            'fields' => $fields->mapToDisplay($request, $this)->toArray(),
+            'fields' => $resource->resolveFields($request)
+                                ->available($request, $this)
+                                ->mapToDisplay($request, $this)
+                                ->toArray(),
+            'id' => $this->getKey(),
             'urls' => $this->mapResourceUrls($request, $resource),
         ];
     }
@@ -76,14 +77,16 @@ trait InteractsWithResource
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Cone\Root\Resources\Resource  $resource
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toResourceForm(Request $request, Resource $resource, Fields $fields): array
+    public function toResourceForm(Request $request, Resource $resource): array
     {
         return [
             'abilities' => $this->mapResourceAbilities($request, $resource),
-            'fields' => $fields->mapToForm($request, $this)->toArray(),
+            'fields' => $resource->resolveFields($request)
+                                ->available($request, $this)
+                                ->mapToForm($request, $this)
+                                ->toArray(),
             'urls' => $this->mapResourceUrls($request, $resource),
         ];
     }
