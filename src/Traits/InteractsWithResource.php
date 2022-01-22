@@ -3,6 +3,7 @@
 namespace Cone\Root\Traits;
 
 use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Facades\Resource as Registry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -53,6 +54,18 @@ trait InteractsWithResource
     }
 
     /**
+     * Get the available resource fields for the model the current request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return \Cone\Root\Support\Collections\Fields
+     */
+    public function getAvailableResourceFields(Request $request, Resource $resource): Fields
+    {
+        return $resource->resolveFields($request)->available($request, $this);
+    }
+
+    /**
      * Get the resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -63,10 +76,7 @@ trait InteractsWithResource
     {
         return [
             'abilities' => $this->mapResourceAbilities($request, $resource),
-            'fields' => $resource->resolveFields($request)
-                                ->available($request, $this)
-                                ->mapToDisplay($request, $this)
-                                ->toArray(),
+            'fields' => $this->getAvailableResourceFields($request, $resource)->mapToDisplay($request, $this)->toArray(),
             'id' => $this->getKey(),
             'urls' => $this->mapResourceUrls($request, $resource),
         ];
@@ -83,10 +93,7 @@ trait InteractsWithResource
     {
         return [
             'abilities' => $this->mapResourceAbilities($request, $resource),
-            'fields' => $resource->resolveFields($request)
-                                ->available($request, $this)
-                                ->mapToForm($request, $this)
-                                ->toArray(),
+            'fields' => $this->getAvailableResourceFields($request, $resource)->mapToForm($request, $this)->toArray(),
             'urls' => $this->mapResourceUrls($request, $resource),
         ];
     }

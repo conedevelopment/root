@@ -3,6 +3,7 @@
 namespace Cone\Root\Interfaces;
 
 use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Fields;
 use Illuminate\Http\Request;
 
 interface Resourceable
@@ -24,6 +25,15 @@ interface Resourceable
      * @return array
      */
     public function mapResourceAbilities(Request $request, Resource $resource): array;
+
+    /**
+     * Get the available resource fields for the model the current request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Resources\Resource  $resource
+     * @return \Cone\Root\Support\Collections\Fields
+     */
+    public function getAvailableResourceFields(Request $request, Resource $resource): Fields;
 
     /**
      * Get the Root resource display representation of the model.
