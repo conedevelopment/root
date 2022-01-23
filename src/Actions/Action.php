@@ -10,6 +10,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -179,5 +180,19 @@ abstract class Action implements Arrayable
             'name' => $this->getName(),
             'url' => URL::to($this->getUri()),
         ];
+    }
+
+    /**
+     * Get the form representation of the action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toForm(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'fields' => $this->resolveFields($request)->mapToForm($request, $model)->toArray(),
+        ]);
     }
 }
