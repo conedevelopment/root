@@ -22,7 +22,7 @@ class Fields extends Collection
     {
         return $this->filter(static function (Field $field) use ($request, $parameters): bool {
             return $field->authorized($request, ...$parameters)
-                && $field->visible($request, ...$parameters);
+                && $field->visible($request);
         })->values();
     }
 
