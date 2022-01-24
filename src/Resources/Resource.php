@@ -548,7 +548,10 @@ class Resource implements Arrayable
                     });
 
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->available($request)->toArray(),
+            'actions' => $this->resolveActions($request)
+                            ->available($request)
+                            ->mapToForm($request, $this->getModelInstance())
+                            ->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
