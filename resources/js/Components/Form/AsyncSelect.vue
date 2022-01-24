@@ -32,7 +32,7 @@
 </template>
 
 <script>
-    import Closable from './../../Mixins/Closalbe';
+    import Closable from '../../Mixins/Closable';
 
     export default {
         mixins: [Closable],
@@ -70,18 +70,6 @@
 
         mounted() {
             this.$dispatcher.once('open', this.fetch);
-
-            window.addEventListener('keyup', (event) => {
-                if (this.isOpen && event.code === 'Escape') {
-                    this.close();
-                }
-            });
-
-            window.addEventListener('click', (event) => {
-                if (this.isOpen && ! this.$el.contains(event.target)) {
-                    this.close();
-                }
-            });
         },
 
         data() {
