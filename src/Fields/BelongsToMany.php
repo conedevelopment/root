@@ -18,7 +18,7 @@ class BelongsToMany extends BelongsTo
     protected ?Closure $pivotFieldsResolver = null;
 
     /**
-     * The resolved store.
+     * The resolved components.
      *
      * @var array
      */

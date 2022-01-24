@@ -80,7 +80,7 @@ class Resource implements Arrayable
     protected ?Closure $widgetsResolver = null;
 
     /**
-     * The resolved store.
+     * The resolved components.
      *
      * @var array
      */

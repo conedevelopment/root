@@ -35,7 +35,7 @@ abstract class Action implements Arrayable
     protected bool $inline = false;
 
     /**
-     * The resolved store.
+     * The resolved components.
      *
      * @var array
      */

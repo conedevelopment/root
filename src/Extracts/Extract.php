@@ -26,7 +26,7 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * The resolved store.
+     * The resolved components.
      *
      * @var array
      */
