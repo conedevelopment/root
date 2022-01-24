@@ -4,17 +4,9 @@ namespace DummyNamespace;
 
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
-use QualifiedDummyModelClass;
 
 class DummyClass extends Resource
 {
-    /**
-     * The model class.
-     *
-     * @var string
-     */
-    protected string $model = DummyModelClass::class;
-
     /**
      * Define the fields for the resource.
      *
