@@ -1,6 +1,6 @@
 <template>
     <select v-model="value">
-        <option :value="null" disabled>{{ name }}</option>
+        <option :value="null">{{ name }}</option>
         <option v-for="(label, value) in options" :key="value" :value="value">
             {{ label }}
         </option>
