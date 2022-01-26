@@ -31,13 +31,13 @@ class ActionTest extends TestCase
     }
 
     /** @test */
-    public function an_action_can_be_inline()
+    public function an_action_has_fields()
     {
         $this->assertTrue(true);
     }
 
     /** @test */
-    public function an_action_runs_task_on_models()
+    public function an_action_has_form_representation()
     {
         $this->assertTrue(true);
     }

@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class Field implements Arrayable
+abstract class Field implements Arrayable
 {
     use Authorizable;
     use ResolvesVisibility;

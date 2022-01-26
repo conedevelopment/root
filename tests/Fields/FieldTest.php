@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Text;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Models\User;
@@ -16,7 +16,7 @@ class FieldTest extends TestCase
     {
         parent::setUp();
 
-        $this->field = new Field('Name');
+        $this->field = new Text('Name');
 
         $this->model = User::factory()->make();
     }
@@ -28,7 +28,7 @@ class FieldTest extends TestCase
         $this->assertSame('name', $this->field->getAttribute('name'));
 
         $this->assertSame(
-            ['label' => 'Name', 'name' => 'name', 'id' => 'name'],
+            ['label' => 'Name', 'name' => 'name', 'id' => 'name', 'type' => 'text'],
             $this->field->getAttributes()
         );
     }
@@ -144,10 +144,6 @@ class FieldTest extends TestCase
     /** @test */
     public function a_field_has_type_attribute()
     {
-        $this->assertNull($this->field->type);
-
-        $this->field->type('text');
-
         $this->assertSame('text', $this->field->type);
     }
 

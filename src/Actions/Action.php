@@ -28,13 +28,6 @@ abstract class Action implements Arrayable
     }
 
     /**
-     * Indicates if the action is inline (visible on table row).
-     *
-     * @var bool
-     */
-    protected bool $inline = false;
-
-    /**
      * The resolved components.
      *
      * @var array
@@ -123,19 +116,6 @@ abstract class Action implements Arrayable
         );
 
         return Redirect::back();
-    }
-
-    /**
-     * Set the inline attribute.
-     *
-     * @param  bool  $value
-     * @return $this
-     */
-    public function inline(bool $value = true): static
-    {
-        $this->inline = $value;
-
-        return $this;
     }
 
     /**
