@@ -81,7 +81,7 @@ abstract class Extract implements Arrayable
      */
     public function getKey(): string
     {
-        return Str::of(static::class)->classBasename()->plural()->kebab();
+        return (string) Str::of(static::class)->classBasename()->kebab();
     }
 
     /**
@@ -91,7 +91,7 @@ abstract class Extract implements Arrayable
      */
     public function getName(): string
     {
-        return Str::of(static::class)->classBasename()->headline();
+        return (string) Str::of(static::class)->classBasename()->headline();
     }
 
     /**

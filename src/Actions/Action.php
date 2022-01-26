@@ -89,6 +89,26 @@ abstract class Action implements Arrayable
     }
 
     /**
+     * Get the key for the filter.
+     *
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return (string) Str::of(static::class)->classBasename()->kebab();
+    }
+
+    /**
+     * Get the name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return (string) Str::of(static::class)->classBasename()->headline();
+    }
+
+    /**
      * Perform the action.
      *
      * @param  \Cone\Root\Http\Requests\ActionRequest  $request
@@ -116,26 +136,6 @@ abstract class Action implements Arrayable
         $this->inline = $value;
 
         return $this;
-    }
-
-    /**
-     * Get the key for the filter.
-     *
-     * @return string
-     */
-    public function getKey(): string
-    {
-        return Str::of(static::class)->classBasename()->lower()->kebab();
-    }
-
-    /**
-     * Get the name.
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return Str::of(static::class)->classBasename()->headline();
     }
 
     /**

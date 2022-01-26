@@ -4,6 +4,7 @@ namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Tests\PublishPosts;
 use Cone\Root\Tests\TestCase;
+use Illuminate\Support\Facades\URL;
 
 class ActionTest extends TestCase
 {
@@ -19,7 +20,14 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_registers_routes()
     {
-        $this->assertTrue(true);
+        $this->app['router']->prefix('api/actions')->group(function ($router) {
+            $this->action->registerRoutes($this->app['request'], $router);
+        });
+
+        $this->assertSame('api/actions/publish-posts', $this->action->getUri());
+
+        $this->post(URL::to($this->action->getUri()))
+            ->assertRedirect('/posts');
     }
 
     /** @test */

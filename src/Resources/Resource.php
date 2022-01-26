@@ -114,7 +114,7 @@ class Resource implements Arrayable
      */
     public function getKey(): string
     {
-        return Str::of($this->getModel())->classBasename()->plural()->kebab();
+        return (string) Str::of($this->getModel())->classBasename()->plural()->kebab();
     }
 
     /**
@@ -124,7 +124,7 @@ class Resource implements Arrayable
      */
     public function getName(): string
     {
-        return Str::of($this->getModel())->classBasename()->headline()->plural();
+        return (string) Str::of($this->getModel())->classBasename()->headline()->plural();
     }
 
     /**
@@ -134,7 +134,7 @@ class Resource implements Arrayable
      */
     public function getModelName(): string
     {
-        return Str::of($this->getModel())->classBasename();
+        return (string) Str::of($this->getModel())->classBasename();
     }
 
     /**
