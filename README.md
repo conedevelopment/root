@@ -1,5 +1,7 @@
 # Root
 
+[![Back-end](https://github.com/conedevelopment/root/actions/workflows/back-end.yml/badge.svg)](https://github.com/conedevelopment/root/actions/workflows/back-end.yml)
+
 ## 📚 Documentation
 
 ## 🤝 Contributing

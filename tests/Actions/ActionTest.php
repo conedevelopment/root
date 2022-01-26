@@ -20,11 +20,11 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_registers_routes()
     {
-        $this->app['router']->prefix('api/actions')->group(function ($router) {
+        $this->app['router']->prefix('api/posts/actions')->group(function ($router) {
             $this->action->registerRoutes($this->app['request'], $router);
         });
 
-        $this->assertSame('api/actions/publish-posts', $this->action->getUri());
+        $this->assertSame('api/posts/actions/publish-posts', $this->action->getUri());
 
         $this->post(URL::to($this->action->getUri()))
             ->assertRedirect('/posts');
