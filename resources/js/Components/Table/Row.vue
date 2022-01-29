@@ -9,8 +9,11 @@
             v-html="field.formatted_value"
         ></td>
         <td>
+            <button type="button" v-if="item.abilities.delete" @click="destroy(item.urls.show)">
+                Delete
+            </button>
             <Link v-if="item.abilities.view" :href="item.urls.show">
-                Show
+                View
             </Link>
             <Link v-if="item.abilities.update" :href="item.urls.edit">
                 Edit
@@ -57,6 +60,12 @@
                 if (index !== -1) {
                     this.$parent.selection.splice(index, 1);
                 }
+            },
+            destroy(url) {
+                this.$inertia.delete(url, {
+                    onBefore: () => confirm('Are you sure?'),
+                    onStart: (visit) => this.deselect(),
+                });
             },
         },
     }

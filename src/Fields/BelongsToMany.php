@@ -100,6 +100,20 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
+     * Resolve the default value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveDefault(Request $request, Model $model): mixed
+    {
+        // Map pivot fields for the related models
+
+        return parent::resolveDefault($request, $model);
+    }
+
+    /**
      * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -108,7 +122,7 @@ class BelongsToMany extends BelongsTo
      */
     public function resolveOptions(Request $request, Model $model): array
     {
-        // Map pivot fields for the related models
+        // Map pivot fields for the options
 
         return parent::resolveOptions($request, $model);
     }

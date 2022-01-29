@@ -60,16 +60,6 @@ abstract class Root
     }
 
     /**
-     * Flush the registered callbacks.
-     *
-     * @return void
-     */
-    public static function flush(): void
-    {
-        static::$callbacks = [];
-    }
-
-    /**
      * Register the root routes.
      *
      * @param  \Closure  $callback

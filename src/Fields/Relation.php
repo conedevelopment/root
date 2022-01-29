@@ -158,15 +158,19 @@ abstract class Relation extends Field
      */
     public function resolveDefault(Request $request, Model $model): mixed
     {
-        $default = parent::resolveDefault($request, $model);
+        if (is_null($this->defaultResolver)) {
+            $this->defaultResolver = static function (Request $request, Model $model, mixed $value): mixed {
+                if ($value instanceof Model) {
+                    return $value->getKey();
+                } elseif ($value instanceof Collection) {
+                    return $value->map->getKey()->toArray();
+                }
 
-        if ($default instanceof Model) {
-            return $default->getKey();
-        } elseif ($default instanceof Collection) {
-            return $default->map->getKey()->toArray();
+                return $value;
+            };
         }
 
-        return $default;
+        return parent::resolveDefault($request, $model);
     }
 
     /**
@@ -192,7 +196,7 @@ abstract class Relation extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model): mixed {
-                $default = parent::resolveDefault($request, $model);
+                $default = $this->getDefaultValue($request, $model);
 
                 if ($default instanceof Model) {
                     return $this->resolveDisplay($request, $default);
