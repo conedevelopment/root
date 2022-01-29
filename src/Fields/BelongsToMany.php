@@ -11,6 +11,13 @@ use Illuminate\Routing\Router;
 class BelongsToMany extends BelongsTo
 {
     /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'BelongsToMany';
+
+    /**
      * The pivot fields resolver callback.
      *
      * @var \Closure|null
@@ -100,20 +107,6 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Resolve the default value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
-     */
-    public function resolveDefault(Request $request, Model $model): mixed
-    {
-        // Map pivot fields for the related models
-
-        return parent::resolveDefault($request, $model);
-    }
-
-    /**
      * Resolve the options for the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -122,9 +115,32 @@ class BelongsToMany extends BelongsTo
      */
     public function resolveOptions(Request $request, Model $model): array
     {
-        // Map pivot fields for the options
+        return $this->resolveQuery($request, $model)
+                    ->get()
+                    ->mapWithKeys(function (Model $related) use ($request, $model): array {
+                        return $this->mapOption($request, $model, $related);
+                    })
+                    ->toArray();
+    }
 
-        return parent::resolveOptions($request, $model);
+    /**
+     * Map the given option.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return array
+     */
+    public function mapOption(Request $request, Model $model, Model $related): array
+    {
+        return [
+            'value' => $related->getKey(),
+            'formatted_value' => $this->resolveDisplay($request, $related),
+            'pivot_fields' => $this->resolvePivotFields($request)
+                                ->available($request, $model, $related)
+                                ->mapToForm($request, $related)
+                                ->toArray(),
+        ];
     }
 
     /**
@@ -136,8 +152,16 @@ class BelongsToMany extends BelongsTo
      */
     public function toInput(Request $request, Model $model): array
     {
+        $models = $this->getDefaultValue($request, $model);
+
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
+            'pivot_fields' => $models->map(function (Model $related) use ($request, $model): array {
+                return $this->resolvePivotFields($request)
+                            ->available($request, $model, $related)
+                            ->mapToForm($request, $related)
+                            ->toArray();
+            }),
         ]);
     }
 }

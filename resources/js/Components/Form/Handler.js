@@ -1,5 +1,6 @@
 import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
+import BelongsToMany from './BelongsToMany';
 import Editor from './Editor';
 import Input from './Input';
 import Media from './Media';
@@ -11,6 +12,7 @@ export default {
 
     components: {
         AsyncSelect,
+        BelongsToMany,
         Editor,
         Input,
         Media,

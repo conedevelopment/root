@@ -20,18 +20,17 @@ class RelationController extends Controller
     {
         $field = $request->route('resolved');
 
-        $models = $field->resolveQuery($request, $request->resource()->getModelInstance())
+        $model = $request->resource()->getModelInstance();
+
+        $models = $field->resolveQuery($request, $model)
                         ->tap(static function (Builder $query) use ($request): void {
                             if ($query->hasNamedScope('filter')) {
                                 $query->filter($request);
                             }
                         })
                         ->cursorPaginate()
-                        ->through(static function (Model $model) use ($request, $field) {
-                            return [
-                                'id' => $model->getKey(),
-                                'label' => $field->resolveDisplay($request, $model),
-                            ];
+                        ->through(static function (Model $related) use ($request, $model, $field): array {
+                            return $field->mapOption($request, $model, $related);
                         });
 
         return new JsonResponse($models);
