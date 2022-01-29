@@ -6,9 +6,9 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
@@ -21,17 +21,18 @@ class MediaController extends Controller
      */
     public function index(RootRequest $request): JsonResponse
     {
-        $resource = $request->resource();
-
         $field = $request->route('resolved');
 
-        Gate::allowIf($field->authorized($request));
+        $model = $request->resource()->getModelInstance();
 
-        $media = $field->resolveQuery($request, $resource->getModelInstance())
+        $media = $field->resolveQuery($request, $model)
                     ->filter($request)
                     ->latest()
                     ->cursorPaginate($request->input('per_page'))
-                    ->withQueryString();
+                    ->withQueryString()
+                    ->through(static function (Model $related) use ($request, $model, $field): array {
+                        return $field->mapOption($request, $model, $related);
+                    });
 
         return new JsonResponse($media);
     }
@@ -45,8 +46,6 @@ class MediaController extends Controller
     public function store(RootRequest $request): JsonResponse
     {
         $field = $request->route('resolved');
-
-        Gate::allowIf($field->authorized($request));
 
         $file = $request->file('file');
 

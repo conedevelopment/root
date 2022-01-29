@@ -36,6 +36,19 @@ class Media extends MorphToMany
     }
 
     /**
+     * Map the given option.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return array
+     */
+    public function mapOption(Request $request, Model $model, Model $related): array
+    {
+        return $related->toArray();
+    }
+
+    /**
      * The routes that should be registerd.
      *
      * @param  \Illuminate\Routing\Router  $router

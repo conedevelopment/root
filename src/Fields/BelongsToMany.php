@@ -117,7 +117,7 @@ class BelongsToMany extends BelongsTo
     {
         return $this->resolveQuery($request, $model)
                     ->get()
-                    ->mapWithKeys(function (Model $related) use ($request, $model): array {
+                    ->map(function (Model $related) use ($request, $model): array {
                         return $this->mapOption($request, $model, $related);
                     })
                     ->toArray();
