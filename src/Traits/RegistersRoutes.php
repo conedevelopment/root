@@ -18,6 +18,21 @@ trait RegistersRoutes
     protected ?string $uri = null;
 
     /**
+     * Get the key.
+     *
+     * @return string
+     */
+    abstract public function getKey(): string;
+
+    /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    abstract public function routes(Router $router): void;
+
+    /**
      * Set the URI attribute.
      *
      * @param  string  $uri
@@ -66,19 +81,4 @@ trait RegistersRoutes
             );
         }
     }
-
-    /**
-     * Get the key.
-     *
-     * @return string
-     */
-    abstract public function getKey(): string;
-
-    /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    abstract public function routes(Router $router): void;
 }
