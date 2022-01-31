@@ -13,6 +13,6 @@ class ExtractRequest extends RootRequest
      */
     public function extract(): Extract
     {
-        return $this->route('resolved');
+        return $this->resolved();
     }
 }

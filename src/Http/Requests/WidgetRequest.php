@@ -13,6 +13,6 @@ class WidgetRequest extends RootRequest
      */
     public function widget(): Widget
     {
-        return $this->route('resolved');
+        return $this->resolved();
     }
 }

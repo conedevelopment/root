@@ -13,6 +13,6 @@ class ActionRequest extends RootRequest
      */
     public function action(): Action
     {
-        return $this->route('resolved');
+        return $this->resolved();
     }
 }

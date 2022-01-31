@@ -62,19 +62,6 @@ abstract class Widget implements Arrayable, Renderable
     abstract public function data(Request $request): array;
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        if ($this->async) {
-            $router->get($this->getKey(), WidgetController::class);
-        }
-    }
-
-    /**
      * Get the key.
      *
      * @return string
@@ -135,6 +122,19 @@ abstract class Widget implements Arrayable, Renderable
     public function render(): string
     {
         return View::make($this->getTemplate(), App::call([$this, 'data']))->render();
+    }
+
+    /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->async) {
+            $router->get($this->getKey(), WidgetController::class);
+        }
     }
 
     /**

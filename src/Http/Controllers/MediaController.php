@@ -21,7 +21,7 @@ class MediaController extends Controller
      */
     public function index(RootRequest $request): JsonResponse
     {
-        $field = $request->route('resolved');
+        $field = $request->resolved();
 
         $model = $request->resource()->getModelInstance();
 
@@ -45,7 +45,7 @@ class MediaController extends Controller
      */
     public function store(RootRequest $request): JsonResponse
     {
-        $field = $request->route('resolved');
+        $field = $request->resolved();
 
         $file = $request->file('file');
 

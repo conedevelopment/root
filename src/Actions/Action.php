@@ -55,33 +55,6 @@ abstract class Action implements Arrayable
     abstract public function handle(Request $request, Collection $models): void;
 
     /**
-     * Register the action routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function registerRoutes(Request $request, Router $router): void
-    {
-        $this->defaultRegisterRoutes($request, $router);
-
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
-    }
-
-    /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        $router->post($this->getKey(), ActionController::class);
-    }
-
-    /**
      * Get the key for the filter.
      *
      * @return string
@@ -146,6 +119,33 @@ abstract class Action implements Arrayable
         }
 
         return $this->resolved['fields'];
+    }
+
+    /**
+     * Register the action routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->defaultRegisterRoutes($request, $router);
+
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        $router->post($this->getKey(), ActionController::class);
     }
 
     /**

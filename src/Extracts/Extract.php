@@ -44,37 +44,6 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Register the extract routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function registerRoutes(Request $request, Router $router): void
-    {
-        $this->defaultRegisterRoutes($request, $router);
-
-        $router->prependGroupStackPrefix('/api')
-                ->prefix($this->getKey())
-                ->group(function (Router $router) use ($request): void {
-                    $this->resolveFields($request)->registerRoutes($request, $router);
-                    $this->resolveActions($request)->registerRoutes($request, $router);
-                    $this->resolveWidgets($request)->registerRoutes($request, $router);
-                });
-    }
-
-    /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        $router->get($this->getKey(), ExtractController::class);
-    }
-
-    /**
      * Get the key.
      *
      * @return string
@@ -223,6 +192,37 @@ abstract class Extract implements Arrayable
         }
 
         return $this->resolved['widgets'];
+    }
+
+    /**
+     * Register the extract routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->defaultRegisterRoutes($request, $router);
+
+        $router->prependGroupStackPrefix('/api')
+                ->prefix($this->getKey())
+                ->group(function (Router $router) use ($request): void {
+                    $this->resolveFields($request)->registerRoutes($request, $router);
+                    $this->resolveActions($request)->registerRoutes($request, $router);
+                    $this->resolveWidgets($request)->registerRoutes($request, $router);
+                });
+    }
+
+    /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        $router->get($this->getKey(), ExtractController::class);
     }
 
     /**

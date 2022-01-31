@@ -19,4 +19,14 @@ class RootRequest extends Request
             $this->route('resource') ?: ($this->route()->action['resource'] ?? null)
         );
     }
+
+    /**
+     * Get the resolved component.
+     *
+     * @return mixed
+     */
+    public function resolved(): mixed
+    {
+        return $this->resolved();
+    }
 }

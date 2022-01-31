@@ -32,25 +32,6 @@ abstract class Filter implements Arrayable
     }
 
     /**
-     * Apply the filter on the query.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function apply(Request $request, Builder $query, mixed $value): Builder
-    {
-        $name = $this->getKey();
-
-        if ($query->getModel()->hasNamedScope($name)) {
-            $query->getModel()->callNamedScope($name, [$query, $value]);
-        }
-
-        return $query;
-    }
-
-    /**
      * Get the key.
      *
      * @return string
@@ -78,6 +59,25 @@ abstract class Filter implements Arrayable
     public function getComponent(): string
     {
         return $this->component;
+    }
+
+    /**
+     * Apply the filter on the query.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $value
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function apply(Request $request, Builder $query, mixed $value): Builder
+    {
+        $name = $this->getKey();
+
+        if ($query->getModel()->hasNamedScope($name)) {
+            $query->getModel()->callNamedScope($name, [$query, $value]);
+        }
+
+        return $query;
     }
 
     /**

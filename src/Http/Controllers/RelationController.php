@@ -18,7 +18,7 @@ class RelationController extends Controller
      */
     public function __invoke(RootRequest $request): JsonResponse
     {
-        $field = $request->route('resolved');
+        $field = $request->resolved();
 
         $model = $request->resource()->getModelInstance();
 
