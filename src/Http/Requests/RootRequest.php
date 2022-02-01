@@ -27,6 +27,6 @@ class RootRequest extends Request
      */
     public function resolved(): mixed
     {
-        return $this->resolved();
+        return $this->route('resolved');
     }
 }

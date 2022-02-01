@@ -29,7 +29,7 @@ class RelationController extends Controller
                             }
                         })
                         ->cursorPaginate()
-                        ->through(static function (Model $related) use ($request, $model, $field): array {
+                        ->mapWithKeys(static function (Model $related) use ($request, $model, $field): array {
                             return $field->mapOption($request, $model, $related);
                         });
 

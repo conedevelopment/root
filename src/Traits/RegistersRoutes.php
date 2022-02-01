@@ -62,9 +62,7 @@ trait RegistersRoutes
      */
     public function registerRoutes(Request $request, Router $router): void
     {
-        $this->setUri(
-            sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey())
-        );
+        $this->setUri(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
 
         $router->matched(function (RouteMatched $event): void {
             if ($event->route->uri() === $this->getUri()) {

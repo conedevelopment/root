@@ -122,16 +122,16 @@ abstract class Relation extends Field
      * Resolve the display format or the query result.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return mixed
      */
-    public function resolveDisplay(Request $request, Model $model): mixed
+    public function resolveDisplay(Request $request, Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
-            $this->display($model->getKeyName());
+            $this->display($related->getKeyName());
         }
 
-        return call_user_func_array($this->displayResolver, [$request, $model]);
+        return call_user_func_array($this->displayResolver, [$request, $related]);
     }
 
     /**
@@ -255,10 +255,23 @@ abstract class Relation extends Field
     {
         return $this->resolveQuery($request, $model)
                     ->get()
-                    ->mapWithKeys(function (Model $model) use ($request): array {
-                        return [$model->getKey() => $this->resolveDisplay($request, $model)];
+                    ->mapWithKeys(function (Model $related) use ($request, $model): array {
+                        return $this->mapOption($request, $model, $related);
                     })
                     ->toArray();
+    }
+
+    /**
+     * Map the given option.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return array
+     */
+    public function mapOption(Request $request, Model $model, Model $related): array
+    {
+        return [$related->getKey() => $this->resolveDisplay($request, $related)];
     }
 
     /**
