@@ -48,12 +48,7 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Hydrate the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
-     * @return void
+     * {@inheritdoc}
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
@@ -107,11 +102,7 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Resolve the options for the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveOptions(Request $request, Model $model): array
     {
@@ -124,12 +115,7 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Map the given option.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
+     * {@inheritdoc}
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
@@ -144,11 +130,7 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Get the input representation of the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
     {

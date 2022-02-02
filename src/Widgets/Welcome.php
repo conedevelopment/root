@@ -15,10 +15,7 @@ class Welcome extends Widget
     protected string $template = 'root::widgets.welcome';
 
     /**
-     * Get the data.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * {@inheritdoc}
      */
     public function data(Request $request): array
     {

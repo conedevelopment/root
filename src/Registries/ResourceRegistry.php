@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\App;
 class ResourceRegistry extends Registry implements Contract
 {
     /**
-     * Register an item into the registry.
-     *
-     * @param  string  $key
-     * @param  object $item
-     * @return void
+     * {@inheritdoc}
      */
     public function register(string $key, object $item): void
     {

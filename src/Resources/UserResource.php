@@ -11,10 +11,7 @@ use Illuminate\Validation\Rule;
 class UserResource extends Resource
 {
     /**
-     * Define the fields for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * {@inheritdoc}
      */
     public function fields(Request $request): array
     {

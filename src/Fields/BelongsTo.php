@@ -8,12 +8,7 @@ use Illuminate\Http\Request;
 class BelongsTo extends Relation
 {
     /**
-     * Hydrate the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
-     * @return void
+     * {@inheritdoc}
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {

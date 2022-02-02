@@ -43,11 +43,7 @@ class Date extends Field
     }
 
     /**
-     * Format the value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * {@inheritdoc}
      */
     public function resolveFormat(Request $request, Model $model): mixed
     {

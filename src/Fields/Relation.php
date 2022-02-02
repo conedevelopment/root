@@ -150,11 +150,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Resolve the default value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * {@inheritdoc}
      */
     public function resolveDefault(Request $request, Model $model): mixed
     {
@@ -174,11 +170,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Get the default value from the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getDefaultValue(Request $request, Model $model): mixed
     {
@@ -186,11 +178,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Format the value.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * {@inheritdoc}
      */
     public function resolveFormat(Request $request, Model $model): mixed
     {
@@ -288,11 +276,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Get the input representation of the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
     {

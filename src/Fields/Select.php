@@ -58,11 +58,7 @@ class Select extends Field
     }
 
     /**
-     * Get the input representation of the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
     {

@@ -40,11 +40,7 @@ class File extends Media
     }
 
     /**
-     * Persist the request value on the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
+     * {@inheritdoc}
      */
     public function persist(Request $request, Model $model): void
     {
@@ -60,11 +56,7 @@ class File extends Media
     }
 
     /**
-     * Get the value for hydrating the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getValueForHydrate(Request $request, Model $model): mixed
     {
@@ -72,10 +64,7 @@ class File extends Media
     }
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * {@inheritdoc}
      */
     public function routes(Router $router): void
     {

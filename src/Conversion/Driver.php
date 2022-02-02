@@ -33,6 +33,8 @@ abstract class Driver
      *
      * @param  \Cone\Root\Models\Medium  $medium
      * @return \Cone\Root\Models\Medium
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function perform(Medium $medium): Medium
     {

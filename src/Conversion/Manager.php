@@ -16,9 +16,7 @@ class Manager extends BaseManager implements Contract
     protected array $conversions = [];
 
     /**
-     * Get the default driver name.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDefaultDriver(): string
     {

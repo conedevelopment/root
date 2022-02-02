@@ -43,9 +43,7 @@ abstract class SelectFilter extends Filter
     }
 
     /**
-     * Get the instance as an array.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray(): array
     {

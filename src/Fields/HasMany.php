@@ -8,12 +8,7 @@ use Illuminate\Http\Request;
 class HasMany extends Relation
 {
     /**
-     * Hydrate the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
-     * @return void
+     * {@inheritdoc}
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
@@ -27,11 +22,7 @@ class HasMany extends Relation
     }
 
     /**
-     * Get the input representation of the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
     {

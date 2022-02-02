@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class GdDriver extends Driver
 {
     /**
-     * Perform the registered conversions on the medium.
-     *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @return \Cone\Root\Models\Medium
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * {@inheritdoc}
      */
     public function perform(Medium $medium): Medium
     {
@@ -25,12 +20,7 @@ class GdDriver extends Driver
     }
 
     /**
-     * Convert the medium using the given conversion.
-     *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @param  string  $conversion
-     * @param  \Closure  $callback
-     * @return void
+     * {@inheritdoc}
      */
     public function convert(Medium $medium, string $conversion, Closure $callback): void
     {

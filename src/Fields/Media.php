@@ -66,11 +66,7 @@ class Media extends MorphToMany
     }
 
     /**
-     * Resolve the options for the field.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveOptions(Request $request, Model $model): array
     {
@@ -78,12 +74,7 @@ class Media extends MorphToMany
     }
 
     /**
-     * Map the given option.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
+     * {@inheritdoc}
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
@@ -96,10 +87,7 @@ class Media extends MorphToMany
     }
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * {@inheritdoc}
      */
     public function routes(Router $router): void
     {
