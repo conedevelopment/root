@@ -4,8 +4,6 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\MediaController;
-use Cone\Root\Jobs\MoveFile;
-use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
