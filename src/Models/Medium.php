@@ -191,11 +191,15 @@ class Medium extends Model implements Contract
      */
     public function getUrlsAttribute(): array
     {
+        $urls = ['original' => $this->getUrl()];
+
+        if (! $this->convertable()) {
+            return $urls;
+        }
+
         return array_reduce($this->properties['conversions'] ?? [], function (array $urls, string $conversion): array {
-            return $this->convertable()
-                ? array_merge($urls, [$conversion => $this->getUrl($conversion)])
-                : $urls;
-        }, ['original' => $this->getUrl()]);
+            return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
+        }, $urls);
     }
 
     /**
@@ -215,7 +219,9 @@ class Medium extends Model implements Contract
      */
     public function convert(): static
     {
-        return Conversion::perform($this);
+        Conversion::perform($this);
+
+        return $this;
     }
 
     /**
@@ -227,11 +233,13 @@ class Medium extends Model implements Contract
      */
     public function getPath(?string $conversion = null, bool $absolute = false): string
     {
-        $path = "{$this->id}/{$this->file_name}";
+        $path = sprintf('%s/%s', $this->id, $this->file_name);
 
-        $path = is_null($conversion) ? $path : substr_replace(
-            $path, "-{$conversion}", -(mb_strlen(Str::afterLast($path, '.')) + 1), -mb_strlen("-{$conversion}")
-        );
+        if (! is_null($conversion)) {
+            $path = substr_replace(
+                $path, "-{$conversion}", -(mb_strlen(Str::afterLast($path, '.')) + 1), -mb_strlen("-{$conversion}")
+            );
+        }
 
         return $absolute ? Storage::disk($this->disk)->path($path) : $path;
     }

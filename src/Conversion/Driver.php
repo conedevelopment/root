@@ -32,11 +32,11 @@ abstract class Driver
      * Perform the registered conversions on the medium.
      *
      * @param  \Cone\Root\Models\Medium  $medium
-     * @return \Cone\Root\Models\Medium
+     * @return void
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function perform(Medium $medium): Medium
+    public function perform(Medium $medium): void
     {
         if (! Storage::disk($medium->disk)->exists($medium->getPath())) {
             throw new FileNotFoundException("The file located at [{$medium->getAbsolutePath()}] is not found.");
@@ -53,8 +53,6 @@ abstract class Driver
         $medium->properties = array_replace($medium->properties, ['conversions' => $conversions]);
 
         $medium->save();
-
-        return $medium;
     }
 
     /**

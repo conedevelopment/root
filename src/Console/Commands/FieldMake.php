@@ -3,6 +3,7 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Input\InputOption;
 
 class FieldMake extends GeneratorCommand
 {
@@ -46,5 +47,49 @@ class FieldMake extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\\Root\\Fields';
+    }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function buildClass($name): string
+    {
+        $class = parent::buildClass($name);
+
+        return $this->replaceComponent($class);
+    }
+
+    /**
+     * Replace the component related code.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function replaceComponent(string $class): string
+    {
+        if ($component = $this->option('component')) {
+            return str_replace(
+                [PHP_EOL.'{{component}}', '{{/component}}', 'DummyComponent'],
+                ['', '', $component],
+                $class
+            );
+        }
+
+        return preg_replace('/\n{{component}}.*{{\/component}}/s', '', $class);
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+        ];
     }
 }

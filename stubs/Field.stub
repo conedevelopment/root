@@ -6,5 +6,12 @@ use Cone\Root\Fields\Field;
 
 class DummyClass extends Field
 {
-    //
+{{component}}
+    /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component = 'DummyComponent';
+{{/component}}
 }

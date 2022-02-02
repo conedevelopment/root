@@ -7,7 +7,7 @@ use Cone\Root\Interfaces\Conversion\Manager;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \Cone\Root\Models\Medium perform(\Cone\Root\Models\Medium $medium)
+ * @method static void perform(\Cone\Root\Models\Medium $medium)
  *
  * @see \Cone\Root\Interfaces\Conversion\Manager
  */
