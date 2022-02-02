@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Controllers\FileController;
-use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -50,10 +48,8 @@ class File extends Media
      */
     public function persist(Request $request, Model $model): void
     {
-        $media = array_map(static function (UploadedFile $file) use ($request): array {
-            $medium = $request->user()->uploads()->save(
-                (Medium::proxy())::makeFrom($file->getRealPath())
-            );
+        $media = array_map(function (UploadedFile $file) use ($request): array {
+            $medium = $this->store($request, $file->getRealPath());
 
             $file->storeAs($medium->id, $medium->file_name, $medium->disk);
 
@@ -83,6 +79,6 @@ class File extends Media
      */
     public function routes(Router $router): void
     {
-        $router->post($this->getKey(), FileController::class);
+        //
     }
 }

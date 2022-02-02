@@ -5,7 +5,6 @@ namespace Cone\Root\Http\Controllers;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
-use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
@@ -57,9 +56,7 @@ class MediaController extends Controller
             return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 
-        $medium = $request->user()->uploads()->save(
-            (Medium::proxy())::makeFrom($path)
-        );
+        $medium = $field->store($request, $path);
 
         MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
                 ->dispatch($medium, $path);
