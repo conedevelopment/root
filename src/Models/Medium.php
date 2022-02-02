@@ -41,7 +41,7 @@ class Medium extends Model implements Contract
      * @var array
      */
     protected $attributes = [
-        'properties' => '{"alt":null}',
+        'properties' => '{"conversions":[]}',
     ];
 
     /**

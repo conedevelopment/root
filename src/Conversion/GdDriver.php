@@ -2,9 +2,8 @@
 
 namespace Cone\Root\Conversion;
 
+use Closure;
 use Cone\Root\Models\Medium;
-use Cone\Root\Support\Facades\Conversion;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,27 +19,32 @@ class GdDriver extends Driver
      */
     public function perform(Medium $medium): Medium
     {
-        if (! Storage::disk($medium->disk)->exists($medium->getPath())) {
-            throw new FileNotFoundException("The file located at [{$medium->getAbsolutePath()}] is not found.");
-        }
-
         File::ensureDirectoryExists(Storage::disk('local')->path('root-tmp'));
 
-        foreach (Conversion::all() as $conversion => $callback) {
-            $image = $this->createImage($medium);
+        return parent::perform($medium);
+    }
 
-            call_user_func_array($callback, [$image]);
+    /**
+     * Convert the medium using the given conversion.
+     *
+     * @param  \Cone\Root\Models\Medium  $medium
+     * @param  string  $conversion
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public function convert(Medium $medium, string $conversion, Closure $callback): void
+    {
+        $image = $this->createImage($medium);
 
-            $image->save();
+        call_user_func_array($callback, [$image]);
 
-            Storage::disk($medium->disk)->move(
-                $image->getPath(), $medium->getPath($conversion)
-            );
+        $image->save();
 
-            $image->destroy();
-        }
+        Storage::disk($medium->disk)->move(
+            $image->getPath(), $medium->getPath($conversion)
+        );
 
-        return $medium;
+        $image->destroy();
     }
 
     /**
