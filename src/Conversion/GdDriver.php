@@ -12,11 +12,11 @@ class GdDriver extends Driver
     /**
      * {@inheritdoc}
      */
-    public function perform(Medium $medium): Medium
+    public function perform(Medium $medium): void
     {
         File::ensureDirectoryExists(Storage::disk('local')->path('root-tmp'));
 
-        return parent::perform($medium);
+        parent::perform($medium);
     }
 
     /**

@@ -4,6 +4,14 @@
 
 ## 📚 Documentation
 
+- [Installation](https://rootconedevelopment.com/docs/installation) - Before moving on, please checkout the Laravel documentation about its installation, requirements and configuration.
+- [Resources](https://rootconedevelopment.com/docs/resources) - Resources are basically extra layers around models. Using resources it's easy to build up a CRUD workflow for a model.
+- [Fields](https://rootconedevelopment.com/docs/fields) - Fields are handlers for the model attributes.
+- [Filters](https://rootconedevelopment.com/docs/filters) - Filters are responsible for transforming the current request to a database query.
+- [Actions](https://rootconedevelopment.com/docs/actions) - Actions are responsible for performing a specific action on a set of models.
+- [Widgets](https://rootconedevelopment.com/docs/widgets) - Widgets are cards that display some information or any content you want to display.
+- [Extracts](https://rootconedevelopment.com/docs/extracts) - Extracts are layers on the top of the resource index.
+
 ## 🤝 Contributing
 
 Thank you for considering contributing to Root! The contribution guide can be found in the [documentation](https://root.conedevelopment.com/docs/contribution).
