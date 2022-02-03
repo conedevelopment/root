@@ -343,6 +343,10 @@ class Resource implements Arrayable
                 $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
             }
 
+            $actions->each->withQuery(function (): Builder {
+                return $this->query();
+            });
+
             $this->resolved['actions'] = $actions;
         }
 
@@ -393,6 +397,10 @@ class Resource implements Arrayable
             if (! is_null($this->extractsResolver)) {
                 $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
             }
+
+            $extracts->each->withQuery(function (): Builder {
+                return $this->query();
+            });
 
             $this->resolved['extracts'] = $extracts;
         }
@@ -466,19 +474,6 @@ class Resource implements Arrayable
     }
 
     /**
-     * Get the abilities.
-     *
-     * @return array
-     */
-    public function getAbilities(): array
-    {
-        return [
-            'global' => ['viewAny', 'create'],
-            'scoped' => ['view', 'update', 'delete', 'restore', 'forceDelete'],
-        ];
-    }
-
-    /**
      * Get the policy.
      *
      * @return mixed
@@ -498,10 +493,8 @@ class Resource implements Arrayable
     {
         $policy = $this->getPolicy();
 
-        $abilities = $this->getAbilities();
-
         return array_reduce(
-            $abilities['global'],
+            ['viewAny', 'create'],
             function (array $stack, $ability) use ($request, $policy): array {
                 return array_merge($stack, [
                     $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
@@ -544,7 +537,7 @@ class Resource implements Arrayable
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request): array {
-                        return $model->toResourceDisplay($request, $this);
+                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
                     });
 
         return array_merge($this->toArray(), [
@@ -583,7 +576,7 @@ class Resource implements Arrayable
     {
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
-            'model' => $model->toResourceDisplay($request, $this),
+            'model' => $model->toDisplay($request, $this->resolveFields($request)->available($request, $model)),
         ]);
     }
 
@@ -597,7 +590,7 @@ class Resource implements Arrayable
     public function toEdit(UpdateRequest $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'model' => $model->toResourceForm($request, $this),
+            'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
         ]);
     }
 

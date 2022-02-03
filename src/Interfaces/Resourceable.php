@@ -9,49 +9,30 @@ use Illuminate\Http\Request;
 interface Resourceable
 {
     /**
-     * Map the resource URLs for the model.
+     * Map the abilities for the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
      * @return array
      */
-    public function mapResourceUrls(Request $request, Resource $resource): array;
-
-    /**
-     * Map the resource abilities for the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return array
-     */
-    public function mapResourceAbilities(Request $request, Resource $resource): array;
-
-    /**
-     * Get the available resource fields for the model the current request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function getAvailableResourceFields(Request $request, Resource $resource): Fields;
+    public function mapAbilities(Request $request): array;
 
     /**
      * Get the Root resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toResourceDisplay(Request $request, Resource $resource): array;
+    public function toDisplay(Request $request, Fields $fields): array;
 
     /**
      * Get the Root resource form representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toResourceForm(Request $request, Resource $resource): array;
+    public function toForm(Request $request, Fields $fields): array;
 
     /**
      * Get the resource representation of the model.

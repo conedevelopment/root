@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Actions;
 
+use Closure;
+use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Support\Collections\Fields;
@@ -33,6 +35,13 @@ abstract class Action implements Arrayable
      * @var array
      */
     protected array $resolved = [];
+
+    /**
+     * The query resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $queryResolver = null;
 
     /**
      * Make a new action instance.
@@ -78,17 +87,46 @@ abstract class Action implements Arrayable
      * Perform the action.
      *
      * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function perform(ActionRequest $request, Builder $query): RedirectResponse
+    public function perform(ActionRequest $request): RedirectResponse
     {
         $this->handle(
             $request,
-            $query->findMany($request->input('models', []))
+            $this->resolveQuery($request)->findMany($request->input('models', []))
         );
 
         return Redirect::back();
+    }
+
+    /**
+     * Set the query resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function withQuery(Closure $callback): static
+    {
+        $this->queryResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     *
+     * @throws \Cone\Root\Exceptions\QueryResolutionException
+     */
+    public function resolveQuery(Request $request): Builder
+    {
+        if (is_null($this->queryResolver)) {
+            throw new QueryResolutionException();
+        }
+
+        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**

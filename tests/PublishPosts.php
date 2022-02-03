@@ -4,7 +4,6 @@ namespace Cone\Root\Tests;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Http\Requests\ActionRequest;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -18,9 +17,9 @@ class PublishPosts extends Action
         //
     }
 
-    public function perform(ActionRequest $request, Builder $query): RedirectResponse
+    public function perform(ActionRequest $request): RedirectResponse
     {
-        $this->handle($request, $query->get());
+        $this->handle($request, Post::query()->get());
 
         return Redirect::to('/posts');
     }
@@ -28,7 +27,7 @@ class PublishPosts extends Action
     public function routes(Router $router): void
     {
         $router->post($this->getKey(), function (ActionRequest $request) {
-            return $this->perform($request, Post::query());
+            return $this->perform($request);
         });
     }
 }

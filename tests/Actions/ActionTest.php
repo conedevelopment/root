@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests\Actions;
 
+use Cone\Root\Tests\Post;
 use Cone\Root\Tests\PublishPosts;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Support\Facades\URL;
@@ -15,6 +16,10 @@ class ActionTest extends TestCase
         parent::setUp();
 
         $this->action = new PublishPosts();
+
+        $this->action->withQuery(function () {
+            return Post::query();
+        });
     }
 
     /** @test */
@@ -26,8 +31,10 @@ class ActionTest extends TestCase
 
         $this->assertSame('api/posts/actions/publish-posts', $this->action->getUri());
 
-        $this->post(URL::to($this->action->getUri()))
-            ->assertRedirect('/posts');
+        $this->assertArrayHasKey(
+            $this->action->getUri(),
+            $this->app['router']->getRoutes()->get('POST')
+        );
     }
 
     /** @test */

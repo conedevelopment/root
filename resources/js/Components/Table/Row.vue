@@ -9,13 +9,13 @@
             v-html="field.formatted_value"
         ></td>
         <td>
-            <button type="button" v-if="item.abilities.delete" @click="destroy(item.urls.show)">
+            <button type="button" v-if="item.abilities.delete" @click="destroy(`${$parent.urls.index}/${item.id}`)">
                 Delete
             </button>
-            <Link v-if="item.abilities.view" :href="item.urls.show">
+            <Link v-if="item.abilities.view" :href="`${$parent.urls.index}/${item.id}`">
                 View
             </Link>
-            <Link v-if="item.abilities.update" :href="item.urls.edit">
+            <Link v-if="item.abilities.update" :href="`${$parent.urls.index}/${item.id}/edit`">
                 Edit
             </Link>
         </td>

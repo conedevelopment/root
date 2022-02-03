@@ -2,6 +2,9 @@
 
 namespace Cone\Root\Extracts;
 
+use Closure;
+use Cone\Root\Actions\Action;
+use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
@@ -31,6 +34,13 @@ abstract class Extract implements Arrayable
      * @var array
      */
     protected array $resolved = [];
+
+    /**
+     * The query resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $queryResolver = null;
 
     /**
      * Make a new extract instance.
@@ -64,14 +74,33 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Get the query for the extract.
+     * Set the query resolver.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  \Closure  $callback
+     * @return $this
      */
-    public function query(Builder $query): Builder
+    public function withQuery(Closure $callback): static
     {
-        return $query;
+        $this->queryResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query for the extract.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     *
+     * @throws \Cone\Root\Exceptions\QueryResolutionException
+     */
+    public function resolveQuery(Request $request): Builder
+    {
+        if (is_null($this->queryResolver)) {
+            throw new QueryResolutionException();
+        }
+
+        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**
@@ -156,8 +185,14 @@ abstract class Extract implements Arrayable
         if (! isset($this->resolved['actions'])) {
             $this->resolved['actions'] = Actions::make($this->actions($request));
 
-            $this->resolved['actions']->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
+            $this->resolved['actions']->each(function (Action $action) use ($request): void {
+                $action->mergeAuthorizationResolver(function (Request $request): bool {
+                    return $this->authorized($request);
+                });
+
+                $action->withQuery(function () use ($request): Builder {
+                    return $this->resolveQuery($request);
+                });
             });
         }
 
@@ -192,6 +227,20 @@ abstract class Extract implements Arrayable
         }
 
         return $this->resolved['widgets'];
+    }
+
+    /**
+     * Map the URLs.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapUrls(Request $request): array
+    {
+        return [
+            'create' => str_replace("/extracts/{$this->getKey()}", '', URL::to($this->getUri())),
+            'index' => str_replace("/extracts/{$this->getKey()}", '', URL::to($this->getUri())),
+        ];
     }
 
     /**
@@ -247,24 +296,23 @@ abstract class Extract implements Arrayable
      */
     public function toIndex(ExtractRequest $request): array
     {
-        $resource = $request->resource();
-
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->query($resource->query())
+        $query = $this->resolveQuery($request)
                     ->tap(static function (Builder $query) use ($request, $filters): void {
                         $filters->apply($request, $query)->latest();
                     })
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
-                    ->through(static function (Model $model) use ($request, $resource): array {
-                        return $model->toResourceDisplay($request, $resource);
+                    ->through(function (Model $model) use ($request): array {
+                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
                     });
 
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
             'query' => $query->toArray(),
+            'urls' => $this->mapUrls($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }
