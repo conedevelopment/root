@@ -156,7 +156,7 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        $fields = $resource->resolveFields($request)->available($request);
+        $fields = $resource->resolveFields($request)->available($request, $model);
 
         $request->validate(
             $fields->mapToValidate($request, $model)->toArray()

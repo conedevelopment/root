@@ -65,13 +65,6 @@ abstract class Field implements Arrayable
     ];
 
     /**
-     * The rules resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $rulesResolver = null;
-
-    /**
      * The Vue compoent.
      *
      * @var string
@@ -476,17 +469,12 @@ abstract class Field implements Arrayable
      * Set the validation rules.
      *
      * @param  array|\Closure  $rules
+     * @param  string  $context
      * @return $this
      */
-    public function rules(array|Closure $rules): static
+    public function rules(array|Closure $rules, string $context = '*'): static
     {
-        if ($rules instanceof Closure) {
-            $this->rulesResolver = $rules;
-        } elseif (Arr::isAssoc($rules)) {
-            $this->rules = array_merge($this->rules, $rules);
-        } else {
-            $this->rules['*'] = $rules;
-        }
+        $this->rules[$context] = $rules;
 
         return $this;
     }
@@ -499,9 +487,7 @@ abstract class Field implements Arrayable
      */
     public function createRules(array|Closure $rules): static
     {
-        $this->rules['create'] = $rules;
-
-        return $this;
+        return $this->rules($rules, 'create');
     }
 
     /**
@@ -512,9 +498,7 @@ abstract class Field implements Arrayable
      */
     public function updateRules(array|Closure $rules): static
     {
-        $this->rules['update'] = $rules;
-
-        return $this;
+        return $this->rules($rules, 'update');
     }
 
     /**
@@ -575,24 +559,14 @@ abstract class Field implements Arrayable
             default => '*',
         };
 
-        $resolved = is_null($this->rulesResolver)
-            ? []
-            : call_user_func_array($this->rulesResolver, [$request, $model]);
-
-        if (! Arr::isAssoc($resolved)) {
-            $resolved = ['*' => $resolved];
-        }
-
         $rules = array_map(
             static function (array|Closure $rule) use ($request, $model): array {
                 return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
             },
-            array_merge_recursive($this->rules, $resolved)
+            Arr::only($this->rules, array_unique(['*', $key]))
         );
 
-        return array_unique(
-            $key === '*' ? $rules['*'] : array_merge($rules['*'], $rules[$key] ?? [])
-        );
+        return array_unique(Arr::flatten($rules));
     }
 
     /**
