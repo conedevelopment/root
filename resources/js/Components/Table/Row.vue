@@ -9,13 +9,13 @@
             v-html="field.formatted_value"
         ></td>
         <td>
-            <button type="button" v-if="item.abilities.delete" @click="destroy(`${$parent.urls.index}/${item.id}`)">
+            <button type="button" v-if="item.abilities.delete" @click="destroy(url)">
                 Delete
             </button>
-            <Link v-if="item.abilities.view" :href="`${$parent.urls.index}/${item.id}`">
+            <Link v-if="item.abilities.view" :href="url">
                 View
             </Link>
-            <Link v-if="item.abilities.update" :href="`${$parent.urls.index}/${item.id}/edit`">
+            <Link v-if="item.abilities.update" :href="`${url}/edit`">
                 Edit
             </Link>
         </td>
@@ -46,6 +46,9 @@
                     value ? this.select() : this.deselect();
                 },
             },
+            url() {
+                return `${this.$parent.urls.index}/${this.item.id}`;
+            },
         },
 
         methods: {
@@ -63,7 +66,7 @@
             },
             destroy(url) {
                 this.$inertia.delete(url, {
-                    onBefore: () => confirm('Are you sure?'),
+                    onBefore: () => confirm(this.__('Are you sure?')),
                     onStart: (visit) => this.deselect(),
                 });
             },

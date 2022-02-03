@@ -238,8 +238,7 @@ abstract class Extract implements Arrayable
     public function mapUrls(Request $request): array
     {
         return [
-            'create' => str_replace("/extracts/{$this->getKey()}", '', URL::to($this->getUri())),
-            'index' => str_replace("/extracts/{$this->getKey()}", '', URL::to($this->getUri())),
+            'index' => URL::to(str_replace("/extracts/{$this->getKey()}", '', $this->getUri())),
         ];
     }
 
