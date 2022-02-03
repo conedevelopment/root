@@ -11,12 +11,12 @@ class DummyClass extends Extract
     /**
      * Get the query for the extract.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Builder $query): Builder
+    public function resolveQuery(Request $request): Builder
     {
-        return parent::query($query);
+        return parent::resolveQuery($request);
     }
 
     /**
