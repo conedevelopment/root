@@ -11,17 +11,18 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable
+abstract class Action implements Arrayable, Responsable
 {
     use Authorizable;
     use ResolvesVisibility;
@@ -87,16 +88,15 @@ abstract class Action implements Arrayable
      * Perform the action.
      *
      * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function perform(ActionRequest $request): RedirectResponse
+    public function perform(ActionRequest $request): Response
     {
-        $this->handle(
-            $request,
-            $this->resolveQuery($request)->findMany($request->input('models', []))
-        );
+        $query = $this->resolveQuery($request);
 
-        return Redirect::back();
+        $this->handle($request, $query->findMany($request->input('models', [])));
+
+        return $this->toResponse($request);
     }
 
     /**
@@ -212,5 +212,16 @@ abstract class Action implements Arrayable
         return array_merge($this->toArray(), [
             'fields' => $this->resolveFields($request)->available($request, $model)->mapToForm($request, $model)->toArray(),
         ]);
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function toResponse($request): Response
+    {
+        return Redirect::back();
     }
 }
