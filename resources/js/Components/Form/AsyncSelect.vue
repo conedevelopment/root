@@ -18,10 +18,10 @@
                 <div
                     ref="option"
                     v-for="(item, index) in response.data"
-                    v-html="item.label"
-                    :key="item.id"
+                    v-html="item.formatted_value"
+                    :key="item.value"
                     :class="[index === active ? 'active' : '']"
-                    @mousedown="select(item.id)"
+                    @mousedown="select(item.value)"
                 ></div>
                 <div v-if="response.data.length === 0" aria-disabled="true">
                     {{ __('No items found for the given keyword.') }}
@@ -132,9 +132,11 @@
             fetch(event) {
                 this.processing = true;
 
+                const exclude = Array.isArray(this.modelValue) ? this.modelValue : [this.modelValue];
+
                 this.$http.get(this.url, { params: {
                     search: event.target.value,
-                    exclude: Array.isArray(this.modelValue) ? this.modelValue : [this.modelValue],
+                    exclude: exclude.filter((item) => item),
                 } }).then((response) => {
                     this.response = response.data;
                 }).catch((error) => {

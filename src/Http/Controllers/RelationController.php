@@ -28,8 +28,8 @@ class RelationController extends Controller
                                 $query->filter($request);
                             }
                         })
-                        ->cursorPaginate()
-                        ->mapWithKeys(static function (Model $related) use ($request, $model, $field): array {
+                        ->paginate()
+                        ->through(static function (Model $related) use ($request, $model, $field): array {
                             return $field->mapOption($request, $model, $related);
                         });
 

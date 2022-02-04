@@ -244,7 +244,9 @@ abstract class Relation extends Field
         return $this->resolveQuery($request, $model)
                     ->get()
                     ->mapWithKeys(function (Model $related) use ($request, $model): array {
-                        return $this->mapOption($request, $model, $related);
+                        $option = $this->mapOption($request, $model, $related);
+
+                        return [$option['value'] => $option['formatted_value']];
                     })
                     ->toArray();
     }
@@ -259,7 +261,10 @@ abstract class Relation extends Field
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
-        return [$related->getKey() => $this->resolveDisplay($request, $related)];
+        return [
+            'value' => $related->getKey(),
+            'formatted_value' => $this->resolveDisplay($request, $related),
+        ];
     }
 
     /**

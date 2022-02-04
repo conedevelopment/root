@@ -119,14 +119,12 @@ class BelongsToMany extends BelongsTo
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
-        return [
-            'value' => $related->getKey(),
-            'formatted_value' => $this->resolveDisplay($request, $related),
+        return array_merge(parent::mapOption($request, $model, $related), [
             'pivot_fields' => $this->resolvePivotFields($request)
                                 ->available($request, $model, $related)
                                 ->mapToForm($request, $related)
                                 ->toArray(),
-        ];
+        ]);
     }
 
     /**
