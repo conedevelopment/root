@@ -5,7 +5,6 @@ namespace Cone\Root\Tests\Actions;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\PublishPosts;
 use Cone\Root\Tests\TestCase;
-use Illuminate\Support\Facades\URL;
 
 class ActionTest extends TestCase
 {
@@ -40,7 +39,11 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_has_fields()
     {
-        $this->assertTrue(true);
+        $fields = $this->action->resolveFields($this->app['request']);
+
+        $this->assertTrue($fields->contains(function ($field) {
+            return $field->getKey() === 'title';
+        }));
     }
 
     /** @test */

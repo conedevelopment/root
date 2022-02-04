@@ -3,12 +3,10 @@
 namespace Cone\Root\Tests;
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Http\Requests\ActionRequest;
-use Illuminate\Http\RedirectResponse;
+use Cone\Root\Fields\Text;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Redirect;
 
 class PublishPosts extends Action
 {
@@ -17,17 +15,17 @@ class PublishPosts extends Action
         //
     }
 
-    public function perform(ActionRequest $request): RedirectResponse
+    public function fields(Request $request): array
     {
-        $this->handle($request, Post::query()->get());
-
-        return Redirect::to('/posts');
+        return [
+            Text::make('Title'),
+        ];
     }
 
     public function routes(Router $router): void
     {
-        $router->post($this->getKey(), function (ActionRequest $request) {
-            return $this->perform($request);
+        $router->post($this->getKey(), function () {
+            //
         });
     }
 }
