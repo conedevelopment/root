@@ -27,13 +27,17 @@ export default {
         value: {
             default: null,
         },
-        error: {
+        name: {
             type: String,
-            default: null,
+            required: true,
         },
         component: {
             type: String,
             default: 'Input',
+        },
+        form: {
+            type: Object,
+            required: true,
         },
     },
 
@@ -44,11 +48,14 @@ export default {
     render() {
         return h(resolveComponent(this.component), {
             ...this.$attrs,
-            error: this.error,
+            name: this.name,
             modelValue: this.modelValue,
+            error: this.form.errors[this.name],
+            disabled: this.form.processing,
             required: ! [undefined, 'false'].includes(this.$attrs.required),
             'onUpdate:modelValue': (value) => {
                 this.$emit('update:modelValue', value);
+                this.form.clearErrors(this.name);
             },
         }, this.$slots);
     },

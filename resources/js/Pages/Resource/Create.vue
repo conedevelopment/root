@@ -4,10 +4,9 @@
             v-for="field in model.fields"
             v-bind="field"
             v-model="form[field.name]"
+            :form="form"
             :key="field.name"
-            :error="form.errors[field.name]"
-            :disabled="form.processing"
-            @update:modelValue="form.clearErrors(field.name)"
+            :name="field.name"
         ></FormHandler>
 
         <button type="submit" :disabled="form.processing">

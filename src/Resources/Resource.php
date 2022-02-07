@@ -560,8 +560,10 @@ class Resource implements Arrayable
      */
     public function toCreate(CreateRequest $request): array
     {
+        $model = $this->getModelInstance();
+
         return array_merge($this->toArray(), [
-            'model' => $this->getModelInstance()->toResourceForm($request, $this),
+            'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
         ]);
     }
 

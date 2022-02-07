@@ -1,20 +1,22 @@
 <template>
     <div>
         <label :for="$attrs.id">{{ label }}</label>
+        <fieldset v-for="(value, index) in modelValue" :key="index">
+            <FormHandler
+                v-for="field in value.fields"
+                v-bind="field"
+                v-model="$parent.form[field.name]"
+                :form="$parent.form"
+                :key="field.name"
+                :name="field.name"
+        ></FormHandler>
+        </fieldset>
         <span v-if="error">{{ error }}</span>
     </div>
 </template>
 
 <script>
-    import AsyncSelect from './AsyncSelect';
-    import Select from './Select';
-
     export default {
-        components: {
-            AsyncSelect,
-            Select,
-        },
-
         props: {
             modelValue: {
                 type: Array,
