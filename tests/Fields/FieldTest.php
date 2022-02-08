@@ -215,17 +215,17 @@ class FieldTest extends TestCase
                     ->updateRules(['unique:users,1']);
 
         $this->assertSame(
-            ['required'],
+            [$this->field->name => ['required']],
             $this->field->toValidate($this->app['request'], $this->model)
         );
 
         $this->assertSame(
-            ['required', 'unique:users'],
+            [$this->field->name => ['required', 'unique:users']],
             $this->field->toValidate(new CreateRequest(), $this->model)
         );
 
         $this->assertSame(
-            ['required', 'unique:users,1'],
+            [$this->field->name => ['required', 'unique:users,1']],
             $this->field->toValidate(new UpdateRequest(), $this->model)
         );
     }

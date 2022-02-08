@@ -85,9 +85,7 @@ class ResourceController extends Controller
 
         $model = $resource->getModelInstance();
 
-        $request->validate(
-            $fields->mapToValidate($request, $model)->toArray()
-        );
+        $request->validate($fields->mapToValidate($request, $model));
 
         $fields->each->persist($request, $model);
 
@@ -158,9 +156,7 @@ class ResourceController extends Controller
 
         $fields = $resource->resolveFields($request)->available($request, $model);
 
-        $request->validate(
-            $fields->mapToValidate($request, $model)->toArray()
-        );
+        $request->validate($fields->mapToValidate($request, $model));
 
         $fields->each->persist($request, $model);
 

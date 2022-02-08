@@ -55,15 +55,13 @@ class Fields extends Collection
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
+     * @return array
      */
-    public function mapToValidate(Request $request, Model $model): Collection
+    public function mapToValidate(Request $request, Model $model): array
     {
-        return $this->mapWithKeys(static function (Field $field) use ($request, $model): array {
-                    return [$field->name => $field->toValidate($request, $model)];
-                })
-                ->filter()
-                ->toBase();
+        return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
+            return array_merge_recursive($rules, $field->toValidate($request, $model));
+        }, []);
     }
 
     /**

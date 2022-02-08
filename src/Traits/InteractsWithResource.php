@@ -59,6 +59,7 @@ trait InteractsWithResource
         return [
             'abilities' => $this->mapAbilities($request),
             'fields' => $fields->mapToForm($request, $this)->toArray(),
+            'id' => $this->getKey(),
         ];
     }
 

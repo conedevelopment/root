@@ -7,6 +7,7 @@ use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
 
 class BelongsToMany extends BelongsTo
 {
@@ -32,19 +33,40 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
-     * Register the field routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * {@inheritdoc}
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function resolveDefault(Request $request, Model $model): mixed
     {
-        parent::registerRoutes($request, $router);
+        if (is_null($this->defaultResolver)) {
+            $this->defaultResolver = function (Request $request, Model $model, mixed $value): mixed {
+                $relation = $this->getRelation($model);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolvePivotFields($request)->registerRoutes($request, $router);
-        });
+                $columns = $relation->getPivotColumns();
+
+                $key = $relation->getPivotAccessor();
+
+                return $value->mapWithKeys(static function (Model $related) use ($key, $columns): array {
+                    return [$related->getKey() => $related->getAttribute($key)->only($columns)];
+                });
+            };
+        }
+
+        return parent::resolveDefault($request, $model);
+    }
+
+    /**
+     * Set the async attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function async(bool $value = true): static
+    {
+        parent::async($value);
+
+        $this->component = 'BelongsToMany';
+
+        return $this;
     }
 
     /**
@@ -121,10 +143,26 @@ class BelongsToMany extends BelongsTo
     {
         return array_merge(parent::mapOption($request, $model, $related), [
             'pivot_fields' => $this->resolvePivotFields($request)
-                                ->available($request, $model, $related)
-                                ->mapToForm($request, $related)
-                                ->toArray(),
+                                    ->available($request, $model, $related)
+                                    ->mapToForm($request, $related)
+                                    ->toArray(),
         ]);
+    }
+
+    /**
+     * Register the field routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        parent::registerRoutes($request, $router);
+
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolvePivotFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**
@@ -136,12 +174,37 @@ class BelongsToMany extends BelongsTo
 
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
-            'pivot_fields' => $models->map(function (Model $related) use ($request, $model): array {
-                return $this->resolvePivotFields($request)
-                            ->available($request, $model, $related)
-                            ->mapToForm($request, $related)
-                            ->toArray();
+            'pivot_fields' => $models->mapWithKeys(function (Model $related) use ($request, $model): array {
+                return [
+                    $related->getKey() => $this->resolvePivotFields($request)
+                                                ->available($request, $model, $related)
+                                                ->mapToForm($request, $related)
+                                                ->toArray(),
+                ];
             }),
         ]);
+    }
+
+    /**
+     * Get the validation representation of the field.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toValidate(Request $request, Model $model): array
+    {
+        $pivotRules = $this->resolvePivotFields($request)
+                            ->available($request, $model)
+                            ->mapToValidate($request, $model);
+
+        return array_merge(
+            parent::toValidate($request, $model),
+            Collection::make($pivotRules)
+                    ->mapWithKeys(function (array $rules, string $key): array {
+                        return [$this->name.'.*.'.$key => $rules];
+                    })
+                    ->toArray(),
+        );
     }
 }

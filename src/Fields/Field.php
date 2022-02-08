@@ -566,7 +566,7 @@ abstract class Field implements Arrayable
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 
-        return array_unique(Arr::flatten($rules, 1));
+        return [$this->name => array_unique(Arr::flatten($rules, 1))];
     }
 
     /**
