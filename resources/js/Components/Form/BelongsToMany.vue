@@ -1,7 +1,6 @@
 <template>
     <div>
         <fieldset></fieldset>
-        <span v-if="error">{{ error }}</span>
     </div>
 </template>
 

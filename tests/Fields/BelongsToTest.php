@@ -30,7 +30,9 @@ class BelongsToTest extends TestCase
         $post = new Post();
 
         $this->assertSame(
-            Author::query()->get()->pluck('id', 'id')->toArray(),
+            Author::query()->get()->map(function ($model) {
+                return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
+            })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
     }
@@ -43,7 +45,9 @@ class BelongsToTest extends TestCase
         $this->field->display('name');
 
         $this->assertSame(
-            Author::query()->get()->pluck('name', 'id')->toArray(),
+            Author::query()->get()->map(function ($model) {
+                return ['value' => $model->getKey(), 'formatted_value' => $model->name];
+            })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
 
@@ -54,8 +58,8 @@ class BelongsToTest extends TestCase
         $this->field->display($closure);
 
         $this->assertSame(
-            Author::query()->get()->mapWithKeys(function ($model) use ($closure) {
-                return [$model->id => $closure($this->app['request'], $model)];
+            Author::query()->get()->map(function ($model) use ($closure) {
+                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->app['request'], $model)];
             })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );

@@ -30,7 +30,9 @@ class HasManyTest extends TestCase
         $author = new Author();
 
         $this->assertSame(
-            Post::query()->get()->pluck('id', 'id')->toArray(),
+            Post::query()->get()->map(function ($model) {
+                return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
+            })->toArray(),
             $this->field->resolveOptions($this->app['request'], $author)
         );
     }
@@ -43,7 +45,9 @@ class HasManyTest extends TestCase
         $this->field->display('title');
 
         $this->assertSame(
-            Post::query()->get()->pluck('title', 'id')->toArray(),
+            Post::query()->get()->map(function ($model) {
+                return ['value' => $model->getKey(), 'formatted_value' => $model->title];
+            })->toArray(),
             $this->field->resolveOptions($this->app['request'], $author)
         );
 
@@ -54,8 +58,8 @@ class HasManyTest extends TestCase
         $this->field->display($closure);
 
         $this->assertSame(
-            Post::query()->get()->mapWithKeys(function ($model) use ($closure) {
-                return [$model->id => $closure($this->app['request'], $model)];
+            Post::query()->get()->map(function ($model) use ($closure) {
+                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->app['request'], $model)];
             })->toArray(),
             $this->field->resolveOptions($this->app['request'], $author)
         );

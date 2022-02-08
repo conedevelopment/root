@@ -114,19 +114,6 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(Request $request, Model $model): array
-    {
-        return $this->resolveQuery($request, $model)
-                    ->get()
-                    ->map(function (Model $related) use ($request, $model): array {
-                        return $this->mapOption($request, $model, $related);
-                    })
-                    ->toArray();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
         return array_merge(parent::mapOption($request, $model, $related), [

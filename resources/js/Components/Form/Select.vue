@@ -3,8 +3,8 @@
         <label :for="$attrs.id">{{ label }}</label>
         <select v-bind="$attrs" v-model="value">
             <option :disabled="! nullable" :value="null" selected>{{ label }}</option>
-            <option v-for="(option, value) in options" :value="value" :key="value">
-                {{ option }}
+            <option v-for="option in options" :value="option.value" :key="option.value">
+                {{ option.formatted_value }}
             </option>
         </select>
         <span v-if="error">{{ error }}</span>
@@ -38,6 +38,10 @@
                 type: Boolean,
                 default: false,
             },
+            selectResolver: {
+                type: Function,
+                default: (value, options) => value,
+            },
         },
 
         inheritAttrs: false,
@@ -47,7 +51,7 @@
         computed: {
             value: {
                 set(value) {
-                    this.$emit('update:modelValue', value);
+                    this.$emit('update:modelValue', this.selectResolver(value, this.options));
                 },
                 get() {
                     return JSON.parse(JSON.stringify(this.modelValue));

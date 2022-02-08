@@ -54,7 +54,11 @@ class Select extends Field
             return [];
         }
 
-        return call_user_func_array($this->optionsResolver, [$request, $model]);
+        $options = call_user_func_array($this->optionsResolver, [$request, $model]);
+
+        return array_map(static function (mixed $formattedValue, string $value): array {
+            return ['value' => $value, 'formatted_value' => $formattedValue];
+        }, $options, array_keys($options));
     }
 
     /**

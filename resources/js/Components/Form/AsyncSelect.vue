@@ -62,6 +62,10 @@
                 type: String,
                 required: true,
             },
+            selectResolver: {
+                type: Function,
+                default: (value, options) => value,
+            },
         },
 
         inheritAttrs: false,
@@ -94,7 +98,7 @@
                     value = this.active;
                 }
 
-                this.$emit('update:modelValue', value);
+                this.$emit('update:modelValue', this.selectResolver(value, this.response.data));
             },
             select(index) {
                 this.highlight(index);
