@@ -286,6 +286,7 @@ abstract class Relation extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
+            'async' => $this->async,
             'nullable' => $this->nullable,
             'options' => $this->async ? [] : $this->resolveOptions($request, $model),
             'url' => $this->async ? URL::to($this->getUri()) : null,

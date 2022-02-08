@@ -12,13 +12,6 @@ use Illuminate\Support\Collection;
 class BelongsToMany extends BelongsTo
 {
     /**
-     * The Vue compoent.
-     *
-     * @var string
-     */
-    protected string $component = 'BelongsToMany';
-
-    /**
      * The pivot fields resolver callback.
      *
      * @var \Closure|null
@@ -55,18 +48,13 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Set the async attribute.
+     * Get the Vue component.
      *
-     * @param  bool  $value
-     * @return $this
+     * @return string
      */
-    public function async(bool $value = true): static
+    public function getComponent(): string
     {
-        parent::async($value);
-
-        $this->component = 'BelongsToMany';
-
-        return $this;
+        return 'BelongsToMany';
     }
 
     /**
