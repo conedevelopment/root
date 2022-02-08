@@ -15,7 +15,7 @@ jobs:
         os: ["ubuntu-20.04"]
         php: ["8.0", "8.1"]
         stability: ["prefer-stable"]
-        laravel: ["8.x"]
+        laravel: ["9.x"]
 
     name: "${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
 
