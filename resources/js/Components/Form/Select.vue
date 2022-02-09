@@ -15,7 +15,7 @@
     export default {
         props: {
             modelValue: {
-                type: [String, Number, Array],
+                type: [String, Number, Array, Object],
                 default: null,
             },
             label: {
@@ -54,7 +54,13 @@
                     this.$emit('update:modelValue', this.selectResolver(value, this.options));
                 },
                 get() {
-                    return JSON.parse(JSON.stringify(this.modelValue));
+                    let value = this.modelValue;
+
+                    if (value instanceof Object) {
+                        value = Object.keys(value);
+                    }
+
+                    return JSON.parse(JSON.stringify(value));
                 },
             },
         },

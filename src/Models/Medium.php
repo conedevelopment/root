@@ -270,11 +270,15 @@ class Medium extends Model implements Contract
      * Scope the query only to the given search term.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $value
+     * @param  string|null  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSearch(Builder $query, string $value): Builder
+    public function scopeSearch(Builder $query, ?string $value = null): Builder
     {
+        if (is_null($value)) {
+            return $query;
+        }
+
         return $query->where($query->qualifyColumn('name'), 'like', "%{$value}%");
     }
 

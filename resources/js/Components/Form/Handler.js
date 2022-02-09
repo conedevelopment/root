@@ -52,7 +52,7 @@ export default {
             modelValue: this.modelValue,
             error: this.form.errors[this.name],
             disabled: this.form.processing,
-            required: ! [undefined, 'false'].includes(this.$attrs.required),
+            required: ! [undefined, 'false', false].includes(this.$attrs.required),
             'onUpdate:modelValue': (value) => {
                 this.$emit('update:modelValue', value);
                 this.form.clearErrors(this.name);
