@@ -104,7 +104,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($request);
+        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('view', $model);
@@ -126,7 +126,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($request);
+        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
@@ -148,7 +148,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($request);
+        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
@@ -175,7 +175,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        $model = $resource->resolveRouteBinding($request);
+        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         $trashed = class_uses_recursive(SoftDeletes::class) && $model->trashed();
 

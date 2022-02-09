@@ -151,21 +151,23 @@ class Resource implements Arrayable
      * Retrieve the model for a bound value.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $key
+     * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Model
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function resolveRouteBinding(Request $request, string $key = 'id'): Model
+    public function resolveRouteBinding(Request $request, mixed $value): Model
     {
+        $key = strtolower($this->getModelName());
+
         if (($model = $request->route($key)) instanceof Model) {
             return $model;
         }
 
-        $model = $this->getModelInstance()->resolveRouteBinding($request->route($key));
+        $model = $this->getModelInstance()->resolveRouteBinding($value);
 
         if (is_null($model)) {
-            throw (new ModelNotFoundException())->setModel($this->getModel(), $request->route($key));
+            throw (new ModelNotFoundException())->setModel($this->getModel(), $value);
         }
 
         $request->route()->setParameter($key, $model);
