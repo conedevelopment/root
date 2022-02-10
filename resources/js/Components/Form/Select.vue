@@ -54,13 +54,7 @@
                     this.$emit('update:modelValue', this.selectResolver(value, this.options));
                 },
                 get() {
-                    let value = this.modelValue;
-
-                    if (value instanceof Object) {
-                        value = Object.keys(value);
-                    }
-
-                    return JSON.parse(JSON.stringify(value));
+                    return JSON.parse(JSON.stringify(this.modelValue));
                 },
             },
         },

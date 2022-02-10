@@ -38,6 +38,34 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
+    public function resolveDefault(Request $request, Model $model): mixed
+    {
+        if (is_null($this->defaultResolver)) {
+            $this->defaultResolver = function (Request $request, Model $model, mixed $value): mixed {
+                $relation = $this->getRelation($model);
+
+                return $value->mapWithKeys(function (Model $related) use ($request, $model, $relation) {
+                    return [
+                        $related->getKey() => $this->resolvePivotFields($request)
+                                                    ->available($request, $model, $related)
+                                                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation) {
+                                                        return [
+                                                            $field->name => $field->resolveDefault(
+                                                                $request, $related->getRelation($relation->getPivotAccessor())
+                                                            ),
+                                                        ];
+                                                    }),
+                    ];
+                });
+            };
+        }
+
+        return parent::resolveDefault($request, $model);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $model->saved(function (Model $model) use ($value): void {

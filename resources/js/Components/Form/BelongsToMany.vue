@@ -2,7 +2,7 @@
     <div>
         <FormHandler
             v-bind="$attrs"
-            v-model="$parent.form[name]"
+            v-model="value"
             :component="component"
             :form="$parent.form"
             :name="name"
@@ -36,6 +36,18 @@
         computed: {
             component() {
                 return this.async ? 'AsyncSelect' : 'Select';
+            },
+            value: {
+                set(value) {
+                    console.log(value);
+                },
+                get() {
+                    if (! Array.isArray(this.modelValue) && this.modelValue instanceof Object) {
+                        return Object.keys(this.modelValue);
+                    }
+
+                    return JSON.parse(JSON.stringify(this.modelValue));
+                },
             },
         },
 
