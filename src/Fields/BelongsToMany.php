@@ -26,28 +26,6 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
-     * {@inheritdoc}
-     */
-    public function resolveDefault(Request $request, Model $model): mixed
-    {
-        if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = function (Request $request, Model $model, mixed $value): mixed {
-                $relation = $this->getRelation($model);
-
-                $columns = $relation->getPivotColumns();
-
-                $key = $relation->getPivotAccessor();
-
-                return $value->mapWithKeys(static function (Model $related) use ($key, $columns): array {
-                    return [$related->getKey() => $related->getAttribute($key)->only($columns)];
-                });
-            };
-        }
-
-        return parent::resolveDefault($request, $model);
-    }
-
-    /**
      * Get the Vue component.
      *
      * @return string
