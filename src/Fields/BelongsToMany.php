@@ -116,10 +116,12 @@ class BelongsToMany extends BelongsTo
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
+        $relation = $this->getRelation($model);
+
         return array_merge(parent::mapOption($request, $model, $related), [
             'pivot_fields' => $this->resolvePivotFields($request)
                                     ->available($request, $model, $related)
-                                    ->mapToForm($request, $related)
+                                    ->mapToForm($request, $relation->newPivot())
                                     ->toArray(),
         ]);
     }
@@ -147,14 +149,16 @@ class BelongsToMany extends BelongsTo
     {
         $models = $this->getDefaultValue($request, $model);
 
+        $relation = $this->getRelation($model);
+
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
             'multiple' => true,
-            'pivot_fields' => $models->mapWithKeys(function (Model $related) use ($request, $model): array {
+            'pivot_fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
                 return [
                     $related->getKey() => $this->resolvePivotFields($request)
                                                 ->available($request, $model, $related)
-                                                ->mapToForm($request, $related)
+                                                ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
                                                 ->toArray(),
                 ];
             }),
