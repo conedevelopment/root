@@ -1,5 +1,5 @@
 <template>
-    <div class="table-responsive">
+    <div>
         <Actions
             v-if="actions.length > 0"
             :actions="actions"
@@ -11,16 +11,21 @@
             :filters="filters"
             :query-string="queryString"
         ></Filters>
-        <table class="table table--striped">
-            <Head></Head>
-            <tbody>
-                <Row
-                    v-for="item in query.data"
-                    :key="item.id"
-                    :item="item"
-                ></Row>
-            </tbody>
-        </table>
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table--striped">
+                    <Head></Head>
+                    <tbody>
+                        <Row
+                            v-for="item in query.data"
+                            :key="item.id"
+                            :item="item"
+                        ></Row>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <Pagination></Pagination>
     </div>
 </template>
 
@@ -29,6 +34,7 @@
     import Extracts from './Extracts';
     import Filters from './Filters';
     import Head from './Head';
+    import Pagination from './Pagination';
     import QueryString from './../../Support/QueryString';
     import Row from './Row';
 
@@ -38,6 +44,7 @@
             Extracts,
             Filters,
             Head,
+            Pagination,
             Row,
         },
 

@@ -7,15 +7,13 @@
                 v-bind="widget"
             ></Widget>
         </div>
-        <div class="card">
-            <Table
-                :actions="actions"
-                :extracts="extracts"
-                :filters="filters"
-                :query="query"
-                :urls="urls"
-            ></Table>
-        </div>
+        <Table
+            :actions="actions"
+            :extracts="extracts"
+            :filters="filters"
+            :query="query"
+            :urls="urls"
+        ></Table>
     </div>
 </template>
 

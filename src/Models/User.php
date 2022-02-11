@@ -129,7 +129,7 @@ class User extends Authenticatable implements Contract, Resourceable
      */
     public function getAvatarAttribute(): string
     {
-        return URL::asset('vendor/root/img/avatar-placeholder.svg');
+        return sprintf('https://www.gravatar.com/avatar/%s?d=identicon', md5($this->email));
     }
 
     /**

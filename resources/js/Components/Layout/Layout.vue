@@ -1,13 +1,16 @@
 <template>
     <div class="app">
-        <Sidebar :resources="resources"></Sidebar>
+        <Sidebar :resources="resources" :user="user"></Sidebar>
         <main class="app-body">
-            <Nav></Nav>
+            <Nav :user="user"></Nav>
             <div class="app-body__inner">
                 <Header></Header>
                 <slot></slot>
             </div>
         </main>
+        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+            <input type="hidden" name="_token" :value="$page.props.csrf_token">
+        </form>
     </div>
 </template>
 

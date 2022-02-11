@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 
 class LoginController extends Controller
@@ -35,7 +36,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return Redirect::intended('root.dashboard');
+        return Redirect::intended(URL::route('root.dashboard'));
     }
 
     /**

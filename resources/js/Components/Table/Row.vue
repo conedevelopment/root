@@ -12,14 +12,19 @@
             v-html="field.formatted_value"
         ></td>
         <td>
-            <button type="button" v-if="item.abilities.delete" @click="destroy(url)">
-                Delete
+            <button
+                type="button"
+                class="btn btn--icon btn--tertiary btn--sm"
+                v-if="item.abilities.delete"
+                @click="destroy(url)"
+            >
+                <Icon class="btn__icon" name="delete"></Icon>
             </button>
-            <Link v-if="item.abilities.view" :href="url">
-                View
+            <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm">
+                <Icon class="btn__icon" name="view"></Icon>
             </Link>
-            <Link v-if="item.abilities.update" :href="`${url}/edit`">
-                Edit
+            <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm">
+                <Icon class="btn__icon" name="edit"></Icon>
             </Link>
         </td>
     </tr>
