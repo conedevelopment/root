@@ -157,12 +157,12 @@ class RootServiceProvider extends ServiceProvider
     {
         $this->app['view']->composer('root::app', function (View $view): void {
             $view->with('root', [
-                'resources' => array_map(
+                'resources' => array_values(array_map(
                     static function (Resources\Resource $resource): array {
                         return $resource->toArray();
                     },
                     Support\Facades\Resource::available($this->app['request'])
-                ),
+                )),
                 'translations' => (object) $this->app['translator']->getLoader()->load(
                     $this->app->getLocale(), '*', '*'
                 ),

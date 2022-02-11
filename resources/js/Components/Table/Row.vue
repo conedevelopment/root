@@ -1,7 +1,10 @@
 <template>
     <tr :class="{ 'is-selected': selected }">
         <th v-if="$parent.actions.length > 0" scope="row">
-            <input type="checkbox" v-model="selected">
+            <label class="form-check" style="position: relative; top: 3px;">
+                <input class="form-check__control" type="checkbox" v-model="selected">
+                <span class="form-label form-check__label" aria-label="Select/unselect [title here]"></span>
+            </label>
         </th>
         <td
             v-for="field in item.fields"

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="table-responsive">
         <Actions
             v-if="actions.length > 0"
             :actions="actions"
@@ -11,7 +11,7 @@
             :filters="filters"
             :query-string="queryString"
         ></Filters>
-        <table>
+        <table class="table table--striped">
             <Head></Head>
             <tbody>
                 <Row

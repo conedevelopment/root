@@ -2,7 +2,10 @@
     <thead>
         <tr v-if="columns.length > 0">
             <th v-if="$parent.actions.length > 0" scope="col">
-                <input ref="input" type="checkbox" v-model="selected">
+                <label class="form-check" style="position: relative; top: 3px;">
+                    <input ref="input" class="form-check__control" type="checkbox" v-model="selected">
+                    <span class="form-label form-check__label" aria-label="Select/unselect [title here]"></span>
+                </label>
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
                 {{ column.label }}

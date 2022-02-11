@@ -28,6 +28,10 @@
             },
         },
 
+        layout: function (h, page) {
+            return h(this.resolveDefaultLayout(), () => page);
+        },
+
         data() {
             return {
                 form: this.$inertia.form(

@@ -1,43 +1,35 @@
 <template>
     <aside class="js-app-sidebar app-sidebar">
         <div class="app-sidebar__header">
-            <a href="/">
+            <Link href="/">
                 <img class="app-sidebar__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">
-            </a>
+            </Link>
         </div>
-        <nav class="navigation app-sidebar__navigation" aria-label="Site">
+        <nav class="navigation app-sidebar__navigation" :aria-label="__('Site')">
             <ul>
                 <li class="navigation-item">
-                    <a class="navigation-item__link" href="#">
+                    <Link class="navigation-item__link" href="/">
                         <Icon class="navigation-item__icon" name="dashboard"></Icon>
-                        <span class="navigation-item__caption">Dashboard</span>
-                    </a>
+                        <span class="navigation-item__caption">{{ __('Dashboard') }}</span>
+                    </Link>
                 </li>
             </ul>
-            <p class="app-sidebar__title">Content</p>
+            <p class="app-sidebar__title">{{ __('Resources') }}</p>
             <ul>
-                <li class="navigation-item is-open">
-                    <a class="navigation-item__link" href="#">
-                        <Icon class="navigation-item__icon" name="post"></Icon>
-                        <span class="navigation-item__caption">Posts</span>
-                    </a>
-                    <ul class="navigation-submenu">
-                        <li>
-                            <a href="#" aria-current="page">All Posts</a>
-                        </li>
-                        <li>
-                            <a href="#">New Post</a>
-                        </li>
-                    </ul>
+                <li v-for="resource in resources" :key="resource.key" class="navigation-item">
+                    <Link class="navigation-item__link" :href="resource.urls.index">
+                        <!-- <Icon class="navigation-item__icon" name="post"></Icon> -->
+                        <span class="navigation-item__caption">{{ resource.name }}</span>
+                    </Link>
                 </li>
             </ul>
-            <p class="app-sidebar__title">Administration</p>
+            <p class="app-sidebar__title">{{ __('Tools') }}</p>
             <ul>
                 <li class="navigation-item">
-                    <a class="navigation-item__link" href="#">
-                        <Icon class="navigation-item__icon" name="person"></Icon>
+                    <Link class="navigation-item__link" href="#">
+                        <!-- <Icon class="navigation-item__icon" name="person"></Icon> -->
                         <span class="navigation-item__caption">Users</span>
-                    </a>
+                    </Link>
                 </li>
             </ul>
         </nav>
@@ -78,6 +70,13 @@
     export default {
         components: {
             Link,
+        },
+
+        props: {
+            resources: {
+                type: Array,
+                default: () => [],
+            },
         },
     }
 </script>

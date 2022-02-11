@@ -1,1 +1,3 @@
-Welcome to Root!
+<div class="card">
+    Welcome to Root!
+</div>

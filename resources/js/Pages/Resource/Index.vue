@@ -7,7 +7,7 @@
                 v-bind="widget"
             ></Widget>
         </div>
-        <div class="table">
+        <div class="card">
             <Table
                 :actions="actions"
                 :extracts="extracts"

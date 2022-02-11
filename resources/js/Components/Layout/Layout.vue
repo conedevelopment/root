@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <Sidebar></Sidebar>
+        <Sidebar :resources="resources"></Sidebar>
         <main class="app-body">
             <Nav></Nav>
             <div class="app-body__inner">
