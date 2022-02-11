@@ -1,0 +1,46 @@
+@use 'sprucecss/scss/spruce';
+
+.tab-navigation {
+  display: flex;
+  gap: spruce.spacer(xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-block-end: spruce.spacer(s);
+  white-space: nowrap;
+  overflow-x: auto;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    border-radius: spruce.$border-radius-sm;
+    padding: spruce.spacer(xxs) spruce.spacer(xs);
+    text-decoration: none;
+    transition: var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+
+    &:hover,
+    &[aria-current='page'] {
+      background-color: spruce.color(secondary-background, btn);
+      color: spruce.color(secondary-foreground, btn);
+
+      .count {
+        color: spruce.color(secondary-foreground-opaque, btn);
+      }
+    }
+
+    span {
+      color: spruce.color(text);
+      transition: var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    }
+
+    &[aria-current='page'] {
+      font-weight: 700;
+
+      .count {
+        font-weight: 400;
+      }
+    }
+  }
+}

@@ -7,6 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     {{-- Styles --}}
+    <link href="/vendor/root/favicon.png" rel="icon" sizes="32x32">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&amp;family=IBM+Plex+Sans:wght@400;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <link href="{{ URL::asset('vendor/root/app.css') }}" rel="stylesheet">
     @foreach(Cone\Root\Support\Facades\Asset::styles() as $key => $style)
         <link id="style-{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">

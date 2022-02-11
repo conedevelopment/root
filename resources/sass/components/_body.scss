@@ -1,0 +1,14 @@
+@use 'sprucecss/scss/spruce';
+
+.app-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  &__inner {
+    margin-inline: auto;
+    max-width: 100rem;
+    padding-inline: var(--gutter-lg);
+    width: 100%;
+  }
+}

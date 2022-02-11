@@ -3,6 +3,7 @@ import Cookie from './../Support/Cookie';
 import Debounce from './../Directives/Debounce';
 import DispatchesEvents from './../Mixins/DispatchesEvents';
 import FormHandler from './../Components/Form/Handler';
+import Icon from './../Components/Icon';
 import Translator from './../Support/Translator';
 import WidgetHandler from './../Components/Widgets/Handler';
 
@@ -11,6 +12,7 @@ export default {
         app.mixin(DispatchesEvents);
 
         app.component('FormHandler', FormHandler);
+        app.component('Icon', Icon);
         app.component('WidgetHandler', WidgetHandler);
 
         app.directive('debounce', Debounce);

@@ -1,7 +1,7 @@
 import { createApp, resolveComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import Root from './Plugins/Root';
-import Layout from './Components/Layout';
+import Layout from './Components/Layout/Layout';
 
 createInertiaApp({
     resolve: (name) => {

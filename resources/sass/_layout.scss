@@ -1,0 +1,21 @@
+@use 'sprucecss/scss/spruce';
+
+$sidebar-width: 20rem;
+
+.app {
+  background: linear-gradient(180deg, hsl(217, 100%, 97%) 4%, #fff);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  @include spruce.breakpoint(md) {
+    &-sidebar {
+      width: $sidebar-width;
+    }
+
+    &-body {
+      margin-inline-start: $sidebar-width;
+    }
+  }
+}

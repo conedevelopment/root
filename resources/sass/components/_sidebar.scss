@@ -1,0 +1,168 @@
+@use 'sprucecss/scss/spruce';
+
+.app-sidebar {
+  background-color: spruce.color(background);
+  border-inline-end: 1px solid spruce.color(border, sidebar);
+  display: none;
+  inset-block: 0;
+  inset-inline-start: auto;
+  position: fixed;
+  z-index: 120;
+
+  @include spruce.breakpoint(md) {
+    display: block !important;
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    height: 6rem;
+    margin-block-end: 1rem;
+    margin-inline: spruce.spacer(m);
+  }
+
+  &__logo {
+    height: 1.35rem;
+    width: auto;
+  }
+
+  &__navigation {
+    @include spruce.scrollbar(
+      $border-radius: 3px
+    );
+    @include spruce.layout-stack;
+    height: calc(100vh - 6rem - 1rem - 6rem);
+    margin-inline-end: spruce.spacer(s);
+    min-height: 10rem;
+    padding-inline-start: spruce.spacer(m);
+    padding-inline-end: spruce.spacer(s);
+    overflow-y: auto;
+  }
+
+  &__title {
+    color: spruce.color(secondary);
+    font-size: spruce.$font-size-sm;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    margin-block-end: spruce.spacer(s);
+    text-transform: uppercase;
+  }
+
+  &__footer {
+    align-items: center;
+    display: flex;
+    height: 6rem;
+    margin-inline: spruce.spacer(m);
+  }
+}
+
+.navigation {
+  font-family: var(--font-family-heading);
+  list-style: none;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    > li + li {
+      margin-block-start: spruce.spacer(s);
+    }
+  }
+}
+
+.navigation-item {
+  $this: &;
+
+  &.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .navigation-submenu {
+    display: none;
+  }
+
+  &.is-open {
+    position: relative;
+
+    &::before {
+      background-color: darken(spruce.color(primary, $only-color: true), 20%);
+      border-start-end-radius: spruce.$border-radius-sm;
+      border-end-end-radius: spruce.$border-radius-sm;
+      content: '';
+      inset-inline-start: calc(spruce.spacer(m) * -1);
+      position: absolute;
+      inset-block: 0.25rem 0;
+      width: 0.4rem;
+    }
+
+    #{$this}__icon {
+      color: spruce.color(primary);
+    }
+
+    .navigation-submenu {
+      display: block;
+    }
+  }
+
+  &__link {
+    align-items: center;
+    color: spruce.color(heading);
+    display: flex;
+    font-weight: 500;
+    gap: spruce.spacer(xs);
+    text-decoration: none;
+    transition: color var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+
+    &:hover,
+    &:focus,
+    &.is-active {
+      color: spruce.color(primary);
+      text-decoration: none;
+
+      #{$this}__icon {
+        color: spruce.color(primary);
+      }
+    }
+  }
+
+  &__icon {
+    color: spruce.color(icon, sidebar);
+    display: inline-flex;
+    height: 1.15rem;
+    margin-right: 0;
+    transition: color var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    width: 1.15rem;
+  }
+}
+
+.navigation-submenu {
+  list-style: none;
+  margin-block: 0.7rem 1rem !important;
+  padding: 0;
+
+  > * + * {
+    margin-top: 0.2rem !important;
+  }
+
+  a {
+    border-radius: spruce.$border-radius-lg;
+    color: spruce.color(heading);
+    display: block;
+    font-weight: 500;
+    padding-bottom: 0.2em;
+    padding-inline: calc(2rem + 0.5rem) 1rem;
+    padding-top: 0.2em;
+    text-decoration: none;
+    transition: var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+
+    &:hover,
+    &:focus,
+    &[aria-current='page'] {
+      background-color: spruce.color(active, sidebar);
+      color: spruce.color(primary);
+    }
+  }
+}

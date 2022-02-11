@@ -1,1 +1,67 @@
-//
+@use 'sass:color';
+
+$color-primary-light: hsl(215, 100%, 96%);
+$color-primary: hsl(214, 98%, 49%);
+
+@use 'sprucecss/scss/spruce' with (
+  $color-primary: $color-primary,
+  $color-secondary: hsl(214, 98%, 25%),
+  $colors: (
+    base: (
+      heading: hsl(238, 69%, 22%),
+      text: hsl(207, 44%, 20%)
+    ),
+    btn: (
+      primary-foreground-opaque: hsl(0, 0%, 100%, 0.75),
+      secondary-foreground-opaque: hsl(0, 0%, 100%, 0.75),
+      tertiary-background: $color-primary-light,
+      tertiary-background-hover: $color-primary,
+      tertiary-foreground: $color-primary,
+      tertiary-foreground-hover: $color-primary-light,
+    ),
+    form: (
+      border: hsl(223, 16%, 80%),
+      border-focus: $color-primary,
+      check-background: hsl(214, 98%, 25%),
+      select-foreground: hsl(214, 98%, 25%)
+    ),
+    table: (
+      border: $color-primary-light,
+      hover: $color-primary-light,
+      stripe: hsl(216, 100%, 98%)
+    ),
+    breadcrumb: (
+      arrow: hsl(0, 0%, 0%, 0.1)
+    ),
+    sidebar: (
+      border: hsl(214, 100%, 90%),
+      icon: hsl(245, 37%, 83%),
+      active: $color-primary-light
+    )
+  ),
+  $spacers: (
+    m: 2rem
+  ),
+  $font-family-base: #{'Inter', sans-serif},
+  $font-family-heading: #{'Poppins', sans-serif},
+  $font-size-sm: 0.8375rem,
+  $font-size-base: 0.9375rem,
+  $btn-border-radius: 0.5rem,
+  $btn-font-weight: 600,
+  $btn-padding-sm: 0.65em 0.95em,
+  $form-label-font-weight: 600,
+  $transition-duration: 0.1s
+);
+
+@forward 'components';
+@forward 'layout';
+@forward 'sprucecss-expansion';
+
+:root {
+  --gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)});
+  --gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)});
+}
+
+.hidden {
+  display: none;
+}

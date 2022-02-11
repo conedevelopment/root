@@ -1,0 +1,23 @@
+@use 'sprucecss/scss/spruce';
+
+.app-filter {
+  @include spruce.layout-stack(spruce.spacer(xs));
+  margin-block-end: spruce.spacer(s);
+
+  &__title {
+    align-items: center;
+    display: flex;
+    font-size: spruce.font-size(h4);
+  }
+
+  &__inner {
+    --col-width: 10rem;
+
+    @include spruce.layout-flex($gutter: 1rem);
+
+    background-color: spruce.color(background);
+    border-radius: spruce.$border-radius-lg;
+    box-shadow: 0 0.25rem 2rem 0 rgba(74, 104, 179, 0.15);
+    padding: var(--gutter-md);
+  }
+}
