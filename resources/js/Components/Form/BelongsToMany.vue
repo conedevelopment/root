@@ -5,6 +5,7 @@
             v-model="value"
             :component="component"
             :form="$parent.form"
+            :name="name"
             :select-resolver="selectResolver"
         ></FormHandler>
         <fieldset v-for="(pivot, key) in modelValue" :key="key">
@@ -13,7 +14,8 @@
                 v-bind="field"
                 v-model="modelValue[key][field.name]"
                 :form="$parent.form"
-                :key="field.name"
+                :key="`${key}-${field.name}`"
+                :name="`${name}.${key}.${field.name}`"
             ></FormHandler>
         </fieldset>
     </div>
@@ -25,6 +27,10 @@
             modelValue: {
                 type: [Array, Object],
                 default: () => [],
+            },
+            name: {
+                type: String,
+                required: true,
             },
             async: {
                 type: Boolean,
