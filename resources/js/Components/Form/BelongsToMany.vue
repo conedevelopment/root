@@ -1,23 +1,27 @@
 <template>
-    <div>
-        <FormHandler
-            v-bind="$attrs"
-            v-model="value"
-            :component="component"
-            :form="$parent.form"
-            :name="name"
-            :select-resolver="selectResolver"
-        ></FormHandler>
-        <fieldset v-for="(pivot, key) in modelValue" :key="key">
+    <div class="form-group">
+        <div class="form-row--mixed">
             <FormHandler
-                v-for="field in fields[key]"
-                v-bind="field"
-                v-model="modelValue[key][field.name]"
+                v-bind="$attrs"
+                v-model="value"
+                :component="component"
                 :form="$parent.form"
-                :key="`${key}-${field.name}`"
-                :name="`${name}.${key}.${field.name}`"
+                :name="name"
+                :select-resolver="selectResolver"
             ></FormHandler>
-        </fieldset>
+            <div>
+                <fieldset v-for="(pivot, key) in modelValue" :key="key">
+                    <FormHandler
+                        v-for="field in fields[key]"
+                        v-bind="field"
+                        v-model="modelValue[key][field.name]"
+                        :form="$parent.form"
+                        :key="`${key}-${field.name}`"
+                        :name="`${name}.${key}.${field.name}`"
+                    ></FormHandler>
+                </fieldset>
+            </div>
+        </div>
     </div>
 </template>
 
