@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <label :for="$attrs.id">{{ label }}</label>
-        <select v-bind="$attrs" v-model="value">
+    <div class="form-group">
+        <label class="form-label" :for="$attrs.id">{{ label }}</label>
+        <select class="form-control" v-bind="$attrs" v-model="value">
             <option :disabled="! nullable" :value="null" selected>{{ label }}</option>
             <option v-for="option in options" :value="option.value" :key="option.value">
                 {{ option.formatted_value }}

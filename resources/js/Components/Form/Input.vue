@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <label :for="$attrs.id">{{ label }}</label>
-        <input v-bind="$attrs" :value="modelValue" @input="update">
+    <div class="form-group">
+        <label class="form-label" :for="$attrs.id">{{ label }}</label>
+        <input class="form-control" v-bind="$attrs" :value="modelValue" @input="update">
         <span v-if="error">{{ error }}</span>
     </div>
 </template>
