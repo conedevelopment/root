@@ -1,11 +1,15 @@
 <template>
     <form @submit.prevent @reset.prevent>
-        <select @change="submit">
-            <option value="" disabled selected>Extract</option>
-            <option v-for="extract in extracts" :key="extract.key" :value="extract.key">
-                {{ extract.name }}
-            </option>
-        </select>
+        <FormHandler
+            nullable
+            component="Select"
+            v-model="_extract"
+            :name="name"
+            :form="form"
+            :label="__('Extract')"
+            :options="options"
+            @update:modelValue="submit"
+        ></FormHandler>
     </form>
 </template>
 
@@ -18,13 +22,32 @@
             },
         },
 
+        data() {
+            return {
+                _extract: null,
+                form: this.$inertia.form(this.name, {}),
+            };
+        },
+
+        computed: {
+            name() {
+                return window.location.pathname + '-extracts';
+            },
+            options() {
+                return this.extracts.map((extract) => ({
+                    value: extract.key,
+                    formatted_value: extract.name,
+                }));
+            },
+        },
+
         methods: {
-            submit(event) {
+            submit() {
                 const extract = this.extracts.find((extract) => {
-                    return extract.key = event.target.value;
+                    return extract.key = this._extract;
                 });
 
-                this.$inertia.visit(extract.url);
+                this.form.get(extract.url);
             },
         },
     }

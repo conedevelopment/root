@@ -18,9 +18,6 @@
                 <Icon class="btn__icon btn__icon--start" name="magnifier"></Icon>
                 Quick search...<span class="btn__keybind">Ctrl K</span>
             </button>
-            <button type="button" class="js-toggle-filter btn btn--secondary btn--icon">
-                <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
-            </button>
         </div>
     </header>
 </template>

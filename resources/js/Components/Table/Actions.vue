@@ -1,11 +1,14 @@
 <template>
     <form @submit.prevent="submit" @reset.prevent>
-        <select v-model="_action">
-            <option :value="null" disabled>Action</option>
-            <option v-for="action in actions" :key="action.key" :value="action.key">
-                {{ action.name }}
-            </option>
-        </select>
+        <FormHandler
+            nullable
+            component="Select"
+            v-model="_action"
+            :name="name"
+            :form="form"
+            :label="__('Action')"
+            :options="options"
+        ></FormHandler>
         <button type="submit" :disabled="form.processing || _action === null || models.length === 0">
             Run
         </button>
@@ -30,8 +33,20 @@
         data() {
             return {
                 _action: null,
-                form: this.$inertia.form(window.location.pathname + '-actions', {}),
+                form: this.$inertia.form(this.name, {}),
             };
+        },
+
+        computed: {
+            name() {
+                return window.location.pathname + '-actions';
+            },
+            options() {
+                return this.actions.map((action) => ({
+                    value: action.key,
+                    formatted_value: action.name,
+                }));
+            },
         },
 
         methods: {

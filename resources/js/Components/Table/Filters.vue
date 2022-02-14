@@ -1,12 +1,17 @@
 <template>
     <div>
-        <FilterHandler
-            v-for="filter in filters"
-            :key="filter.key"
-            v-bind="filter"
-            :value="queryString.get(filter.key)"
-            @change="(value) => queryString.set(filter.key, value)"
-        ></FilterHandler>
+        <button type="button" class="js-toggle-filter btn btn--secondary btn--icon">
+            <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
+        </button>
+        <div style="display: none;">
+            <FilterHandler
+                v-for="filter in filters"
+                :key="filter.key"
+                v-bind="filter"
+                :value="queryString.get(filter.key)"
+                @change="(value) => queryString.set(filter.key, value)"
+            ></FilterHandler>
+        </div>
     </div>
 </template>
 

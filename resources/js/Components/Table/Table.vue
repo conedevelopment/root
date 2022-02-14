@@ -2,8 +2,8 @@
     <div>
         <Actions
             v-if="actions.length > 0"
-            :actions="actions"
             v-model:models="selection"
+            :actions="actions"
         ></Actions>
         <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
         <Filters
