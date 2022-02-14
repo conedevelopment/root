@@ -1,16 +1,18 @@
 <template>
     <div>
-        <Actions
-            v-if="actions.length > 0"
-            v-model:models="selection"
-            :actions="actions"
-        ></Actions>
-        <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
-        <Filters
-            v-if="filters.length > 0"
-            :filters="filters"
-            :query-string="queryString"
-        ></Filters>
+        <div class="form-row--mixed">
+            <Actions
+                v-if="actions.length > 0"
+                v-model:models="selection"
+                :actions="actions"
+            ></Actions>
+            <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
+            <Filters
+                v-if="filters.length > 0"
+                :filters="filters"
+                :query-string="queryString"
+            ></Filters>
+        </div>
         <div class="card">
             <div class="table-responsive">
                 <table class="table table--striped">

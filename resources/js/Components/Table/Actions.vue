@@ -9,8 +9,12 @@
             :label="__('Action')"
             :options="options"
         ></FormHandler>
-        <button type="submit" :disabled="form.processing || _action === null || models.length === 0">
-            Run
+        <button
+            type="submit"
+            class="btn btn--primary"
+            :disabled="form.processing || _action === null || models.length === 0"
+        >
+            {{ __('Run') }}
         </button>
     </form>
 </template>

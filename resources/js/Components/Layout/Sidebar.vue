@@ -18,7 +18,6 @@
             <ul>
                 <li v-for="resource in resources" :key="resource.key" class="navigation-item">
                     <Link :href="resource.urls.index" class="navigation-item__link">
-                        <Icon class="navigation-item__icon" name="post"></Icon>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
                 </li>
