@@ -16,6 +16,8 @@
 </template>
 
 <script>
+    import Form from './../../Components/Layout/Form';
+
     export default {
         props: {
             urls: {
@@ -29,7 +31,7 @@
         },
 
         layout: function (h, page) {
-            return h(this.resolveDefaultLayout(), () => page);
+            return h(this.resolveDefaultLayout(), () => h(Form, () => page));
         },
 
         data() {

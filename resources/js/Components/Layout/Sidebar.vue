@@ -18,17 +18,8 @@
             <ul>
                 <li v-for="resource in resources" :key="resource.key" class="navigation-item">
                     <Link :href="resource.urls.index" class="navigation-item__link">
-                        <!-- <Icon class="navigation-item__icon" name="post"></Icon> -->
+                        <Icon class="navigation-item__icon" name="post"></Icon>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
-                    </Link>
-                </li>
-            </ul>
-            <p class="app-sidebar__title">{{ __('Tools') }}</p>
-            <ul>
-                <li class="navigation-item">
-                    <Link class="navigation-item__link" href="#">
-                        <!-- <Icon class="navigation-item__icon" name="person"></Icon> -->
-                        <span class="navigation-item__caption">Users</span>
                     </Link>
                 </li>
             </ul>

@@ -18,6 +18,7 @@
                         :form="$parent.form"
                         :key="`${key}-${field.name}`"
                         :name="`${name}.${key}.${field.name}`"
+                        :id="`${name}.${key}.${field.name}`"
                     ></FormHandler>
                 </fieldset>
             </div>
