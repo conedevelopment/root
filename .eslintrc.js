@@ -9,6 +9,5 @@ module.exports = {
         "plugin:vue/recommended"
     ],
     rules: {
-        "vue/component-definition-name-casing": ["error", "kebab-case"]
     }
 }
