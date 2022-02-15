@@ -42,7 +42,7 @@ jobs:
         run: "yarn run test --color"
 
       - name: "Run SASS linter"
-        run: "yarn run lint-sass resources/sass/"
+        run: "yarn run lint-sass"
 
   build:
     name: "Build"
