@@ -1,7 +1,8 @@
 <?php
 
-namespace Cone\Root\Http\Controllers;
+namespace Cone\Root\Http\Controllers\Account;
 
+use Cone\Root\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;

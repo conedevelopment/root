@@ -1,9 +1,9 @@
 <?php
 
-use Cone\Root\Http\Controllers\AccountController;
+use Cone\Root\Http\Controllers\Account\AccountController;
+use Cone\Root\Http\Controllers\Account\PasswordController;
+use Cone\Root\Http\Controllers\Account\ProfileController;
 use Cone\Root\Http\Controllers\DashboardController;
-use Cone\Root\Http\Controllers\PasswordController;
-use Cone\Root\Http\Controllers\ProfileController;
 use Cone\Root\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
 
