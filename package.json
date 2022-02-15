@@ -24,7 +24,7 @@
         "sass": "^1.32.4",
         "sass-loader": "^8.0.0",
         "sprucecss": "^0.2.0",
-        "vue": "^3.0.5",
+        "vue": "^3.2.26",
         "vue-loader": "^16.1.0"
     },
     "devDependencies": {

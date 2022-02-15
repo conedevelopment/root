@@ -27,7 +27,7 @@
                 </table>
             </div>
         </div>
-        <Pagination></Pagination>
+        <Pagination :query="query"></Pagination>
     </div>
 </template>
 
