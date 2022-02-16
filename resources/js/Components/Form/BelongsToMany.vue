@@ -11,9 +11,9 @@
             ></FormHandler>
             <div>
                 <fieldset v-for="(pivot, key) in modelValue" :key="key">
-                    <legend></legend>
+                    <legend>{{ formattedValue[key] }}</legend>
                     <FormHandler
-                        v-for="field in fields[key]"
+                        v-for="field in pivotFields[key]"
                         v-bind="field"
                         v-model="modelValue[key][field.name]"
                         :form="$parent.form"
@@ -46,6 +46,10 @@
                 type: [Array, Object],
                 default: () => [],
             },
+            formatted_value: {
+                type: [Array, Object],
+                default: () => [],
+            },
         },
 
         inheritAttrs: false,
@@ -54,7 +58,8 @@
 
         data() {
             return {
-                fields: Object.assign({}, this.pivot_fields),
+                pivotFields: Object.assign({}, this.pivot_fields),
+                formattedValue: Object.assign({}, this.formatted_value),
             };
         },
 
@@ -70,7 +75,7 @@
                         }
 
                         return Object.assign(values, {
-                            [key]: this.fields[key].reduce((pivotValues, field) => {
+                            [key]: this.pivotFields[key].reduce((pivotValues, field) => {
                                 return Object.assign(pivotValues, { [field.name]: field.value });
                             }, {}),
                         });
@@ -90,11 +95,19 @@
 
         methods: {
             selectResolver(value, options) {
-                this.fields = value.reduce((fields, key) => {
+                this.pivotFields = value.reduce((fields, key) => {
                     return Object.assign(fields, {
-                        [key]: this.fields.hasOwnProperty(key)
-                            ? this.fields[key]
+                        [key]: this.pivotFields.hasOwnProperty(key)
+                            ? this.pivotFields[key]
                             : options.find((option) => option.value === key).pivot_fields,
+                    });
+                }, {});
+
+                this.formattedValue = value.reduce((fields, key) => {
+                    return Object.assign(fields, {
+                        [key]: this.formattedValue.hasOwnProperty(key)
+                            ? this.formattedValue[key]
+                            : options.find((option) => option.value === key).formatted_value,
                     });
                 }, {});
 
