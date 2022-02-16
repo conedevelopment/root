@@ -159,6 +159,9 @@ class BelongsToMany extends BelongsTo
 
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
+            'formatted_value' => $models->mapWithKeys(function (Model $related) use ($request): mixed {
+                return [$related->getKey() => $this->resolveDisplay($request, $related)];
+            }),
             'multiple' => true,
             'pivot_fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
                 return [

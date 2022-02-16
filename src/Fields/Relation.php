@@ -189,8 +189,8 @@ abstract class Relation extends Field
                 if ($default instanceof Model) {
                     return $this->resolveDisplay($request, $default);
                 } elseif ($default instanceof Collection) {
-                    return $default->map(function (Model $model) use ($request): mixed {
-                        return $this->resolveDisplay($request, $model);
+                    return $default->map(function (Model $related) use ($request): mixed {
+                        return $this->resolveDisplay($request, $related);
                     })->join(', ');
                 }
 

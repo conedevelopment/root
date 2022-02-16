@@ -11,6 +11,7 @@
             ></FormHandler>
             <div>
                 <fieldset v-for="(pivot, key) in modelValue" :key="key">
+                    <legend></legend>
                     <FormHandler
                         v-for="field in fields[key]"
                         v-bind="field"
