@@ -167,6 +167,7 @@ class RootServiceProvider extends ServiceProvider
                     $this->app->getLocale(), '*', '*'
                 ),
                 'user' => $this->app['request']->user()->toRoot(),
+                'config' => (object) [],
             ]);
         });
     }

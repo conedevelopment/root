@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <Sidebar :resources="resources" :user="user"></Sidebar>
+        <Sidebar ref="sidebar" :resources="resources" :user="user"></Sidebar>
         <main class="app-body">
             <Nav :user="user"></Nav>
             <div class="app-body__inner">

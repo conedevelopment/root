@@ -5,7 +5,11 @@
                 <img class="mobile-header__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">
             </Link>
             <div class="mobile-header__actions">
-                <button class="js-toggle-sidebar btn btn--secondary btn--icon">
+                <button
+                    type="button"
+                    class="js-toggle-sidebar btn btn--secondary btn--icon"
+                    @click="toggleSidebar"
+                >
                     <Icon class="btn__icon btn__icon--start" name="menu-open"></Icon>
                 </button>
                 <UserMenu :user="user"></UserMenu>
@@ -28,6 +32,12 @@
             user: {
                 type: Object,
                 required: true,
+            },
+        },
+
+        methods: {
+            toggleSidebar() {
+                this.$parent.$refs.sidebar.toggle();
             },
         },
     }

@@ -1,5 +1,5 @@
 <template>
-    <aside class="js-app-sidebar app-sidebar">
+    <aside class="js-app-sidebar app-sidebar" :class="{ 'is-open': isOpen }">
         <div class="app-sidebar__header">
             <Link href="/">
                 <img class="app-sidebar__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">
@@ -31,6 +31,7 @@
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
+    import Closable from './../../Mixins/Closable';
     import UserMenu from './UserMenu';
 
     export default {
@@ -38,6 +39,8 @@
             Link,
             UserMenu,
         },
+
+        mixins: [Closable],
 
         props: {
             resources: {
@@ -48,6 +51,10 @@
                 type: Object,
                 required: true,
             },
+        },
+
+        mounted() {
+            this.$inertia.on('success', this.close);
         },
     }
 </script>
