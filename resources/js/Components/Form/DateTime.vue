@@ -4,6 +4,56 @@
 
 <script>
     export default {
-        //
+        props: {
+            modelValue: {
+                type: String,
+                default: null,
+            },
+        },
+
+        inheritAttrs: false,
+
+        emits: ['update:modelValue'],
+
+        data() {
+            return {
+                value: new Date(this.modelValue),
+            };
+        },
+
+        computed: {
+            date: {
+                set(value) {
+                    value = value.split('-');
+                    this.value.setFullYear(value[0]);
+                    this.value.setMonth(value[1] - 1);
+                    this.value.setDate(value[2]);
+                    this.$emit('update:modelValue', this.value.toISOString().replace('T', ' ').replace(/\..*Z/, ''));
+                },
+                get() {
+                    return this.modelValue ? [
+                        this.value.getFullYear(),
+                        (this.value.getMonth() + 1).toString().padStart(2, 0),
+                        this.value.getDate().toString().padStart(2, 0),
+                    ].join('-') : null;
+                },
+            },
+            time: {
+                set(value) {
+                    value = value.split(':');
+                    this.value.setHours(value[0]);
+                    this.value.setMinutes(value[1]);
+                    this.value.setSeconds(value[2]);
+                    this.$emit('update:modelValue', this.value.toISOString().replace('T', ' ').replace(/\..*Z/, ''));
+                },
+                get() {
+                    return this.modelValue ? [
+                        this.value.getHours().toString().padStart(2, 0),
+                        this.value.getMinutes().toString().padStart(2, 0),
+                        this.value.getSeconds().toString().padStart(2, 0),
+                    ].join(':') : null;
+                },
+            },
+        },
     }
 </script>
