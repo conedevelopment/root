@@ -9,8 +9,8 @@
             :name="field.name"
         ></FormHandler>
 
-        <button type="submit" :disabled="form.processing">
-            Save
+        <button type="submit" class="btn btn--primary" :disabled="form.processing">
+            {{ __('Save') }}
         </button>
     </form>
 </template>

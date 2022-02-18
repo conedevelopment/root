@@ -1,11 +1,20 @@
 <template>
-
+    <div class="form-group">
+        <label class="form-label" :for="$attrs.id">{{ label }}</label>
+        <input class="form-control" v-bind="$attrs" v-model="date">
+        <input type="time" step="1" class="form-control" v-model="time" :disabled="$attrs.disabled">
+        <span v-if="error">{{ error }}</span>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
             modelValue: {
+                type: String,
+                default: null,
+            },
+            error: {
                 type: String,
                 default: null,
             },
@@ -28,7 +37,7 @@
                     this.value.setFullYear(value[0]);
                     this.value.setMonth(value[1] - 1);
                     this.value.setDate(value[2]);
-                    this.$emit('update:modelValue', this.value.toISOString().replace('T', ' ').replace(/\..*Z/, ''));
+                    this.$emit('update:modelValue', this.value.toISOString());
                 },
                 get() {
                     return this.modelValue ? [
@@ -44,7 +53,7 @@
                     this.value.setHours(value[0]);
                     this.value.setMinutes(value[1]);
                     this.value.setSeconds(value[2]);
-                    this.$emit('update:modelValue', this.value.toISOString().replace('T', ' ').replace(/\..*Z/, ''));
+                    this.$emit('update:modelValue', this.value.toISOString());
                 },
                 get() {
                     return this.modelValue ? [
