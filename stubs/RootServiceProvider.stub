@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use Cone\Root\Interfaces\Models\User as UserInterface;
+use Cone\Root\Models\User as BaseUser;
 use Cone\Root\Root;
 use Cone\Root\RootApplicationServiceProvider;
 use Cone\Root\Widgets\Welcome;
@@ -20,7 +21,9 @@ class RootServiceProvider extends RootApplicationServiceProvider
     {
         parent::register();
 
-        $this->app->bind(UserInterface::class, User::class);
+        if (is_subclass_of(User::class, BaseUser::class)) {
+            $this->app->bind(UserInterface::class, User::class);
+        }
     }
 
     /**
@@ -33,7 +36,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
         parent::boot();
 
         Root::running(static function (): void {
-            User::registerResource();
+            (BaseUser::proxy())::registerResource();
         });
     }
 
