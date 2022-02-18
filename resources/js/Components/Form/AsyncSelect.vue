@@ -5,6 +5,7 @@
             type="text"
             autocomplete="off"
             v-bind="$attrs"
+            v-model.lazy="search"
             v-debounce="300"
             @focus="open"
             @keydown.up="highlightPrev"
@@ -81,6 +82,7 @@
                 active: -1,
                 processing: false,
                 response: { data: [] },
+                search: null,
             };
         },
 
@@ -98,7 +100,12 @@
                     value = this.active;
                 }
 
-                this.$emit('update:modelValue', this.selectResolver(value, this.response.data));
+                this.$emit(
+                    'update:modelValue',
+                    this.selectResolver(value, JSON.parse(JSON.stringify(this.response.data)))
+                );
+
+                this.$nextTick(() => this.fetch());
             },
             select(index) {
                 this.highlight(index);
@@ -133,13 +140,13 @@
             clear() {
                 this.$emit('update:modelValue', []);
             },
-            fetch(event) {
+            fetch() {
                 this.processing = true;
 
                 const exclude = Array.isArray(this.modelValue) ? this.modelValue : [this.modelValue];
 
                 this.$http.get(this.url, { params: {
-                    search: event.target.value,
+                    search: this.search,
                     exclude: exclude.filter((item) => item),
                 } }).then((response) => {
                     this.response = response.data;

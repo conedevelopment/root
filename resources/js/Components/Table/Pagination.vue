@@ -14,8 +14,8 @@
                 <Link
                     class="btn btn--primary btn--sm"
                     type="button"
-                    :as="link.url === null ? 'button' : 'a'"
-                    :disabled="link.url === null"
+                    :as="link.url === null || link.active ? 'button' : 'a'"
+                    :disabled="link.url === null || link.active"
                     :href="link.url"
                     :aria-current="link.active ? 'page' : ''"
                     v-html="link.label"
