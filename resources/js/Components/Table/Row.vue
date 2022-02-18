@@ -3,7 +3,7 @@
         <th v-if="$parent.actions.length > 0" scope="row">
             <label class="form-check" style="position: relative; top: 3px;">
                 <input class="form-check__control" type="checkbox" v-model="selected">
-                <span class="form-label form-check__label" aria-label="Select/unselect [title here]"></span>
+                <span class="form-label form-check__label" aria-label=""></span>
             </label>
         </th>
         <td

@@ -210,7 +210,10 @@ abstract class Action implements Arrayable, Responsable
     public function toForm(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'fields' => $this->resolveFields($request)->available($request, $model)->mapToForm($request, $model)->toArray(),
+            'fields' => $this->resolveFields($request)
+                            ->available($request, $model)
+                            ->mapToForm($request, $model)
+                            ->toArray(),
         ]);
     }
 
