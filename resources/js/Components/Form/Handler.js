@@ -24,9 +24,6 @@ export default {
         modelValue: {
             default: null,
         },
-        value: {
-            default: null,
-        },
         name: {
             type: String,
             required: true,
