@@ -10,18 +10,20 @@
                 :select-resolver="selectResolver"
             ></FormHandler>
             <div>
-                <fieldset v-for="(pivot, key) in modelValue" :key="key">
-                    <legend>{{ formattedValue[key] }}</legend>
-                    <FormHandler
-                        v-for="field in pivotFields[key]"
-                        v-bind="field"
-                        v-model="modelValue[key][field.name]"
-                        :form="$parent.form"
-                        :key="`${key}-${field.name}`"
-                        :id="`${name}.${key}.${field.name}`"
-                        :name="`${name}.${key}.${field.name}`"
-                    ></FormHandler>
-                </fieldset>
+                <div v-for="(pivot, key) in modelValue" :key="key">
+                    <fieldset v-if="pivotFields?.[key] && pivotFields[key].length > 0">
+                        <legend>{{ formattedValue[key] }}</legend>
+                        <FormHandler
+                            v-for="field in pivotFields[key]"
+                            v-bind="field"
+                            v-model="modelValue[key][field.name]"
+                            :form="$parent.form"
+                            :key="`${key}-${field.name}`"
+                            :id="`${name}.${key}.${field.name}`"
+                            :name="`${name}.${key}.${field.name}`"
+                        ></FormHandler>
+                    </fieldset>
+                </div>
             </div>
         </div>
     </div>

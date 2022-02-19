@@ -1,9 +1,183 @@
 <template>
-
+    <div v-show="isOpen" class="modal" @click.self="close">
+        <div class="modal-media modal-dialog modal-dialog-scrollable modal-dialog-centered modal-full-screen">
+            <div
+                class="modal-content"
+                :class="{ 'has-active-dropzone': dragging }"
+                :data-dropzone-text="__('Drop your files here')"
+                @dragstart.prevent
+                @dragend.prevent="dragging = false"
+                @dragover.prevent="dragging = true"
+                @dragleave.prevent="dragging = false"
+                @drop.prevent="handleFiles($event.dataTransfer.files)"
+            >
+                <div class="modal-header">
+                    <h3 class="modal-title">{{ __('Media') }}</h3>
+                    <button type="button" class="modal-close btn btn--secondary" @click="close">
+                        <Icon name="close"></Icon>
+                    </button>
+                </div>
+                <div ref="container" class="modal-body">
+                    <Filters></Filters>
+                    <div
+                        v-if="queue.length || response.data.length"
+                        :class="{
+                            'media-item-list-wrapper is-sidebar-open': selection.length > 0,
+                            'media-item-list-wrapper': selection.length === 0
+                        }"
+                    >
+                        <div class="media-item-list__body">
+                            <Uploader v-for="(file, index) in queue" :key="`uploader-${index}`" :file="file"></Uploader>
+                            <Item
+                                v-for="(item, index) in response.data"
+                                :key="`${item.file_name}-${index}`"
+                                :item="item"
+                            ></Item>
+                        </div>
+                        <div v-show="selection.length" class="media-item-list__sidebar">
+                            <Sidebar></Sidebar>
+                        </div>
+                    </div>
+                    <div v-else class="alert alert--info" role="alert">
+                        {{ __('No results found.') }}
+                    </div>
+                </div>
+                <Toolbar></Toolbar>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
+    import Item from './Item';
+    import Filters from './Filters';
+    import Sidebar from './Sidebar';
+    import Toolbar from './Toolbar';
+    import Uploader from './Uploader';
+    import Closable from './../../Mixins/Closable';
+    import { throttle } from './../../Support/Helpers';
+    import QueryString from './../../Support/QueryString';
+
     export default {
-        //
+        components: {
+            Item,
+            Filters,
+            Sidebar,
+            Toolbar,
+            Uploader,
+        },
+
+        mixins: [Closable],
+
+        props: {
+            modelValue: {
+                type: Array,
+                default: () => [],
+            },
+            multiple: {
+                type: Boolean,
+                default: false,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+        },
+
+        inheritAttrs: false,
+
+        emits: ['update:modelValue'],
+
+        watch: {
+            modelValue: {
+                handler(newValue, oldValue) {
+                    this.selection = Array.from(newValue || []);
+                },
+                deep: true,
+            },
+            isOpen(newValue, oldValue) {
+                document.body.classList.toggle('has-modal-open', newValue);
+            },
+            query: {
+                handler(newValue, oldValue) {
+                    this.fetch();
+                },
+                deep: true,
+            },
+        },
+
+        mounted() {
+            this.$dispatcher.once('open', this.fetch);
+
+            window.addEventListener('keyup', (event) => {
+                if (this.isOpen && event.code === 'Escape') {
+                    this.close();
+                }
+            });
+
+            this.$refs.container.addEventListener('scroll', throttle((event) => {
+                if (this.shouldPaginate()) {
+                    this.paginate();
+                }
+            }, 300));
+        },
+
+        data() {
+            return {
+                queue: [],
+                dragging: false,
+                processing: false,
+                query: new QueryString(null, {
+                    type: '',
+                    sort: 'created_at:desc',
+                }),
+                selection: Array.from(this.modelValue || []),
+                response: { data: [], next_page_url: null, prev_page_url: null },
+            };
+        },
+
+        methods: {
+            fetch() {
+                this.processing = true;
+
+                const query = this.query.flatten();
+
+                this.$http.get(this.url, { params: query }).then((response) => {
+                    this.response = response.data;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            paginate() {
+                this.processing = true;
+
+                this.$http.get(this.response.next_page_url).then((response) => {
+                    this.response.data.push(...response.data.data);
+                    this.response.next_page_url = response.data.next_page_url;
+                    this.response.prev_page_url = response.data.prev_page_url;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            handleFiles(files) {
+                this.dragging = false;
+
+                for (let i = 0; i < files.length; i++) {
+                    this.queue.unshift(files.item(i));
+                }
+            },
+            shouldPaginate() {
+                const el = this.$refs.container;
+
+                return ! this.processing
+                    && this.response.next_page_url !== null
+                    && this.response.data.length > 0
+                    && (el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
+            },
+        },
     }
 </script>
