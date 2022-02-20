@@ -1,8 +1,25 @@
 <template>
     <div class="form-group form-group--vertical-check">
-        <label class="form-check">
-            <input class="form-check__control" type="checkbox">
-            <span class="form-label form-check__label">{{ $attrs.label }}</span>
+        <label class="form-label" :for="id">{{ label }}</label>
+        <label v-for="option in options" class="form-check" :key="option.value">
+            <input
+                v-bind="$attrs"
+                class="form-check__control"
+                v-model="selection"
+                :name="`${name}.${option.value}`"
+                :value="option.value"
+            >
+            <span class="form-check__label">{{ option.formatted_value }}</span>
+        </label>
+        <label v-if="options.length === 0" class="form-check">
+            <input
+                v-bind="$attrs"
+                class="form-check__control"
+                v-model="selection"
+                :id="id"
+                :name="name"
+            >
+            <span class="form-check__label">{{ label }}</span>
         </label>
     </div>
 </template>
@@ -11,8 +28,33 @@
     export default {
         props: {
             modelValue: {
-                type: [Object, String, Number, Boolean],
                 default: null,
+            },
+            value: {
+                default: null,
+            },
+            formatted_value: {
+                default: null,
+            },
+            label: {
+                type: String,
+                required: true,
+            },
+            error: {
+                type: String,
+                default: null,
+            },
+            id: {
+                type: String,
+                requried: true,
+            },
+            name: {
+                type: String,
+                requried: true,
+            },
+            options: {
+                type: Array,
+                default: () => [],
             },
         },
 
@@ -21,37 +63,15 @@
         emits: ['update:modelValue'],
 
         computed: {
-            isSwitch() {
-                return ! Array.isArray(this.modelValue);
-            },
-            checked() {
-                const json = JSON.stringify(this.$attrs.value);
-
-                return this.isSwitch
-                    ? this.modelValue
-                    : this.modelValue.some((value) => JSON.stringify(value) === json);
-            },
-        },
-
-        methods: {
-            update() {
-                let value;
-
-                if (this.isSwitch) {
-                    value = ! this.modelValue;
-                } else if (! this.checked) {
-                    value = Array.from(this.modelValue);
-
-                    value.push(this.$attrs.value);
-                } else {
-                    const json = JSON.stringify(this.$attrs.value);
-
-                    value = Array.from(this.modelValue);
-
-                    value.splice(this.modelValue.findIndex((item) => JSON.stringify(item) === json), 1);
-                }
-
-                this.$emit('update:modelValue', value);
+            selection: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return this.modelValue === null && this.options.length > 0
+                        ? []
+                        : this.modelValue;
+                },
             },
         },
     }

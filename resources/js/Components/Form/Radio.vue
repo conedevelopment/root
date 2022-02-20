@@ -1,13 +1,45 @@
 <template>
-
+    <div class="form-group form-group--vertical-check">
+        <label class="form-label" :for="id">{{ label }}</label>
+        <label v-for="option in options" class="form-check" :key="option.value">
+            <input
+                v-bind="$attrs"
+                class="form-check__control"
+                v-model="selection"
+                :value="option.value"
+            >
+            <span class="form-check__label">{{ option.formatted_value }}</span>
+        </label>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
             modelValue: {
-                type: [Object, String, Number, Boolean],
                 default: null,
+            },
+            value: {
+                default: null,
+            },
+            formatted_value: {
+                default: null,
+            },
+            label: {
+                type: String,
+                required: true,
+            },
+            error: {
+                type: String,
+                default: null,
+            },
+            id: {
+                type: String,
+                requried: true,
+            },
+            options: {
+                type: Array,
+                default: () => [],
             },
         },
 
@@ -16,14 +48,13 @@
         emits: ['update:modelValue'],
 
         computed: {
-            checked() {
-                return JSON.stringify(this.$attrs.value) === JSON.stringify(this.modelValue);
-            },
-        },
-
-        methods: {
-            update() {
-                this.$emit('update:modelValue', this.$attrs.value);
+            selection: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return this.modelValue;
+                },
             },
         },
     }

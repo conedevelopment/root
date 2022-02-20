@@ -14,6 +14,10 @@
                 type: String,
                 default: null,
             },
+            label: {
+                type: String,
+                default: null,
+            },
             error: {
                 type: String,
                 default: null,

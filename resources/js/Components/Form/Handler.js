@@ -1,9 +1,11 @@
 import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
 import BelongsToMany from './BelongsToMany';
+import Checkbox from './Checkbox';
 import Editor from './Editor';
 import Input from './Input';
 import Media from './Media';
+import Radio from './Radio';
 import Select from './Select';
 import Textarea from './Textarea';
 
@@ -13,9 +15,11 @@ export default {
     components: {
         AsyncSelect,
         BelongsToMany,
+        Checkbox,
         Editor,
         Input,
         Media,
+        Radio,
         Select,
         Textarea,
     },
