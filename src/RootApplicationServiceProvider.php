@@ -4,9 +4,10 @@ namespace Cone\Root;
 
 use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
-abstract class RootApplicationServiceProvider extends ServiceProvider
+class RootApplicationServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -48,12 +49,20 @@ abstract class RootApplicationServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    abstract protected function gate(): void;
+    protected function gate(): void
+    {
+        Gate::define('viewRoot', static function (): bool {
+            return true;
+        });
+    }
 
     /**
      * The dashboard widgets.
      *
      * @return array
      */
-    abstract protected function widgets(): array;
+    protected function widgets(): array
+    {
+        return [];
+    }
 }

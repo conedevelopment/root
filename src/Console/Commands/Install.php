@@ -71,8 +71,8 @@ class Install extends Command
         ));
 
         file_put_contents(app_path('Providers/RootServiceProvider.php'), str_replace(
-            ["namespace App\\Providers;", "App\\Models\\User;"],
-            ["namespace {$namespace}\\Providers;", "{$namespace}\\Models\\User;"],
+            ["namespace App\\Providers;", "use App\\Models\\User;"],
+            ["namespace {$namespace}\\Providers;", "use {$namespace}\\Models\\User;"],
             file_get_contents(app_path('Providers/RootServiceProvider.php'))
         ));
     }
