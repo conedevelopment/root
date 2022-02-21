@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Actions;
+namespace Cone\Root\Tests\Extracts;
 
 use Cone\Root\Tests\LongPosts;
 use Cone\Root\Tests\Post;
@@ -39,24 +39,40 @@ class ExtractTest extends TestCase
     /** @test */
     public function a_extract_has_fields()
     {
-        $this->assertTrue(true);
+        $fields = $this->extract->resolveFields($this->app['request']);
+
+        $this->assertTrue($fields->contains(function ($field) {
+            return $field->getKey() === 'title';
+        }));
     }
 
     /** @test */
     public function a_extract_has_filters()
     {
-        $this->assertTrue(true);
+        $filters = $this->extract->resolveFilters($this->app['request']);
+
+        $this->assertTrue($filters->contains(function ($field) {
+            return $field->getKey() === 'type';
+        }));
     }
 
     /** @test */
     public function a_extract_has_actions()
     {
-        $this->assertTrue(true);
+        $actions = $this->extract->resolveActions($this->app['request']);
+
+        $this->assertTrue($actions->contains(function ($field) {
+            return $field->getKey() === 'publish-posts';
+        }));
     }
 
     /** @test */
     public function a_extract_has_widgets()
     {
-        $this->assertTrue(true);
+        $widgets = $this->extract->resolveWidgets($this->app['request']);
+
+        $this->assertTrue($widgets->contains(function ($widget) {
+            return $widget->getKey() === 'posts-count';
+        }));
     }
 }

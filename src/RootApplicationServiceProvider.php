@@ -28,7 +28,16 @@ abstract class RootApplicationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->gate();
+        $this->registerRoutes();
+    }
 
+    /**
+     * Register the routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes(): void
+    {
         Root::routes(function (Router $router): void {
             $this->app->make('root.widgets')->registerRoutes($this->app['request'], $router);
         }, true);

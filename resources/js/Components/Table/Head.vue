@@ -1,10 +1,10 @@
 <template>
     <thead>
-        <tr v-if="columns.length > 0">
+        <tr>
             <th v-if="$parent.actions.length > 0" scope="col">
                 <label class="form-check" style="position: relative; top: 3px;">
                     <input ref="input" class="form-check__control" type="checkbox" v-model="selected">
-                    <span class="form-label form-check__label" aria-label="Select/unselect [title here]"></span>
+                    <span class="form-label form-check__label" aria-label=""></span>
                 </label>
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
@@ -18,8 +18,8 @@
 <script>
     export default {
         watch: {
-            indeterminate(value, oldValue) {
-                this.$refs.input.indeterminate = value;
+            indeterminate(newValue, oldValue) {
+                this.$refs.input.indeterminate = newValue;
             },
         },
 
@@ -27,13 +27,11 @@
             columns() {
                 const fields = this.$parent.query.data?.[0]?.fields || [];
 
-                return fields.map((field) => {
-                    return {
-                        label: field.label,
-                        name: field.name,
-                        sortable: field.sortable,
-                    };
-                });
+                return fields.map((field) => ({
+                    label: field.label,
+                    name: field.name,
+                    sortable: field.sortable,
+                }));
             },
             selected: {
                 get() {

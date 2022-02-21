@@ -49,6 +49,15 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_has_form_representation()
     {
-        $this->assertTrue(true);
+        $model = new Post();
+
+        $this->assertSame(
+            array_merge($this->action->toArray(), [
+                'fields' => $this->action->resolveFields($this->app['request'])
+                                        ->mapToForm($this->app['request'], $model)
+                                        ->toArray(),
+            ]),
+            $this->action->toForm($this->app['request'], $model)
+        );
     }
 }
