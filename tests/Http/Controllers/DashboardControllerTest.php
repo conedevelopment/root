@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests\Http\Conrollers;
 
 use Cone\Root\Tests\TestCase;
-use Illuminate\Support\Facades\URL;
 
 class DashboardControllerTest extends TestCase
 {
@@ -11,7 +10,7 @@ class DashboardControllerTest extends TestCase
     public function an_admin_can_invoke_dashboard()
     {
         $this->actingAs($this->admin)
-            ->get(URL::route('root.dashboard'))
+            ->get('/root')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([

@@ -70,7 +70,11 @@ class RootServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->registerComposers();
         $this->registerPublishes();
-        $this->registerRoutes();
+
+        $this->app->booted(function (): void {
+            $this->registerRoutes();
+        });
+
         $this->registerMacros();
     }
 
@@ -109,22 +113,24 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
+        if (Root::shouldRun($this->app['request'])) {
+            $this->app['router']->pattern(
+                'resource',
+                implode('|', array_keys(Support\Facades\Resource::all()))
+            );
+        }
+
         $this->app['router']->middlewareGroup(
             'root', $this->app['config']->get('root.middleware', [])
         );
 
         $this->app['router']->group([
             'as' => 'root.',
-            'prefix' => Root::getPath(),
             'domain' => Root::getDomain(),
+            'middleware' => 'root',
+            'prefix' => Root::getPath(),
         ], function (): void {
-            $this->app['router']->group(['middleware' => 'web'], function (): void {
-                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
-            });
-
-            $this->app['router']->group(['middleware' => 'root'], function (): void {
-                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-            });
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
 
