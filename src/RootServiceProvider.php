@@ -111,12 +111,7 @@ class RootServiceProvider extends ServiceProvider
             'root', $this->app['config']->get('root.middleware', [])
         );
 
-        $this->app['router']->group([
-            'as' => 'root.',
-            'domain' => Root::getDomain(),
-            'middleware' => 'root',
-            'prefix' => Root::getPath(),
-        ], function (): void {
+        Root::routes(function (): void {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
