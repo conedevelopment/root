@@ -122,6 +122,16 @@ class User extends Authenticatable implements Contract, Resourceable
     }
 
     /**
+     * Get the records for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function records(): HasMany
+    {
+        return $this->hasMany(Record::getProxiedClass());
+    }
+
+    /**
      * Get the avatar attribute.
      *
      * @return string
