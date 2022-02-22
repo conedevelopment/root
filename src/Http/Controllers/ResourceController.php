@@ -9,6 +9,7 @@ use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Root;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -91,7 +92,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
+        return Redirect::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $model->getKey()));
     }
 
     /**
@@ -162,7 +163,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::route('root.resource.show', [$resource->getKey(), $model]);
+        return Redirect::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $model->getKey()));
     }
 
     /**
@@ -185,6 +186,6 @@ class ResourceController extends Controller
 
         $trashed ? $model->forceDelete() : $model->delete();
 
-        return Redirect::route('root.resource.index', $resource->getKey());
+        return Redirect::to(sprintf('%s/%s', Root::getPath(), $resource->getKey()));
     }
 }

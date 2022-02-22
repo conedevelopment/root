@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Closure;
+use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
@@ -470,8 +471,8 @@ class Resource implements Arrayable
     public function mapUrls(Request $request): array
     {
         return [
-            'create' => URL::route('root.resource.create', $this->getKey()),
-            'index' => URL::route('root.resource.index', $this->getKey()),
+            'create' => URL::to(sprintf('%s/%s/create', Root::getPath(), $this->getKey())),
+            'index' => URL::to(sprintf('%s/%s', Root::getPath(), $this->getKey())),
         ];
     }
 
@@ -617,11 +618,12 @@ class Resource implements Arrayable
      */
     protected function registerRoutes(Request $request): void
     {
-        $this->routes(function (Router $router) use ($request): void {
+        $this->routeGroup(function (Router $router) use ($request): void {
+            $this->routes($router);
             $this->resolveExtracts($request)->registerRoutes($request, $router);
         });
 
-        $this->routes(function (Router $router) use ($request): void {
+        $this->routeGroup(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
@@ -629,13 +631,30 @@ class Resource implements Arrayable
     }
 
     /**
-     * Register the resource routes.
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        $router->get('/', [ResourceController::class, 'index']);
+        $router->get('/create', [ResourceController::class, 'create']);
+        $router->post('/', [ResourceController::class, 'store']);
+        $router->get('/{id}', [ResourceController::class, 'show']);
+        $router->get('/{id}/edit', [ResourceController::class, 'edit']);
+        $router->patch('/{id}', [ResourceController::class, 'update']);
+        $router->delete('/{id}', [ResourceController::class, 'destroy']);
+    }
+
+    /**
+     * Wrap the given routes into the route group.
      *
      * @param  \Closure  $callback
      * @param  bool  $api
      * @return void
      */
-    public function routes(Closure $callback, bool $api = false): void
+    public function routeGroup(Closure $callback, bool $api = false): void
     {
         Root::routes(function (Router $router) use ($callback): void {
             $router->group([

@@ -81,7 +81,7 @@ abstract class Field implements Arrayable
     public function __construct(string $label, ?string $name = null)
     {
         $this->label($label);
-        $this->name($name ??= (string) Str::of($label)->snake());
+        $this->name($name ??= (string) Str::of($label)->lower()->snake());
         $this->id($name);
     }
 

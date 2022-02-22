@@ -63,18 +63,14 @@ class RootServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            $this->registerCommands();
+            $this->registerPublishes();
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
-        $this->registerCommands();
         $this->registerComposers();
-        $this->registerPublishes();
-
-        $this->app->booted(function (): void {
-            $this->registerRoutes();
-        });
-
+        $this->registerRoutes();
         $this->registerMacros();
     }
 
@@ -85,25 +81,23 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerPublishes(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/root.php' => $this->app->configPath('root.php'),
-            ], 'root-config');
+        $this->publishes([
+            __DIR__.'/../config/root.php' => $this->app->configPath('root.php'),
+        ], 'root-config');
 
-            $this->publishes([
-                __DIR__.'/../public' => public_path('vendor/root'),
-                __DIR__.'/../resources/js' => $this->app->resourcePath('js/vendor/root'),
-                __DIR__.'/../resources/sass' => $this->app->resourcePath('sass/vendor/root'),
-            ], 'root-assets');
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/root'),
+            __DIR__.'/../resources/js' => $this->app->resourcePath('js/vendor/root'),
+            __DIR__.'/../resources/sass' => $this->app->resourcePath('sass/vendor/root'),
+        ], 'root-assets');
 
-            $this->publishes([
-                __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),
-            ], 'root-views');
+        $this->publishes([
+            __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),
+        ], 'root-views');
 
-            $this->publishes([
-                __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->path('Providers/RootServiceProvider.php'),
-            ], 'root-provider');
-        }
+        $this->publishes([
+            __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->path('Providers/RootServiceProvider.php'),
+        ], 'root-provider');
     }
 
     /**
@@ -113,13 +107,6 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        if (Root::shouldRun($this->app['request'])) {
-            $this->app['router']->pattern(
-                'resource',
-                implode('|', array_keys(Support\Facades\Resource::all()))
-            );
-        }
-
         $this->app['router']->middlewareGroup(
             'root', $this->app['config']->get('root.middleware', [])
         );
@@ -141,18 +128,16 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                Console\Commands\ActionMake::class,
-                Console\Commands\ExtractMake::class,
-                Console\Commands\FieldMake::class,
-                Console\Commands\FilterMake::class,
-                Console\Commands\Install::class,
-                Console\Commands\Publish::class,
-                Console\Commands\ResourceMake::class,
-                Console\Commands\WidgetMake::class,
-            ]);
-        }
+        $this->commands([
+            Console\Commands\ActionMake::class,
+            Console\Commands\ExtractMake::class,
+            Console\Commands\FieldMake::class,
+            Console\Commands\FilterMake::class,
+            Console\Commands\Install::class,
+            Console\Commands\Publish::class,
+            Console\Commands\ResourceMake::class,
+            Console\Commands\WidgetMake::class,
+        ]);
     }
 
     /**
