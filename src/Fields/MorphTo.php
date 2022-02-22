@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Fields;
 
-class MorphMany extends BelongsTo
+class MorphTo extends BelongsTo
 {
     //
 }
