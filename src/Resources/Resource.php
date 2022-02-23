@@ -619,7 +619,10 @@ class Resource implements Arrayable
     protected function registerRoutes(Request $request): void
     {
         $this->routeGroup(function (Router $router) use ($request): void {
-            $this->routes($router);
+            if (! App::routesAreCached()) {
+                $this->routes($router);
+            }
+
             $this->resolveExtracts($request)->registerRoutes($request, $router);
         });
 
