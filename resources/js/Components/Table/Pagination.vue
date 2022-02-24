@@ -10,7 +10,7 @@
             <label for="per-page">{{ __('of 15 items') }}</label>
         </div>
         <ul class="list-footer__pagination">
-            <li v-for="(link, index) in query.links" :key="index">
+            <li v-for="(link, index) in items.links" :key="index">
                 <Link
                     class="btn btn--primary btn--sm"
                     type="button"
@@ -34,7 +34,7 @@
         },
 
         props: {
-            query: {
+            items: {
                 type: Object,
                 required: true,
             },

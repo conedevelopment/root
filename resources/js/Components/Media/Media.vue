@@ -56,7 +56,6 @@
     import Uploader from './Uploader';
     import Closable from './../../Mixins/Closable';
     import { throttle } from './../../Support/Helpers';
-    import QueryString from './../../Support/QueryString';
 
     export default {
         components: {
@@ -98,12 +97,6 @@
             isOpen(newValue, oldValue) {
                 document.body.classList.toggle('has-modal-open', newValue);
             },
-            query: {
-                handler(newValue, oldValue) {
-                    this.fetch();
-                },
-                deep: true,
-            },
         },
 
         mounted() {
@@ -127,10 +120,7 @@
                 queue: [],
                 dragging: false,
                 processing: false,
-                query: new QueryString(null, {
-                    type: '',
-                    sort: 'created_at:desc',
-                }),
+                query: {},
                 selection: Array.from(this.modelValue || []),
                 response: { data: [], next_page_url: null, prev_page_url: null },
             };
@@ -140,9 +130,7 @@
             fetch() {
                 this.processing = true;
 
-                const query = this.query.flatten();
-
-                this.$http.get(this.url, { params: query }).then((response) => {
+                this.$http.get(this.url, { params: this.query }).then((response) => {
                     this.response = response.data;
                 }).catch((error) => {
                     //

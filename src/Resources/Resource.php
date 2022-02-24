@@ -533,7 +533,7 @@ class Resource implements Arrayable
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->query()
+        $items = $this->query()
                     ->tap(static function (Builder $query) use ($request, $filters): void {
                         $filters->apply($request, $query)->latest();
                     })
@@ -550,7 +550,7 @@ class Resource implements Arrayable
                             ->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
-            'query' => $query->toArray(),
+            'items' => $items->toArray(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }

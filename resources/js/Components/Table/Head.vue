@@ -25,7 +25,7 @@
 
         computed: {
             columns() {
-                const fields = this.$parent.query.data?.[0]?.fields || [];
+                const fields = this.$parent.items.data?.[0]?.fields || [];
 
                 return fields.map((field) => ({
                     label: field.label,
@@ -36,7 +36,7 @@
             selected: {
                 get() {
                     return this.$parent.selection.length > 0
-                        && this.$parent.selection.length === this.$parent.query.data.length;
+                        && this.$parent.selection.length === this.$parent.items.data.length;
                 },
                 set(value) {
                     value ? this.selectAll() : this.clearSelection();
@@ -44,7 +44,7 @@
             },
             indeterminate() {
                 return this.$parent.selection.length > 0
-                    && this.$parent.selection.length < this.$parent.query.data.length;
+                    && this.$parent.selection.length < this.$parent.items.data.length;
             },
         },
 
@@ -52,7 +52,7 @@
             selectAll(matching = false) {
                 // append all matching to query string
 
-                this.$parent.selection = this.$parent.query.data.map((item) => item.id);
+                this.$parent.selection = this.$parent.items.data.map((item) => item.id);
             },
             clearSelection() {
                 this.$parent.selection = [];

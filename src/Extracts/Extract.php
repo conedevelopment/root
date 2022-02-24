@@ -297,7 +297,7 @@ abstract class Extract implements Arrayable
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->resolveQuery($request)
+        $items = $this->resolveQuery($request)
                     ->tap(static function (Builder $query) use ($request, $filters): void {
                         $filters->apply($request, $query)->latest();
                     })
@@ -310,7 +310,7 @@ abstract class Extract implements Arrayable
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'filters' => $filters->toArray(),
-            'query' => $query->toArray(),
+            'items' => $items->toArray(),
             'urls' => $this->mapUrls($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);

@@ -11,25 +11,28 @@ export default {
     },
 
     props: {
+        modelValue: {
+            default: null,
+        },
         component: {
             type: String,
             default: 'SelectFilter',
         },
-        value: {
+        default: {
             default: null,
         },
     },
 
     inheritAttrs: false,
 
-    emits: ['change'],
+    emits: ['update:modelValue'],
 
     render() {
         return h(resolveComponent(this.component), {
             ...this.$attrs,
-            modelValue: this.value,
+            modelValue: this.modelValue,
             'onUpdate:modelValue': (value) => {
-                this.$emit('change', value);
+                this.$emit('update:modelValue', value);
             },
         }, this.$slots);
     },

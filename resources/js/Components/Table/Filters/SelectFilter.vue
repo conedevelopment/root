@@ -1,5 +1,5 @@
 <template>
-    <select v-model="value">
+    <select v-bind="$attrs" v-model="value">
         <option :value="null">{{ name }}</option>
         <option v-for="(label, value) in options" :key="value" :value="value">
             {{ label }}

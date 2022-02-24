@@ -11,7 +11,7 @@
             :actions="actions"
             :extracts="extracts"
             :filters="filters"
-            :query="query"
+            :items="items"
             :urls="urls"
         ></Table>
     </div>
@@ -28,7 +28,7 @@
         },
 
         props: {
-            query: {
+            items: {
                 type: Object,
                 required: true,
             },
