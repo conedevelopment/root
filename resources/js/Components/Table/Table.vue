@@ -10,7 +10,6 @@
             <Filters
                 v-if="filters.length > 0"
                 :filters="filters"
-                :query-string="queryString"
             ></Filters>
         </div>
         <div class="card">
@@ -37,7 +36,6 @@
     import Filters from './Filters';
     import Head from './Head';
     import Pagination from './Pagination';
-    import QueryString from './../../Support/QueryString';
     import Row from './Row';
 
     export default {
@@ -102,12 +100,6 @@
             return {
                 selection: [],
                 processing: false,
-                queryString: new QueryString(
-                    window.location.search,
-                    this.filters.reduce((stack, filter) => {
-                        return Object.assign(stack, { [filter.key]: filter.default });
-                    }, {})
-                )
             };
         },
     }

@@ -88,7 +88,7 @@ abstract class Filter implements Arrayable
      */
     public function default(Request $request): mixed
     {
-        return null;
+        return $request->query($this->getKey());
     }
 
     /**
