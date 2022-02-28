@@ -21,10 +21,8 @@
                     <Filters></Filters>
                     <div
                         v-if="queue.length || response.data.length"
-                        :class="{
-                            'media-item-list-wrapper is-sidebar-open': selection.length > 0,
-                            'media-item-list-wrapper': selection.length === 0
-                        }"
+                        class="media-item-list-wrapper "
+                        :class="{ 'is-sidebar-open': selection.length > 0 }"
                     >
                         <div class="media-item-list__body">
                             <Uploader v-for="(file, index) in queue" :key="`uploader-${index}`" :file="file"></Uploader>
@@ -70,7 +68,7 @@
 
         props: {
             modelValue: {
-                type: Array,
+                type: [Array, Object],
                 default: () => [],
             },
             multiple: {
@@ -88,12 +86,6 @@
         emits: ['update:modelValue'],
 
         watch: {
-            modelValue: {
-                handler(newValue, oldValue) {
-                    this.selection = Array.from(newValue || []);
-                },
-                deep: true,
-            },
             isOpen(newValue, oldValue) {
                 document.body.classList.toggle('has-modal-open', newValue);
             },
@@ -117,13 +109,23 @@
 
         data() {
             return {
-                queue: [],
                 dragging: false,
                 processing: false,
                 query: {},
-                selection: Array.from(this.modelValue || []),
+                queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
             };
+        },
+
+        computed: {
+            selection: {
+                get() {
+                    return Array.from(this.modelValue || []);
+                },
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+            },
         },
 
         methods: {
