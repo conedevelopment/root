@@ -21,16 +21,6 @@
             aria-labelledby="user-user-navigation"
         >
             <li>
-                <Link href="#" class="user-menu-navigation__item" aria-current="">
-                    Personal Informations
-                </Link>
-            </li>
-            <li>
-                <Link href="#" class="user-menu-navigation__item" aria-current="">
-                    Change Password
-                </Link>
-            </li>
-            <li>
                 <button type="submit" form="logout-form" class="user-menu-navigation__item">
                     {{ __('Logout') }}
                 </button>
@@ -40,14 +30,9 @@
 </template>
 
 <script>
-    import { Link } from '@inertiajs/inertia-vue3';
     import Closable from './../../Mixins/Closable';
 
     export default {
-        components: {
-            Link,
-        },
-
         mixins: [Closable],
 
         props: {

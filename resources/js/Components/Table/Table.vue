@@ -87,8 +87,8 @@
                     return this.filters.reduce((query, filter) => {
                         return Object.assign(query, { [filter.key]: filter.default });
                     }, {
-                        page: params.get('page'),
-                        per_page: params.get('per_page'),
+                        page: params.get('page') || 1,
+                        per_page: params.get('per_page') || 15,
                     });
                 },
                 set(value) {
