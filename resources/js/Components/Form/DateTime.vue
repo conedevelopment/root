@@ -1,9 +1,21 @@
 <template>
     <div class="form-group">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
-        <input class="form-control" v-bind="$attrs" v-model="date">
-        <input type="time" step="1" class="form-control" v-model="time" :disabled="$attrs.disabled">
-        <span v-if="error">{{ error }}</span>
+        <input
+            class="form-control"
+            v-bind="$attrs"
+            v-model="date"
+            :class="{ 'form-control--invalid': error !== null }"
+        >
+        <input
+            type="time"
+            step="1"
+            class="form-control"
+            v-model="time"
+            :disabled="$attrs.disabled"
+            :class="{ 'form-control--invalid': error !== null }"
+        >
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 

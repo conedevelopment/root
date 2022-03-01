@@ -9,13 +9,15 @@
             :name="field.name"
         ></FormHandler>
 
-        <button type="submit" :disabled="form.processing">
-            Save
+        <button type="submit" class="btn btn--primary" :disabled="form.processing">
+            {{ __('Save') }}
         </button>
     </form>
 </template>
 
 <script>
+    import Form from './../../Components/Layout/Form';
+
     export default {
         props: {
             urls: {
@@ -26,6 +28,10 @@
                 type: Object,
                 required: true,
             },
+        },
+
+        layout: function (h, page) {
+            return h(this.resolveDefaultLayout(), () => h(Form, () => page));
         },
 
         data() {

@@ -1,13 +1,18 @@
 <template>
     <div class="form-group">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
-        <select class="form-control" v-bind="$attrs" v-model="value">
+        <select
+            class="form-control"
+            v-bind="$attrs"
+            v-model="value"
+            :class="{ 'form-control--invalid': error !== null }"
+        >
             <option :disabled="! nullable" :value="null" selected>{{ label }}</option>
             <option v-for="option in options" :value="option.value" :key="option.value">
                 {{ option.formatted_value }}
             </option>
         </select>
-        <span v-if="error">{{ error }}</span>
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 

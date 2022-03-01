@@ -1,19 +1,21 @@
 <template>
-    <div>
-        <label :for="$attrs.id">{{ label }}</label>
+    <div class="form-group">
+        <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <input
             type="text"
+            class="form-control"
             autocomplete="off"
             v-bind="$attrs"
             v-model.lazy="search"
             v-debounce="300"
+            :class="{ 'form-control--invalid': error !== null }"
             @focus="open"
             @keydown.up="highlightPrev"
             @keydown.down="highlightNext"
             @keydown.enter.prevent="commit"
             @change="fetch"
         >
-        <span v-if="error">{{ error }}</span>
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
         <div style="max-height: 200px; width: 100%; z-index: 1000;">
             <div v-show="isOpen">
                 <div

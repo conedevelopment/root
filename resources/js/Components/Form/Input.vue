@@ -1,8 +1,14 @@
 <template>
     <div class="form-group">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
-        <input class="form-control" v-bind="$attrs" :value="modelValue" @input="update">
-        <span v-if="error">{{ error }}</span>
+        <input
+            class="form-control"
+            v-bind="$attrs"
+            :class="{ 'form-control--invalid': error !== null }"
+            :value="modelValue"
+            @input="update"
+        >
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 
