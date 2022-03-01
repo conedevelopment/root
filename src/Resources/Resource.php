@@ -580,7 +580,7 @@ class Resource implements Arrayable
     public function toShow(ShowRequest $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'actions' => $this->resolveActions($request)->available($request)->toArray(),
+            'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
             'model' => $model->toDisplay($request, $this->resolveFields($request)->available($request, $model)),
         ]);
     }
