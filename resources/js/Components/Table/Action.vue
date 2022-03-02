@@ -1,6 +1,15 @@
 <template>
     <form @submit.prevent="submit">
         <Modal ref="modal" :title="action.name">
+            <FormHandler
+                v-for="field in action.fields"
+                v-bind="field"
+                v-model="form[field.name]"
+                :form="form"
+                :key="field.name"
+                :name="field.name"
+            ></FormHandler>
+
             <template #footer>
                 <button type="submit" class="btn btn--primary">
                     {{ __('Run') }}
