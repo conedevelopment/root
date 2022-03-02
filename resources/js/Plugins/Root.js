@@ -4,6 +4,7 @@ import Debounce from './../Directives/Debounce';
 import DispatchesEvents from './../Mixins/DispatchesEvents';
 import FormHandler from './../Components/Form/Handler';
 import Icon from './../Components/Icon';
+import Modal from './../Components/Modal';
 import Translator from './../Support/Translator';
 import WidgetHandler from './../Components/Widgets/Handler';
 
@@ -13,6 +14,7 @@ export default {
 
         app.component('FormHandler', FormHandler);
         app.component('Icon', Icon);
+        app.component('Modal', Modal);
         app.component('WidgetHandler', WidgetHandler);
 
         app.directive('debounce', Debounce);
