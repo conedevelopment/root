@@ -28,6 +28,8 @@
             },
         },
 
+        emits: ['success', 'error'],
+
         data() {
             return {
                 form: this.$inertia.form(this.action.key, Object.assign({}, this.action.data)),
@@ -45,9 +47,13 @@
                     all: false,
                 })).post(this.action.url, {
                     onSuccess: () => {
-                        this.$emit('update:models', []);
+                        this.$emit('success');
+                        this.$refs.modal.close();
                     },
-                });
+                    onError: (errors) => {
+                        this.$emit('error');
+                    },
+                }, { errorBag: this.action.key });
             },
         },
     }

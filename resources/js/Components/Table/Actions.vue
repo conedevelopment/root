@@ -25,6 +25,7 @@
                 :action="action"
                 :key="action.key"
                 :models="models"
+                @success="$emit('update:models', [])"
             ></Action>
         </div>
     </div>
