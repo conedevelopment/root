@@ -21,9 +21,7 @@
 
         data() {
             return {
-                form: this.$inertia.form(this.action.key, {
-                    //
-                }),
+                form: this.$inertia.form(this.action.key, Object.assign({}, this.action.data)),
             };
         },
 

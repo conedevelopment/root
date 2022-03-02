@@ -36,10 +36,7 @@
 
         data() {
             return {
-                form: this.$inertia.form(
-                    window.location.pathname,
-                    this.model.fields.reduce((stack, field) => Object.assign(stack, { [field.name]: field.value }), {})
-                ),
+                form: this.$inertia.form(window.location.pathname, Object.assign({}, this.model.data)),
             };
         },
 

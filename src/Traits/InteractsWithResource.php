@@ -56,9 +56,12 @@ trait InteractsWithResource
      */
     public function toForm(Request $request, Fields $fields): array
     {
+        $fields = $fields->mapToForm($request, $this)->toArray();
+
         return [
             'abilities' => $this->mapAbilities($request),
-            'fields' => $fields->mapToForm($request, $this)->toArray(),
+            'data' => array_column($fields, 'value', 'name'),
+            'fields' => $fields,
             'id' => $this->getKey(),
         ];
     }
