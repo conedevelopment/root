@@ -10,6 +10,7 @@
                 <slot></slot>
             </div>
             <div class="dialog_form_actions">
+                <slot name="footer"></slot>
                 <button type="button" @click="close">Cancel</button>
             </div>
         </div>

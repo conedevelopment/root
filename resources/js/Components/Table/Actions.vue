@@ -1,26 +1,43 @@
 <template>
-    <form @submit.prevent="submit" @reset.prevent>
-        <FormHandler
-            nullable
-            component="Select"
-            v-model="_action"
-            :name="name"
-            :form="form"
-            :label="__('Action')"
-            :options="options"
-        ></FormHandler>
-        <button
-            type="submit"
-            class="btn btn--primary"
-            :disabled="form.processing || _action === null || models.length === 0"
-        >
-            {{ __('Run') }}
-        </button>
-    </form>
+    <div>
+        <form @submit.prevent="submit">
+            <div class="form-group">
+                <label class="form-label" for="actions-select">{{ __('Action') }}</label>
+                <select id="actions-select" class="form-control" v-model="_action">
+                    <option :value="null">{{ __('Action') }}</option>
+                    <option v-for="(action, index) in actions" :value="index" :key="index">
+                        {{ action.name }}
+                    </option>
+                </select>
+            </div>
+            <button
+                type="submit"
+                class="btn btn--primary"
+                :disabled="_action === null || models.length === 0"
+            >
+                {{ __('Run') }}
+            </button>
+        </form>
+        <div>
+            <Action
+                v-for="action in actions"
+                ref="action"
+                :action="action"
+                :key="action.key"
+                :models="models"
+            ></Action>
+        </div>
+    </div>
 </template>
 
 <script>
+    import Action from './Action';
+
     export default {
+        components: {
+            Action,
+        },
+
         props: {
             actions: {
                 type: Array,
@@ -37,37 +54,12 @@
         data() {
             return {
                 _action: null,
-                form: this.$inertia.form(this.name, {}),
             };
-        },
-
-        computed: {
-            name() {
-                return window.location.pathname + '-actions';
-            },
-            options() {
-                return this.actions.map((action) => ({
-                    value: action.key,
-                    formatted_value: action.name,
-                }));
-            },
         },
 
         methods: {
             submit() {
-                const action = this.actions.find((action) => {
-                    return action.key = this._action;
-                });
-
-                this.form.transform((data) => ({
-                    ...data,
-                    models: this.models,
-                    all: false,
-                })).post(action.url, {
-                    onSuccess: () => {
-                        this.$emit('update:models', []);
-                    },
-                });
+                this.$refs.action[this._action].open();
             },
         },
     }
