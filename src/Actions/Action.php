@@ -236,7 +236,7 @@ abstract class Action implements Arrayable, Responsable
     {
         return Redirect::back()->with(
             "alerts.action-{$this->getKey()}",
-            new Alert(__(':action was successful!' , ['action' => $this->getName()]))
+            Alert::info(__(':action was successful!' , ['action' => $this->getName()]))
         );
     }
 }

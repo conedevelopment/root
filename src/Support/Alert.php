@@ -34,10 +34,54 @@ class Alert implements Arrayable, Jsonable, Stringable
      * @param  string  $type
      * @return void
      */
-    public function __construct(string $message, string $type = self::INFO)
+    public function __construct(string $message, string $type)
     {
         $this->message = $message;
         $this->type = $type;
+    }
+
+    /**
+     * Make a new info alert instance.
+     *
+     * @param  string  $message
+     * @return static
+     */
+    public static function info(string $message): static
+    {
+        return new static($message, static::INFO);
+    }
+
+    /**
+     * Make a new success alert instance.
+     *
+     * @param  string  $message
+     * @return static
+     */
+    public static function success(string $message): static
+    {
+        return new static($message, static::SUCCESS);
+    }
+
+    /**
+     * Make a new error alert instance.
+     *
+     * @param  string  $message
+     * @return static
+     */
+    public static function error(string $message): static
+    {
+        return new static($message, static::ERROR);
+    }
+
+    /**
+     * Make a new warning alert instance.
+     *
+     * @param  string  $message
+     * @return static
+     */
+    public static function warning(string $message): static
+    {
+        return new static($message, static::WARNING);
     }
 
     /**
