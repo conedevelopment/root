@@ -5,6 +5,9 @@ mix.webpackConfig({
         publicPath: '/vendor/root/',
         chunkFilename: '[name].js',
     },
+    stats: {
+        children: true
+    },
 });
 
 mix.setPublicPath('./public')
