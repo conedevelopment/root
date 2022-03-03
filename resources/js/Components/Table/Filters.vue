@@ -7,9 +7,9 @@
             <FilterHandler
                 v-for="filter in filters"
                 v-bind="filter"
+                v-model="form[filter.key]"
                 :key="filter.key"
-                :modelValue="query[filter.key]"
-                @update:modelValue="(value) => update(filter.key, value)"
+                @update:modelValue="() => $emit('change')"
             ></FilterHandler>
         </div>
     </div>
@@ -24,33 +24,16 @@
         },
 
         props: {
-            modelValue: {
-                type: Object,
-                default: () => {},
-            },
             filters: {
                 type: Array,
                 default: () => [],
             },
-        },
-
-        emits: ['update:modelValue'],
-
-        computed: {
-            query: {
-                get() {
-                    return this.modelValue;
-                },
-                set(value) {
-                    this.$emit('update:modelValue', value);
-                },
+            form: {
+                type: Object,
+                required: true,
             },
         },
 
-        methods: {
-            update(key, value) {
-                this.query = Object.assign({}, this.query, { [key]: value });
-            },
-        },
+        emits: ['change'],
     }
 </script>

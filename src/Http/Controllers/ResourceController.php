@@ -190,6 +190,6 @@ class ResourceController extends Controller
         $trashed ? $model->forceDelete() : $model->delete();
 
         return Redirect::to(sprintf('%s/%s', Root::getPath(), $resource->getKey()))
-                    ->with('alerts.resource-destroyed', Alert::info(__('The resource has been deleted!')));
+                    ->with('alerts.resource-deleted', Alert::info(__('The resource has been deleted!')));
     }
 }

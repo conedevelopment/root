@@ -4,8 +4,8 @@
             <select
                 class="form-control form-control--sm"
                 id="per-page"
-                :value="modelValue.per_page"
-                @change="update"
+                v-model="form.per_page"
+                @update:modelValue="$emit('change')"
             >
                 <option value="15">15</option>
                 <option value="25">25</option>
@@ -39,25 +39,16 @@
         },
 
         props: {
-            modelValue: {
-                type: Object,
-                default: () => {},
-            },
             items: {
+                type: Object,
+                required: true,
+            },
+            form: {
                 type: Object,
                 required: true,
             },
         },
 
-        emits: ['update:modelValue'],
-
-        methods: {
-            update(event) {
-                this.$emit(
-                    'update:modelValue',
-                    Object.assign({}, this.modelValue, { 'per_page': event.target.value })
-                );
-            },
-        },
+        emits: ['change'],
     }
 </script>

@@ -9,8 +9,9 @@
             <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
             <Filters
                 v-if="filters.length > 0"
-                v-model="query"
+                :form="queryHandler"
                 :filters="filters"
+                @change="fetch"
             ></Filters>
         </div>
         <div class="card">
@@ -27,7 +28,11 @@
                 </table>
             </div>
         </div>
-        <Pagination v-model="query" :items="items"></Pagination>
+        <Pagination
+            :form="queryHandler"
+            :items="items"
+            @change="fetch"
+        ></Pagination>
     </div>
 </template>
 
@@ -70,42 +75,26 @@
                 type: Array,
                 default: () => [],
             },
+            query: {
+                type: Object,
+                default: () => {},
+            },
         },
 
         data() {
             return {
                 selection: [],
                 processing: false,
+                queryHandler: this.$inertia.form(window.location.href, this.query),
             };
         },
 
-        computed: {
-            query: {
-                get() {
-                    const params = new URLSearchParams(window.location.search);
-
-                    return this.filters.reduce((query, filter) => {
-                        return Object.assign(query, { [filter.key]: filter.default });
-                    }, {
-                        page: params.get('page') || 1,
-                        per_page: params.get('per_page') || 15,
-                    });
-                },
-                set(value) {
-                    this.fetch(value);
-                },
-            },
-        },
-
         methods: {
-            fetch(query) {
-                const params = JSON.parse(JSON.stringify(query));
-
-                if (params.hasOwnProperty('page') && params.page != 1) {
-                    params.page = 1;
-                }
-
-                this.$inertia.get(window.location.pathname, params, {
+            fetch() {
+                this.queryHandler.transform((data) => ({
+                    ...data,
+                    page: 1
+                })).get(this.items.path, {
                     replace: true,
                     preserveState: true,
                     preserveScroll: true,

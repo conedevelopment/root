@@ -37,4 +37,20 @@ class Filters extends Collection
 
         return $query;
     }
+
+    /**
+     * Map the filters into their query representation.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapToQuery(Request $request): array
+    {
+        return $this->reduce(static function (array $query, Filter $filter) use ($request): array {
+            return array_merge($query, [$filter->getKey() => $filter->default($request)]);
+        }, [
+            'page' => $request->query('page', 1),
+            'per_page' => $request->query('per_page', 15),
+        ]);
+    }
 }

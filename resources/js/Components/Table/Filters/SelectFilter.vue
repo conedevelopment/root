@@ -1,10 +1,13 @@
 <template>
-    <select v-bind="$attrs" v-model="value">
-        <option :value="null">{{ name }}</option>
-        <option v-for="(label, value) in options" :key="value" :value="value">
-            {{ label }}
-        </option>
-    </select>
+    <div class="form-group">
+        <label for=""></label>
+        <select :id="`filter`" class="form-control" v-bind="$attrs" v-model="value">
+            <option :value="null">{{ name }}</option>
+            <option v-for="(label, value) in options" :key="value" :value="value">
+                {{ label }}
+            </option>
+        </select>
+    </div>
 </template>
 
 <script>
