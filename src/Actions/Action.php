@@ -65,7 +65,7 @@ abstract class Action implements Arrayable, Responsable
     abstract public function handle(Request $request, Collection $models): void;
 
     /**
-     * Get the key for the filter.
+     * Get the key.
      *
      * @return string
      */
@@ -93,6 +93,14 @@ abstract class Action implements Arrayable, Responsable
     public function perform(ActionRequest $request): Response
     {
         $query = $this->resolveQuery($request);
+
+        $model = $query->getModel();
+
+        $request->validate(
+            $this->resolveFields($request)
+                ->available($request, $model)
+                ->mapToValidate($request, $model)
+        );
 
         $this->handle($request, $query->findMany($request->input('models', [])));
 
