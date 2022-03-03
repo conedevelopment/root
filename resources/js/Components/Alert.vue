@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <slot></slot>
+    <div class="alert" :class="`alert--${type}`" v-show="isOpen">
+        <div class="alert__message" v-html="message"></div>
+        <button type="button" class="alert__close" @click="close">&times;</button>
     </div>
 </template>
 
@@ -9,5 +10,22 @@
 
     export default {
         mixins: [Closable],
+
+        props: {
+            message: {
+                type: String,
+                required: true,
+            },
+            type: {
+                type: String,
+                default: 'info',
+            },
+        },
+
+        data() {
+            return {
+                isOpen: true,
+            };
+        },
     }
 </script>

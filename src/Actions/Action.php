@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Requests\ActionRequest;
+use Cone\Root\Support\Alert;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -233,6 +234,9 @@ abstract class Action implements Arrayable, Responsable
      */
     public function toResponse($request): Response
     {
-        return Redirect::back();
+        return Redirect::back()->with(
+            "alerts.action-{$this->getKey()}",
+            new Alert(__(':action was successful!' , ['action' => $this->getName()]))
+        );
     }
 }
