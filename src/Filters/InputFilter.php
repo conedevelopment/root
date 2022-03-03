@@ -9,5 +9,5 @@ abstract class InputFilter extends Filter
      *
      * @var string
      */
-    protected string $component = 'InputFilter';
+    protected string $component = 'Input';
 }

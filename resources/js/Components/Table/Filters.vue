@@ -4,25 +4,22 @@
             <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
         </button>
         <div>
-            <FilterHandler
+            <FormHandler
                 v-for="filter in filters"
                 v-bind="filter"
                 v-model="form[filter.key]"
+                :form="form"
                 :key="filter.key"
+                :name="filter.key"
+                :label="filter.name"
                 @update:modelValue="() => $emit('change')"
-            ></FilterHandler>
+            ></FormHandler>
         </div>
     </div>
 </template>
 
 <script>
-    import FilterHandler from './Filters/Handler';
-
     export default {
-        components: {
-            FilterHandler,
-        },
-
         props: {
             filters: {
                 type: Array,

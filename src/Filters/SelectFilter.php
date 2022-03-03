@@ -12,7 +12,7 @@ abstract class SelectFilter extends Filter
      *
      * @var string
      */
-    protected string $component = 'SelectFilter';
+    protected string $component = 'Select';
 
     /**
      * Indicates if mulitple options can be selected.
@@ -64,9 +64,16 @@ abstract class SelectFilter extends Filter
      */
     public function toArray(): array
     {
+        $options = App::call([$this, 'options']);
+
         return array_merge(parent::toArray(), [
             'multiple' => $this->multiple,
-            'options' => App::call([$this, 'options']),
+            'options' => array_map(static function (mixed $value, mixed $key): array {
+                return [
+                    'value' => $key,
+                    'formatted_value' => $value,
+                ];
+            }, $options, array_keys($options)),
         ]);
     }
 }
