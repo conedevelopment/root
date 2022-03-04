@@ -2,11 +2,13 @@
 
 namespace Cone\Root;
 
+use Closure;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class RootServiceProvider extends ServiceProvider
 {
@@ -167,11 +169,19 @@ class RootServiceProvider extends ServiceProvider
     protected function registerMacros(): void
     {
         $this->app['router']->macro('prependGroupStackPrefix', function (string $prefix): Router {
-            $attributes = ['prefix' => $prefix];
-
-            if ($this->hasGroupStack()) {
-                $attributes = $this->mergeWithLastGroup($attributes, false);
+            if (Root::getPath() === '') {
+                $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], true);
+            } else {
+                $attributes = [
+                    'prefix' => Str::replaceFirst(
+                        Root::getPath(),
+                        sprintf('%s/%s', Root::getPath(), $prefix),
+                        $this->getLastGroupPrefix()
+                    ),
+                ];
             }
+
+            array_pop($this->groupStack);
 
             $this->groupStack[] = $attributes;
 
