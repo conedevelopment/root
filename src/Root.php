@@ -87,10 +87,10 @@ abstract class Root
     /**
      * Get the Root domain.
      *
-     * @return string|null
+     * @return string
      */
-    public static function getDomain(): ?string
+    public static function getDomain(): string
     {
-        return Config::get('root.domain', null);
+        return (string) Config::get('root.domain', null);
     }
 }
