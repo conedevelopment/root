@@ -169,7 +169,8 @@ class RootServiceProvider extends ServiceProvider
     {
         $this->app['router']->macro('prependGroupStackPrefix', function (string $prefix): Router {
             if (Root::getPath() === '') {
-                $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], true);
+                $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], false);
+                dd($attributes);
             } else {
                 $attributes = [
                     'prefix' => Str::replaceFirst(
