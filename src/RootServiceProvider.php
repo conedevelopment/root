@@ -2,7 +2,6 @@
 
 namespace Cone\Root;
 
-use Closure;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
