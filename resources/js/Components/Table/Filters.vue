@@ -12,7 +12,7 @@
                 :key="filter.key"
                 :name="filter.key"
                 :label="filter.name"
-                @update:modelValue="() => $emit('change')"
+                @update:modelValue="emit"
             ></FormHandler>
         </div>
     </div>
@@ -32,5 +32,11 @@
         },
 
         emits: ['change'],
+
+        methods: {
+            emit() {
+                this.$emit('change');
+            },
+        },
     }
 </script>

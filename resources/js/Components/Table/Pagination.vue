@@ -5,7 +5,7 @@
                 class="form-control form-control--sm"
                 id="per-page"
                 v-model="form.per_page"
-                @update:modelValue="$emit('change')"
+                @update:modelValue="emit"
             >
                 <option value="15">15</option>
                 <option value="25">25</option>
@@ -50,5 +50,11 @@
         },
 
         emits: ['change'],
+
+        methods: {
+            emit() {
+                this.$emit('change');
+            },
+        },
     }
 </script>
