@@ -168,16 +168,16 @@ class RootServiceProvider extends ServiceProvider
     protected function registerMacros(): void
     {
         $this->app['router']->macro('prependGroupStackPrefix', function (string $prefix): Router {
-            if (Root::getPath() === '') {
-                $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], false);
-            } else {
-                $attributes = [
+            $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], false);
+
+            if (! empty(Root::getPath())) {
+                $attributes = array_replace($attributes, [
                     'prefix' => Str::replaceFirst(
                         Root::getPath(),
                         sprintf('%s/%s', Root::getPath(), $prefix),
                         $this->getLastGroupPrefix()
                     ),
-                ];
+                ]);
             }
 
             array_pop($this->groupStack);
