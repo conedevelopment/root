@@ -3,6 +3,7 @@
 namespace Cone\Root\Filters;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 
 abstract class SelectFilter extends Filter
@@ -30,23 +31,6 @@ abstract class SelectFilter extends Filter
     abstract public function options(Request $request): array;
 
     /**
-     * The default value of the filter.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
-     */
-    public function default(Request $request): mixed
-    {
-        $default = parent::default($request);
-
-        if ($this->multiple) {
-            return $default ?: [];
-        }
-
-        return $default;
-    }
-
-    /**
      * Set the multiple attribute.
      *
      * @param  bool  $value
@@ -57,6 +41,16 @@ abstract class SelectFilter extends Filter
         $this->multiple = $value;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function default(Request $request): mixed
+    {
+        $default = parent::default($request);
+
+        return $this->multiple ? Arr::wrap($default) : $default;
     }
 
     /**
