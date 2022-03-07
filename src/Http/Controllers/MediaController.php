@@ -22,18 +22,7 @@ class MediaController extends Controller
     {
         $field = $request->resolved();
 
-        $model = $request->resource()->getModelInstance();
-
-        $items = $field->resolveQuery($request, $model)
-                    ->filter($request)
-                    ->latest()
-                    ->cursorPaginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->through(static function (Model $related) use ($request, $model, $field): array {
-                        return $field->mapOption($request, $model, $related);
-                    });
-
-        return new JsonResponse($items);
+        return new JsonResponse($field->mapItems($request));
     }
 
     /**

@@ -508,6 +508,26 @@ class Resource implements Arrayable
     }
 
     /**
+     * Map the items.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapItems(Request $request): array
+    {
+        return $this->query()
+                    ->tap(function (Builder $query) use ($request): void {
+                        $this->resolveFilters($request)->available($request)->apply($request, $query)->latest();
+                    })
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->through(function (Model $model) use ($request): array {
+                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
+                    })
+                    ->toArray();
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -531,26 +551,14 @@ class Resource implements Arrayable
      */
     public function toIndex(IndexRequest $request): array
     {
-        $filters = $this->resolveFilters($request)->available($request);
-
-        $items = $this->query()
-                    ->tap(static function (Builder $query) use ($request, $filters): void {
-                        $filters->apply($request, $query)->latest();
-                    })
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->through(function (Model $model) use ($request): array {
-                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
-                    });
-
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)
                             ->available($request)
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
-            'filters' => $filters->toArray(),
-            'items' => $items->toArray(),
+            'filters' => ($filters = $this->resolveFilters($request)->available($request))->toArray(),
+            'items' => $this->mapItems($request),
             'query' => $filters->mapToQuery($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);

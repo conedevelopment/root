@@ -4,6 +4,7 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\MediaController;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -33,12 +34,12 @@ class Media extends MorphToMany
     protected ?Closure $storingResolver = null;
 
     /**
-     * Set the storing resolver callback.
+     * Set the storage resolver callback.
      *
      * @param  \Closure  $callback
      * @return $this
      */
-    public function storing(Closure $callback): static
+    public function storeUsing(Closure $callback): static
     {
         $this->storingResolver = $callback;
 
@@ -84,6 +85,27 @@ class Media extends MorphToMany
                                     ->mapToForm($request, $related)
                                     ->toArray()
         ]);
+    }
+
+    /**
+     * Map the items.
+     *
+     * @param \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function mapItems(RootRequest $request): array
+    {
+        $model = $request->resource()->getModelInstance();
+
+        return $this->resolveQuery($request, $model)
+                    ->filter($request)
+                    ->latest()
+                    ->cursorPaginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->through(function (Model $related) use ($request, $model): array {
+                        return $this->mapOption($request, $model, $related);
+                    })
+                    ->toArray();
     }
 
     /**
