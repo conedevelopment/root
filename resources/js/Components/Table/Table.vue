@@ -1,38 +1,21 @@
 <template>
     <div>
         <div class="form-row--mixed">
-            <Actions
-                v-if="actions.length > 0"
-                v-model:models="selection"
-                :actions="actions"
-            ></Actions>
+            <Actions v-if="actions.length > 0" v-model:selection="selection" :actions="actions"></Actions>
             <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
-            <Filters
-                v-if="filters.length > 0"
-                :form="queryHandler"
-                :filters="filters"
-                @change="fetch"
-            ></Filters>
+            <Filters v-if="filters.length > 0" :form="queryHandler" :filters="filters" @change="fetch"></Filters>
         </div>
         <div class="card">
             <div class="table-responsive">
                 <table class="table table--striped">
-                    <Head></Head>
+                    <Head v-model:selection="selection" :items="items.data"></Head>
                     <tbody>
-                        <Row
-                            v-for="item in items.data"
-                            :key="item.id"
-                            :item="item"
-                        ></Row>
+                        <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                     </tbody>
                 </table>
             </div>
         </div>
-        <Pagination
-            :form="queryHandler"
-            :items="items"
-            @change="fetch"
-        ></Pagination>
+        <Pagination :form="queryHandler" :items="items" @change="fetch"></Pagination>
     </div>
 </template>
 
@@ -102,6 +85,7 @@
                         this.processing = true;
                     },
                     onFinish: () => {
+                        this.selection = [];
                         this.processing = false;
                     },
                 });

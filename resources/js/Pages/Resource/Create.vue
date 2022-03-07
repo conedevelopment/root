@@ -42,8 +42,11 @@
 
         methods: {
             submit() {
-                this.form.clearErrors();
-                this.form.post(this.urls.index);
+                this.form.post(this.urls.index, {
+                    onStart: () => {
+                        this.form.clearErrors();
+                    },
+                });
             },
         },
     }

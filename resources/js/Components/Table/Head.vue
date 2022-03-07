@@ -17,6 +17,19 @@
 
 <script>
     export default {
+        props: {
+            items: {
+                type: Array,
+                required: true,
+            },
+            selection: {
+                type: Array,
+                required: true,
+            },
+        },
+
+        emits: ['update:selection'],
+
         watch: {
             indeterminate(newValue, oldValue) {
                 this.$refs.input.indeterminate = newValue;
@@ -25,7 +38,7 @@
 
         computed: {
             columns() {
-                const fields = this.$parent.items.data?.[0]?.fields || [];
+                const fields = this.items?.[0]?.fields || [];
 
                 return fields.map((field) => ({
                     label: field.label,
@@ -35,27 +48,29 @@
             },
             selected: {
                 get() {
-                    return this.$parent.selection.length > 0
-                        && this.$parent.selection.length === this.$parent.items.data.length;
+                    return this.selection.length > 0
+                        && this.selection.length === this.items.length;
                 },
                 set(value) {
                     value ? this.selectAll() : this.clearSelection();
                 },
             },
             indeterminate() {
-                return this.$parent.selection.length > 0
-                    && this.$parent.selection.length < this.$parent.items.data.length;
+                return this.selection.length > 0
+                    && this.selection.length < this.items.length;
             },
         },
 
         methods: {
             selectAll(matching = false) {
                 // append all matching to query string
-
-                this.$parent.selection = this.$parent.items.data.map((item) => item.id);
+                this.$emit(
+                    'update:selection',
+                    this.items.map((item) => item.id)
+                );
             },
             clearSelection() {
-                this.$parent.selection = [];
+                this.$emit('update:selection', []);
             },
         },
     }

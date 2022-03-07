@@ -13,7 +13,7 @@
             <button
                 type="submit"
                 class="btn btn--primary"
-                :disabled="_action === null || models.length === 0"
+                :disabled="_action === null || selection.length === 0"
             >
                 {{ __('Run') }}
             </button>
@@ -24,8 +24,8 @@
                 ref="action"
                 :action="action"
                 :key="action.key"
-                :models="models"
-                @success="$emit('update:models', [])"
+                :selection="selection"
+                @success="$emit('update:selection', [])"
             ></Action>
         </div>
     </div>
@@ -44,13 +44,13 @@
                 type: Array,
                 default: () => [],
             },
-            models: {
+            selection: {
                 type: Array,
                 default: () => [],
             },
         },
 
-        emits: ['update:models'],
+        emits: ['update:selection'],
 
         data() {
             return {

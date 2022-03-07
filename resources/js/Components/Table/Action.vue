@@ -26,6 +26,10 @@
                 type: Object,
                 required: true,
             },
+            selection: {
+                type: Array,
+                required: true,
+            },
         },
 
         emits: ['success', 'error'],
@@ -43,8 +47,8 @@
             submit() {
                 this.form.transform((data) => ({
                     ...data,
-                    models: this.models,
                     all: false,
+                    models: this.selection,
                 })).post(this.action.url, {
                     onSuccess: () => {
                         this.$emit('success');
