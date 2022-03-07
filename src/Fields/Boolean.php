@@ -9,14 +9,19 @@ class Boolean extends Field
      *
      * @var string
      */
-    protected string $component = 'Input';
+    protected string $component = 'Checkbox';
 
     /**
-     * The field attributes.
+     * Create a new file field instance.
      *
-     * @var array
+     * @param  string  $label
+     * @param  string|null  $name
+     * @return void
      */
-    protected array $attributes = [
-        'type' => 'checkbox',
-    ];
+    public function __construct(string $label, ?string $name = null)
+    {
+        parent::__construct($label, $name);
+
+        $this->type('checkbox');
+    }
 }
