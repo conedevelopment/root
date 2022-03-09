@@ -7,8 +7,8 @@
             <FormHandler
                 v-for="filter in filters"
                 v-bind="filter"
-                v-model="form[filter.key]"
-                :form="form"
+                v-model="query[filter.key]"
+                :form="query"
                 :key="filter.key"
                 :name="filter.key"
                 :label="filter.name"
@@ -25,7 +25,7 @@
                 type: Array,
                 default: () => [],
             },
-            form: {
+            query: {
                 type: Object,
                 required: true,
             },

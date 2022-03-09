@@ -4,7 +4,7 @@
             <select
                 class="form-control form-control--sm"
                 id="per-page"
-                v-model="form.per_page"
+                v-model="query.per_page"
                 @update:modelValue="emit"
             >
                 <option value="15">15</option>
@@ -43,7 +43,7 @@
                 type: Object,
                 required: true,
             },
-            form: {
+            query: {
                 type: Object,
                 required: true,
             },

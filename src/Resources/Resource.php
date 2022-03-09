@@ -515,16 +515,22 @@ class Resource implements Arrayable
      */
     public function mapItems(Request $request): array
     {
-        return $this->query()
-                    ->tap(function (Builder $query) use ($request): void {
-                        $this->resolveFilters($request)->available($request)->apply($request, $query)->latest();
-                    })
+        $query = $this->query();
+
+        $filters = $this->resolveFilters($request)->available($request);
+
+        $items = $filters->apply($request, $query)
+                    ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request): array {
                         return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
                     })
                     ->toArray();
+
+        return array_merge($items, [
+            'query' => $filters->mapToQuery($request, $query),
+        ]);
     }
 
     /**
@@ -557,9 +563,8 @@ class Resource implements Arrayable
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
-            'filters' => ($filters = $this->resolveFilters($request)->available($request))->toArray(),
+            'filters' => $this->resolveFilters($request)->available($request)->toArray(),
             'items' => $this->mapItems($request),
-            'query' => $filters->mapToQuery($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }

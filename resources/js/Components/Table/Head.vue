@@ -9,6 +9,9 @@
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
                 {{ column.label }}
+                <button v-if="column.sortable" type="button" @click="sort(column.name)">
+                    <Icon name="unfold-more"></Icon>
+                </button>
             </th>
             <th scope="col">&nbsp;</th>
         </tr>
@@ -26,7 +29,7 @@
                 type: Array,
                 required: true,
             },
-            form: {
+            query: {
                 type: Object,
                 required: true,
             },
@@ -75,6 +78,9 @@
             },
             clearSelection() {
                 this.$emit('update:selection', []);
+            },
+            sort(by) {
+                console.log(by);
             },
         },
     }

@@ -243,6 +243,32 @@ abstract class Extract implements Arrayable
     }
 
     /**
+     * Map the items.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function mapItems(Request $request): array
+    {
+        $query = $this->resolveQuery($request);
+
+        $filters = $this->resolveFilters($request)->available($request);
+
+        $items = $filters->apply($request, $query)
+                    ->latest()
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->through(function (Model $model) use ($request): array {
+                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
+                    })
+                    ->toArray();
+
+        return array_merge($items, [
+            'query' => $filters->mapToQuery($request, $query),
+        ]);
+    }
+
+    /**
      * Register the extract routes.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -295,24 +321,11 @@ abstract class Extract implements Arrayable
      */
     public function toIndex(ExtractRequest $request): array
     {
-        $filters = $this->resolveFilters($request)->available($request);
-
-        $items = $this->resolveQuery($request)
-                    ->tap(static function (Builder $query) use ($request, $filters): void {
-                        $filters->apply($request, $query)->latest();
-                    })
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->through(function (Model $model) use ($request): array {
-                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
-                    });
-
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
-            'filters' => $filters->toArray(),
-            'items' => $items->toArray(),
+            'filters' => $this->resolveFilters($request)->available($request),
+            'items' => $this->mapItems($request),
             'urls' => $this->mapUrls($request),
-            'query' => $filters->mapToQuery($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }

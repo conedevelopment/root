@@ -42,15 +42,22 @@ class Filters extends Collection
      * Map the filters into their query representation.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return array
      */
-    public function mapToQuery(Request $request): array
+    public function mapToQuery(Request $request, Builder $query): array
     {
+        $model = $query->getModel();
+
         return $this->reduce(static function (array $query, Filter $filter) use ($request): array {
-            return array_merge($query, [$filter->getKey() => $filter->default($request)]);
+            return array_replace($query, [$filter->getKey() => $filter->default($request)]);
         }, [
             'page' => $request->query('page', 1),
-            'per_page' => $request->query('per_page', 15),
+            'per_page' => $request->query('per_page', $model->getPerPage()),
+            'sort' => [
+                'by' => $request->query('sort.by', $model->getCreatedAtColumn()),
+                'order' => 'desc',
+            ],
         ]);
     }
 }
