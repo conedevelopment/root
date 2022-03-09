@@ -21,7 +21,7 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) });
 
         app.use(plugin);
-        app.use(Root);
+        app.use(Root, window.Root);
 
         document.dispatchEvent(new CustomEvent('root:booting', { detail: { app } }));
 

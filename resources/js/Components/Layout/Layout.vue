@@ -1,8 +1,8 @@
 <template>
     <div class="app">
-        <Sidebar ref="sidebar" :resources="resources" :user="user"></Sidebar>
+        <Sidebar ref="sidebar"></Sidebar>
         <main class="app-body">
-            <Nav :user="user"></Nav>
+            <Nav></Nav>
             <div class="app-body__inner">
                 <Header></Header>
                 <div class="app-body-alerts">
@@ -32,12 +32,6 @@
         },
 
         computed: {
-            resources() {
-                return window.Root.resources;
-            },
-            user() {
-                return window.Root.user;
-            },
             token() {
                 return this.$page.props.csrf_token;
             },

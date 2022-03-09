@@ -26,6 +26,10 @@
                 type: Array,
                 required: true,
             },
+            form: {
+                type: Object,
+                required: true,
+            },
         },
 
         emits: ['update:selection'],

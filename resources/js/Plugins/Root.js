@@ -19,6 +19,8 @@ export default {
 
         app.directive('debounce', Debounce);
 
+        app.config.globalProperties.$app = options;
+
         app.config.globalProperties.$cookie = new Cookie();
 
         const translator = new Translator(options.translations || {});

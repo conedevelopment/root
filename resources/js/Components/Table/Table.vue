@@ -8,7 +8,7 @@
         <div class="card">
             <div class="table-responsive">
                 <table class="table table--striped">
-                    <Head v-model:selection="selection" :items="items.data"></Head>
+                    <Head v-model:selection="selection" :form="queryHandler" :items="items.data"></Head>
                     <tbody>
                         <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                     </tbody>

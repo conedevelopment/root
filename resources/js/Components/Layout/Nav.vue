@@ -1,7 +1,7 @@
 <template>
     <div class="mobile-header">
         <div class="mobile-header__inner">
-            <Link href="/">
+            <Link :href="$app.config.url">
                 <img class="mobile-header__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">
             </Link>
             <div class="mobile-header__actions">
@@ -12,7 +12,7 @@
                 >
                     <Icon class="btn__icon btn__icon--start" name="menu-open"></Icon>
                 </button>
-                <UserMenu :user="user"></UserMenu>
+                <UserMenu></UserMenu>
             </div>
         </div>
     </div>
@@ -26,13 +26,6 @@
         components: {
             Link,
             UserMenu,
-        },
-
-        props: {
-            user: {
-                type: Object,
-                required: true,
-            },
         },
 
         methods: {

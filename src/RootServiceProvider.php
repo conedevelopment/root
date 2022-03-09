@@ -155,7 +155,9 @@ class RootServiceProvider extends ServiceProvider
                     $this->app->getLocale(), '*', '*'
                 ),
                 'user' => $this->app['request']->user()->toRoot(),
-                'config' => (object) [],
+                'config' => [
+                    'url' => $this->app['url']->route('root.dashboard'),
+                ],
             ]);
         });
     }
@@ -180,9 +182,7 @@ class RootServiceProvider extends ServiceProvider
                 ]);
             }
 
-            array_pop($this->groupStack);
-
-            $this->groupStack[] = $attributes;
+            $this->groupStack[array_key_last($this->groupStack)] = $attributes;
 
             return $this;
         });

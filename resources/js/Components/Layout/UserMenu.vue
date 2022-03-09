@@ -7,10 +7,10 @@
             :aria-label="__('User Menu')"
             @click="toggle"
         >
-            <img class="user-menu__avatar" :src="user.avatar">
+            <img class="user-menu__avatar" :src="$app.user.avatar">
             <div class="user-menu__caption">
-                <span class="user-menu__name">{{ user.name }}</span>
-                <span class="user-menu__role">{{ user.email }}</span>
+                <span class="user-menu__name">{{ $app.user.name }}</span>
+                <span class="user-menu__role">{{ $app.user.email }}</span>
             </div>
             <div class="js-user-menu-toggle user-menu__toggle">
                 <Icon class="user-menu__arrow" name="unfold-more"></Icon>
@@ -34,12 +34,5 @@
 
     export default {
         mixins: [Closable],
-
-        props: {
-            user: {
-                type: Object,
-                required: true,
-            },
-        },
     }
 </script>

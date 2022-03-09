@@ -34,7 +34,7 @@ trait Filterable
      */
     public function scopeExclude(Builder $query, ?array $value = []): Builder
     {
-        if (is_null($value) || empty($value)) {
+        if (empty($value)) {
             return $query;
         }
 
