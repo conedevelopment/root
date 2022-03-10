@@ -62,7 +62,7 @@ class Filters extends Collection
             'per_page' => (int) $request->query('per_page', $model->getPerPage()),
             'sort' => [
                 'by' => $request->query('sort.by', $model->getCreatedAtColumn()),
-                'order' => 'desc',
+                'order' => $request->query('sort.order', 'desc'),
             ],
         ]);
     }
