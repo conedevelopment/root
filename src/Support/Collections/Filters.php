@@ -58,8 +58,8 @@ class Filters extends Collection
         return $this->reduce(static function (array $query, Filter $filter) use ($request): array {
             return array_replace($query, [$filter->getKey() => $filter->default($request)]);
         }, [
-            'page' => $request->query('page', 1),
-            'per_page' => $request->query('per_page', $model->getPerPage()),
+            'page' => (int) $request->query('page', 1),
+            'per_page' => (int) $request->query('per_page', $model->getPerPage()),
             'sort' => [
                 'by' => $request->query('sort.by', $model->getCreatedAtColumn()),
                 'order' => 'desc',

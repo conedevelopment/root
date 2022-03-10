@@ -12,7 +12,6 @@
             :extracts="extracts"
             :filters="filters"
             :items="items"
-            :query="query"
             :urls="urls"
         ></Table>
     </div>
@@ -52,10 +51,6 @@
             widgets: {
                 type: Array,
                 default: () => [],
-            },
-            query: {
-                type: Object,
-                default: () => {},
             },
         },
 

@@ -4,13 +4,15 @@
             <select
                 class="form-control form-control--sm"
                 id="per-page"
-                v-model="query.per_page"
+                v-model.number="query.per_page"
                 @update:modelValue="emit"
             >
-                <option value="15">15</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
+                <option v-if="! counts.includes(query.per_page)" disabled :value="query.per_page">
+                    {{ __('Custom (:count)', { count: query.per_page }) }}
+                </option>
+                <option v-for="count in counts" :key="count" :value="count">
+                    {{ count }}
+                </option>
             </select>
             <label for="per-page">{{ __('of :count items', { count: items.total }) }}</label>
         </div>
@@ -50,6 +52,12 @@
         },
 
         emits: ['update:query'],
+
+        data() {
+            return {
+                counts: [15, 25, 50, 100],
+            };
+        },
 
         methods: {
             emit() {

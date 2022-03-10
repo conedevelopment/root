@@ -103,6 +103,7 @@ abstract class Filter implements Arrayable
             'default' => App::call([$this, 'default']),
             'key' => $this->getKey(),
             'name' => $this->getName(),
+            'nullable' => true,
         ];
     }
 }

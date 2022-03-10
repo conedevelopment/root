@@ -541,11 +541,11 @@ class Resource implements Arrayable
     public function toArray(): array
     {
         return [
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-            'model_name' => $this->getModelName(),
-            'urls' => App::call([$this, 'mapUrls']),
             'abilities' => App::call([$this, 'mapAbilities']),
+            'key' => $this->getKey(),
+            'model_name' => $this->getModelName(),
+            'name' => $this->getName(),
+            'urls' => App::call([$this, 'mapUrls']),
         ];
     }
 
