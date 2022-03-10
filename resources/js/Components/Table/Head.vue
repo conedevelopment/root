@@ -35,7 +35,7 @@
             },
         },
 
-        emits: ['update:selection'],
+        emits: ['update:selection', 'update:query'],
 
         watch: {
             indeterminate(newValue, oldValue) {
@@ -80,7 +80,10 @@
                 this.$emit('update:selection', []);
             },
             sort(by) {
-                console.log(by);
+                this.query.sort.by = by;
+                this.query.sort.order = this.query.sort.order === 'desc' ? 'asc' : 'desc';
+
+                this.$emit('update:query');
             },
         },
     }

@@ -35,7 +35,13 @@ class Filters extends Collection
             $filter->apply($request, $query, $request->input($filter->getKey()));
         });
 
-        return $query;
+        return tap($query, static function (Builder $query) use ($request): void {
+            $model = $query->getModel();
+
+            if ($model->hasNamedScope('filter')) {
+                $model->callNamedScope('filter', [$query, $request]);
+            }
+        });
     }
 
     /**

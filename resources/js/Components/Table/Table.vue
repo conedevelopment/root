@@ -3,19 +3,19 @@
         <div class="form-row--mixed">
             <Actions v-if="actions.length > 0" v-model:selection="selection" :actions="actions"></Actions>
             <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
-            <Filters v-if="filters.length > 0" :query="query" :filters="filters" @change="fetch"></Filters>
+            <Filters v-if="filters.length > 0" :query="query" :filters="filters" @update:query="fetch"></Filters>
         </div>
         <div class="card">
             <div class="table-responsive">
                 <table class="table table--striped">
-                    <Head v-model:selection="selection" :query="query" :items="items.data"></Head>
+                    <Head v-model:selection="selection" :query="query" :items="items.data" @update:query="fetch"></Head>
                     <tbody>
                         <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                     </tbody>
                 </table>
             </div>
         </div>
-        <Pagination :query="query" :items="items" @change="fetch"></Pagination>
+        <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
     </div>
 </template>
 

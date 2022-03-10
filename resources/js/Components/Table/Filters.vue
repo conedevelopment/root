@@ -31,11 +31,11 @@
             },
         },
 
-        emits: ['change'],
+        emits: ['update:query'],
 
         methods: {
             emit() {
-                this.$emit('change');
+                this.$emit('update:query');
             },
         },
     }
