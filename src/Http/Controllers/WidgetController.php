@@ -11,7 +11,7 @@ class WidgetController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\WidgetRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(WidgetRequest $request): Response
