@@ -8,7 +8,9 @@ use Cone\Root\Models\User as BaseUser;
 use Cone\Root\Root;
 use Cone\Root\RootApplicationServiceProvider;
 use Cone\Root\Widgets\Welcome;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Fortify\Fortify;
 
 class RootServiceProvider extends RootApplicationServiceProvider
 {
@@ -34,6 +36,10 @@ class RootServiceProvider extends RootApplicationServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        Fortify::loginView(function (): View {
+            return $this->app['view']->make('root::auth.login');
+        });
 
         Root::running(static function (): void {
             (BaseUser::proxy())::registerResource();
