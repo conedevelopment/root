@@ -1,14 +1,32 @@
 <template>
     <div>
         <div class="form-row--mixed">
-            <Actions v-if="actions.length > 0" v-model:selection="selection" :actions="actions"></Actions>
-            <Extracts v-if="extracts.length > 0" :extracts="extracts"></Extracts>
-            <Filters v-if="filters.length > 0" :query="query" :filters="filters" @update:query="fetch"></Filters>
+            <Actions
+                v-if="actions.length > 0"
+                :selection="selection"
+                :actions="actions"
+                @success="clearSelection"
+            ></Actions>
+            <Extracts
+                v-if="extracts.length > 0"
+                :extracts="extracts"
+            ></Extracts>
+            <Filters
+                v-if="filters.length > 0"
+                :query="query"
+                :filters="filters"
+                @update:query="fetch"
+            ></Filters>
         </div>
         <div class="card">
             <div class="table-responsive">
                 <table class="table table--striped">
-                    <Head v-model:selection="selection" :query="query" :items="items.data" @update:query="fetch"></Head>
+                    <Head
+                        :items="items.data"
+                        :query="query"
+                        :selection="selection"
+                        @update:query="fetch"
+                    ></Head>
                     <tbody>
                         <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                     </tbody>
@@ -20,7 +38,7 @@
 </template>
 
 <script>
-    import Actions from './Actions';
+    import Actions from './../Actions/Actions';
     import Extracts from './Extracts';
     import Filters from './Filters';
     import Head from './Head';
@@ -69,6 +87,28 @@
         },
 
         methods: {
+            selected(item) {
+                return this.selection.includes(item.id);
+            },
+            select(item) {
+                if (! this.selection.includes(item.id)) {
+                    this.selection.push(item.id);
+                }
+            },
+            deselect(item) {
+                const index = this.selection.indexOf(item.id);
+
+                if (index !== -1) {
+                    this.selection.splice(index, 1);
+                }
+            },
+            selectAll(matching = false) {
+                // append all matching to query string
+                this.selection = this.items.data.map((item) => item.id);
+            },
+            clearSelection() {
+                this.selection = [];
+            },
             fetch() {
                 this.query.transform((data) => ({
                     ...data,
@@ -81,7 +121,7 @@
                         this.processing = true;
                     },
                     onFinish: () => {
-                        this.selection = [];
+                        this.clearSelection();
                         this.processing = false;
                     },
                 });

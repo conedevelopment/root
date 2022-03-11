@@ -25,7 +25,8 @@
                 :action="action"
                 :key="action.key"
                 :selection="selection"
-                @success="$emit('update:selection', [])"
+                @error="$emit('error', action)"
+                @success="$emit('success', action)"
             ></Action>
         </div>
     </div>
@@ -50,7 +51,7 @@
             },
         },
 
-        emits: ['update:selection'],
+        emits: ['success', 'error'],
 
         data() {
             return {

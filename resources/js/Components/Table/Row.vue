@@ -48,10 +48,10 @@
         computed: {
             selected: {
                 get() {
-                    return this.$parent.selection.includes(this.item.id);
+                    return this.$parent.selected(this.item);
                 },
                 set(value) {
-                    value ? this.select() : this.deselect();
+                    value ? this.$parent.select(this.item) : this.$parent.deselect(this.item);
                 },
             },
             url() {
@@ -60,22 +60,10 @@
         },
 
         methods: {
-            select() {
-                if (! this.selected) {
-                    this.$parent.selection.push(this.item.id);
-                }
-            },
-            deselect() {
-                const index = this.$parent.selection.indexOf(this.item.id);
-
-                if (index !== -1) {
-                    this.$parent.selection.splice(index, 1);
-                }
-            },
             destroy(url) {
                 this.$inertia.delete(url, {
                     onBefore: () => confirm(this.__('Are you sure?')),
-                    onStart: (visit) => this.deselect(),
+                    onStart: (visit) => this.$parent.deselect(this.item),
                 });
             },
         },

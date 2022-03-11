@@ -35,7 +35,7 @@
             },
         },
 
-        emits: ['update:selection', 'update:query'],
+        emits: ['update:query'],
 
         watch: {
             indeterminate(newValue, oldValue) {
@@ -59,7 +59,7 @@
                         && this.selection.length === this.items.length;
                 },
                 set(value) {
-                    value ? this.selectAll() : this.clearSelection();
+                    value ? this.$parent.selectAll() : this.$parent.clearSelection();
                 },
             },
             indeterminate() {
@@ -69,16 +69,6 @@
         },
 
         methods: {
-            selectAll(matching = false) {
-                // append all matching to query string
-                this.$emit(
-                    'update:selection',
-                    this.items.map((item) => item.id)
-                );
-            },
-            clearSelection() {
-                this.$emit('update:selection', []);
-            },
             sort(by) {
                 this.query.sort.by = by;
                 this.query.sort.order = this.query.sort.order === 'desc' ? 'asc' : 'desc';
