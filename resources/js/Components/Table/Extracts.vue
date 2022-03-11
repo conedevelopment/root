@@ -2,6 +2,7 @@
     <form @submit.prevent @reset.prevent>
         <FormHandler
             nullable
+            class="form-group--input"
             component="Select"
             v-model="_extract"
             :name="name"

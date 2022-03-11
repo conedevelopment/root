@@ -1,7 +1,7 @@
 <template>
     <div>
-        <form @submit.prevent="submit">
-            <div class="form-group">
+        <form @submit.prevent="submit" class="form--inline">
+            <div class="form-group form-group--inline">
                 <label class="form-label" for="actions-select">{{ __('Action') }}</label>
                 <select id="actions-select" class="form-control" v-model="_action">
                     <option :value="null">{{ __('Action') }}</option>

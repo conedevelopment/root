@@ -1610,6 +1610,19 @@ samp {
   outline: 2px solid transparent;
 }
 
+.form--inline {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+}
+
+.form-group--inline {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  gap: 1rem;
+}
+
 .table a {
   text-decoration: none;
 }

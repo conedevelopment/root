@@ -1,0 +1,18 @@
+@use '~sprucecss/scss/spruce';
+
+.form {
+    &--inline {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(s);
+    }
+}
+
+.form-group {
+    &--inline {
+        align-items: center;
+        display: flex;
+        flex-grow: 1;
+        gap: spruce.spacer(s);
+    }
+}
