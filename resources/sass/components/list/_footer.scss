@@ -1,34 +1,34 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .list-footer {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: spruce.spacer(l);
-  justify-content: space-between;
-  margin-block: spruce.spacer(s) spruce.spacer(l);
-  row-gap: spruce.spacer(s);
-
-  &__pager {
     align-items: center;
     display: flex;
-    gap: spruce.spacer(xs);
+    flex-wrap: wrap;
+    column-gap: spruce.spacer(l);
+    justify-content: space-between;
+    margin-block: spruce.spacer(s) spruce.spacer(l);
+    row-gap: spruce.spacer(s);
 
-    label {
-      flex-shrink: 0;
+    &__pager {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(xs);
+
+        label {
+            flex-shrink: 0;
+        }
     }
-  }
 
-  &__pagination {
-    align-items: center;
-    display: flex;
-    gap: spruce.spacer(xs);
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    &__pagination {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(xs);
+        list-style: none;
+        margin: 0;
+        padding: 0;
 
-    li {
-      margin: 0;
+        li {
+            margin: 0;
+        }
     }
-  }
 }

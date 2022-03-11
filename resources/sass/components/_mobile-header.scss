@@ -1,43 +1,43 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .mobile-header {
-  background-color: spruce.color(background);
-  border-block-end: 1px solid spruce.color(border, sidebar);
-  padding-block: spruce.spacer(s);
+    background-color: spruce.color(background);
+    border-block-end: 1px solid spruce.color(border, sidebar);
+    padding-block: spruce.spacer(s);
 
-  @include spruce.breakpoint(md) {
-    display: none;
-  }
-
-  &__inner {
-    align-items: center;
-    display: flex;
-    gap: spruce.spacer(m);
-    justify-content: space-between;
-    padding-inline: var(--gutter-lg);
-  }
-
-  &__logo {
-    height: 1.15rem;
-    width: auto;
-  }
-
-  &__actions {
-    align-items: center;
-    display: flex;
-    gap: spruce.spacer(s);
-  }
-
-  .user-menu__caption {
-    display: none;
-
-    @include spruce.breakpoint(xs) {
-      display: flex;
+    @include spruce.breakpoint(md) {
+        display: none;
     }
-  }
 
-  .user-menu-navigation {
-    inset-inline-start: initial;
-    min-width: 12rem;
-  }
+    &__inner {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(m);
+        justify-content: space-between;
+        padding-inline: var(--gutter-lg);
+    }
+
+    &__logo {
+        height: 1.15rem;
+        width: auto;
+    }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(s);
+    }
+
+    .user-menu__caption {
+        display: none;
+
+        @include spruce.breakpoint(xs) {
+            display: flex;
+        }
+    }
+
+    .user-menu-navigation {
+        inset-inline-start: initial;
+        min-width: 12rem;
+    }
 }

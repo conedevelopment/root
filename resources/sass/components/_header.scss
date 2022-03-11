@@ -1,73 +1,73 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .app-header {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: spruce.spacer(l);
-  justify-content: space-between;
-  padding-block: spruce.spacer(m) spruce.spacer(s);
-  row-gap: spruce.spacer(s);
-
-  &__heading {
-    display: flex;
-    flex-direction: column;
-    gap: spruce.spacer(xxs);
-  }
-
-  &__actions {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: spruce.spacer(s);
-  }
+    column-gap: spruce.spacer(l);
+    justify-content: space-between;
+    padding-block: spruce.spacer(m) spruce.spacer(s);
+    row-gap: spruce.spacer(s);
 
-  &__title {
-    font-size: spruce.font-size(h3);
-    font-weight: 800;
-    margin: 0;
-  }
+    &__heading {
+        display: flex;
+        flex-direction: column;
+        gap: spruce.spacer(xxs);
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(s);
+    }
+
+    &__title {
+        font-size: spruce.font-size(h3);
+        font-weight: 800;
+        margin: 0;
+    }
 }
 
 .breadcrumbs {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  white-space: nowrap;
-
-  li {
-    align-items: center;
-    display: inline-flex;
+    display: flex;
+    list-style: none;
     margin: 0;
-  }
-
-  > li + li {
-    &::before {
-      border-bottom: 2px solid spruce.color(arrow, breadcrumb);
-      border-right: 2px solid spruce.color(arrow, breadcrumb);
-      content: '';
-      display: inline-flex;
-      height: 0.4rem;
-      margin: 0 spruce.spacer(xs);
-      transform: rotate(-45deg);
-      width: 0.4rem;
-    }
-  }
-
-  span {
-    align-items: center;
-    display: inline-flex;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  [aria-current='page'] {
-    display: inline-block;
-    max-width: 30rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 0;
     white-space: nowrap;
-  }
+
+    li {
+        align-items: center;
+        display: inline-flex;
+        margin: 0;
+    }
+
+    > li + li {
+        &::before {
+        border-bottom: 2px solid spruce.color(arrow, breadcrumb);
+        border-right: 2px solid spruce.color(arrow, breadcrumb);
+        content: '';
+        display: inline-flex;
+        height: 0.4rem;
+        margin: 0 spruce.spacer(xs);
+        transform: rotate(-45deg);
+        width: 0.4rem;
+        }
+    }
+
+    span {
+        align-items: center;
+        display: inline-flex;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    [aria-current='page'] {
+        display: inline-block;
+        max-width: 30rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }

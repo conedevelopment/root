@@ -1,12 +1,12 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .btn {
-  &__keybind {
-    color: spruce.color(primary-foreground-opaque, btn);
-    font-weight: 400;
-  }
+    &__keybind {
+        color: spruce.color(primary-foreground-opaque, btn);
+        font-weight: 400;
+    }
 }
 
 .btn--tertiary {
-  @include spruce.btn-variant($foreground: tertiary-foreground, $background: tertiary-background);
+    @include spruce.btn-variant(tertiary);
 }

@@ -9,7 +9,7 @@
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
                 {{ column.label }}
-                <button v-if="column.sortable" type="button" @click="sort(column.name)">
+                <button v-if="column.sortable" type="button" @click="sort(column.name)" class="table-sort-btn">
                     <Icon name="unfold-more"></Icon>
                 </button>
             </th>

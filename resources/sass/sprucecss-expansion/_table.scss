@@ -1,44 +1,55 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .table {
-  a {
-    text-decoration: none;
-  }
-
-  thead tr {
-    th {
-      background-color: spruce.color(primary);
-      color: #fff;
-    }
-  }
-
-  th,
-  td {
-    &:first-child {
-      border-start-start-radius: spruce.$border-radius-lg;
-      border-end-start-radius: spruce.$border-radius-lg;
+    a {
+        text-decoration: none;
     }
 
-    &:last-child {
-      border-start-end-radius: spruce.$border-radius-lg;
-      border-end-end-radius: spruce.$border-radius-lg;
+    thead tr {
+        th {
+        background-color: spruce.color(primary);
+        color: #fff;
+        }
     }
-  }
 
-  td {
-    color: spruce.color(text);
-  }
+    th,
+    td {
+        &:first-child {
+            border-start-start-radius: spruce.$border-radius-lg;
+            border-end-start-radius: spruce.$border-radius-lg;
+        }
 
-  th,
-  td {
-    border-bottom: none;
-  }
-
-  .select-row-wrapper {
-    display: flex;
-
-    .form-check {
-      margin-block-end: 1px;
+        &:last-child {
+            border-start-end-radius: spruce.$border-radius-lg;
+            border-end-end-radius: spruce.$border-radius-lg;
+        }
     }
-  }
+
+    td {
+        color: spruce.color(text);
+    }
+
+    th,
+    td {
+        border-bottom: none;
+    }
+
+    .select-row-wrapper {
+        display: flex;
+
+        .form-check {
+            margin-block-end: 1px;
+        }
+    }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(xs);
+    }
+
+    &-sort-btn {
+        @include spruce.clear-btn;
+    }
 }

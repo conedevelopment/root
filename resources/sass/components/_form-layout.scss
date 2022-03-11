@@ -1,16 +1,16 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .form-layout {
-  align-items: start;
-  display: grid;
-  gap: spruce.spacer(m);
-  grid-template-areas: 'body'
-                       'sidebar';
-  grid-template-columns: minmax(0, 1fr);
-  margin-block-end: spruce.spacer(l);
+    align-items: start;
+    display: grid;
+    gap: spruce.spacer(m);
+    grid-template-areas: 'body'
+                        'sidebar';
+    grid-template-columns: minmax(0, 1fr);
+    margin-block-end: spruce.spacer(l);
 
-  @include spruce.breakpoint(sm) {
-    grid-template-areas: 'body sidebar';
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  }
+    @include spruce.breakpoint(sm) {
+        grid-template-areas: 'body sidebar';
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
 }

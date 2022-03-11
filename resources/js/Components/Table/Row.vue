@@ -12,20 +12,22 @@
             v-html="field.formatted_value"
         ></td>
         <td>
-            <button
-                type="button"
-                class="btn btn--icon btn--tertiary btn--sm"
-                v-if="item.abilities.delete"
-                @click="destroy(url)"
-            >
-                <Icon class="btn__icon" name="delete"></Icon>
-            </button>
-            <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm">
-                <Icon class="btn__icon" name="view"></Icon>
-            </Link>
-            <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm">
-                <Icon class="btn__icon" name="edit"></Icon>
-            </Link>
+            <div class="table__actions">
+                <button
+                    type="button"
+                    class="btn btn--icon btn--tertiary btn--sm"
+                    v-if="item.abilities.delete"
+                    @click="destroy(url)"
+                >
+                    <Icon class="btn__icon" name="delete"></Icon>
+                </button>
+                <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm">
+                    <Icon class="btn__icon" name="view"></Icon>
+                </Link>
+                <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm">
+                    <Icon class="btn__icon" name="edit"></Icon>
+                </Link>
+            </div>
         </td>
     </tr>
 </template>

@@ -1,17 +1,17 @@
 @use 'sass:color';
 @use 'sass:map';
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .status-label {
-  border-radius: spruce.$border-radius-lg;
-  font-size: spruce.$font-size-sm;
-  font-weight: 600;
-  padding: 0.2em 0.5em;
+    border-radius: spruce.$border-radius-lg;
+    font-size: spruce.$font-size-sm;
+    font-weight: 600;
+    padding: 0.2em 0.5em;
 
-  @each $name, $value in map.get(spruce.$colors, alert) {
-    @at-root .status-label--#{$name} {
-      background-color: color.scale($value, $lightness: 90%);
-      color: color.scale($value, $lightness: -30%);
+    @each $name, $value in map.get(spruce.$colors, alert) {
+        @at-root .status-label--#{$name} {
+            background-color: color.scale($value, $lightness: 90%);
+            color: color.scale($value, $lightness: -30%);
+        }
     }
-  }
 }

@@ -1,59 +1,59 @@
-@use 'sprucecss/scss/spruce';
+@use '~sprucecss/scss/spruce';
 
 .app-sidebar {
-  background-color: spruce.color(background);
-  border-inline-end: 1px solid spruce.color(border, sidebar);
-  display: none;
-  inset-block: 0;
-  inset-inline-start: auto;
-  position: fixed;
-  z-index: 120;
+    background-color: spruce.color(background);
+    border-inline-end: 1px solid spruce.color(border, sidebar);
+    display: none;
+    inset-block: 0;
+    inset-inline-start: auto;
+    position: fixed;
+    z-index: 120;
 
-  @include spruce.breakpoint(md) {
-    display: block !important;
-  }
+    @include spruce.breakpoint(md) {
+        display: block !important;
+    }
 
-  &__header {
-    align-items: center;
-    display: flex;
-    height: 6rem;
-    margin-block-end: 1rem;
-    margin-inline: spruce.spacer(m);
-  }
+    &__header {
+        align-items: center;
+        display: flex;
+        height: 6rem;
+        margin-block-end: 1rem;
+        margin-inline: spruce.spacer(m);
+    }
 
-  &__logo {
-    height: 1.35rem;
-    width: auto;
-  }
+    &__logo {
+        height: 1.35rem;
+        width: auto;
+    }
 
-  &__navigation {
-    @include spruce.scrollbar(
-      $border-radius: 3px
-    );
-    @include spruce.layout-stack;
-    height: calc(100vh - 6rem - 1rem - 6rem);
-    margin-inline-end: spruce.spacer(s);
-    min-height: 10rem;
-    padding-inline-start: spruce.spacer(m);
-    padding-inline-end: spruce.spacer(s);
-    overflow-y: auto;
-  }
+    &__navigation {
+        @include spruce.scrollbar(
+            $border-radius: 3px
+        );
+        @include spruce.layout-stack;
+        height: calc(100vh - 6rem - 1rem - 6rem);
+        margin-inline-end: spruce.spacer(s);
+        min-height: 10rem;
+        padding-inline-start: spruce.spacer(m);
+        padding-inline-end: spruce.spacer(s);
+        overflow-y: auto;
+    }
 
-  &__title {
-    color: spruce.color(secondary);
-    font-size: spruce.$font-size-sm;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    margin-block-end: spruce.spacer(s);
-    text-transform: uppercase;
-  }
+    &__title {
+        color: spruce.color(secondary);
+        font-size: spruce.$font-size-sm;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        margin-block-end: spruce.spacer(s);
+        text-transform: uppercase;
+    }
 
-  &__footer {
-    align-items: center;
-    display: flex;
-    height: 6rem;
-    margin-inline: spruce.spacer(m);
-  }
+    &__footer {
+        align-items: center;
+        display: flex;
+        height: 6rem;
+        margin-inline: spruce.spacer(m);
+    }
 }
 
 .navigation {
@@ -114,7 +114,7 @@
     font-weight: 500;
     gap: spruce.spacer(xs);
     text-decoration: none;
-    transition: color var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    transition: color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
 
     &:hover,
     &:focus,
@@ -133,7 +133,7 @@
     display: inline-flex;
     height: 1.15rem;
     margin-right: 0;
-    transition: color var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    transition: color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
     width: 1.15rem;
   }
 }
@@ -156,7 +156,7 @@
     padding-inline: calc(2rem + 0.5rem) 1rem;
     padding-top: 0.2em;
     text-decoration: none;
-    transition: var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    transition: var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
 
     &:hover,
     &:focus,
