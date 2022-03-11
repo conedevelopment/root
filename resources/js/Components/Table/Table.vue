@@ -56,18 +56,6 @@
         },
 
         props: {
-            items: {
-                type: Object,
-                required: true,
-            },
-            urls: {
-                type: Object,
-                required: true,
-            },
-            filters: {
-                type: Array,
-                default: () => [],
-            },
             actions: {
                 type: Array,
                 default: () => [],
@@ -75,6 +63,18 @@
             extracts: {
                 type: Array,
                 default: () => [],
+            },
+            filters: {
+                type: Array,
+                default: () => [],
+            },
+            items: {
+                type: Object,
+                required: true,
+            },
+            urls: {
+                type: Object,
+                required: true,
             },
         },
 
