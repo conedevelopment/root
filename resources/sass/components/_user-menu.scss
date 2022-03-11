@@ -89,12 +89,14 @@
     background: transparent;
     border: 0;
     color: spruce.color(heading);
+    cursor: pointer;
     display: flex;
     font-weight: 500;
     line-height: spruce.$line-height-md;
     padding: 0;
     text-decoration: none;
     transition: color var(--#{spruce.$prefix}-transition-duration) var(--#{spruce.$prefix}-transition-timing-function);
+    width: 100%;
 
     &:hover,
     &:focus,
