@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="form-group" :class="class" :style="stlye">
         <label :for="$attrs.id">{{ label }}</label>
         <span v-if="error">{{ error }}</span>
     </div>
@@ -8,6 +8,14 @@
 <script>
     export default {
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: [Array, Object],
                 default: () => [],

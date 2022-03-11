@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div class="form-group" :class="class" :style="style">
         <div class="form-row--mixed">
             <FormHandler
                 v-bind="$attrs"
@@ -32,6 +32,14 @@
 <script>
     export default {
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: [Array, Object],
                 default: () => [],

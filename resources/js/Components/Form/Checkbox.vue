@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group form-group--vertical-check">
+    <div class="form-group form-group--vertical-check" :class="class" :style="style">
         <label class="form-label" :for="id">{{ label }}</label>
         <label v-for="option in options" class="form-check" :key="option.value">
             <input
@@ -27,6 +27,14 @@
 <script>
     export default {
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 default: null,
             },

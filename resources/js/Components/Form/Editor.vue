@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="form-group" :class="class" :style="stlye">
         <div ref="input" class="editor" spellcheck="false"></div>
     </div>
 </template>
