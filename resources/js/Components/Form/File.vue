@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="class" :style="stlye"></div>
+    <div class="form-group" :class="class" :style="style"></div>
 </template>
 
 <script>

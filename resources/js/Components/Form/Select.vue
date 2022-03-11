@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="class" :style="stlye">
+    <div class="form-group" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <select
             class="form-control"
