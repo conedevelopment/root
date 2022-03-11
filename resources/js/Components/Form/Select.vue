@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div class="form-group" :class="class" :style="stlye">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <select
             class="form-control"
@@ -19,6 +19,14 @@
 <script>
     export default {
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: [String, Number, Array, Object],
                 default: null,

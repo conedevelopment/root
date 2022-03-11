@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div class="form-group" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <input
             type="text"
@@ -41,6 +41,14 @@
         mixins: [Closable],
 
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: [String, Number, Array],
                 default: null,
