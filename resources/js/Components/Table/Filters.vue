@@ -1,9 +1,9 @@
 <template>
     <div>
-        <button type="button" class="js-toggle-filter btn btn--secondary btn--icon">
+        <button type="button" class="js-toggle-filter btn btn--secondary btn--icon" @click="toggle">
             <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
         </button>
-        <div>
+        <div v-show="isOpen">
             <FormHandler
                 v-for="filter in filters"
                 v-bind="filter"
@@ -19,7 +19,11 @@
 </template>
 
 <script>
+    import Closable from './../../Mixins/Closable';
+
     export default {
+        mixins: [Closable],
+
         props: {
             filters: {
                 type: Array,
