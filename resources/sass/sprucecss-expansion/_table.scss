@@ -49,7 +49,28 @@
         gap: spruce.spacer(xs);
     }
 
+    .th-helper {
+        align-items: center;
+        display: flex;
+        gap: spruce.spacer(xxs);
+    }
+
     &-sort-btn {
         @include spruce.clear-btn;
+        display: inline-flex;
+        height: 0.85rem;
+        opacity: 0.5;
+        transition: opacity var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+        width: 0.85rem;
+
+        &:hover,
+        &:focus {
+            opacity: 0.75;
+        }
+
+        svg {
+            height: auto;
+            width: 100%;
+        }
     }
 }

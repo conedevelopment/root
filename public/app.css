@@ -1751,6 +1751,11 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+.table .th-helper {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+}
 .table-sort-btn {
   background: none;
   border: 0;
@@ -1759,6 +1764,18 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   font: inherit;
   outline: inherit;
   padding: 0;
+  display: inline-flex;
+  height: 0.85rem;
+  opacity: 0.5;
+  transition: opacity var(--spruce-transition-duration) var(--spruce-transition-timing-function);
+  width: 0.85rem;
+}
+.table-sort-btn:hover, .table-sort-btn:focus {
+  opacity: 0.75;
+}
+.table-sort-btn svg {
+  height: auto;
+  width: 100%;
 }
 
 :root {
