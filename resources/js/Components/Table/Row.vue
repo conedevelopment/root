@@ -1,5 +1,5 @@
 <template>
-    <tr :class="{ 'is-selected': selected }">
+    <tr :class="{ 'is-selected': selected, 'is-trashed': item.trashed }">
         <th v-if="$parent.actions.length > 0" scope="row">
             <label class="form-check" style="position: relative; top: 3px;">
                 <input class="form-check__control" type="checkbox" v-model="selected">

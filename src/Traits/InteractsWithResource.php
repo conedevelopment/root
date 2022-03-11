@@ -5,6 +5,7 @@ namespace Cone\Root\Traits;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Facades\Resource as Registry;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -44,6 +45,7 @@ trait InteractsWithResource
             'abilities' => $this->mapAbilities($request),
             'fields' => $fields->mapToDisplay($request, $this)->toArray(),
             'id' => $this->getKey(),
+            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this)) && $this->trashed(),
         ];
     }
 
