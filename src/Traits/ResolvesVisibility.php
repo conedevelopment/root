@@ -12,11 +12,11 @@ use Illuminate\Http\Request;
 trait ResolvesVisibility
 {
     /**
-     * The visibility resolver callback.
+     * The visibility resolver callbacks.
      *
-     * @var \Closure|null
+     * @var array
      */
-    protected ?Closure $visibilityResolver = null;
+    protected array $visibilityResolvers = [];
 
     /**
      * Determine if the field is visible for the given request and action.
@@ -26,8 +26,13 @@ trait ResolvesVisibility
      */
     public function visible(Request $request): bool
     {
-        return is_null($this->visibilityResolver)
-            || call_user_func_array($this->visibilityResolver, [$request]);
+        foreach ($this->visibilityResolvers as $callback) {
+            if (! call_user_func_array($callback, [$request])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -206,7 +211,7 @@ trait ResolvesVisibility
      */
     public function visibleOn(Closure $callback): static
     {
-        $this->visibilityResolver = $callback;
+        $this->visibilityResolvers[] = $callback;
 
         return $this;
     }
