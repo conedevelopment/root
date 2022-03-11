@@ -138,7 +138,7 @@ class User extends Authenticatable implements Contract, Resourceable
      */
     public function getAvatarAttribute(): string
     {
-        return sprintf('https://www.gravatar.com/avatar/%s?d=identicon', md5($this->email));
+        return sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($this->email));
     }
 
     /**
