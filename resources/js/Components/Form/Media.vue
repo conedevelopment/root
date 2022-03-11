@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="class" :style="stlye">
+    <div class="form-group" :class="class" :style="style">
         <label :for="$attrs.id">{{ label }}</label>
         <span v-if="error">{{ error }}</span>
     </div>

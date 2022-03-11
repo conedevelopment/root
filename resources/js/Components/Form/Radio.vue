@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group form-group--vertical-check" :class="class" :style="stlye">
+    <div class="form-group form-group--vertical-check" :class="class" :style="style">
         <label class="form-label" :for="id">{{ label }}</label>
         <label v-for="option in options" class="form-check" :key="option.value">
             <input
