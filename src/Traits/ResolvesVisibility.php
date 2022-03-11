@@ -19,7 +19,7 @@ trait ResolvesVisibility
     protected array $visibilityResolvers = [];
 
     /**
-     * Determine if the field is visible for the given request and action.
+     * Determine if the object is visible for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return bool

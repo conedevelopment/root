@@ -281,7 +281,7 @@ class Resource implements Arrayable
     }
 
     /**
-     * Resolve filters.
+     * Resolve the filters.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Cone\Root\Support\Collections\Filters
@@ -346,11 +346,9 @@ class Resource implements Arrayable
                 $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
             }
 
-            $actions->each->withQuery(function (): Builder {
+            $this->resolved['actions'] = $actions->each->withQuery(function (): Builder {
                 return $this->query();
             });
-
-            $this->resolved['actions'] = $actions;
         }
 
         return $this->resolved['actions'];
@@ -401,11 +399,9 @@ class Resource implements Arrayable
                 $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
             }
 
-            $extracts->each->withQuery(function (): Builder {
+            $this->resolved['extracts'] = $extracts->each->withQuery(function (): Builder {
                 return $this->query();
             });
-
-            $this->resolved['extracts'] = $extracts;
         }
 
         return $this->resolved['extracts'];
@@ -471,8 +467,8 @@ class Resource implements Arrayable
     public function mapUrls(Request $request): array
     {
         return [
-            'create' => URL::to(sprintf('%s/%s/create', Root::getPath(), $this->getKey())),
-            'index' => URL::to(sprintf('%s/%s', Root::getPath(), $this->getKey())),
+            'create' => URL::route("root.{$this->getKey()}.create"),
+            'index' => URL::route("root.{$this->getKey()}.index"),
         ];
     }
 
@@ -634,7 +630,9 @@ class Resource implements Arrayable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $this->routes($router);
+                $router->as("{$this->getKey()}.")->group(function (Router $router): void {
+                    $this->routes($router);
+                });
             }
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
@@ -655,13 +653,13 @@ class Resource implements Arrayable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index']);
-        $router->get('/create', [ResourceController::class, 'create']);
-        $router->post('/', [ResourceController::class, 'store']);
-        $router->get('/{id}', [ResourceController::class, 'show']);
-        $router->get('/{id}/edit', [ResourceController::class, 'edit']);
-        $router->patch('/{id}', [ResourceController::class, 'update']);
-        $router->delete('/{id}', [ResourceController::class, 'destroy']);
+        $router->get('/', [ResourceController::class, 'index'])->name('index');
+        $router->get('/create', [ResourceController::class, 'create'])->name('create');
+        $router->post('/', [ResourceController::class, 'store'])->name('store');
+        $router->get('/{id}', [ResourceController::class, 'show'])->name('show');
+        $router->get('/{id}/edit', [ResourceController::class, 'edit'])->name('edit');
+        $router->patch('/{id}', [ResourceController::class, 'update'])->name('update');
+        $router->delete('/{id}', [ResourceController::class, 'destroy'])->name('destroy');
     }
 
     /**
