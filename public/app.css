@@ -1097,7 +1097,7 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   -moz-column-gap: 3rem;
        column-gap: 3rem;
   justify-content: space-between;
-  padding-block: 2rem 1rem;
+  padding-block: 2rem;
   row-gap: 1rem;
 }
 .app-header__heading {
@@ -1111,7 +1111,7 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   gap: 1rem;
 }
 .app-header__title {
-  font-size: clamp(1.4159584219rem, 2vw + 1rem, 1.6658334375rem);
+  font-size: clamp(1.615rem, 2vw + 1rem, 1.9rem);
   font-weight: 800;
   margin: 0;
 }

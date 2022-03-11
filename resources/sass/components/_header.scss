@@ -6,7 +6,7 @@
     flex-wrap: wrap;
     column-gap: spruce.spacer(l);
     justify-content: space-between;
-    padding-block: spruce.spacer(m) spruce.spacer(s);
+    padding-block: spruce.spacer(m);
     row-gap: spruce.spacer(s);
 
     &__heading {
@@ -22,7 +22,7 @@
     }
 
     &__title {
-        font-size: spruce.font-size(h3);
+        font-size: spruce.responsive-font-size(1.9rem);
         font-weight: 800;
         margin: 0;
     }
