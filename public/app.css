@@ -1714,6 +1714,47 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   padding: 0;
 }
 
+.modal-backdrop {
+  align-items: start;
+  background-color: rgba(0, 8, 46, 0.28);
+  display: none;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  overflow-y: auto;
+}
+.modal-backdrop--visible {
+  display: flex;
+}
+
+.modal {
+  background-color: var(--spruce-base-color-background);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 2rem 0 rgba(74, 104, 179, 0.15);
+  margin-block: 2rem;
+  margin-inline: 1rem;
+  max-width: 40rem;
+  padding: 2rem;
+  width: 30rem;
+}
+.modal__title {
+  color: var(--spruce-base-color-secondary);
+  font-size: clamp(1.062234375rem, 2vw + 1rem, 1.2496875rem);
+  margin-block: 0;
+}
+.modal__inner {
+  -webkit-margin-before: 0.5rem;
+          margin-block-start: 0.5rem;
+}
+.modal__action {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  -webkit-margin-before: 1rem;
+          margin-block-start: 1rem;
+}
+
 .app {
   background: linear-gradient(180deg, #f0f6ff 4%, #fff);
   background-attachment: fixed;
