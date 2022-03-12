@@ -1,17 +1,19 @@
 <template>
     <form @submit.prevent="submit" @reset.prevent="form.reset">
-        <FormHandler
-            v-for="field in model.fields"
-            v-bind="field"
-            v-model="form[field.name]"
-            :form="form"
-            :key="field.name"
-            :name="field.name"
-        ></FormHandler>
+        <div class="form-group-stack">
+            <FormHandler
+                v-for="field in model.fields"
+                v-bind="field"
+                v-model="form[field.name]"
+                :form="form"
+                :key="field.name"
+                :name="field.name"
+            ></FormHandler>
 
-        <button type="submit" class="btn btn--primary" :disabled="form.processing">
-            {{ __('Save') }}
-        </button>
+            <button type="submit" class="btn btn--primary" :disabled="form.processing">
+                {{ __('Save') }}
+            </button>
+        </div>
     </form>
 </template>
 
