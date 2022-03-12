@@ -1750,6 +1750,10 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   flex-grow: 1;
   gap: 1rem;
 }
+.form-group--inline > * + * {
+  -webkit-margin-before: 0;
+          margin-block-start: 0;
+}
 
 .table a {
   text-decoration: none;
