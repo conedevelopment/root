@@ -1738,6 +1738,18 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   outline: 2px solid transparent;
 }
 
+.form-group-stack > * {
+  -webkit-margin-after: 0;
+          margin-block-end: 0;
+  -webkit-margin-before: 0;
+          margin-block-start: 0;
+  width: 100%;
+}
+.form-group-stack > * + * {
+  -webkit-margin-before: 1rem;
+          margin-block-start: 1rem;
+}
+
 .form--inline {
   align-items: center;
   display: flex;
@@ -1753,6 +1765,14 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 .form-group--inline > * + * {
   -webkit-margin-before: 0;
           margin-block-start: 0;
+}
+
+select option[disabled]:first-child {
+  color: var(--spruce-base-color-secondary);
+  cursor: not-allowed;
+  font-size: 0.8375rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .table a {

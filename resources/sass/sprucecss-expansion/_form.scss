@@ -1,5 +1,9 @@
 @use '~sprucecss/scss/spruce';
 
+.form-group-stack {
+    @include spruce.layout-stack(spruce.spacer(s));
+}
+
 .form {
     &--inline {
         align-items: center;
@@ -18,5 +22,15 @@
         > * + * {
             margin-block-start: 0;
         }
+    }
+}
+
+select {
+    option[disabled]:first-child {
+        color: spruce.color(secondary);
+        cursor: not-allowed;
+        font-size: spruce.$font-size-sm;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 }
