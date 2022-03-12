@@ -1,5 +1,5 @@
 <template>
-    <aside class="js-app-sidebar app-sidebar" :class="{ 'is-open': isOpen }">
+    <aside class="app-sidebar" :class="{ 'is-open': isOpen }">
         <div class="app-sidebar__header">
             <Link :href="$app.config.url">
                 <img class="app-sidebar__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">

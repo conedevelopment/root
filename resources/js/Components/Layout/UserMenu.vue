@@ -2,7 +2,7 @@
     <div class="user-menu-wrapper">
         <button
             type="button"
-            class="js-user-menu user-menu"
+            class="user-menu"
             :aria-expanded="isOpen ? 'true' : 'false'"
             :aria-label="__('User Menu')"
             @click="toggle"
@@ -12,12 +12,12 @@
                 <span class="user-menu__name">{{ $app.user.name }}</span>
                 <span class="user-menu__role">{{ $app.user.email }}</span>
             </div>
-            <div class="js-user-menu-toggle user-menu__toggle">
+            <div class="user-menu__toggle">
                 <Icon class="user-menu__arrow" name="unfold-more"></Icon>
             </div>
         </button>
         <ul
-            class="js-user-menu-navigation user-menu-navigation user-menu-navigation--top"
+            class="user-menu-navigation user-menu-navigation--top"
             aria-labelledby="user-user-navigation"
         >
             <li>

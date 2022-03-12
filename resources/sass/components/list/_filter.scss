@@ -2,7 +2,13 @@
 
 .app-filter {
     @include spruce.layout-stack(spruce.spacer(xs));
-    margin-block-end: spruce.spacer(s);
+    background-color: spruce.color(background);
+    box-shadow: 0 0.25rem 2rem 0 rgba(74, 104, 179, 0.15);
+    inset: 0 auto 0 0;
+    padding: spruce.spacer(m);
+    position: fixed;
+    width: 20rem;
+    z-index: 130;
 
     &__title {
         align-items: center;
