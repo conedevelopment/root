@@ -1,0 +1,5 @@
+@use '~sprucecss/scss/spruce';
+
+.app-list {
+    margin-block-start: spruce.spacer(m);
+}

@@ -1,39 +1,43 @@
 <template>
     <div>
-        <div class="form-row--mixed">
-            <Actions
-                v-if="actions.length > 0"
-                :selection="selection"
-                :actions="actions"
-                @success="clearSelection"
-            ></Actions>
-            <Extracts
-                v-if="extracts.length > 0"
-                :extracts="extracts"
-            ></Extracts>
-            <Filters
-                v-if="filters.length > 0"
-                :query="query"
-                :filters="filters"
-                @update:query="fetch"
-            ></Filters>
-        </div>
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table--striped">
-                    <Head
-                        :items="items.data"
-                        :query="query"
-                        :selection="selection"
-                        @update:query="fetch"
-                    ></Head>
-                    <tbody>
-                        <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
-                    </tbody>
-                </table>
+        <div class="app-operation">
+            <div class="form-row--mixed">
+                <Actions
+                    v-if="actions.length > 0"
+                    :selection="selection"
+                    :actions="actions"
+                    @success="clearSelection"
+                ></Actions>
+                <Extracts
+                    v-if="extracts.length > 0"
+                    :extracts="extracts"
+                ></Extracts>
+                <Filters
+                    v-if="filters.length > 0"
+                    :query="query"
+                    :filters="filters"
+                    @update:query="fetch"
+                ></Filters>
             </div>
         </div>
-        <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
+        <div class="app-list">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table--striped">
+                        <Head
+                            :items="items.data"
+                            :query="query"
+                            :selection="selection"
+                            @update:query="fetch"
+                        ></Head>
+                        <tbody>
+                            <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
+        </div>
     </div>
 </template>
 

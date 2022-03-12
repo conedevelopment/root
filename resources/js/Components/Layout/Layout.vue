@@ -5,10 +5,12 @@
             <Nav></Nav>
             <div class="app-body__inner">
                 <Header></Header>
-                <div class="app-body-alerts">
-                    <Alert v-for="(alert, index) in alerts" :key="index" v-bind="alert"></Alert>
+                <div class="app-body__content">
+                    <div class="app-alerts">
+                        <Alert v-for="(alert, index) in alerts" :key="index" v-bind="alert"></Alert>
+                    </div>
+                    <slot></slot>
                 </div>
-                <slot></slot>
             </div>
         </main>
         <form id="logout-form" action="/logout" method="POST" style="display: none;">
