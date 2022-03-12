@@ -1,0 +1,5 @@
+@use '~sprucecss/scss/spruce';
+
+.clear-list {
+    @include spruce.clear-list;
+}

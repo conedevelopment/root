@@ -1708,6 +1708,12 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
           margin-block-start: 1rem;
 }
 
+.clear-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .app {
   background: linear-gradient(180deg, #f0f6ff 4%, #fff);
   background-attachment: fixed;

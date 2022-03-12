@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="app-card card">
-            <ul>
+            <ul class="clear-list">
                 <li v-for="field in model.fields" :key="field.name">
                     <strong>{{ field.label }}</strong>: {{ field.formatted_value }}
                 </li>
