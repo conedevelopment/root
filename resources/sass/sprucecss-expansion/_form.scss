@@ -8,6 +8,7 @@
     &--inline {
         align-items: center;
         display: flex;
+        flex-wrap: wrap;
         gap: spruce.spacer(s);
     }
 }

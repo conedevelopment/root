@@ -1,24 +1,22 @@
 <template>
     <div>
         <div class="app-operation">
-            <div class="form-row--mixed">
-                <Actions
-                    v-if="actions.length > 0"
-                    :selection="selection"
-                    :actions="actions"
-                    @success="clearSelection"
-                ></Actions>
-                <Extracts
-                    v-if="extracts.length > 0"
-                    :extracts="extracts"
-                ></Extracts>
-                <Filters
-                    v-if="filters.length > 0"
-                    :query="query"
-                    :filters="filters"
-                    @update:query="fetch"
-                ></Filters>
-            </div>
+            <Filters
+                v-if="filters.length > 0"
+                :query="query"
+                :filters="filters"
+                @update:query="fetch"
+            ></Filters>
+            <Actions
+                v-if="actions.length > 0"
+                :selection="selection"
+                :actions="actions"
+                @success="clearSelection"
+            ></Actions>
+            <Extracts
+                v-if="extracts.length > 0"
+                :extracts="extracts"
+            ></Extracts>
         </div>
         <div class="app-list">
             <div class="card">

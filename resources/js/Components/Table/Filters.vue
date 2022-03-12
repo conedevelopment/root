@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="app-operation__filter">
         <button type="button" class="btn btn--secondary btn--icon" @click="toggle">
             <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
         </button>
