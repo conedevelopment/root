@@ -1,19 +1,27 @@
 <template>
     <div class="app-operation__filter">
-        <button type="button" class="btn btn--secondary btn--icon" @click="toggle">
+        <button type="button" class="btn btn--secondary btn--icon" @click="toggle" aria-label="Open/Close filter">
             <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
         </button>
         <div class="app-filter" v-show="isOpen">
-            <FormHandler
-                v-for="filter in filters"
-                v-bind="filter"
-                v-model="query[filter.key]"
-                :form="query"
-                :key="filter.key"
-                :name="filter.key"
-                :label="filter.name"
-                @update:modelValue="emit"
-            ></FormHandler>
+            <h2 class="app-filter__title">
+                {{ __('Filter') }}
+                <button type="button" class="btn btn--secondary btn--sm btn--icon">
+                    <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
+                </button>
+            </h2>
+            <div class="app-filter__inner">
+                <FormHandler
+                    v-for="filter in filters"
+                    v-bind="filter"
+                    v-model="query[filter.key]"
+                    :form="query"
+                    :key="filter.key"
+                    :name="filter.key"
+                    :label="filter.name"
+                    @update:modelValue="emit"
+                ></FormHandler>
+            </div>
         </div>
     </div>
 </template>

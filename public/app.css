@@ -798,8 +798,8 @@ samp {
   width: 1em;
 }
 .btn__icon--sm {
-  height: 0.85em;
-  width: 0.85em;
+  height: 0.7em;
+  width: 0.7em;
 }
 
 .btn--primary {
@@ -1589,34 +1589,23 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   width: 20rem;
   z-index: 130;
 }
-.app-filter > * {
+.app-filter__title {
+  align-items: center;
+  display: flex;
+  font-size: clamp(1.062234375rem, 2vw + 1rem, 1.2496875rem);
+  gap: 2rem;
+  justify-content: space-between;
+}
+.app-filter__inner > * {
   -webkit-margin-after: 0;
           margin-block-end: 0;
   -webkit-margin-before: 0;
           margin-block-start: 0;
   width: 100%;
 }
-.app-filter > * + * {
+.app-filter__inner > * + * {
   -webkit-margin-before: 0.5rem;
           margin-block-start: 0.5rem;
-}
-.app-filter__title {
-  align-items: center;
-  display: flex;
-  font-size: clamp(1.062234375rem, 2vw + 1rem, 1.2496875rem);
-}
-.app-filter__inner {
-  --col-width: 10rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  background-color: var(--spruce-base-color-background);
-  border-radius: 0.5rem;
-  box-shadow: 0 0.25rem 2rem 0 rgba(74, 104, 179, 0.15);
-  padding: var(--gutter-md);
-}
-.app-filter__inner > * {
-  flex: 1 1 var(--col-width);
 }
 
 .list-footer {
@@ -1724,6 +1713,7 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   justify-content: center;
   position: fixed;
   overflow-y: auto;
+  z-index: 140;
 }
 .modal-backdrop--visible {
   display: flex;
