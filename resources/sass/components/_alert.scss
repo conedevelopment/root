@@ -4,7 +4,7 @@
 
 .app-alert {
     @include spruce.layout-stack(spruce.spacer(s));
-    margin-block-start: 1rem;
+    margin-block-start: 1.5rem;
 }
 
 .alert {

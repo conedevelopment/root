@@ -778,7 +778,7 @@ samp {
   padding: 0.9em;
 }
 .btn--sm {
-  font-size: 0.8rem;
+  font-size: 0.8675rem;
   padding: 0.65em 0.95em;
 }
 .btn--lg {
@@ -963,7 +963,7 @@ html[dir=rtl] .form-control--valid, html[dir=rtl] .form-control--invalid {
   outline: 2px solid transparent;
 }
 .form-control--sm {
-  font-size: 0.8375rem;
+  font-size: 0.9375rem;
   padding: 0.25em 0.5em;
 }
 .form-control--lg {
@@ -1079,8 +1079,8 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 }
 
 .app-alert {
-  -webkit-margin-before: 1rem;
-          margin-block-start: 1rem;
+  -webkit-margin-before: 1.5rem;
+          margin-block-start: 1.5rem;
 }
 .app-alert > * {
   -webkit-margin-after: 0;
@@ -1532,8 +1532,8 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 }
 
 .app-card {
-  -webkit-margin-before: 2rem;
-          margin-block-start: 2rem;
+  -webkit-margin-before: 1.5rem;
+          margin-block-start: 1.5rem;
 }
 
 .card {
@@ -1554,11 +1554,8 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 }
 .card__title {
   color: var(--spruce-base-color-secondary);
-  font-size: 0.8375rem;
-  font-weight: 700;
-  letter-spacing: 0.2px;
+  font-size: clamp(1.062234375rem, 2vw + 1rem, 1.2496875rem);
   margin-block: 0;
-  text-transform: uppercase;
 }
 .card__inner > * {
   -webkit-margin-after: 0;
@@ -1657,8 +1654,8 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 }
 
 .app-list {
-  -webkit-margin-before: 2rem;
-          margin-block-start: 2rem;
+  -webkit-margin-before: 1.5rem;
+          margin-block-start: 1.5rem;
 }
 
 .status-label {
@@ -1704,8 +1701,8 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 }
 
 .app-operation {
-  -webkit-margin-before: 1rem;
-          margin-block-start: 1rem;
+  -webkit-margin-before: 1.5rem;
+          margin-block-start: 1.5rem;
 }
 
 .clear-list {
@@ -1716,7 +1713,7 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 
 .modal-backdrop {
   align-items: start;
-  background-color: rgba(0, 8, 46, 0.28);
+  background-color: rgba(0, 8, 46, 0.4);
   display: none;
   inset: 0;
   justify-content: center;

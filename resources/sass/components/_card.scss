@@ -1,7 +1,7 @@
 @use '~sprucecss/scss/spruce';
 
 .app-card {
-    margin-block-start: spruce.spacer(m);
+    margin-block-start: 1.5rem;
 }
 
 .card {
@@ -24,11 +24,8 @@
 
     &__title {
         color: spruce.color(secondary);
-        font-size: spruce.$font-size-sm;
-        font-weight: 700;
-        letter-spacing: 0.2px;
+        font-size: spruce.font-size(h4);
         margin-block: 0;
-        text-transform: uppercase;
     }
 
     &__inner {
