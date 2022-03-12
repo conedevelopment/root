@@ -31,4 +31,11 @@
             margin: 0;
         }
     }
+
+    .btn {
+        &[aria-current='page'] {
+            background-color: spruce.color(secondary);
+            opacity: 1;
+        }
+    }
 }

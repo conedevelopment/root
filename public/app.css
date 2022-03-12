@@ -1549,6 +1549,10 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 .list-footer__pagination li {
   margin: 0;
 }
+.list-footer .btn[aria-current=page] {
+  background-color: var(--spruce-base-color-secondary);
+  opacity: 1;
+}
 
 .app-list {
   -webkit-margin-before: 2rem;
