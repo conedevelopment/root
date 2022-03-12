@@ -1,0 +1,27 @@
+@use '~sprucecss/scss/spruce';
+
+.site-auth {
+    align-items: center;
+    background: linear-gradient(180deg, hsl(217, 100%, 97%) 4%, #fff);
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding: spruce.spacer(s);
+
+    &__inner {
+        background-color: spruce.color(background);
+        border: 1px solid var(--spruce-sidebar-color-border);
+        border-radius: spruce.$border-radius-lg;
+        max-width: 30rem;
+        padding: spruce.spacer(l) clamp(spruce.spacer(m), 2vw + 1rem, spruce.spacer(l));
+        width: 100%;
+    }
+
+    &__logo {
+        margin-block-end: spruce.spacer(s);
+        margin-inline: auto;
+        width: 6.5rem;
+    }
+}

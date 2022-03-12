@@ -12,28 +12,27 @@
     <title>@yield('title') - {{ Config::get('app.name') }}</title>
 </head>
 <body>
-    <main>
-        {{-- Message --}}
-        @if(Session::has('message'))
-            <div role="alert">
-                {{ Session::get('message') }}
-            </div>
-        @endif
+    <main class="site-auth">
+        <div class="site-auth__inner">
+            {{-- Message --}}
+            @if(Session::has('message'))
+                <div role="alert">
+                    {{ Session::get('message') }}
+                </div>
+            @endif
 
-        {{-- Erros --}}
-        @if($errors->isNotEmpty())
-            <div role="alert">
-                {{ __('Error!') }}
-            </div>
-        @endif
+            {{-- Erros --}}
+            @if($errors->isNotEmpty())
+                <div role="alert">
+                    {{ __('Error!') }}
+                </div>
+            @endif
 
-        <h1>
-            @yield('title')
-        </h1>
+            <img class="site-auth__logo" src="{{ asset('/vendor/root/root-logo-dark.svg') }}" alt="Root">
 
-        {{-- Content --}}
-        @yield('content')
-
+            {{-- Content --}}
+            @yield('content')
+        </div>
     </main>
 
     {{-- Icons --}}

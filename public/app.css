@@ -1764,6 +1764,31 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   }
 }
 
+.site-auth {
+  align-items: center;
+  background: linear-gradient(180deg, #f0f6ff 4%, #fff);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+.site-auth__inner {
+  background-color: var(--spruce-base-color-background);
+  border: 1px solid var(--spruce-sidebar-color-border);
+  border-radius: 0.5rem;
+  max-width: 30rem;
+  padding: 3rem clamp(2rem, 2vw + 1rem, 3rem);
+  width: 100%;
+}
+.site-auth__logo {
+  -webkit-margin-after: 1rem;
+          margin-block-end: 1rem;
+  margin-inline: auto;
+  width: 6.5rem;
+}
+
 .btn__keybind {
   color: var(--spruce-btn-color-primary-foreground-opaque);
   font-weight: 400;

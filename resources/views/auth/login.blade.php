@@ -7,13 +7,13 @@
 @section('content')
     <form method="POST" action="/login">
         @csrf
-        <div class="form-group-wrapper">
+        <div class="form-group-stack">
             <div class="form-group">
-                <label class="form-group__label" for="email">{{ __('Email') }}</label>
+                <label class="form-label" for="email">{{ __('Email') }}</label>
                 <input
                     id="email"
                     type="text"
-                    class="form-group__input @error('email') is-invalid @enderror"
+                    class="form-control @error('email') is-invalid @enderror"
                     name="email"
                     value="{{ Request::old('email') }}"
                     required
@@ -28,11 +28,11 @@
             </div>
 
             <div class="form-group">
-                <label class="form-group__label" for="password">{{ __('Password') }}</label>
+                <label class="form-label" for="password">{{ __('Password') }}</label>
                 <input
                     id="password"
                     type="password"
-                    class="form-group__input @error('password') is-invalid @enderror"
+                    class="form-control @error('password') is-invalid @enderror"
                     name="password"
                     required
                     autocomplete="current-password"
@@ -45,22 +45,20 @@
             </div>
 
             <div class="form-group">
-                <div class="custom-checkbox">
+                <label class="form-check form-check--lg" for="remember">
                     <input
                         type="checkbox"
-                        class="custom-checkbox__input"
+                        class="form-check__control"
                         name="remember"
                         id="remember"
                         {{ Request::old('remember') ? 'checked' : '' }}
                     >
-                    <label class="custom-checkbox__label" for="remember">
-                        {{ __('Remember me') }}
-                    </label>
-                </div>
+                    <span class="form-label form-check__label">{{ __('Remember me') }}</span>
+                </label>
             </div>
 
             <div class="form-group">
-                <button type="submit">
+                <button type="submit" class="btn btn--primary">
                     {{ __('Login') }}
                 </button>
             </div>
