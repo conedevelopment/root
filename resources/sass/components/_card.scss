@@ -1,5 +1,9 @@
 @use '~sprucecss/scss/spruce';
 
+.app-card {
+    margin-block-start: spruce.spacer(m);
+}
+
 .card {
     background-color: spruce.color(background);
     border-radius: spruce.$border-radius-lg;

@@ -1078,6 +1078,98 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   color: var(--spruce-alert-color-danger);
 }
 
+.app-alert {
+  -webkit-margin-before: 1rem;
+          margin-block-start: 1rem;
+}
+.app-alert > * {
+  -webkit-margin-after: 0;
+          margin-block-end: 0;
+  -webkit-margin-before: 0;
+          margin-block-start: 0;
+  width: 100%;
+}
+.app-alert > * + * {
+  -webkit-margin-before: 1rem;
+          margin-block-start: 1rem;
+}
+
+.alert {
+  align-items: center;
+  border: 1px solid;
+  border-left: 0.35rem solid;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  font-weight: 600;
+  gap: 2rem;
+  justify-content: space-between;
+  padding: 0.75em 1em;
+}
+.alert--danger {
+  background-color: #fbeaea;
+  color: #9c1a1a;
+}
+
+.alert--danger .alert__close {
+  background-color: #9c1a1a;
+  color: #fbeaea;
+}
+
+.alert--info {
+  background-color: #e1f8ff;
+  color: #007096;
+}
+
+.alert--info .alert__close {
+  background-color: #007096;
+  color: #e1f8ff;
+}
+
+.alert--success {
+  background-color: #ddffee;
+  color: #00763b;
+}
+
+.alert--success .alert__close {
+  background-color: #00763b;
+  color: #ddffee;
+}
+
+.alert--warning {
+  background-color: #fefae9;
+  color: #ba970b;
+}
+
+.alert--warning .alert__close {
+  background-color: #ba970b;
+  color: #fefae9;
+}
+
+.alert__close {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  outline: inherit;
+  padding: 0;
+  align-items: center;
+  border-radius: 0.5rem;
+  display: flex;
+  height: 1.5rem;
+  justify-content: center;
+  transition: opacity var(--spruce-transition-duration) var(--spruce-transition-timing-function);
+  width: 1.5rem;
+}
+.alert__close:hover, .alert__close:focus {
+  opacity: 0.75;
+}
+.alert__close svg {
+  height: 0.5rem;
+  width: 0.5rem;
+}
+
 .app-body {
   display: flex;
   flex-direction: column;
@@ -1437,6 +1529,11 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
 .navigation-submenu a:hover, .navigation-submenu a:focus, .navigation-submenu a[aria-current=page] {
   background-color: var(--spruce-sidebar-color-active);
   color: var(--spruce-base-color-primary);
+}
+
+.app-card {
+  -webkit-margin-before: 2rem;
+          margin-block-start: 2rem;
 }
 
 .card {

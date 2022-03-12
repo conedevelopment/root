@@ -1,12 +1,16 @@
 <template>
     <div>
-        <Actions
-            v-if="actions.length > 0"
-            :selection="[model.id]"
-            :actions="actions"
-            @success="clearSelection"
-        ></Actions>
-        <div class="card">
+        <div class="app-operation">
+            <div class="form-row--mixed">
+                <Actions
+                    v-if="actions.length > 0"
+                    :selection="[model.id]"
+                    :actions="actions"
+                    @success="clearSelection"
+                ></Actions>
+            </div>
+        </div>
+        <div class="app-card card">
             <ul>
                 <li v-for="field in model.fields" :key="field.name">
                     <strong>{{ field.label }}</strong>: {{ field.formatted_value }}

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <button type="button" class="js-toggle-filter btn btn--secondary btn--icon" @click="toggle">
+        <button type="button" class="btn btn--secondary btn--icon" @click="toggle">
             <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
         </button>
-        <div v-show="isOpen">
+        <div class="app-filter" v-show="isOpen">
             <FormHandler
                 v-for="filter in filters"
                 v-bind="filter"
