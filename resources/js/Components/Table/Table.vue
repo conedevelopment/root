@@ -23,7 +23,7 @@
         <div class="app-list">
             <div class="card">
                 <div class="table-responsive">
-                    <table class="table table--striped">
+                    <table class="table table--striped" v-if="items.data.length">
                         <Head
                             :items="items.data"
                             :query="query"
@@ -34,6 +34,9 @@
                             <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                         </tbody>
                     </table>
+                    <div v-else class="alert alert--info">
+                        {{ __('No results found.') }}
+                    </div>
                 </div>
             </div>
             <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
