@@ -1,7 +1,9 @@
 <template>
     <div class="alert" :class="`alert--${type}`" v-show="isOpen">
         <div class="alert__message" v-html="message"></div>
-        <button type="button" class="alert__close" @click="close">&times;</button>
+        <button type="button" class="alert__close" @click="close">
+            <Icon name="close"></Icon>
+        </button>
     </div>
 </template>
 
