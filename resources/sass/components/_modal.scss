@@ -8,6 +8,7 @@
     justify-content: center;
     position: fixed;
     overflow-y: auto;
+    z-index: 140;
 
     &--visible {
         display: flex;
