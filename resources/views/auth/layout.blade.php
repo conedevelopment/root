@@ -14,24 +14,26 @@
 <body>
     <main class="site-auth">
         <div class="site-auth__inner">
+            <img class="site-auth__logo" src="{{ asset('/vendor/root/root-logo-dark.svg') }}" alt="Root">
+
             {{-- Message --}}
             @if(Session::has('message'))
-                <div role="alert">
+                <div role="alert" class="alert alert--danger">
                     {{ Session::get('message') }}
                 </div>
             @endif
 
             {{-- Erros --}}
             @if($errors->isNotEmpty())
-                <div role="alert">
+                <div role="alert" class="alert alert--danger">
                     {{ __('Error!') }}
                 </div>
             @endif
 
-            <img class="site-auth__logo" src="{{ asset('/vendor/root/root-logo-dark.svg') }}" alt="Root">
-
-            {{-- Content --}}
-            @yield('content')
+            <div class="site-auth__panel">
+                {{-- Content --}}
+                @yield('content')
+            </div>
         </div>
     </main>
 

@@ -14,10 +14,10 @@
     border-radius: spruce.$border-radius-lg;
     display: flex;
     flex-wrap: wrap;
-    font-weight: 600;
+    font-weight: 500;
     gap: spruce.spacer(m);
     justify-content: space-between;
-    padding: 0.75em 1em;
+    padding: 0.65em 1em;
 
     @each $name, $value in map.get(spruce.$colors, alert) {
         @at-root .alert--#{$name} {

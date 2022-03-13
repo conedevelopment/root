@@ -13,7 +13,7 @@
                 <input
                     id="email"
                     type="text"
-                    class="form-control @error('email') is-invalid @enderror"
+                    class="form-control @error('email') form-control--invalid @enderror"
                     name="email"
                     value="{{ Request::old('email') }}"
                     required
@@ -21,7 +21,7 @@
                     autofocus
                 >
                 @error('email')
-                    <span class="form-invalid-feedback" role="alert">
+                    <span class="field-feedback field-feedback--invalid" role="alert">
                         {{ $message }}
                     </span>
                 @enderror
@@ -32,13 +32,13 @@
                 <input
                     id="password"
                     type="password"
-                    class="form-control @error('password') is-invalid @enderror"
+                    class="form-control @error('password') form-control--invalid @enderror"
                     name="password"
                     required
                     autocomplete="current-password"
                 >
                 @error('password')
-                    <span class="form-invalid-feedback" role="alert">
+                    <span class="field-feedback field-feedback--invalid" role="alert">
                         {{ $message }}
                     </span>
                 @enderror

@@ -11,17 +11,24 @@
     padding: spruce.spacer(s);
 
     &__inner {
-        background-color: spruce.color(background);
-        border: 1px solid var(--spruce-sidebar-color-border);
-        border-radius: spruce.$border-radius-lg;
-        max-width: 30rem;
-        padding: spruce.spacer(l) clamp(spruce.spacer(m), 2vw + 1rem, spruce.spacer(l));
+        max-width: 25rem;
         width: 100%;
     }
 
     &__logo {
-        margin-block-end: spruce.spacer(s);
+        margin-block-end: spruce.spacer(m);
         margin-inline: auto;
-        width: 6.5rem;
+        width: 6rem;
+    }
+
+    &__panel {
+        background-color: spruce.color(background);
+        border: 1px solid var(--spruce-sidebar-color-border);
+        border-radius: spruce.$border-radius-lg;
+        padding: clamp(2rem, 2vw + 1rem, 2.5rem);
+    }
+
+    .alert {
+        margin-block-end: spruce.spacer(s);
     }
 }
