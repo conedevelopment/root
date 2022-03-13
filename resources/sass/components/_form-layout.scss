@@ -3,14 +3,6 @@
 .form-layout {
     align-items: start;
     display: grid;
-    gap: spruce.spacer(m);
-    grid-template-areas: 'body'
-                        'sidebar';
-    grid-template-columns: minmax(0, 1fr);
+    gap: spruce.spacer(s);
     margin-block-end: spruce.spacer(l);
-
-    @include spruce.breakpoint(sm) {
-        grid-template-areas: 'body sidebar';
-        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    }
 }
