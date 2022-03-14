@@ -31,5 +31,11 @@
                 required: true,
             },
         },
+
+        watch: {
+            isOpen(newValue, oldValue) {
+                document.body.classList.toggle('has-modal-open', newValue);
+            },
+        },
     }
 </script>
