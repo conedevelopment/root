@@ -1,12 +1,20 @@
 <template>
     <div class="app-operation__filter">
-        <button type="button" class="btn btn--secondary btn--icon" @click="toggle" aria-label="Open/Close filter">
-            <Icon class="btn__icon btn__icon--start" name="filter-list"></Icon>
+        <button
+            type="button"
+            class="btn btn--secondary btn--icon"
+            :aria-label="isOpen ? __('Close filters') : __('Open filters')"
+            @click="toggle"
+        >
+            <Icon
+                class="btn__icon btn__icon--start"
+                :name="isOpen ? 'filter-list-off' : 'filter-list'"
+            ></Icon>
         </button>
         <div class="app-filter" v-show="isOpen">
             <h2 class="app-filter__title">
-                {{ __('Filter') }}
-                <button type="button" class="btn btn--secondary btn--sm btn--icon">
+                {{ __('Filters') }}
+                <button type="button" class="btn btn--secondary btn--sm btn--icon" @click="close">
                     <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
                 </button>
             </h2>
