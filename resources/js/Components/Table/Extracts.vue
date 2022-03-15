@@ -6,6 +6,7 @@
             component="Select"
             v-model="_extract"
             :name="name"
+            :id="name"
             :form="form"
             :label="__('Extract')"
             :options="options"
