@@ -143,15 +143,15 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerComposers(): void
     {
-        $this->app['view']->composer('root::app', function (View $view): void {
+        $this->app['view']->composer('root::app', static function (View $view): void {
+            $app = $view->getFactory()->getContainer();
+
             $view->with('root', [
-                'resources' => array_values(Support\Facades\Resource::available($this->app['request'])),
-                'translations' => (object) $this->app['translator']->getLoader()->load(
-                    $this->app->getLocale(), '*', '*'
-                ),
-                'user' => $this->app['request']->user()->toRoot(),
+                'resources' => array_values(Support\Facades\Resource::available($app['request'])),
+                'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
+                'user' => $app['request']->user()->toRoot(),
                 'config' => [
-                    'url' => $this->app['url']->route('root.dashboard'),
+                    'url' => $app['url']->route('root.dashboard'),
                 ],
             ]);
         });
