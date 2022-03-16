@@ -7,7 +7,13 @@
             v-model="value"
             :class="{ 'form-control--invalid': error !== null }"
         >
-            <option :disabled="! nullable" :value="null" selected>{{ label }}</option>
+            <option
+                :disabled="! nullable || $attrs.multiple"
+                :value="null"
+                selected
+            >
+                {{ __('Select :label', { label }) }}
+            </option>
             <option v-for="option in options" :value="option.value" :key="option.value">
                 {{ option.formatted_value }}
             </option>

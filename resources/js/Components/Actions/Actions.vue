@@ -4,7 +4,7 @@
             <div class="form-group form-group--inline">
                 <label class="form-label" for="actions-select">{{ __('Action') }}</label>
                 <select id="actions-select" class="form-control" v-model="_action">
-                    <option :value="null">{{ __('Action') }}</option>
+                    <option :value="null">{{ __('Select Action') }}</option>
                     <option v-for="(action, index) in actions" :value="index" :key="index">
                         {{ action.name }}
                     </option>
