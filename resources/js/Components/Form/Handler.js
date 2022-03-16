@@ -2,6 +2,7 @@ import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
 import BelongsToMany from './BelongsToMany';
 import Checkbox from './Checkbox';
+import DateTime from './DateTime';
 import Editor from './Editor';
 import Input from './Input';
 import Media from './Media';
@@ -16,6 +17,7 @@ export default {
         AsyncSelect,
         BelongsToMany,
         Checkbox,
+        DateTime,
         Editor,
         Input,
         Media,

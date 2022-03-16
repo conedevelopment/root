@@ -7632,10 +7632,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-sprucecss@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-0.4.1.tgz#3c87c5de031827a8227aa7752d4c6340ed0450b6"
-  integrity sha512-zNUCMJf+/XGYwcye/X0MnT89hPL1tYMUBXnfYgP/JQK70Tt4vhLU3gNxJ2KnYq7hB1FWINjV4dMtGiU5yZru8w==
+sprucecss@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-0.5.0.tgz#6ad63ba994171523a0be3ef7735782510c690dc8"
+  integrity sha512-sP+8WunfZTg9yaDaHKPins2I0CFIc5j3cvBul+/x9i906XPhMgYhIjt0PiyFhlQc3gQ2rAS1Z61WH+K/PyxqTA==
   dependencies:
     normalize.css "^8.0.1"
 

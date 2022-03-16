@@ -62,8 +62,8 @@ class Date extends Field
     public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, mixed $value): string {
-                return BaseDate::parse($value)->tz($this->timezone)->format($this->format);
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
+                return is_null($value) ? $value : BaseDate::parse($value)->tz($this->timezone)->format($this->format);
             };
         }
 
