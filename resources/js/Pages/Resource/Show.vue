@@ -8,6 +8,19 @@
                     :actions="actions"
                     @success="clearSelection"
                 ></Actions>
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn--icon btn--primary"
+                        v-if="model.abilities.delete"
+                        @click="destroy(url)"
+                    >
+                        <Icon class="btn__icon" name="delete"></Icon>
+                    </button>
+                    <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary">
+                        <Icon class="btn__icon" name="edit"></Icon>
+                    </Link>
+                </div>
             </div>
         </div>
         <div class="app-card card">
@@ -21,11 +34,13 @@
 </template>
 
 <script>
+    import { Link } from '@inertiajs/inertia-vue3';
     import Actions from './../../Components/Actions/Actions';
 
     export default {
         components: {
             Actions,
+            Link,
         },
 
         props: {
@@ -41,6 +56,20 @@
 
         layout: function (h, page) {
             return h(this.resolveDefaultLayout(), () => page);
+        },
+
+        computed: {
+            url() {
+                return window.location.pathname;
+            },
+        },
+
+        methods: {
+            destroy(url) {
+                this.$inertia.delete(url, {
+                    onBefore: () => confirm(this.__('Are you sure?')),
+                });
+            },
         },
     }
 </script>

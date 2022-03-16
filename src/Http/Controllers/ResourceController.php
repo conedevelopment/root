@@ -9,7 +9,6 @@ use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Root;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
@@ -93,7 +92,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $model->getKey()))
+        return Redirect::route(sprintf('root.%s.%s.show', $resource->getKey(), $model->getKey()))
                     ->with('alerts.resource-created', Alert::info(__('The resource has been created!')));
     }
 
@@ -165,7 +164,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::to(sprintf('%s/%s/%s', Root::getPath(), $resource->getKey(), $model->getKey()))
+        return Redirect::route(sprintf('root.%s.%s.edit', $resource->getKey(), $model->getKey()))
                     ->with('alerts.resource-updated', Alert::info(__('The resource has been updated!')));
     }
 
@@ -189,7 +188,7 @@ class ResourceController extends Controller
 
         $trashed ? $model->forceDelete() : $model->delete();
 
-        return Redirect::to(sprintf('%s/%s', Root::getPath(), $resource->getKey()))
+        return Redirect::route(sprintf('root.%s.index', $resource->getKey()))
                     ->with('alerts.resource-deleted', Alert::info(__('The resource has been deleted!')));
     }
 }
