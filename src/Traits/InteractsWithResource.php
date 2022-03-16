@@ -4,7 +4,6 @@ namespace Cone\Root\Traits;
 
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
-use Cone\Root\Support\Facades\Resource as Registry;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -76,17 +75,5 @@ trait InteractsWithResource
     public static function toResource(): Resource
     {
         return new Resource(static::class);
-    }
-
-    /**
-     * Register the resource for the model.
-     *
-     * @return void
-     */
-    public static function registerResource(): void
-    {
-        $instance = static::toResource();
-
-        Registry::register($instance->getKey(), $instance);
     }
 }

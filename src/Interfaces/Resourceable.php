@@ -40,11 +40,4 @@ interface Resourceable
      * @return \Cone\Root\Resources\Resource
      */
     public static function toResource(): Resource;
-
-    /**
-     * Register the resource for the model.
-     *
-     * @return void
-     */
-    public static function registerResource(): void;
 }

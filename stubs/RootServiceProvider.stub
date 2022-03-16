@@ -40,10 +40,6 @@ class RootServiceProvider extends RootApplicationServiceProvider
         Fortify::loginView(function (): View {
             return $this->app['view']->make('root::auth.login');
         });
-
-        Root::running(static function (): void {
-            (BaseUser::proxy())::registerResource();
-        });
     }
 
     /**
@@ -56,6 +52,18 @@ class RootServiceProvider extends RootApplicationServiceProvider
         Gate::define('viewRoot', static function (): bool {
             return true;
         });
+    }
+
+    /**
+     * The resources.
+     *
+     * @return array
+     */
+    protected function resources(): array
+    {
+        return [
+            (BaseUser::proxy())::toResource(),
+        ];
     }
 
     /**

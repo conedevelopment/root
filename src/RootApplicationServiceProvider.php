@@ -2,7 +2,9 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Support\Facades\Resource;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -29,7 +31,14 @@ class RootApplicationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->gate();
+
         $this->registerRoutes();
+
+        Root::running(function (): void {
+            foreach ($this->resources() as $resource) {
+                Resource::register($resource->getKey(), $resource);
+            }
+        });
     }
 
     /**
@@ -54,6 +63,16 @@ class RootApplicationServiceProvider extends ServiceProvider
         Gate::define('viewRoot', static function (): bool {
             return true;
         });
+    }
+
+    /**
+     * The resources.
+     *
+     * @return array
+     */
+    protected function resources(): array
+    {
+        return [];
     }
 
     /**
