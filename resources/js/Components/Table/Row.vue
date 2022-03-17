@@ -21,10 +21,10 @@
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
-                <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm">
+                <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('View')">
                     <Icon class="btn__icon" name="view"></Icon>
                 </Link>
-                <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm">
+                <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('Edit')">
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>
