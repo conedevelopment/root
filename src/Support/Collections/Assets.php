@@ -1,11 +1,12 @@
 <?php
 
-namespace Cone\Root\Registries;
+namespace Cone\Root\Support\Collections;
 
-use Cone\Root\Interfaces\Registries\AssetRegistry as Contract;
+use Cone\Root\Interfaces\Support\Collections\Assets as Contract;
 use Cone\Root\Support\Asset;
+use Illuminate\Support\Collection;
 
-class AssetRegistry extends Registry implements Contract
+class Assets extends Collection implements Contract
 {
     /**
      * Register a new script.
@@ -19,7 +20,7 @@ class AssetRegistry extends Registry implements Contract
     {
         $asset = new Asset($key, Asset::SCRIPT, $path, $url);
 
-        $this->register($asset->getKey(), $asset);
+        $this->put($asset->getKey(), $asset);
     }
 
     /**
@@ -34,17 +35,17 @@ class AssetRegistry extends Registry implements Contract
     {
         $asset = new Asset($key, Asset::STYLE, $path, $url);
 
-        $this->register($asset->getKey(), $asset);
+        $this->put($asset->getKey(), $asset);
     }
 
     /**
      * Get the registered scripts.
      *
-     * @return array
+     * @return \Cone\Root\Support\Collections\Assets
      */
-    public function scripts(): array
+    public function scripts(): static
     {
-        return array_filter($this->items, static function (Asset $asset): bool {
+        return $this->filter(static function (Asset $asset): bool {
             return $asset->getType() === Asset::SCRIPT;
         });
     }
@@ -52,11 +53,11 @@ class AssetRegistry extends Registry implements Contract
     /**
      * Get the registered styles.
      *
-     * @return array
+     * @return \Cone\Root\Support\Collections\Assets
      */
-    public function styles(): array
+    public function styles(): static
     {
-        return array_filter($this->items, static function (Asset $asset): bool {
+        return $this->filter(static function (Asset $asset): bool {
             return $asset->getType() === Asset::STYLE;
         });
     }

@@ -2,18 +2,51 @@
 
 namespace Cone\Root\Support\Facades;
 
-use Cone\Root\Interfaces\Registries\ResourceRegistry;
+use Cone\Root\Exceptions\ResourceResolutionException;
+use Cone\Root\Interfaces\Support\Collections\Resources;
+use Cone\Root\Resources\Resource as Item;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void register(string $key, \Cone\Root\Resources\Resource $item)
- * @method static \Cone\Root\Resources\Resource resolve(string $key)
- * @method static array available(\Illuminate\Http\Request $request)
+ * @method static \Cone\Root\Interfaces\Support\Collections\Resources available(\Illuminate\Http\Request $request)
  *
- * @see \Cone\Root\Interfaces\Registries\ResourceRegistry
+ * @see \Cone\Root\Interfaces\Support\Collections\Resources
  */
 class Resource extends Facade
 {
+    /**
+     * Register the given item.
+     *
+     * @param  string  $key
+     * @param  \Cone\Root\Resources\Resource  $item
+     * @return void
+     */
+    public static function register(string $key, Item $item): void
+    {
+        static::getFacadeRoot()->put($key, $item);
+
+        $item->registered(
+            static::getFacadeApplication()['request']
+        );
+    }
+
+    /**
+     * Resolve the resource by its key.
+     *
+     * @param  string  $key
+     * @return \Cone\Root\Resources\Resource
+     *
+     * @throws \Cone\Root\Exceptions\ResourceResolutionException
+     */
+    public static function resolve(string $key): Item
+    {
+        if (! static::getFacadeRoot()->has($key)) {
+            throw new ResourceResolutionException("Unable to resolve resource with key [{$key}].");
+        }
+
+        return static::getFacadeRoot()->get($key);
+    }
+
     /**
      * Get the registered name of the component.
      *
@@ -21,6 +54,6 @@ class Resource extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return ResourceRegistry::class;
+        return Resources::class;
     }
 }

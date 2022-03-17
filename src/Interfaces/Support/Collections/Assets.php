@@ -1,8 +1,8 @@
 <?php
 
-namespace Cone\Root\Interfaces\Registries;
+namespace Cone\Root\Interfaces\Support\Collections;
 
-interface AssetRegistry
+interface Assets
 {
     /**
      * Register a new script.

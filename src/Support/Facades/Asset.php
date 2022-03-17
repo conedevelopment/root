@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Support\Facades;
 
-use Cone\Root\Interfaces\Registries\AssetRegistry;
+use Cone\Root\Interfaces\Support\Collections\Assets;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -23,6 +23,6 @@ class Asset extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return AssetRegistry::class;
+        return Assets::class;
     }
 }

@@ -29,8 +29,8 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
-        Interfaces\Registries\AssetRegistry::class => Registries\AssetRegistry::class,
-        Interfaces\Registries\ResourceRegistry::class => Registries\ResourceRegistry::class,
+        Interfaces\Support\Collections\Assets::class => Support\Collections\Assets::class,
+        Interfaces\Support\Collections\Resources::class => Support\Collections\Resources::class,
     ];
 
     /**
@@ -147,7 +147,7 @@ class RootServiceProvider extends ServiceProvider
             $app = $view->getFactory()->getContainer();
 
             $view->with('root', [
-                'resources' => array_values(Support\Facades\Resource::available($app['request'])),
+                'resources' => Support\Facades\Resource::available($app['request'])->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
                 'user' => $app['request']->user()->toRoot(),
                 'config' => [
