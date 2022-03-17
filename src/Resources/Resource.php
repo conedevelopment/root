@@ -94,7 +94,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      *
      * @var string
      */
-    protected string $icon = 'resource';
+    protected string $icon = 'inventory-2';
 
     /**
      * Create a new resource instance.
