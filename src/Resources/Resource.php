@@ -90,6 +90,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     protected array $resolved = [];
 
     /**
+     * The icon for the resource.
+     *
+     * @var string
+     */
+    protected string $icon = 'resource';
+
+    /**
      * Create a new resource instance.
      *
      * @param  string  $model
@@ -176,6 +183,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $request->route()->setParameter($key, $model);
 
         return $model;
+    }
+
+    /**
+     * Get the resource icon.
+     *
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
     }
 
     /**
@@ -541,6 +558,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         return [
             'abilities' => App::call([$this, 'mapAbilities']),
             'key' => $this->getKey(),
+            'icon' => $this->getIcon(),
             'model_name' => $this->getModelName(),
             'name' => $this->getName(),
             'urls' => App::call([$this, 'mapUrls']),
