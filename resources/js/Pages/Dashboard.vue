@@ -1,5 +1,5 @@
 <template>
-    <div class="widgets">
+    <div class="app-widget">
         <Widget
             v-for="widget in widgets"
             :key="widget.key"

@@ -1750,6 +1750,11 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
   }
 }
 
+.app-widget {
+  -webkit-margin-before: 1.5rem;
+          margin-block-start: 1.5rem;
+}
+
 .site-auth {
   align-items: center;
   background: linear-gradient(180deg, #f0f6ff 4%, #fff);
