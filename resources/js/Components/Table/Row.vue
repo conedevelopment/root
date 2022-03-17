@@ -18,6 +18,7 @@
                     class="btn btn--icon btn--tertiary btn--sm"
                     v-if="item.abilities.delete"
                     @click="destroy(url)"
+                    :aria-label="__('Delete')"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
