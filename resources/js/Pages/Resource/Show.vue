@@ -1,26 +1,24 @@
 <template>
     <div>
         <div class="app-operation">
-            <div class="form-row--mixed">
-                <Actions
-                    v-if="actions.length > 0"
-                    :selection="[model.id]"
-                    :actions="actions"
-                    @success="clearSelection"
-                ></Actions>
-                <div>
-                    <button
-                        type="button"
-                        class="btn btn--icon btn--primary"
-                        v-if="model.abilities.delete"
-                        @click="destroy(url)"
-                    >
-                        <Icon class="btn__icon" name="delete"></Icon>
-                    </button>
-                    <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary">
-                        <Icon class="btn__icon" name="edit"></Icon>
-                    </Link>
-                </div>
+            <Actions
+                v-if="actions.length > 0"
+                :selection="[model.id]"
+                :actions="actions"
+                @success="clearSelection"
+            ></Actions>
+            <div class="app-operation__edit">
+                <button
+                    type="button"
+                    class="btn btn--icon btn--primary"
+                    v-if="model.abilities.delete"
+                    @click="destroy(url)"
+                >
+                    <Icon class="btn__icon" name="delete"></Icon>
+                </button>
+                <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary">
+                    <Icon class="btn__icon" name="edit"></Icon>
+                </Link>
             </div>
         </div>
         <div class="app-card card">

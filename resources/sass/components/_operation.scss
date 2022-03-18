@@ -6,4 +6,10 @@
     column-gap: spruce.spacer(m);
     margin-block-start: 1.5rem;
     row-gap: spruce.spacer(s);
+
+    &__edit {
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(s);
+    }
 }
