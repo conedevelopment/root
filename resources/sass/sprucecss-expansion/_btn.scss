@@ -1,9 +1,28 @@
 @use '~sprucecss/scss/spruce';
 
 .btn {
+    &--has-counter {
+        position: relative;
+    }
+
     &__keybind {
         color: spruce.color(primary-foreground-opaque, btn);
         font-weight: 400;
+    }
+
+    &__counter {
+        align-items: center;
+        background-color: spruce.color(danger, alert);
+        border-radius: spruce.$border-radius-lg;
+        color: #fff;
+        display: flex;
+        font-size: 0.7rem;
+        height: 1.2rem;
+        inset: -0.6em -0.65em auto auto;
+        justify-content: center;
+        line-height: 1;
+        min-width: 1.2rem;
+        position: absolute;
     }
 }
 

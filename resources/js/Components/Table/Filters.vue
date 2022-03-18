@@ -2,7 +2,7 @@
     <div class="app-operation__filter">
         <button
             type="button"
-            class="btn btn--secondary btn--icon"
+            class="btn btn--secondary btn--icon btn--has-counter"
             :aria-label="isOpen ? __('Close filters') : __('Open filters')"
             @click="toggle"
         >
@@ -10,6 +10,7 @@
                 class="btn__icon btn__icon--start"
                 :name="isOpen ? 'filter-list-off' : 'filter-list'"
             ></Icon>
+            <span class="btn__counter">3</span>
         </button>
         <div class="app-filter" v-show="isOpen">
             <h2 class="app-filter__title">

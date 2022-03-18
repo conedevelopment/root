@@ -1786,9 +1786,26 @@ html[dir=rtl] select.form-control:not([multiple]):not([size]) {
           margin-block-end: 1rem;
 }
 
+.btn--has-counter {
+  position: relative;
+}
 .btn__keybind {
   color: var(--spruce-btn-color-primary-foreground-opaque);
   font-weight: 400;
+}
+.btn__counter {
+  align-items: center;
+  background-color: var(--spruce-alert-color-danger);
+  border-radius: 0.5rem;
+  color: #fff;
+  display: flex;
+  font-size: 0.7rem;
+  height: 1.2rem;
+  inset: -0.6em -0.65em auto auto;
+  justify-content: center;
+  line-height: 1;
+  min-width: 1.2rem;
+  position: absolute;
 }
 
 .btn--tertiary {
