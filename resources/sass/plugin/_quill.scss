@@ -2,18 +2,20 @@
 @import '~quill/dist/quill.snow.css';
 
 .ql-toolbar.ql-snow {
-    border-top: 1px solid spruce.color(border, form);
-    border-right: 1px solid spruce.color(border, form);
-    border-bottom: 0;
-    border-left: 1px solid spruce.color(border, form);
-    border-radius: 0.25rem 0.25rem 0 0;
+    border-block-start: 1px solid spruce.color(border, form);
+    border-inline-end: 1px solid spruce.color(border, form);
+    border-block-end: 0;
+    border-inline-start: 1px solid spruce.color(border, form);
+    border-radius: spruce.$form-control-border-radius spruce.$form-control-border-radius 0 0;
     padding: 0.5rem;
 }
 
 .ql-container {
     height: auto;
-    border-radius: 0 0 0.25rem 0.25rem;
+    border-radius: 0 0 spruce.$form-control-border-radius spruce.$form-control-border-radius;
     font-family: spruce.$font-family-base;
+    font-size: spruce.$font-size-base;
+    margin-block-start: 0;
     padding: 1rem;
 
     .ql-editor {
@@ -22,8 +24,25 @@
     }
 }
 
-.ql-snow .ql-picker-label {
-    display: inline-flex;
+.ql-snow {
+    .ql-tooltip {
+        border-color: spruce.color(border, form);
+        border-radius: spruce.$form-control-border-radius;
+
+        input[type=text] {
+            border-color: spruce.color(border, form);
+            border-radius: spruce.$form-control-border-radius;
+        }
+    }
+
+    .ql-picker-label {
+        display: inline-flex;
+    }
+}
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    border-color: spruce.color(border, form);
+    border-radius: spruce.$form-control-border-radius;
 }
 
 .ql-snow.ql-toolbar button:hover,

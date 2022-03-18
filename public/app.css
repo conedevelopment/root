@@ -2702,10 +2702,14 @@ legend {
 }
 
 .ql-toolbar.ql-snow {
-  border-top: 1px solid var(--spruce-form-color-border);
-  border-right: 1px solid var(--spruce-form-color-border);
-  border-bottom: 0;
-  border-left: 1px solid var(--spruce-form-color-border);
+  -webkit-border-before: 1px solid var(--spruce-form-color-border);
+          border-block-start: 1px solid var(--spruce-form-color-border);
+  -webkit-border-end: 1px solid var(--spruce-form-color-border);
+          border-inline-end: 1px solid var(--spruce-form-color-border);
+  -webkit-border-after: 0;
+          border-block-end: 0;
+  -webkit-border-start: 1px solid var(--spruce-form-color-border);
+          border-inline-start: 1px solid var(--spruce-form-color-border);
   border-radius: 0.25rem 0.25rem 0 0;
   padding: 0.5rem;
 }
@@ -2714,6 +2718,9 @@ legend {
   height: auto;
   border-radius: 0 0 0.25rem 0.25rem;
   font-family: Inter, sans-serif;
+  font-size: 0.9375rem;
+  -webkit-margin-before: 0;
+          margin-block-start: 0;
   padding: 1rem;
 }
 .ql-container .ql-editor {
@@ -2721,8 +2728,21 @@ legend {
   padding: 0;
 }
 
+.ql-snow .ql-tooltip {
+  border-color: var(--spruce-form-color-border);
+  border-radius: 0.25rem;
+}
+.ql-snow .ql-tooltip input[type=text] {
+  border-color: var(--spruce-form-color-border);
+  border-radius: 0.25rem;
+}
 .ql-snow .ql-picker-label {
   display: inline-flex;
+}
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  border-color: var(--spruce-form-color-border);
+  border-radius: 0.25rem;
 }
 
 .ql-snow.ql-toolbar button:hover,
