@@ -2889,6 +2889,41 @@ legend {
           margin-block-start: 0;
 }
 
+.form-group-inner--stack {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+.form-group-inner--stack > *:first-child {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+.form-group-inner--stack > * + * {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+  -webkit-margin-before: -1px;
+          margin-block-start: -1px;
+}
+@media (min-width: 32em) {
+  .form-group-inner--stack {
+    flex-direction: row;
+  }
+  .form-group-inner--stack > *:first-child {
+    border-radius: 0.25rem;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .form-group-inner--stack > * + * {
+    border-radius: 0.25rem;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    -webkit-margin-before: 0;
+            margin-block-start: 0;
+    -webkit-margin-start: -1px;
+            margin-inline-start: -1px;
+  }
+}
+
 select option[disabled]:first-child {
   color: var(--spruce-base-color-secondary);
   cursor: not-allowed;

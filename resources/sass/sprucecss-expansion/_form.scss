@@ -26,6 +26,43 @@
     }
 }
 
+.form-group-inner {
+    &--stack {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+
+        > *:first-child {
+            border-end-start-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        > * + * {
+            border-start-start-radius: 0;
+            border-start-end-radius: 0;
+            margin-block-start: -1px;
+        }
+
+        @include spruce.breakpoint(xs) {
+            flex-direction: row;
+
+            > *:first-child {
+                border-radius: spruce.$form-control-border-radius;
+                border-start-end-radius: 0;
+                border-end-end-radius: 0;
+            }
+
+            > * + * {
+                border-radius: spruce.$form-control-border-radius;
+                border-start-start-radius: 0;
+                border-end-start-radius: 0;
+                margin-block-start: 0;
+                margin-inline-start: -1px;
+            }
+        }
+    }
+}
+
 select {
     option[disabled]:first-child {
         color: spruce.color(secondary);
