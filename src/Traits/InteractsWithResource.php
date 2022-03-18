@@ -35,7 +35,7 @@ trait InteractsWithResource
      * Get the resource display representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
     public function toDisplay(Request $request, Fields $fields): array
@@ -52,7 +52,7 @@ trait InteractsWithResource
      * Get the resource form representation of the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Cone\Root\Resources\Resource  $resource
+     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
     public function toForm(Request $request, Fields $fields): array
