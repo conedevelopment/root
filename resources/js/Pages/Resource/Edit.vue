@@ -14,6 +14,9 @@
                 <button type="submit" class="btn btn--primary" :disabled="form.processing">
                     {{ __('Save') }}
                 </button>
+                <button type="button" class="btn btn--delete" :disabled="form.processing">
+                    {{ __('Delete') }}
+                </button>
             </div>
         </div>
     </form>
