@@ -26,6 +26,5 @@
     }
 }
 
-.btn--tertiary {
-    @include spruce.btn-variant(tertiary);
-}
+.btn--tertiary { @include spruce.btn-variant(tertiary); }
+.btn--delete { @include spruce.btn-variant(delete); }

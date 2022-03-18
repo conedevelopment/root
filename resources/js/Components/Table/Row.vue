@@ -15,7 +15,7 @@
             <div class="table__actions">
                 <button
                     type="button"
-                    class="btn btn--icon btn--tertiary btn--sm"
+                    class="btn btn--icon btn--delete btn--sm"
                     v-if="item.abilities.delete"
                     @click="destroy(url)"
                     :aria-label="__('Delete')"

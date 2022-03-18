@@ -10,13 +10,14 @@
             <div class="app-operation__edit">
                 <button
                     type="button"
-                    class="btn btn--icon btn--primary"
+                    class="btn btn--icon btn--delete"
                     v-if="model.abilities.delete"
                     @click="destroy(url)"
+                    :aria-label="__('Delete')"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
-                <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary">
+                <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary" :aria-label="__('Edit')">
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>

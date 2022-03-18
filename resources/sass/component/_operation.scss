@@ -1,6 +1,7 @@
 @use '~sprucecss/scss/spruce';
 
 .app-operation {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
     column-gap: spruce.spacer(m);

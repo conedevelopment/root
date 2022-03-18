@@ -1308,6 +1308,10 @@ template {
   --spruce-btn-color-tertiary-background-hover: #026df7;
   --spruce-btn-color-tertiary-foreground: #026df7;
   --spruce-btn-color-tertiary-foreground-hover: #ebf3ff;
+  --spruce-btn-color-delete-foreground: #db2929;
+  --spruce-btn-color-delete-foreground-hover: white;
+  --spruce-btn-color-delete-background: #fbeaea;
+  --spruce-btn-color-delete-background-hover: #db2929;
   --spruce-btn-color-primary-background: #026df7;
   --spruce-btn-color-primary-background-hover: #014092;
   --spruce-btn-color-primary-foreground: white;
@@ -2617,6 +2621,7 @@ legend {
 }
 
 .app-operation {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   -moz-column-gap: 2rem;
@@ -2856,6 +2861,19 @@ legend {
 }
 .btn--tertiary:focus {
   box-shadow: 0 0 0 0.25rem rgba(235, 243, 255, 0.25);
+  outline: 2px solid transparent;
+}
+
+.btn--delete {
+  background-color: var(--spruce-btn-color-delete-background);
+  color: var(--spruce-btn-color-delete-foreground);
+}
+.btn--delete:hover {
+  background-color: var(--spruce-btn-color-delete-background-hover);
+  color: var(--spruce-btn-color-delete-foreground-hover);
+}
+.btn--delete:focus {
+  box-shadow: 0 0 0 0.25rem rgba(251, 234, 234, 0.25);
   outline: 2px solid transparent;
 }
 

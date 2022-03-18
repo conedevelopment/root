@@ -1,41 +1,45 @@
 @use 'sass:color';
 
-$color-primary-light: hsl(215, 100%, 96%);
-$color-primary: hsl(214, 98%, 49%);
+$color-primary-light: hsl(215 100% 96%);
+$color-primary: hsl(214 98% 49%);
 
 @use '~sprucecss/scss/spruce' with (
     $color-primary: $color-primary,
-    $color-secondary: hsl(214, 98%, 25%),
+    $color-secondary: hsl(214 98% 25%),
     $colors: (
         base: (
-            heading: hsl(238, 69%, 22%),
-            text: hsl(207, 44%, 20%)
+            heading: hsl(238 69% 22%),
+            text: hsl(207 44% 20%)
         ),
         btn: (
-            primary-foreground-opaque: hsl(0, 0%, 100%, 0.75),
-            secondary-foreground-opaque: hsl(0, 0%, 100%, 0.75),
+            primary-foreground-opaque: hsl(0 0% 100% / 0.75),
+            secondary-foreground-opaque: hsl(0 0% 100% / 0.75),
             tertiary-background: $color-primary-light,
             tertiary-background-hover: $color-primary,
             tertiary-foreground: $color-primary,
             tertiary-foreground-hover: $color-primary-light,
+            delete-foreground: hsl(0 71% 51%),
+            delete-foreground-hover: hsl(0 0% 100%),
+            delete-background: color.scale(hsl(0 71% 51%), $lightness: 90%),
+            delete-background-hover: hsl(0 71% 51%)
         ),
         form: (
-            border: hsl(223, 16%, 80%),
+            border: hsl(223 16% 80%),
             border-focus: $color-primary,
-            check-background: hsl(214, 98%, 25%),
-            select-foreground: hsl(214, 98%, 25%)
+            check-background: hsl(214 98% 25%),
+            select-foreground: hsl(214 98% 25%)
         ),
         table: (
             border: $color-primary-light,
             hover: $color-primary-light,
-            stripe: hsl(216, 100%, 98%)
+            stripe: hsl(216 100% 98%)
         ),
         breadcrumb: (
-            arrow: hsl(0, 0%, 0%, 0.1)
+            arrow: hsl(0 0% 0% / 0.1)
         ),
         sidebar: (
-            border: hsl(214, 100%, 90%),
-            icon: hsl(245, 37%, 83%),
+            border: hsl(214 100% 90%),
+            icon: hsl(245 37% 83%),
             active: $color-primary-light
         )
     ),
