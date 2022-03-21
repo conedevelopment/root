@@ -2978,17 +2978,16 @@ select option[disabled]:first-child {
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-top: 0.25rem;
+  -webkit-margin-before: 0.5rem;
+          margin-block-start: 0.5rem;
   position: relative;
 }
 .form-range-display::before {
   border-bottom: 1px dashed var(--spruce-form-color-border);
   content: "";
+  inset: 50% 0 auto 0;
   height: 0;
-  left: 0;
   position: absolute;
-  right: 0;
-  top: 50%;
   z-index: 1;
 }
 .form-range-display__item {
@@ -3000,10 +2999,10 @@ select option[disabled]:first-child {
   background-color: var(--spruce-base-color-background);
 }
 .form-range-display__item.is-min {
-  padding-right: 0.25rem;
+  padding-right: 0.5rem;
 }
 .form-range-display__item.is-max {
-  padding-left: 0.25rem;
+  padding-left: 0.5rem;
 }
 .form-range-display__item.is-current {
   background-color: var(--spruce-form-color-range-background);

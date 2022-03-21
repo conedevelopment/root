@@ -81,17 +81,15 @@ select {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-top: 0.25rem;
+    margin-block-start: spruce.spacer(xs);
     position: relative;
 
     &::before {
         border-bottom: 1px dashed spruce.color(border, form);
         content: '';
+        inset: 50% 0 auto 0;
         height: 0;
-        left: 0;
         position: absolute;
-        right: 0;
-        top: 50%;
         z-index: 1;
     }
 
@@ -106,20 +104,20 @@ select {
         }
 
         &.is-min {
-            padding-right: 0.25rem;
+            padding-right: spruce.spacer(xs);
         }
 
         &.is-max {
-            padding-left: 0.25rem;
+            padding-left: spruce.spacer(xs);
         }
 
         &.is-current {
             background-color: spruce.color(range-background, form);
-            border: 1px solid  spruce.color(range-border, form);
+            border: 1px solid spruce.color(range-border, form);
             border-radius: spruce.$border-radius-sm;
-            font-size: 0.9375rem;
+            font-size: spruce.$font-size-base;
             font-weight: 700;
-            padding: 0.25rem 0.5rem;
+            padding: spruce.spacer(xxs) spruce.spacer(xs);
         }
     }
 }
