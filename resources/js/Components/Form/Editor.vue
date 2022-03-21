@@ -1,13 +1,19 @@
 <template>
     <div class="form-group" :class="class" :style="style">
         <div ref="input" class="editor" spellcheck="false"></div>
+        <Media ref="media"></Media>
     </div>
 </template>
 
 <script>
     import Quill from 'quill';
+    import Media from './../Media/Media';
 
     export default {
+        components: {
+            Media,
+        },
+
         props: {
             modelValue: {
                 type: String,

@@ -1,11 +1,11 @@
 <template>
-    <div class="modal-footer">
-        <div class="modal-footer-actions">
+    <div class="modal__action">
+        <div>
             <span v-show="$parent.selection.length" class="modal-help-text">
                 {{ __(':files files selected', { files: $parent.selection.length }) }}
             </span>
         </div>
-        <div class="modal-footer-actions">
+        <div>
             <button type="button" class="btn btn--sm btn--secondary-ghost" :disabled="$parent.processing" @click="$parent.close">
                 {{ __('Close') }}
             </button>

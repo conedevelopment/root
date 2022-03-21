@@ -16,11 +16,19 @@
             </ul>
             <p class="app-sidebar__title">{{ __('Resources') }}</p>
             <ul>
-                <li v-for="resource in $app.resources" :key="resource.key" class="navigation-item">
+                <li
+                    v-for="resource in $app.resources"
+                    class="navigation-item"
+                    :key="resource.key"
+                    :class="{ 'is-open': false }"
+                >
                     <Link :href="resource.urls.index" class="navigation-item__link">
                         <Icon class="navigation-item__icon" :name="resource.icon"></Icon>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
+                    <!-- <ul class="navigation-submenu">
+                        <li></li>
+                    </ul> -->
                 </li>
             </ul>
         </nav>

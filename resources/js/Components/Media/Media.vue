@@ -1,8 +1,15 @@
 <template>
-    <div v-show="isOpen" class="modal" @click.self="close">
-        <div class="modal-media modal-dialog modal-dialog-scrollable modal-dialog-centered modal-full-screen">
+    <div class="modal-backdrop" :class="{ 'modal-backdrop--visible': isOpen }" @click.self="close">
+        <div
+            role="dialog"
+            aria-modal="true"
+            class="modal"
+            :aria-label="title"
+            :class="{ 'hidden': ! isOpen }"
+        >
+            <h2 class="modal__title">{{ __('Media') }}</h2>
             <div
-                class="modal-content"
+                class="modal__inner"
                 :class="{ 'has-active-dropzone': dragging }"
                 :data-dropzone-text="__('Drop your files here')"
                 @dragstart.prevent
@@ -11,13 +18,7 @@
                 @dragleave.prevent="dragging = false"
                 @drop.prevent="handleFiles($event.dataTransfer.files)"
             >
-                <div class="modal-header">
-                    <h3 class="modal-title">{{ __('Media') }}</h3>
-                    <button type="button" class="modal-close btn btn--secondary" @click="close">
-                        <Icon name="close"></Icon>
-                    </button>
-                </div>
-                <div ref="container" class="modal-body">
+                <div ref="container">
                     <Filters></Filters>
                     <div
                         v-if="queue.length || response.data.length"
