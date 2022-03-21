@@ -34,6 +34,7 @@ $sidebar-width: 20rem;
     padding-block: var(--gutter-md);
     padding-inline: var(--gutter-lg);
     position: fixed;
+    width: auto !important;
 
     @include spruce.breakpoint(md) {
         inset: auto 0 0 calc(20rem);

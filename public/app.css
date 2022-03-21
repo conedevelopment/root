@@ -2616,8 +2616,8 @@ legend {
   align-items: start;
   display: grid;
   gap: 1rem;
-  -webkit-margin-after: 10rem;
-          margin-block-end: 10rem;
+  -webkit-margin-after: calc(var(--gutter-lg) + var(--gutter-md) * 2 + 2 * 0.75em + 0.9375rem);
+          margin-block-end: calc(var(--gutter-lg) + var(--gutter-md) * 2 + 2 * 0.75em + 0.9375rem);
 }
 
 .app-operation {
@@ -2716,6 +2716,7 @@ legend {
   padding-block: var(--gutter-md);
   padding-inline: var(--gutter-lg);
   position: fixed;
+  width: auto !important;
 }
 @media (min-width: 64em) {
   .form-group--submit {
