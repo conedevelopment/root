@@ -35,6 +35,7 @@ $sidebar-width: 20rem;
     padding-inline: var(--gutter-lg);
     position: fixed;
     width: auto !important;
+    z-index: 115;
 
     @include spruce.breakpoint(md) {
         inset: auto 0 0 calc(20rem);

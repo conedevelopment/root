@@ -1,0 +1,51 @@
+@use '~sprucecss/scss/spruce';
+
+.accordion-wrapper {
+    @include spruce.layout-stack(spruce.spacer(s));
+}
+
+.accordion {
+    background-color: spruce.color(background, form);
+    border-radius: spruce.$border-radius-sm;
+    border: 1px solid spruce.color(border, form);
+    padding: spruce.spacer(s);
+
+    &__title {
+        color: spruce.color(label, form);
+        font-family: spruce.$font-family-base;
+        font-size: spruce.responsive-font-size(1.2rem);
+        margin: 0;
+
+        span {
+            width: calc(100% - (2rem + 0.5rem));
+        }
+
+        button {
+            align-items: center;
+            background: none;
+            border: 0;
+            cursor: pointer;
+            display: flex;
+            font-weight: 700;
+            justify-content: space-between;
+            padding: 0;
+            text-align: left;
+            width: 100%;
+
+            svg {
+                color: spruce.color(primary);
+                height: 1.5rem;
+                margin-inline-start: spruce.spacer(xs);
+                width: 1.5rem;
+            }
+
+            &[aria-expanded='true'] .vert {
+                display: none;
+            }
+        }
+    }
+
+    &__content {
+        margin-top: spruce.spacer(xs);
+    }
+}

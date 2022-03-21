@@ -26,6 +26,14 @@
     }
 }
 
+.form-row {
+    &--accordion {
+        .accordion-wrapper {
+            margin-block-start: spruce.spacer(s);
+        }
+    }
+}
+
 .form-group-inner {
     &--stack {
         align-items: center;
