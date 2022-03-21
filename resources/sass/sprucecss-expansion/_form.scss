@@ -72,3 +72,54 @@ select {
         text-transform: uppercase;
     }
 }
+
+.form-range {
+    width: 100%;
+}
+
+.form-range-display {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    position: relative;
+
+    &::before {
+        border-bottom: 1px dashed spruce.color(border, form);
+        content: '';
+        height: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        z-index: 1;
+    }
+
+    &__item {
+        color: spruce.color(text);
+        position: relative;
+        z-index: 10;
+
+        &.is-min,
+        &.is-max {
+            background-color: spruce.color(background);
+        }
+
+        &.is-min {
+            padding-right: 0.25rem;
+        }
+
+        &.is-max {
+            padding-left: 0.25rem;
+        }
+
+        &.is-current {
+            background-color: spruce.color(range-background, form);
+            border: 1px solid  spruce.color(range-border, form);
+            border-radius: spruce.$border-radius-sm;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+}

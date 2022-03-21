@@ -1,13 +1,24 @@
 <template>
-    <div class="form-group" :class="class" :style="style">
+    <div class="form-group form-group--range" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <input
-            class="form-control"
+            class="form-range"
             v-bind="$attrs"
             :class="{ 'form-control--invalid': error !== null }"
             :value="modelValue"
             @input="update"
         >
+        <div class="form-range-display">
+            <span class="form-range-display__item is-min">
+                0
+            </span>
+            <span class="form-range-display__item is-current">
+                50
+            </span>
+            <span class="form-range-display__item is-max">
+                100
+            </span>
+        </div>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>

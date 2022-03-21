@@ -1329,6 +1329,8 @@ template {
   --spruce-form-color-border-focus: #026df7;
   --spruce-form-color-check-background: #01377e;
   --spruce-form-color-select-foreground: #01377e;
+  --spruce-form-color-range-background: #f7fafc;
+  --spruce-form-color-range-border: #cbd3dc;
   --spruce-form-color-background: white;
   --spruce-form-color-background-disabled: #f2f2f2;
   --spruce-form-color-border-disabled: #e6e6e6;
@@ -2966,6 +2968,50 @@ select option[disabled]:first-child {
   font-size: 0.8375rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.form-range {
+  width: 100%;
+}
+
+.form-range-display {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+  position: relative;
+}
+.form-range-display::before {
+  border-bottom: 1px dashed var(--spruce-form-color-border);
+  content: "";
+  height: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 1;
+}
+.form-range-display__item {
+  color: var(--spruce-base-color-text);
+  position: relative;
+  z-index: 10;
+}
+.form-range-display__item.is-min, .form-range-display__item.is-max {
+  background-color: var(--spruce-base-color-background);
+}
+.form-range-display__item.is-min {
+  padding-right: 0.25rem;
+}
+.form-range-display__item.is-max {
+  padding-left: 0.25rem;
+}
+.form-range-display__item.is-current {
+  background-color: var(--spruce-form-color-range-background);
+  border: 1px solid var(--spruce-form-color-range-border);
+  border-radius: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
 }
 
 .table a {
