@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" :class="class" :style="style">
         <div ref="input" class="editor" spellcheck="false"></div>
-        <Media ref="media"></Media>
+        <Media ref="media" :url="media_url" :title="__('Media')"></Media>
     </div>
 </template>
 
@@ -15,9 +15,21 @@
         },
 
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: String,
                 default: '',
+            },
+            media_url: {
+                type: String,
+                required: true,
             },
         },
 

@@ -5,6 +5,13 @@ namespace Cone\Root\Fields;
 class Range extends Field
 {
     /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'Range';
+
+    /**
      * Create a new field instance.
      *
      * @param  string  $label

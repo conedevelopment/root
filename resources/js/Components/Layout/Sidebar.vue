@@ -20,7 +20,7 @@
                     v-for="resource in $app.resources"
                     class="navigation-item"
                     :key="resource.key"
-                    :class="{ 'is-open': false }"
+                    :class="{ 'is-open': isActive(resource.urls.index) }"
                 >
                     <Link :href="resource.urls.index" class="navigation-item__link">
                         <Icon class="navigation-item__icon" :name="resource.icon"></Icon>
@@ -53,6 +53,12 @@
 
         mounted() {
             this.$inertia.on('success', this.close);
+        },
+
+        methods: {
+            isActive(url) {
+                return this.$page.props.url.startsWith(url);
+            },
         },
     }
 </script>

@@ -7,6 +7,7 @@ import Editor from './Editor';
 import Input from './Input';
 import Media from './Media';
 import Radio from './Radio';
+import Range from './Range';
 import Select from './Select';
 import Textarea from './Textarea';
 
@@ -22,6 +23,7 @@ export default {
         Input,
         Media,
         Radio,
+        Range,
         Select,
         Textarea,
     },

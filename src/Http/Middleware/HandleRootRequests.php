@@ -24,12 +24,13 @@ class HandleRootRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'csrf_token' => static function () use ($request): string {
-                return $request->session()->token();
-            },
             'alerts' => static function () use ($request): array {
                 return Arr::wrap($request->session()->get('alerts'));
             },
+            'csrf_token' => static function () use ($request): string {
+                return $request->session()->token();
+            },
+            'url' => $request->fullUrl(),
         ]);
     }
 }

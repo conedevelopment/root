@@ -7,7 +7,7 @@
             :aria-label="title"
             :class="{ 'hidden': ! isOpen }"
         >
-            <h2 class="modal__title">{{ __('Media') }}</h2>
+            <h2 class="modal__title">{{ title }}</h2>
             <div
                 class="modal__inner"
                 :class="{ 'has-active-dropzone': dragging }"
@@ -34,7 +34,7 @@
                             ></Item>
                         </div>
                         <div v-show="selection.length" class="media-item-list__sidebar">
-                            <Sidebar></Sidebar>
+                            <Sidebar :items="selection"></Sidebar>
                         </div>
                     </div>
                     <div v-else class="alert alert--info" role="alert">
@@ -79,6 +79,12 @@
             url: {
                 type: String,
                 required: true,
+            },
+            title: {
+                type: String,
+                default: function () {
+                    return this.__('Media');
+                },
             },
         },
 
