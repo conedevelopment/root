@@ -7,8 +7,12 @@
         </div>
         <nav class="navigation app-sidebar__navigation" :aria-label="__('Site')">
             <ul>
-                <li class="navigation-item">
-                    <Link class="navigation-item__link" :href="$app.config.url">
+                <li class="navigation-item" :class="{ 'is-open': $app.config.url === $page.props.url }">
+                    <Link
+                        class="navigation-item__link"
+                        :href="$app.config.url"
+                        :class="{ 'is-active': $app.config.url === $page.props.url }"
+                    >
                         <Icon class="navigation-item__icon" name="dashboard"></Icon>
                         <span class="navigation-item__caption">{{ __('Dashboard') }}</span>
                     </Link>
@@ -19,10 +23,14 @@
                 <li
                     v-for="resource in $app.resources"
                     class="navigation-item"
-                    :key="resource.key"
                     :class="{ 'is-open': isActive(resource.urls.index) }"
+                    :key="resource.key"
                 >
-                    <Link :href="resource.urls.index" class="navigation-item__link">
+                    <Link
+                        class="navigation-item__link"
+                        :href="resource.urls.index"
+                        :class="{ 'is-active': isActive(resource.urls.index) }"
+                    >
                         <Icon class="navigation-item__icon" :name="resource.icon"></Icon>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
