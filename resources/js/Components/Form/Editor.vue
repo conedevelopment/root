@@ -1,5 +1,6 @@
 <template>
     <div class="form-group" :class="class" :style="style">
+        <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <div ref="input" class="editor" spellcheck="false"></div>
         <Media ref="media" :url="media_url" :title="__('Media')"></Media>
     </div>
@@ -28,6 +29,10 @@
                 default: '',
             },
             media_url: {
+                type: String,
+                required: true,
+            },
+            label: {
                 type: String,
                 required: true,
             },
