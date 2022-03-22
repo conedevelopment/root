@@ -16,27 +16,41 @@ class Number extends Field
         parent::__construct($label, $name);
 
         $this->type('number');
+        $this->step(1);
+        $this->min(0);
+        $this->max(100);
     }
 
     /**
-     * Set the min attribute.
+     * Set the "min" attribute.
      *
      * @param  int  $value
      * @return $this
      */
-    public function min(int $value): static
+    public function min(int|float $value): static
     {
         return $this->setAttribute('min', $value);
     }
 
     /**
-     * Set the max attribute.
+     * Set the "max" attribute.
      *
      * @param  int  $value
      * @return $this
      */
-    public function max(int $value): static
+    public function max(int|float $value): static
     {
         return $this->setAttribute('max', $value);
+    }
+
+    /**
+     * Set the "step" attribute.
+     *
+     * @param  int|float  $value
+     * @return $this
+     */
+    public function step(int|float $value): static
+    {
+        return $this->setAttribute('step', $value);
     }
 }

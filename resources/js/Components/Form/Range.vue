@@ -2,6 +2,7 @@
     <div class="form-group form-group--range" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">{{ label }}</label>
         <input
+            ref="input"
             class="form-range"
             v-bind="$attrs"
             :class="{ 'form-control--invalid': error !== null }"
@@ -10,13 +11,13 @@
         >
         <div class="form-range-display">
             <span class="form-range-display__item is-min">
-                0
+                {{ $attrs.min }}
             </span>
             <span class="form-range-display__item is-current">
-                50
+                {{ modelValue || '-' }}
             </span>
             <span class="form-range-display__item is-max">
-                100
+                {{ $attrs.max }}
             </span>
         </div>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>

@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Fields;
 
-class Range extends Field
+class Range extends Number
 {
     /**
      * The Vue compoent.
