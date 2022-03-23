@@ -6,6 +6,7 @@ use Cone\Root\Models\Medium;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\File as Stream;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
@@ -34,6 +35,13 @@ class MoveFile implements ShouldQueue
     public string $path;
 
     /**
+     * Indicates if the original file should be preserved.
+     *
+     * @var bool
+     */
+    public bool $preserve = true;
+
+    /**
      * Delete the job if its models no longer exist.
      *
      * @var bool
@@ -45,12 +53,14 @@ class MoveFile implements ShouldQueue
      *
      * @param  \Cone\Root\Models\Medium  $medium
      * @param  string  $path
+     * @param  bool  $preserve
      * @return void
      */
-    public function __construct(Medium $medium, string $path)
+    public function __construct(Medium $medium, string $path, bool $preserve = true)
     {
         $this->path = $path;
         $this->medium = $medium;
+        $this->preserve = $preserve;
     }
 
     /**
@@ -60,13 +70,17 @@ class MoveFile implements ShouldQueue
      */
     public function handle(): void
     {
-        Storage::disk($this->medium->disk)->makeDirectory(
-            dirname($this->medium->getPath())
+        $directory = dirname($this->medium->getPath());
+
+        Storage::disk($this->medium->disk)->makeDirectory($directory);
+
+        Storage::disk($this->medium->disk)->putFileAs(
+            $directory, new Stream($this->path), basename($this->medium->getPath())
         );
 
-        Storage::disk($this->medium->disk)->move(
-            $this->path, $this->medium->getPath()
-        );
+        if (! $this->preserve && ! filter_var($this->path, FILTER_VALIDATE_URL)) {
+            File::delete($this->path);
+        }
     }
 
     /**
@@ -78,8 +92,6 @@ class MoveFile implements ShouldQueue
     public function failed(Throwable $exception): void
     {
         $this->medium->delete();
-
-        File::delete($this->path);
     }
 }
 

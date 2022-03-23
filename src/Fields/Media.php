@@ -4,6 +4,7 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\MediaController;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
@@ -90,10 +91,10 @@ class Media extends MorphToMany
     /**
      * Map the items.
      *
-     * @param \Cone\Root\Http\Requests\RootRequest  $request
+     * @param \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    public function mapItems(RootRequest $request): array
+    public function mapItems(ResourceRequest $request): array
     {
         $model = $request->resource()->getModelInstance();
 

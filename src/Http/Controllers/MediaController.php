@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Illuminate\Http\JsonResponse;
@@ -14,10 +14,10 @@ class MediaController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(RootRequest $request): JsonResponse
+    public function index(ResourceRequest $request): JsonResponse
     {
         $field = $request->resolved();
 
@@ -27,10 +27,10 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(RootRequest $request): JsonResponse
+    public function store(ResourceRequest $request): JsonResponse
     {
         $field = $request->resolved();
 
@@ -47,7 +47,7 @@ class MediaController extends Controller
         $medium = $field->store($request, $path);
 
         MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
-                ->dispatch($medium, $path);
+                ->dispatch($medium, $path, false);
 
         return new JsonResponse($medium, JsonResponse::HTTP_CREATED);
     }
@@ -55,10 +55,10 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(RootRequest $request): JsonResponse
+    public function destroy(ResourceRequest $request): JsonResponse
     {
         // $medium->delete();
 
