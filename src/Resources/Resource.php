@@ -485,10 +485,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function mapUrls(Request $request): array
     {
-        return [
-            'create' => URL::route("root.{$this->getKey()}.create"),
-            'index' => URL::route("root.{$this->getKey()}.index"),
-        ];
+        $actions = array_fill_keys(['create', 'index'], null);
+
+        foreach ($actions as $action => $value) {
+            $actions[$action] = URL::route(sprintf('root.%s.%s', $this->getKey(), $action));
+        }
+
+        return $actions;
     }
 
     /**
