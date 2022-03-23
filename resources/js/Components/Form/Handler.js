@@ -9,6 +9,7 @@ import Media from './Media';
 import Radio from './Radio';
 import Range from './Range';
 import Select from './Select';
+import Tag from './Tag';
 import Textarea from './Textarea';
 
 export default {
@@ -25,6 +26,7 @@ export default {
         Radio,
         Range,
         Select,
+        Tag,
         Textarea,
     },
 
