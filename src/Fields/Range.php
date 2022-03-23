@@ -23,5 +23,8 @@ class Range extends Number
         parent::__construct($label, $name);
 
         $this->type('range');
+        $this->step(1);
+        $this->min(0);
+        $this->max(100);
     }
 }

@@ -16,9 +16,6 @@ class Number extends Field
         parent::__construct($label, $name);
 
         $this->type('number');
-        $this->step(1);
-        $this->min(0);
-        $this->max(100);
     }
 
     /**
