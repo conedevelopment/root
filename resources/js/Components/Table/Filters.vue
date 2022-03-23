@@ -30,6 +30,11 @@
                     :label="filter.name"
                     @update:modelValue="emit"
                 ></FormHandler>
+                <div class="form-group">
+                    <button type="button" class="btn btn--icon btn--tertiary" :aria-label="__('Reset')" @click="reset">
+                        {{ __('Reset') }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -54,15 +59,18 @@
 
         emits: ['update:query'],
 
+        computed: {
+            activeFilters() {
+                return this.filters.filter((filter) => filter.active).length;
+            },
+        },
+
         methods: {
             emit() {
                 this.$emit('update:query');
             },
-        },
-
-        computed: {
-            activeFilters() {
-                return this.filters.filter((filter) => filter.active).length;
+            reset() {
+                this.$inertia.get(this.$parent.items.path);
             },
         },
     }
