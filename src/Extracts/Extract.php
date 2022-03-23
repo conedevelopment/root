@@ -230,19 +230,6 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Map the URLs.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function mapUrls(Request $request): array
-    {
-        return [
-            'index' => URL::to(str_replace("/extracts/{$this->getKey()}", '', $this->getUri())),
-        ];
-    }
-
-    /**
      * Map the items.
      *
      * @param \Illuminate\Http\Request  $request
@@ -325,7 +312,6 @@ abstract class Extract implements Arrayable
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request),
             'items' => $this->mapItems($request),
-            'urls' => $this->mapUrls($request),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }

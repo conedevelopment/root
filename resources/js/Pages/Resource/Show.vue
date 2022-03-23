@@ -12,12 +12,17 @@
                     type="button"
                     class="btn btn--icon btn--delete"
                     v-if="model.abilities.delete"
-                    @click="destroy(url)"
+                    @click="destroy"
                     :aria-label="__('Delete')"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
-                <Link v-if="model.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--primary" :aria-label="__('Edit')">
+                <Link
+                    v-if="model.abilities.update"
+                    class="btn btn--icon btn--primary"
+                    :href="model.urls.edit"
+                    :aria-label="__('Edit')"
+                >
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>
@@ -57,15 +62,9 @@
             return h(this.resolveDefaultLayout(), () => page);
         },
 
-        computed: {
-            url() {
-                return window.location.pathname;
-            },
-        },
-
         methods: {
-            destroy(url) {
-                this.$inertia.delete(url, {
+            destroy() {
+                this.$inertia.delete(this.model.urls.destroy, {
                     onBefore: () => confirm(this.__('Are you sure?')),
                 });
             },

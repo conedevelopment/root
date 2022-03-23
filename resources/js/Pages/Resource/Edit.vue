@@ -27,10 +27,6 @@
 
     export default {
         props: {
-            urls: {
-                type: Object,
-                required: true,
-            },
             model: {
                 type: Object,
                 required: true,
@@ -50,7 +46,12 @@
         methods: {
             submit() {
                 this.form.clearErrors();
-                this.form.patch(`${this.urls.index}/${this.model.id}`);
+                this.form.patch(this.model.urls.update);
+            },
+            destroy() {
+                this.$inertia.delete(this.model.urls.destroy, {
+                    onBefore: () => confirm(this.__('Are you sure?')),
+                });
             },
         },
     }

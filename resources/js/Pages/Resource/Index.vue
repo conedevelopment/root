@@ -3,8 +3,8 @@
         <div class="app-widget">
             <Widget
                 v-for="widget in widgets"
-                :key="widget.key"
                 v-bind="widget"
+                :key="widget.key"
             ></Widget>
         </div>
         <Table
@@ -12,7 +12,6 @@
             :extracts="extracts"
             :filters="filters"
             :items="items"
-            :urls="urls"
         ></Table>
     </div>
 </template>
@@ -29,10 +28,6 @@
 
         props: {
             items: {
-                type: Object,
-                required: true,
-            },
-            urls: {
                 type: Object,
                 required: true,
             },

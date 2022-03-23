@@ -2,23 +2,23 @@
 
 namespace Cone\Root\Traits;
 
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 
 trait InteractsWithResource
 {
     /**
      * Map the abilities for the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    public function mapAbilities(Request $request): array
+    public function mapAbilities(ResourceRequest $request): array
     {
-        $policy = Gate::getPolicyFor(static::class);
+        $policy = $request->resource()->getPolicy();
 
         return array_reduce(
             ['view', 'update', 'delete', 'restore', 'forceDelete'],
@@ -32,30 +32,50 @@ trait InteractsWithResource
     }
 
     /**
+     * Map the URL for the model.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return array
+     */
+    public function mapUrls(ResourceRequest $request): array
+    {
+        $key = $request->resource()->getKey();
+
+        $actions = array_fill_keys(['show', 'update', 'edit', 'destroy'], null);
+
+        foreach ($actions as $action => $value) {
+            $actions[$action] = URL::route(sprintf('root.%s.%s', $key, $action), $this);
+        }
+
+        return $actions;
+    }
+
+    /**
      * Get the resource display representation of the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toDisplay(Request $request, Fields $fields): array
+    public function toDisplay(ResourceRequest $request, Fields $fields): array
     {
         return [
             'abilities' => $this->mapAbilities($request),
             'fields' => $fields->mapToDisplay($request, $this)->toArray(),
             'id' => $this->getKey(),
             'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this)) && $this->trashed(),
+            'urls' => $this->mapUrls($request),
         ];
     }
 
     /**
      * Get the resource form representation of the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return array
      */
-    public function toForm(Request $request, Fields $fields): array
+    public function toForm(ResourceRequest $request, Fields $fields): array
     {
         $fields = $fields->mapToForm($request, $this)->toArray();
 
@@ -64,6 +84,7 @@ trait InteractsWithResource
             'data' => array_column($fields, 'value', 'name'),
             'fields' => $fields,
             'id' => $this->getKey(),
+            'urls' => $this->mapUrls($request),
         ];
     }
 

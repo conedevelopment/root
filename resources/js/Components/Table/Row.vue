@@ -17,15 +17,15 @@
                     type="button"
                     class="btn btn--icon btn--delete btn--sm"
                     v-if="item.abilities.delete"
-                    @click="destroy(url)"
                     :aria-label="__('Delete')"
+                    @click="destroy"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
-                <Link v-if="item.abilities.view" :href="url" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('View')">
+                <Link v-if="item.abilities.view" :href="item.urls.show" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('View')">
                     <Icon class="btn__icon" name="view"></Icon>
                 </Link>
-                <Link v-if="item.abilities.update" :href="`${url}/edit`" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('Edit')">
+                <Link v-if="item.abilities.update" :href="item.urls.edit" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('Edit')">
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>
@@ -57,14 +57,11 @@
                     value ? this.$parent.select(this.item) : this.$parent.deselect(this.item);
                 },
             },
-            url() {
-                return `${this.$parent.urls.index}/${this.item.id}`;
-            },
         },
 
         methods: {
-            destroy(url) {
-                this.$inertia.delete(url, {
+            destroy() {
+                this.$inertia.delete(this.item.urls.destroy, {
                     onBefore: () => confirm(this.__('Are you sure?')),
                     onStart: (visit) => this.$parent.deselect(this.item),
                 });

@@ -4,7 +4,7 @@ namespace Cone\Root\Http\Requests;
 
 use Cone\Root\Actions\Action;
 
-class ActionRequest extends RootRequest
+class ActionRequest extends ResourceRequest
 {
     /**
      * Get the action bound to the request.

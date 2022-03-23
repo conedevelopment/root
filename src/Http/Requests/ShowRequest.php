@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Http\Requests;
 
-class ShowRequest extends RootRequest
+class ShowRequest extends ResourceRequest
 {
     //
 }

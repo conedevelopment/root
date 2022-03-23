@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Http\Requests;
 
-class UpdateRequest extends RootRequest
+class UpdateRequest extends ResourceRequest
 {
     //
 }

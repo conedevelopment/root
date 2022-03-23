@@ -77,10 +77,6 @@
                 type: Object,
                 required: true,
             },
-            urls: {
-                type: Object,
-                required: true,
-            },
         },
 
         data() {

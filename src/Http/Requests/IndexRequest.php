@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Http\Requests;
 
-class IndexRequest extends RootRequest
+class IndexRequest extends ResourceRequest
 {
     //
 }
