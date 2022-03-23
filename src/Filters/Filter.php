@@ -92,6 +92,17 @@ abstract class Filter implements Arrayable
     }
 
     /**
+     * Determine if the filter is active.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public function active(Request $request): bool
+    {
+        return ! empty($request->query($this->getKey()));
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -99,6 +110,7 @@ abstract class Filter implements Arrayable
     public function toArray(): array
     {
         return [
+            'active' => App::call([$this, 'active']),
             'component' => $this->getComponent(),
             'default' => App::call([$this, 'default']),
             'key' => $this->getKey(),

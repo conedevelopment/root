@@ -3,7 +3,7 @@
         <div
             role="dialog"
             aria-modal="true"
-            class="modal"
+            class="modal modal--media"
             :aria-label="title"
             :class="{ 'hidden': ! isOpen }"
         >

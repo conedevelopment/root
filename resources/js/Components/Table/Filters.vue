@@ -10,7 +10,7 @@
                 class="btn__icon btn__icon--start"
                 :name="isOpen ? 'filter-list-off' : 'filter-list'"
             ></Icon>
-            <span class="btn__counter">3</span>
+            <span v-if="activeFilters > 0" class="btn__counter">{{ activeFilters }}</span>
         </button>
         <div class="app-filter" v-show="isOpen">
             <h2 class="app-filter__title">
@@ -57,6 +57,12 @@
         methods: {
             emit() {
                 this.$emit('update:query');
+            },
+        },
+
+        computed: {
+            activeFilters() {
+                return this.filters.filter((filter) => filter.active).length;
             },
         },
     }
