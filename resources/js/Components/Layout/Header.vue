@@ -1,7 +1,7 @@
 <template>
     <header class="app-header">
         <div class="app-header__heading">
-            <h1 class="app-header__title">Posts</h1>
+            <h1 class="app-header__title">{{ title }}</h1>
         </div>
         <div class="app-header__actions">
             <button type="button" class="btn btn--primary btn--open-search">
@@ -14,6 +14,11 @@
 
 <script>
     export default {
-        //
+        props: {
+            title: {
+                type: String,
+                required: true,
+            },
+        },
     }
 </script>

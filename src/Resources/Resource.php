@@ -605,6 +605,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->toArray(),
             'items' => $this->mapItems($request),
+            'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }
@@ -621,6 +622,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
         return array_merge($this->toArray(), [
             'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
+            'title' => __('Create :model', ['model' => $this->getModelName()]),
         ]);
     }
 
@@ -636,6 +638,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
             'model' => $model->toDisplay($request, $this->resolveFields($request)->available($request, $model)),
+            'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ]);
     }
 
@@ -650,6 +653,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         return array_merge($this->toArray(), [
             'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
+            'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ]);
     }
 

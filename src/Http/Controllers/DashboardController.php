@@ -19,6 +19,7 @@ class DashboardController extends Controller
     public function __invoke(RootRequest $request): Response
     {
         return Inertia::render('Dashboard', [
+            'title' => __('Dashboard'),
             'widgets'=> App::make('root.widgets')->available($request)->toArray(),
         ]);
     }

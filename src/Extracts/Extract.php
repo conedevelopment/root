@@ -312,6 +312,7 @@ abstract class Extract implements Arrayable
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request),
             'items' => $this->mapItems($request),
+            'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }

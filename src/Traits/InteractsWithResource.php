@@ -39,6 +39,10 @@ trait InteractsWithResource
      */
     public function mapUrls(ResourceRequest $request): array
     {
+        if (! $this->exists) {
+            return [];
+        }
+
         $key = $request->resource()->getKey();
 
         $actions = array_fill_keys(['show', 'update', 'edit', 'destroy'], null);

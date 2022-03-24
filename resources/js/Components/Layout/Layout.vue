@@ -4,7 +4,7 @@
         <main class="app-body">
             <Nav></Nav>
             <div class="app-body__inner">
-                <Header></Header>
+                <Header :title="title"></Header>
                 <div v-if="alerts.length > 0" class="app-alert">
                     <Alert v-for="(alert, index) in alerts" :key="index" v-bind="alert"></Alert>
                 </div>
@@ -37,6 +37,9 @@
             },
             alerts() {
                 return this.$page.props.alerts;
+            },
+            title() {
+                return this.$page.props.title || this.__('Dashboard');
             },
         },
     }
