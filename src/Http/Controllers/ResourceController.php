@@ -164,7 +164,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::route(sprintf('root.%s.%s.edit', $resource->getKey(), $model->getKey()))
+        return Redirect::route(sprintf('root.%s.edit', $resource->getKey()), $model->getKey())
                     ->with('alerts.resource-updated', Alert::info(__('The resource has been updated!')));
     }
 

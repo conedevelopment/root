@@ -1,20 +1,14 @@
 <template>
-    <form @submit.prevent="submit" @reset.prevent="form.reset">
-        <div class="form-group-stack">
-            <FormHandler
-                v-for="field in model.fields"
-                v-bind="field"
-                v-model="form[field.name]"
-                :form="form"
-                :key="field.name"
-                :name="field.name"
-            ></FormHandler>
-
-            <button type="submit" class="btn btn--primary" :disabled="form.processing">
-                {{ __('Save') }}
-            </button>
-        </div>
-    </form>
+    <div>
+        <FormHandler
+            v-for="field in model.fields"
+            v-bind="field"
+            v-model="$parent.form[field.name]"
+            :form="$parent.form"
+            :key="field.name"
+            :name="field.name"
+        ></FormHandler>
+    </div>
 </template>
 
 <script>
@@ -33,23 +27,10 @@
         },
 
         layout: function (h, page) {
-            return h(this.resolveDefaultLayout(), () => h(Form, () => page));
-        },
-
-        data() {
-            return {
-                form: this.$inertia.form(window.location.pathname, Object.assign({}, this.model.data)),
-            };
-        },
-
-        methods: {
-            submit() {
-                this.form.post(this.urls.index, {
-                    onStart: () => {
-                        this.form.clearErrors();
-                    },
-                });
-            },
+            return h(this.resolveDefaultLayout(), () => h(Form, {
+                model: page.props.model,
+                url: page.props.urls.index,
+            }, () => page));
         },
     }
 </script>
