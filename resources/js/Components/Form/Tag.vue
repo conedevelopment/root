@@ -4,7 +4,7 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <div class="form-control" :class="{ 'form-control--invalid': error !== null }" @click.self="$refs.input.focus">
+        <div class="form-control tag-control" :class="{ 'form-control--invalid': error !== null }" @click.self="$refs.input.focus">
             <span v-for="(item, index) in modelValue" class="tag" :key="index">
                 <span class="tag__label">{{ item }}</span>
                 <button type="button" class="tag__remove" @click="remove(index)">

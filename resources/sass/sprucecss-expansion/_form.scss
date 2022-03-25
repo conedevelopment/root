@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '~sprucecss/scss/spruce';
 
 .form-group-stack {
@@ -139,5 +140,57 @@ select {
 .form-label {
     &__required-marker {
         color: spruce.color(danger, alert);
+    }
+}
+
+.tag-control {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spruce.spacer(xs);
+
+    input {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        flex-grow: 1;
+        height: 1.4rem;
+    }
+}
+
+.tag {
+    align-items: stretch;
+    background-color: spruce.color(primary);
+    border-radius: spruce.$form-control-border-radius;
+    display: inline-flex;
+    font-size: spruce.$font-size-sm;
+
+    &__label {
+        color: #fff;
+        display: inline-block;
+        font-weight: 500;
+        margin: 0;
+        padding: 0.15em 0.45em;
+    }
+
+    &__remove {
+        align-items: center;
+        background-color: color.adjust(spruce.color(primary, $only-color: true), $lightness: -10%);
+        border: 0;
+        border-radius: 0 spruce.$form-control-border-radius spruce.$form-control-border-radius 0;
+        color: hsl(0 0% 100%);
+        cursor: pointer;
+        display: flex;
+        padding: 0 0.5em;
+        transition: background-color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+
+        &:hover {
+            background-color: color.adjust(spruce.color(primary, $only-color: true), $lightness: -15%);
+        }
+
+        svg {
+            height: 0.75em;
+            width: 0.75em;
+        }
     }
 }

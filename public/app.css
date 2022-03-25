@@ -3085,6 +3085,53 @@ select option[disabled]:first-child {
   color: var(--spruce-alert-color-danger);
 }
 
+.tag-control {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.tag-control input {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  flex-grow: 1;
+  height: 1.4rem;
+}
+
+.tag {
+  align-items: stretch;
+  background-color: var(--spruce-base-color-primary);
+  border-radius: 0.25rem;
+  display: inline-flex;
+  font-size: 0.8375rem;
+}
+.tag__label {
+  color: #fff;
+  display: inline-block;
+  font-weight: 500;
+  margin: 0;
+  padding: 0.15em 0.45em;
+}
+.tag__remove {
+  align-items: center;
+  background-color: #0256c5;
+  border: 0;
+  border-radius: 0 0.25rem 0.25rem 0;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  padding: 0 0.5em;
+  transition: background-color var(--spruce-transition-duration) var(--spruce-transition-timing-function);
+}
+.tag__remove:hover {
+  background-color: #024bac;
+}
+.tag__remove svg {
+  height: 0.75em;
+  width: 0.75em;
+}
+
 .table a {
   text-decoration: none;
 }
