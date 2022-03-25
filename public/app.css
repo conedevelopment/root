@@ -3072,6 +3072,10 @@ select option[disabled]:first-child {
   padding: 0.25rem 0.5rem;
 }
 
+.form-label__required-marker {
+  color: var(--spruce-alert-color-danger);
+}
+
 .table a {
   text-decoration: none;
 }

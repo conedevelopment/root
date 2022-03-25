@@ -129,3 +129,9 @@ select {
         }
     }
 }
+
+.form-label {
+    &__required-marker {
+        color: spruce.color(danger, alert);
+    }
+}
