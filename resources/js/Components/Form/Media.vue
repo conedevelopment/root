@@ -1,6 +1,9 @@
 <template>
     <div class="form-group" :class="class" :style="style">
-        <label :for="$attrs.id">{{ label }}</label>
+        <label class="form-label" :for="$attrs.id">
+            <span>{{ label }}</span>
+            <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+        </label>
         <span v-if="error">{{ error }}</span>
     </div>
 </template>

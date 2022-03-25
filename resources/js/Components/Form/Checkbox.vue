@@ -1,6 +1,9 @@
 <template>
     <div class="form-group form-group--vertical-check" :class="class" :style="style">
-        <label class="form-label" :for="id">{{ label }}</label>
+        <label class="form-label" :for="id">
+            <span>{{ label }}</span>
+            <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+        </label>
         <label v-for="option in options" class="form-check" :key="option.value">
             <input
                 v-bind="$attrs"

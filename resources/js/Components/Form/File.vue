@@ -1,5 +1,10 @@
 <template>
-    <div class="form-group" :class="class" :style="style"></div>
+    <div class="form-group" :class="class" :style="style">
+        <label class="form-label" :for="$attrs.id">
+            <span>{{ label }}</span>
+            <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+        </label>
+    </div>
 </template>
 
 <script>
@@ -12,6 +17,10 @@
             style: {
                 type: [String, Array, Object],
                 default: null,
+            },
+            label: {
+                type: String,
+                required: true,
             },
         },
     }

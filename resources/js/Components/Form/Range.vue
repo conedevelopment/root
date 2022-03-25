@@ -1,6 +1,9 @@
 <template>
     <div class="form-group form-group--range" :class="class" :style="style">
-        <label class="form-label" :for="$attrs.id">{{ label }}</label>
+        <label class="form-label" :for="$attrs.id">
+            <span>{{ label }}</span>
+            <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+        </label>
         <input
             ref="input"
             class="form-range"

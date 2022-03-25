@@ -1,6 +1,9 @@
 <template>
     <div class="form-group" :class="class" :style="style">
-        <label class="form-label" :for="$attrs.id">{{ label }}</label>
+        <label class="form-label" :for="$attrs.id">
+            <span>{{ label }}</span>
+            <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+        </label>
         <div ref="input" class="editor" spellcheck="false"></div>
         <Media ref="media" :url="media_url" :title="__('Media')"></Media>
     </div>
