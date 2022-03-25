@@ -25,6 +25,13 @@
     padding: spruce.spacer(m);
     width: 30rem;
 
+    &--media {
+        inset: spruce.spacer(m);
+        max-width: 100%;
+        position: fixed;
+        width: auto;
+    }
+
     &__title {
         color: spruce.color(secondary);
         font-size: spruce.font-size(h4);
