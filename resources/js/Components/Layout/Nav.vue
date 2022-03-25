@@ -10,7 +10,7 @@
                     class="btn btn--secondary btn--icon"
                     @click="toggleSidebar"
                 >
-                    <Icon class="btn__icon btn__icon--start" name="menu-open"></Icon>
+                    <Icon class="btn__icon btn__icon--start" name="menu"></Icon>
                 </button>
                 <UserMenu></UserMenu>
             </div>

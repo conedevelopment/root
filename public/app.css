@@ -2320,6 +2320,9 @@ legend {
     display: block !important;
   }
 }
+.app-sidebar--open {
+  display: block !important;
+}
 .app-sidebar__header {
   align-items: center;
   display: flex;
@@ -3089,6 +3092,10 @@ select option[disabled]:first-child {
   background-color: var(--spruce-base-color-primary);
   color: #fff;
 }
+.table th,
+.table td {
+  border-bottom: none;
+}
 .table th:first-child,
 .table td:first-child {
   border-start-start-radius: 0.5rem;
@@ -3102,10 +3109,6 @@ select option[disabled]:first-child {
 .table td {
   color: var(--spruce-base-color-text);
 }
-.table th,
-.table td {
-  border-bottom: none;
-}
 .table .select-row-wrapper {
   display: flex;
 }
@@ -3118,6 +3121,7 @@ select option[disabled]:first-child {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  min-width: 6.5rem;
 }
 .table .th-helper {
   align-items: center;
