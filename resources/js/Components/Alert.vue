@@ -24,6 +24,8 @@
             },
         },
 
+        inheritAttrs: false,
+
         data() {
             return {
                 isOpen: true,

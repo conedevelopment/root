@@ -9,7 +9,13 @@
                             <button type="submit" class="btn btn--primary" :disabled="form.processing">
                                 {{ __('Save') }}
                             </button>
-                            <button v-if="exists" type="button" class="btn btn--delete" :disabled="form.processing">
+                            <button
+                                v-if="exists"
+                                type="button"
+                                class="btn btn--delete"
+                                :disabled="form.processing"
+                                @click="destroy"
+                            >
                                 {{ __('Delete') }}
                             </button>
                         </div>
@@ -53,6 +59,9 @@
                 this.form.submit(this.method, this.url, {
                     onStart: () => {
                         this.form.clearErrors();
+                    },
+                    onFinish: () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     },
                 });
             },

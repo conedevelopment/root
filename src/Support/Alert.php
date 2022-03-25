@@ -28,6 +28,13 @@ class Alert implements Arrayable, Jsonable, Stringable
     protected string $type;
 
     /**
+     * The alert timestamp.
+     *
+     * @var string
+     */
+    protected string $timestamp;
+
+    /**
      * Create a new alert instance.
      *
      * @param  string  $message
@@ -38,6 +45,7 @@ class Alert implements Arrayable, Jsonable, Stringable
     {
         $this->message = $message;
         $this->type = $type;
+        $this->timestamp = date(DATE_ATOM);
     }
 
     /**
@@ -93,6 +101,7 @@ class Alert implements Arrayable, Jsonable, Stringable
     {
         return [
             'message' => $this->message,
+            'timestamp' => $this->timestamp,
             'type' => $this->type,
         ];
     }
