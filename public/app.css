@@ -2980,6 +2980,12 @@ legend {
   -webkit-margin-before: 0;
           margin-block-start: 0;
 }
+.form-group--reset {
+  display: flex;
+  justify-content: end;
+  -webkit-margin-before: 1rem;
+          margin-block-start: 1rem;
+}
 
 .form-row--accordion .accordion-wrapper {
   -webkit-margin-before: 1rem;

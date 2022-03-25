@@ -30,8 +30,8 @@
                     :label="filter.name"
                     @update:modelValue="emit"
                 ></FormHandler>
-                <div class="form-group">
-                    <button type="button" class="btn btn--icon btn--tertiary" :aria-label="__('Reset')" @click="reset">
+                <div class="form-group--reset">
+                    <button type="button" class="btn btn--sm btn--icon btn--tertiary" :aria-label="__('Reset')" @click="reset">
                         {{ __('Reset') }}
                     </button>
                 </div>

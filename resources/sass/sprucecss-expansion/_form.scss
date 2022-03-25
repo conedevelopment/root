@@ -24,6 +24,12 @@
             margin-block-start: 0;
         }
     }
+
+    &--reset {
+        display: flex;
+        justify-content: end;
+        margin-block-start: spruce.spacer(s);
+    }
 }
 
 .form-row {
