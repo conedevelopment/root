@@ -15,8 +15,8 @@
                 ref="input"
                 type="text"
                 style="width: 150px;"
-                v-model="tag"
                 v-bind="$attrs"
+                v-model="tag"
                 @blur="add"
                 @keydown.enter.prevent="add"
                 @keydown.backspace="removeLast"
@@ -52,6 +52,10 @@
             error: {
                 type: String,
                 default: null,
+            },
+            value: {
+                type: Array,
+                default: () => [],
             },
         },
 
