@@ -11,7 +11,7 @@
                 <div class="th-helper">
                     {{ column.label }}
                     <button v-if="column.sortable" type="button" @click="sort(column.name)" class="table-sort-btn">
-                        <Icon name="unfold-more"></Icon>
+                        <Icon :name="icon(column.name)"></Icon>
                     </button>
                 </div>
             </th>
@@ -71,8 +71,15 @@
         },
 
         methods: {
-            sort(by) {
-                this.query.sort.by = by;
+            icon(name) {
+                if (this.query.sort.by !== name) {
+                    return 'unfold-more';
+                }
+
+                return this.query.sort.order === 'desc' ? 'unfold-more-top' : 'unfold-more-bottom';
+            },
+            sort(name) {
+                this.query.sort.by = name;
                 this.query.sort.order = this.query.sort.order === 'desc' ? 'asc' : 'desc';
 
                 this.$emit('update:query');

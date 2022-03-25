@@ -1,14 +1,12 @@
 <template>
-    <div>
-        <FormHandler
-            v-for="field in model.fields"
-            v-bind="field"
-            v-model="$parent.form[field.name]"
-            :form="$parent.form"
-            :key="field.name"
-            :name="field.name"
-        ></FormHandler>
-    </div>
+    <FormHandler
+        v-for="field in model.fields"
+        v-bind="field"
+        v-model="$parent.form[field.name]"
+        :form="$parent.form"
+        :key="field.name"
+        :name="field.name"
+    ></FormHandler>
 </template>
 
 <script>
