@@ -10,7 +10,7 @@
                 </svg>
             </button>
         </h2>
-        <div class="accordion__content">
+        <div class="accordion__content" :class="{ hidden: ! isOpen }">
             <slot></slot>
         </div>
     </div>
