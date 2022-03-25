@@ -4,14 +4,24 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <input
-            class="form-control"
-            v-bind="$attrs"
-            :class="{ 'form-control--invalid': error !== null }"
-            @blur="add"
-            @keydown.enter="add"
-            @keydown.backspace="removeLast"
-        >
+        <div class="form-control" :class="{ 'form-control--invalid': error !== null }" @click.self="$refs.input.focus">
+            <span v-for="(item, index) in modelValue" class="tag" :key="index">
+                <span class="tag__label">{{ item }}</span>
+                <button type="button" class="tag__remove" @click="remove(index)">
+                    <Icon name="close"></Icon>
+                </button>
+            </span>
+            <input
+                ref="input"
+                type="text"
+                style="width: 150px;"
+                v-model="tag"
+                v-bind="$attrs"
+                @blur="add"
+                @keydown.enter.prevent="add"
+                @keydown.backspace="removeLast"
+            >
+        </div>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
@@ -57,9 +67,9 @@
 
         methods: {
             add() {
-                if (this.tag && ! this.modelValue.includes(this.tag)) {
-                    const value = Array.from(this.modelValue);
+                const value = Array.from(this.modelValue || []);
 
+                if (this.tag && ! value.includes(this.tag)) {
                     value.push(this.tag);
 
                     this.$emit('update:modelValue', value);
@@ -68,14 +78,14 @@
                 }
             },
             remove(index) {
-                const value = Array.from(this.modelValue);
+                const value = Array.from(this.modelValue || []);
 
                 value.splice(index, 1);
 
                 this.$emit('update:modelValue', value);
             },
             removeLast() {
-                if (! this.tag) {
+                if (Array.isArray(this.modelValue) && ! this.tag) {
                     this.remove(this.modelValue.length - 1);
                 }
             },
