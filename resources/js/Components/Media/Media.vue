@@ -26,7 +26,12 @@
                         :class="{ 'is-sidebar-open': selection.length > 0 }"
                     >
                         <div class="media-item-list__body">
-                            <Uploader v-for="(file, index) in queue" :key="`uploader-${index}`" :file="file"></Uploader>
+                            <Uploader
+                                v-for="(file, index) in queue"
+                                :key="`uploader-${index}`"
+                                :file="file"
+                                :url="url"
+                            ></Uploader>
                             <Item
                                 v-for="(item, index) in response.data"
                                 :key="`${item.file_name}-${index}`"

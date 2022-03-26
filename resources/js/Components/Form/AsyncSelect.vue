@@ -26,7 +26,7 @@
                     v-for="(item, index) in response.data"
                     v-html="item.formatted_value"
                     :key="item.value"
-                    :class="[index === active ? 'active' : '']"
+                    :class="[index === active ? 'is-active' : '']"
                     @mousedown="select(item.value)"
                 ></div>
                 <div v-if="response.data.length === 0" aria-disabled="true">
