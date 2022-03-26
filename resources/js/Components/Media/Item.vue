@@ -29,7 +29,7 @@
             classNames() {
                 return {
                     'is-image': this.item.is_image,
-                    'is-svg': this.item.mime_type === 'image/svg+xml',
+                    'is-svg': this.item.mime_type.startsWith('image/svg'),
                     'is-document': ! this.item.is_image,
                     'is-selected': this.selected,
                     'is-loading': this.loading,

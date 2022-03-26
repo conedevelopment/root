@@ -121,18 +121,8 @@
                 query: {},
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
+                selection: [],
             };
-        },
-
-        computed: {
-            selection: {
-                get() {
-                    return Array.from(this.modelValue || []);
-                },
-                set(value) {
-                    this.$emit('update:modelValue', value);
-                },
-            },
         },
 
         methods: {
