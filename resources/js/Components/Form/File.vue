@@ -4,6 +4,7 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
+        <input class="form-control" type="file" v-bind="$attrs">
     </div>
 </template>
 
