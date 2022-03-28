@@ -30,7 +30,7 @@ class HandleRootRequests extends Middleware
             'csrf_token' => static function () use ($request): string {
                 return $request->session()->token();
             },
-            'url' => $request->fullUrl(),
+            'url' => $request->url(),
         ]);
     }
 }

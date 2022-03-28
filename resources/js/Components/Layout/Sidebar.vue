@@ -34,9 +34,24 @@
                         <Icon class="navigation-item__icon" :name="resource.icon"></Icon>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
-                    <!-- <ul class="navigation-submenu">
-                        <li></li>
-                    </ul> -->
+                    <ul class="navigation-submenu">
+                        <li>
+                            <Link
+                                :href="resource.urls.index"
+                                :aria-current="resource.urls.index === $page.props.url ? 'page' : ''"
+                            >
+                                {{ __('All :resource', { resource: resource.name }) }}
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                :href="resource.urls.create"
+                                :aria-current="resource.urls.create === $page.props.url ? 'page' : ''"
+                            >
+                                {{ __('Create :resource', { resource: resource.model_name }) }}
+                            </Link>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
