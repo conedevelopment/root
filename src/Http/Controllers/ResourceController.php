@@ -92,7 +92,7 @@ class ResourceController extends Controller
 
         $model->save();
 
-        return Redirect::route(sprintf('root.%s.%s.show', $resource->getKey(), $model->getKey()))
+        return Redirect::route(sprintf('root.%s.show', $resource->getKey()), $model->getKey())
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
