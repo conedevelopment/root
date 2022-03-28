@@ -2694,6 +2694,68 @@ legend {
   -webkit-margin-before: 1rem;
           margin-block-start: 1rem;
 }
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.modal-close {
+  align-items: center;
+  display: flex;
+  height: 2.4rem;
+  justify-content: center;
+  padding: 0;
+  width: 2.4rem;
+}
+.modal-close .icon {
+  height: 1.2em;
+  width: 1.2em;
+}
+.modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 2rem 1.5rem;
+}
+.modal-title {
+  margin: 0;
+}
+.modal-filter {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+}
+.modal-filter > * {
+  margin-right: 1.5rem;
+}
+.modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1.5rem 2rem 2rem;
+}
+.modal-footer {
+  align-items: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+}
+.modal-footer-actions > * {
+  margin: 0.5rem 1rem 0.5rem 0;
+}
+.modal-footer-actions > *:last-child {
+  margin-right: 0;
+}
+.modal .modal-help-text {
+  margin: 0.35rem 0;
+}
 
 .accordion-wrapper > * {
   -webkit-margin-after: 0;
