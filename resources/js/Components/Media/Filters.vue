@@ -1,6 +1,6 @@
 <template>
     <div class="modal-filter">
-        <div class="form-group is-inline">
+        <div class="form-group--inline">
             <label for="media-search" class="sr-only">{{ __('Search') }}</label>
             <input
                 id="media-search"
@@ -13,14 +13,14 @@
                 v-debounce="500"
             >
         </div>
-        <div class="form-group is-inline">
+        <div class="form-group--inline">
             <label for="media-type" class="form-group__label is-prepend">
                 <span class="form-group-text">{{ __('Type') }}</span>
             </label>
-            <div class="custom-select custom-select--sm">
+            <div class="custom-select">
                 <select
                     id="media-type"
-                    class="form-control"
+                    class="form-control form-control--sm"
                     :disabled="$parent.processing"
                     v-model="$parent.query.type"
                 >

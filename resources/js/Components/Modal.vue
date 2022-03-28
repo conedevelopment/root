@@ -7,11 +7,11 @@
             :aria-label="title"
             :class="{ 'hidden': ! isOpen }"
         >
-            <h2 class="modal__title">{{ title }}</h2>
-            <div class="modal__inner">
+            <h2 class="modal-title">{{ title }}</h2>
+            <div class="modal-inner">
                 <slot></slot>
             </div>
-            <div class="modal__action">
+            <div class="modal-action">
                 <slot name="footer"></slot>
                 <button type="button" class="btn btn--secondary" @click="close">{{ __('Close') }}</button>
             </div>

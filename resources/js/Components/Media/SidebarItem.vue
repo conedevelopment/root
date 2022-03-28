@@ -12,11 +12,11 @@
             </h3>
             <button
                 type="button"
-                class="btn btn--secondary media-remove-item"
+                class="btn btn--secondary media-remove-item btn--sm btn--icon"
                 :aria-label="__('Remove')"
                 @click="deselect"
             >
-                <Icon name="close"></Icon>
+                <Icon name="close" class="btn__icon btn__icon--sm"></Icon>
             </button>
         </div>
         <div class="media-accordion__content is-open">

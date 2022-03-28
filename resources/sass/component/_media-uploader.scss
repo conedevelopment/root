@@ -167,20 +167,6 @@
     }
 }
 
-.media-remove-item {
-    align-items: center;
-    display: flex;
-    height: 2rem;
-    justify-content: center;
-    padding: 0;
-    width: 2rem;
-
-    .icon {
-        height: 1em;
-        width: 1em;
-    }
-}
-
 .media-sidebar {
     background-color: rgba(0, 0, 0, 0.02);
     border-radius: spruce.$border-radius-lg;

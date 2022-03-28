@@ -7,43 +7,54 @@
             :aria-label="title"
             :class="{ 'hidden': ! isOpen }"
         >
-            <h2 class="modal__title">{{ title }}</h2>
-            <div
-                class="modal__inner"
-                :class="{ 'has-active-dropzone': dragging }"
-                :data-dropzone-text="__('Drop your files here')"
-                @dragstart.prevent
-                @dragend.prevent="dragging = false"
-                @dragover.prevent="dragging = true"
-                @dragleave.prevent="dragging = false"
-                @drop.prevent="handleFiles($event.dataTransfer.files)"
-            >
-                <div ref="container">
-                    <Filters></Filters>
-                    <div
-                        v-if="queue.length || response.data.length"
-                        class="media-item-list-wrapper "
-                        :class="{ 'is-sidebar-open': selection.length > 0 }"
+            <div class="modal-inner">
+                <div class="modal-header">
+                    <h2 class="modal-title">{{ title }}</h2>
+                    <button
+                        type="button"
+                        class="modal-close btn btn--secondary btn--sm btn--icon"
+                        :aria-label="__('Close modal')"
                     >
-                        <div class="media-item-list__body">
-                            <Uploader
-                                v-for="(file, index) in queue"
-                                :key="`uploader-${index}`"
-                                :file="file"
-                                :url="url"
-                            ></Uploader>
-                            <Item
-                                v-for="(item, index) in response.data"
-                                :key="`${item.file_name}-${index}`"
-                                :item="item"
-                            ></Item>
+                        <Icon name="close" class="btn__icon"></Icon>
+                    </button>
+                </div>
+                <div
+                    class="modal-body"
+                    :class="{ 'has-active-dropzone': dragging }"
+                    :data-dropzone-text="__('Drop your files here')"
+                    @dragstart.prevent
+                    @dragend.prevent="dragging = false"
+                    @dragover.prevent="dragging = true"
+                    @dragleave.prevent="dragging = false"
+                    @drop.prevent="handleFiles($event.dataTransfer.files)"
+                >
+                    <div ref="container">
+                        <Filters></Filters>
+                        <div
+                            v-if="queue.length || response.data.length"
+                            class="media-item-list-wrapper "
+                            :class="{ 'is-sidebar-open': selection.length > 0 }"
+                        >
+                            <div class="media-item-list__body">
+                                <Uploader
+                                    v-for="(file, index) in queue"
+                                    :key="`uploader-${index}`"
+                                    :file="file"
+                                    :url="url"
+                                ></Uploader>
+                                <Item
+                                    v-for="(item, index) in response.data"
+                                    :key="`${item.file_name}-${index}`"
+                                    :item="item"
+                                ></Item>
+                            </div>
+                            <div v-show="selection.length" class="media-item-list__sidebar">
+                                <Sidebar :items="selection"></Sidebar>
+                            </div>
                         </div>
-                        <div v-show="selection.length" class="media-item-list__sidebar">
-                            <Sidebar :items="selection"></Sidebar>
+                        <div v-else class="alert alert--info" role="alert">
+                            {{ __('No results found.') }}
                         </div>
-                    </div>
-                    <div v-else class="alert alert--info" role="alert">
-                        {{ __('No results found.') }}
                     </div>
                 </div>
                 <Toolbar></Toolbar>
