@@ -80,6 +80,9 @@
                 type: Function,
                 default: (value, options) => value,
             },
+            value: {
+                default: null,
+            },
         },
 
         inheritAttrs: false,
