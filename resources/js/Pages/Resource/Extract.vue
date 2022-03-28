@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div class="app-operation">
+            <Link :href="resource.urls.index">
+                &larr; {{ resource.name }}
+            </Link>
+        </div>
         <div class="app-widget">
             <Widget
                 v-for="widget in widgets"
@@ -12,11 +17,13 @@
 </template>
 
 <script>
+    import { Link } from '@inertiajs/inertia-vue3';
     import Table from './../../Components/Table/Table';
     import Widget from './../../Components/Widgets/Handler';
 
     export default {
         components: {
+            Link,
             Table,
             Widget,
         },
@@ -37,6 +44,10 @@
             widgets: {
                 type: Array,
                 default: () => [],
+            },
+            resource: {
+                type: Object,
+                required: true,
             },
         },
 
