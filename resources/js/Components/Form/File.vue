@@ -5,7 +5,7 @@
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
         <input
-            class="form-control"
+            class="form-file"
             :class="{ 'form-control--invalid': error !== null }"
             v-bind="$attrs"
             @input="update($event.target.files)"

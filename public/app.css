@@ -3394,6 +3394,10 @@ legend {
   padding-block: 0.43em;
 }
 
+.form-file {
+  display: block;
+}
+
 .form-group-inner--stack {
   align-items: center;
   display: flex;
