@@ -30,6 +30,10 @@
         justify-content: end;
         margin-block-start: spruce.spacer(s);
     }
+
+    &--autocomplete {
+        position: relative;
+    }
 }
 
 .form-row {
@@ -202,6 +206,28 @@ select {
         svg {
             height: 0.75em;
             width: 0.75em;
+        }
+    }
+}
+
+[role='listbox'] {
+    background-color: spruce.color(background, form);
+    border: 1px solid spruce.color(border, form);
+    border-end-start-radius: spruce.$form-control-border-radius;
+    border-end-end-radius: spruce.$form-control-border-radius;
+    inset: calc(100% - 1px) spruce.spacer(xs) auto spruce.spacer(xs);
+    list-style: none;
+    margin-block: 0;
+    padding: spruce.spacer(xs);
+    position: absolute;
+
+    li {
+        border-radius: spruce.$border-radius-sm;
+        padding-inline: spruce.spacer(xs);
+
+        &:hover {
+            background-color: spruce.color(primary);
+            color: hsl(0 0% 100%);
         }
     }
 }

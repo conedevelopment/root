@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="class" :style="style">
+    <div class="form-group form-group--autocomplete" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
@@ -19,20 +19,20 @@
             @change="fetch"
         >
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
-        <div style="max-height: 200px; width: 100%; z-index: 1000;">
-            <div v-show="isOpen">
-                <div
-                    ref="option"
-                    v-for="(item, index) in response.data"
-                    v-html="item.formatted_value"
-                    :key="item.value"
-                    :class="[index === active ? 'is-active' : '']"
-                    @mousedown="select(item.value)"
-                ></div>
-                <div v-if="response.data.length === 0" aria-disabled="true">
-                    {{ __('No items found for the given keyword.') }}
-                </div>
-            </div>
+        <ul v-show="isOpen" role="listbox">
+            <li
+                ref="option"
+                v-for="(item, index) in response.data"
+                v-html="item.formatted_value"
+                :key="item.value"
+                :class="[index === active ? 'is-active' : '']"
+                @mousedown="select(item.value)"
+                tabindex="-1"
+                aria-selected="false"
+            ></li>
+        </ul>
+        <div v-if="response.data.length === 0" aria-live="polite" role="status" class="field-feedback field-feedback--invalid">
+            {{ __('No items found for the given keyword.') }}
         </div>
     </div>
 </template>

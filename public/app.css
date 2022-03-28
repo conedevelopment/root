@@ -3352,6 +3352,9 @@ legend {
   -webkit-margin-before: 1rem;
           margin-block-start: 1rem;
 }
+.form-group--autocomplete {
+  position: relative;
+}
 
 .form-row--accordion .accordion-wrapper {
   -webkit-margin-before: 1rem;
@@ -3502,6 +3505,26 @@ select option[disabled]:first-child {
 .tag__remove svg {
   height: 0.75em;
   width: 0.75em;
+}
+
+[role=listbox] {
+  background-color: var(--spruce-form-color-background);
+  border: 1px solid var(--spruce-form-color-border);
+  border-end-start-radius: 0.25rem;
+  border-end-end-radius: 0.25rem;
+  inset: calc(100% - 1px) 0.5rem auto 0.5rem;
+  list-style: none;
+  margin-block: 0;
+  padding: 0.5rem;
+  position: absolute;
+}
+[role=listbox] li {
+  border-radius: 0.25rem;
+  padding-inline: 0.5rem;
+}
+[role=listbox] li:hover {
+  background-color: var(--spruce-base-color-primary);
+  color: white;
 }
 
 .table a {
