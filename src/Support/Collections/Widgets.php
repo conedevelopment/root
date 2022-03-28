@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
+/**
+ * @extends \Illuminate\Support\Collection<int, \Cone\Root\Widgets\Widget>
+ */
 class Widgets extends Collection
 {
     /**
