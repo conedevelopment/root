@@ -41,6 +41,13 @@
     }
 }
 
+.form-control {
+    &[type='date'],
+    &[type='time'] {
+        padding-block: 0.43em;
+    }
+}
+
 .form-group-inner {
     &--stack {
         align-items: center;
@@ -148,13 +155,14 @@ select {
     display: flex;
     flex-wrap: wrap;
     gap: spruce.spacer(xs);
+    padding: 0.5em;
 
     input {
         border: none;
         border-radius: 0;
         box-shadow: none;
         flex-grow: 1;
-        height: 1.4rem;
+        height: 1.5rem;
     }
 }
 

@@ -3390,6 +3390,10 @@ legend {
           margin-block-start: 1rem;
 }
 
+.form-control[type=date], .form-control[type=time] {
+  padding-block: 0.43em;
+}
+
 .form-group-inner--stack {
   align-items: center;
   display: flex;
@@ -3485,13 +3489,14 @@ select option[disabled]:first-child {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  padding: 0.5em;
 }
 .tag-control input {
   border: none;
   border-radius: 0;
   box-shadow: none;
   flex-grow: 1;
-  height: 1.4rem;
+  height: 1.5rem;
 }
 
 .tag {
