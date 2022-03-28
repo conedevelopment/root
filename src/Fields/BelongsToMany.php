@@ -12,6 +12,13 @@ use Illuminate\Support\Collection;
 class BelongsToMany extends BelongsTo
 {
     /**
+     * The Vue compoent.
+     *
+     * @var string
+     */
+    protected string $component = 'BelongsToMany';
+
+    /**
      * The pivot fields resolver callback.
      *
      * @var \Closure|null
@@ -24,16 +31,6 @@ class BelongsToMany extends BelongsTo
      * @var array
      */
     protected array $resolved = [];
-
-    /**
-     * Get the Vue component.
-     *
-     * @return string
-     */
-    public function getComponent(): string
-    {
-        return 'BelongsToMany';
-    }
 
     /**
      * {@inheritdoc}

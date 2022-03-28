@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 
 class File extends Media
 {
@@ -36,7 +37,7 @@ class File extends Media
         parent::__construct($label, $name, $relation);
 
         $this->type('file');
-        $this->rules(['file']);
+        $this->rules(['array']);
     }
 
     /**
@@ -47,9 +48,9 @@ class File extends Media
         $media = array_map(function (UploadedFile $file) use ($request): array {
             $medium = $this->store($request, $file->getRealPath());
 
-            $file->storeAs($medium->id, $medium->file_name, $medium->disk);
+            $file->storeAs($medium->getKey(), $medium->file_name, $medium->disk);
 
-            return $medium->id;
+            return $medium->getKey();
         }, $this->getValueForHydrate($request, $model));
 
         $this->hydrate($request, $model, $media);
@@ -60,7 +61,7 @@ class File extends Media
      */
     public function getValueForHydrate(Request $request, Model $model): mixed
     {
-        return $request->file($this->name);
+        return Arr::wrap($request->file($this->name));
     }
 
     /**

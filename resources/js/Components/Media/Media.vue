@@ -26,7 +26,12 @@
                         :class="{ 'is-sidebar-open': selection.length > 0 }"
                     >
                         <div class="media-item-list__body">
-                            <Uploader v-for="(file, index) in queue" :key="`uploader-${index}`" :file="file"></Uploader>
+                            <Uploader
+                                v-for="(file, index) in queue"
+                                :key="`uploader-${index}`"
+                                :file="file"
+                                :url="url"
+                            ></Uploader>
                             <Item
                                 v-for="(item, index) in response.data"
                                 :key="`${item.file_name}-${index}`"
@@ -121,18 +126,8 @@
                 query: {},
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
+                selection: [],
             };
-        },
-
-        computed: {
-            selection: {
-                get() {
-                    return Array.from(this.modelValue || []);
-                },
-                set(value) {
-                    this.$emit('update:modelValue', value);
-                },
-            },
         },
 
         methods: {

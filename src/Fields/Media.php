@@ -5,7 +5,6 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

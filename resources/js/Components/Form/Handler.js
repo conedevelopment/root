@@ -4,6 +4,7 @@ import BelongsToMany from './BelongsToMany';
 import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
+import File from './File';
 import Input from './Input';
 import Media from './Media';
 import Radio from './Radio';
@@ -21,6 +22,7 @@ export default {
         Checkbox,
         DateTime,
         Editor,
+        File,
         Input,
         Media,
         Radio,
