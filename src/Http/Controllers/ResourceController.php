@@ -6,7 +6,7 @@ use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
@@ -171,10 +171,10 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(RootRequest $request): RedirectResponse
+    public function destroy(ResourceRequest $request): RedirectResponse
     {
         $resource = $request->resource();
 
