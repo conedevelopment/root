@@ -30,7 +30,7 @@
         <div class="app-card card">
             <ul class="clear-list">
                 <li v-for="field in model.fields" :key="field.name">
-                    <strong>{{ field.label }}</strong>: {{ field.formatted_value }}
+                    <strong>{{ field.label }}</strong>: <span v-html="field.formatted_value"></span>
                 </li>
             </ul>
         </div>
