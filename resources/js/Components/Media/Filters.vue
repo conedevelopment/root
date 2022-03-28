@@ -24,7 +24,7 @@
                     :disabled="$parent.processing"
                     v-model="$parent.query.type"
                 >
-                    <option value="">{{ __('All') }}</option>
+                    <option :value="null">{{ __('All') }}</option>
                     <option value="file">{{ __('File') }}</option>
                     <option value="image">{{ __('Image') }}</option>
                 </select>

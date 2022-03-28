@@ -151,6 +151,7 @@ class RootServiceProvider extends ServiceProvider
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
                 'user' => $app['request']->user()->toRoot(),
                 'config' => [
+                    'name' => $app['config']->get('app.name'),
                     'url' => $app['url']->route('root.dashboard'),
                 ],
             ]);

@@ -2,7 +2,7 @@
     <div class="mobile-header">
         <div class="mobile-header__inner">
             <Link :href="$app.config.url">
-                <img class="mobile-header__logo" src="/vendor/root/root-logo-dark.svg" alt="Root">
+                <img class="mobile-header__logo" src="/vendor/root/root-logo-dark.svg" :alt="$app.config.name">
             </Link>
             <div class="mobile-header__actions">
                 <button
@@ -12,7 +12,7 @@
                 >
                     <Icon class="btn__icon btn__icon--start" name="menu"></Icon>
                 </button>
-                <UserMenu></UserMenu>
+                <UserMenu direction="bottom"></UserMenu>
             </div>
         </div>
     </div>

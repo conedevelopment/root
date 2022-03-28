@@ -14,6 +14,7 @@
                         type="button"
                         class="modal-close btn btn--secondary btn--sm btn--icon"
                         :aria-label="__('Close modal')"
+                        @click="close"
                     >
                         <Icon name="close" class="btn__icon"></Icon>
                     </button>
@@ -134,7 +135,9 @@
             return {
                 dragging: false,
                 processing: false,
-                query: {},
+                query: {
+                    type: null,
+                },
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 selection: [],

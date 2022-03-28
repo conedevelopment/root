@@ -31,6 +31,16 @@
             Sidebar,
         },
 
+        mounted() {
+            const title = document.title;
+
+            document.title = `${title} | ${this.title}`;
+
+            this.$inertia.on('finish', () => {
+                document.title = `${title} | ${this.title}`;
+            });
+        },
+
         computed: {
             token() {
                 return this.$page.props.csrf_token;

@@ -17,7 +17,8 @@
             </div>
         </button>
         <ul
-            class="user-menu-navigation user-menu-navigation--top"
+            class="user-menu-navigation"
+            :class="classNames"
             aria-labelledby="user-user-navigation"
         >
             <li>
@@ -34,5 +35,18 @@
 
     export default {
         mixins: [Closable],
+
+        props: {
+            direction: {
+                type: String,
+                default: 'top',
+            },
+        },
+
+        computed: {
+            classNames() {
+                return `user-menu-navigation--${this.direction}`;
+            },
+        },
     }
 </script>

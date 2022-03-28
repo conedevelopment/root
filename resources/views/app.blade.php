@@ -18,7 +18,7 @@
     @endforeach
 
     {{-- Title --}}
-    <title>Root</title>
+    <title>{{ Config::get('app.name') }}</title>
 </head>
 <body>
     {{-- App --}}
