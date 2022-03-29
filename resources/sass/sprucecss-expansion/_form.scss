@@ -225,7 +225,8 @@ select {
         border-radius: spruce.$border-radius-sm;
         padding-inline: spruce.spacer(xs);
 
-        &:hover {
+        &:hover,
+        &.is-active {
             background-color: spruce.color(primary);
             color: hsl(0 0% 100%);
         }

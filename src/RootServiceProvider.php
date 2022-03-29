@@ -88,9 +88,12 @@ class RootServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/root'),
+        ], 'root-compiled');
+
+        $this->publishes([
             __DIR__.'/../resources/js' => $this->app->resourcePath('js/vendor/root'),
             __DIR__.'/../resources/sass' => $this->app->resourcePath('sass/vendor/root'),
-        ], 'root-assets');
+        ], 'root-vendor');
 
         $this->publishes([
             __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),

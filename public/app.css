@@ -3522,7 +3522,7 @@ select option[disabled]:first-child {
   border-radius: 0.25rem;
   padding-inline: 0.5rem;
 }
-[role=listbox] li:hover {
+[role=listbox] li:hover, [role=listbox] li.is-active {
   background-color: var(--spruce-base-color-primary);
   color: white;
 }

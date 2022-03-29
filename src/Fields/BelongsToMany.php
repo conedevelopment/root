@@ -33,6 +33,19 @@ class BelongsToMany extends BelongsTo
     protected array $resolved = [];
 
     /**
+     * Set the async attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function async(bool $value = true): static
+    {
+        $this->async = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveDefault(Request $request, Model $model): mixed

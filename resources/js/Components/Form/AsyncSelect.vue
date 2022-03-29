@@ -19,21 +19,29 @@
             @change="fetch"
         >
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
-        <ul v-show="isOpen" role="listbox">
+        <ul v-show="isOpen" role="listbox" style="z-index: 1000;">
             <li
                 ref="option"
                 v-for="(item, index) in response.data"
                 v-html="item.formatted_value"
-                :key="item.value"
-                :class="[index === active ? 'is-active' : '']"
-                @mousedown="select(item.value)"
                 tabindex="-1"
-                aria-selected="false"
+                :aria-selected="index === active ? 'true' : 'false'"
+                :class="{ 'is-active': index === active }"
+                :key="item.value"
+                @mousedown="select(item.value)"
             ></li>
+            <li
+                v-if="response.data.length === 0"
+                aria-live="polite"
+                role="status"
+                class="field-feedback field-feedback--invalid"
+            >
+                {{ __('No items found for the given keyword.') }}
+            </li>
         </ul>
-        <div v-if="response.data.length === 0" aria-live="polite" role="status" class="field-feedback field-feedback--invalid">
-            {{ __('No items found for the given keyword.') }}
-        </div>
+        <ul>
+
+        </ul>
     </div>
 </template>
 
@@ -53,7 +61,7 @@
                 default: null,
             },
             modelValue: {
-                type: [String, Number, Array],
+                type: [String, Number, Array, Object],
                 default: null,
             },
             label: {
@@ -81,6 +89,7 @@
                 default: (value, options) => value,
             },
             value: {
+                type: [String, Number, Array, Object],
                 default: null,
             },
         },
@@ -120,6 +129,7 @@
                     'update:modelValue',
                     this.selectResolver(value, JSON.parse(JSON.stringify(this.response.data)))
                 );
+
 
                 this.$nextTick(() => this.fetch());
             },
