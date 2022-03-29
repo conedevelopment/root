@@ -10,7 +10,7 @@
                     class="btn btn--secondary btn--icon"
                     @click="toggleSidebar"
                 >
-                    <Icon class="btn__icon btn__icon--start" name="menu"></Icon>
+                    <Icon class="btn__icon btn__icon--start" :name="isOpen ? 'menu-open' : 'menu'"></Icon>
                 </button>
                 <UserMenu direction="bottom"></UserMenu>
             </div>
@@ -26,6 +26,24 @@
         components: {
             Link,
             UserMenu,
+        },
+
+        mounted() {
+            this.isOpen = this.$parent.$refs.sidebar.isOpen;
+
+            this.$parent.$refs.sidebar.$dispatcher.on('open', () => {
+                this.isOpen = this.$parent.$refs.sidebar.isOpen;
+            });
+
+            this.$parent.$refs.sidebar.$dispatcher.on('close', () => {
+                this.isOpen = this.$parent.$refs.sidebar.isOpen;
+            });
+        },
+
+        data() {
+            return {
+                isOpen: false,
+            };
         },
 
         methods: {

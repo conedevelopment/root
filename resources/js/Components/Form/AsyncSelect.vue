@@ -39,9 +39,6 @@
                 {{ __('No items found for the given keyword.') }}
             </li>
         </ul>
-        <ul>
-
-        </ul>
     </div>
 </template>
 
