@@ -29,15 +29,9 @@
         },
 
         mounted() {
-            this.isOpen = this.$parent.$refs.sidebar.isOpen;
-
-            this.$parent.$refs.sidebar.$dispatcher.on('open', () => {
-                this.isOpen = this.$parent.$refs.sidebar.isOpen;
-            });
-
-            this.$parent.$refs.sidebar.$dispatcher.on('close', () => {
-                this.isOpen = this.$parent.$refs.sidebar.isOpen;
-            });
+            this.sync();
+            this.$parent.$refs.sidebar.$dispatcher.on('open', this.sync);
+            this.$parent.$refs.sidebar.$dispatcher.on('close', this.sync);
         },
 
         data() {
@@ -49,6 +43,9 @@
         methods: {
             toggleSidebar() {
                 this.$parent.$refs.sidebar.toggle();
+            },
+            sync() {
+                this.isOpen = this.$parent.$refs.sidebar.isOpen;
             },
         },
     }

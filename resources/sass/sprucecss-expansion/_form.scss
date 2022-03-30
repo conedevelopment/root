@@ -225,6 +225,11 @@ select {
         border-radius: spruce.$border-radius-sm;
         padding-inline: spruce.spacer(xs);
 
+        &.is-selected {
+            background-color: color.adjust(spruce.color(primary, $only-color: true), $lightness: 20%);
+            color: hsl(0 0% 100%);
+        }
+
         &:hover,
         &.is-active {
             background-color: spruce.color(primary);
