@@ -1,6 +1,7 @@
 {
     "name": "conedevelopment/root",
-    "description": "Another CMS.",
+    "description": "Root is an admin package for Laravel applications.",
+    "keywords": ["laravel", "admin", "dashboard"],
     "type": "project",
     "license": "MIT",
     "authors": [
