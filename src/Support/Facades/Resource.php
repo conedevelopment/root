@@ -3,6 +3,7 @@
 namespace Cone\Root\Support\Facades;
 
 use Cone\Root\Exceptions\ResourceResolutionException;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Interfaces\Support\Collections\Resources;
 use Cone\Root\Resources\Resource as Item;
 use Illuminate\Support\Facades\Facade;
@@ -23,11 +24,13 @@ class Resource extends Facade
      */
     public static function register(string $key, Item $item): void
     {
+        static $request;
+
+        $request = RootRequest::createFrom(static::getFacadeApplication()['request']);
+
         static::getFacadeRoot()->put($key, $item);
 
-        $item->registered(
-            static::getFacadeApplication()['request']
-        );
+        $item->registered($request);
     }
 
     /**

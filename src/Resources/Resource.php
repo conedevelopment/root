@@ -3,6 +3,8 @@
 namespace Cone\Root\Resources;
 
 use Closure;
+use Cone\Root\Actions\Action;
+use Cone\Root\Extracts\Extract;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
@@ -263,7 +265,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                 $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
             }
 
-            $this->resolved['fields'] = $fields;
+            $this->resolved['fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['fields'];
@@ -314,7 +318,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                 $filters = call_user_func_array($this->filtersResolver, [$request, $filters]);
             }
 
-            $this->resolved['filters'] = $filters;
+            $this->resolved['filters'] = $filters->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['filters'];
@@ -365,8 +371,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                 $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
             }
 
-            $this->resolved['actions'] = $actions->each->withQuery(function (): Builder {
-                return $this->query();
+            $this->resolved['actions'] = $actions->each(function (Action $action): void {
+                $action->withQuery(function (): Builder {
+                    return $this->query();
+                })->mergeAuthorizationResolver(function (Request $request): bool {
+                    return $this->authorized($request);
+                });
             });
         }
 
@@ -418,8 +428,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                 $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
             }
 
-            $this->resolved['extracts'] = $extracts->each->withQuery(function (): Builder {
-                return $this->query();
+            $this->resolved['extracts'] = $extracts->each(function (Extract $extract): void {
+                $extract->withQuery(function (): Builder {
+                    return $this->query();
+                })->mergeAuthorizationResolver(function (Request $request): bool {
+                    return $this->authorized($request);
+                });
             });
         }
 
@@ -471,7 +485,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                 $widgets = call_user_func_array($this->widgetsResolver, [$request, $widgets]);
             }
 
-            $this->resolved['widgets'] = $widgets;
+            $this->resolved['widgets'] = $widgets->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
         }
 
         return $this->resolved['widgets'];
@@ -720,11 +736,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function routeGroup(Closure $callback, bool $api = false): void
     {
         Root::routes(function (Router $router) use ($callback): void {
-            $router->group([
-                'prefix' => $this->getKey(),
-                'resource' => $this->getKey(),
-                'middleware' => [AuthorizeResource::class],
-            ], $callback);
+            $router->group(['prefix' => $this->getKey(), 'resource' => $this->getKey()], $callback);
         }, $api);
     }
 }
