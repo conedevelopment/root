@@ -655,6 +655,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
             'model' => $model->toDisplay($request, $this->resolveFields($request)->available($request, $model)),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
+            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
     }
 

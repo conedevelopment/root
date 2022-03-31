@@ -1,5 +1,12 @@
 <template>
     <div>
+        <div class="app-widget">
+            <Widget
+                v-for="widget in widgets"
+                :key="widget.key"
+                v-bind="widget"
+            ></Widget>
+        </div>
         <div class="app-operation">
             <Actions
                 v-if="actions.length > 0"
