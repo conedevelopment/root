@@ -60,7 +60,7 @@ abstract class Extract implements Arrayable
      */
     public function getKey(): string
     {
-        return (string) Str::of(static::class)->classBasename()->kebab();
+        return Str::of(static::class)->classBasename()->kebab()->toString();
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class Extract implements Arrayable
      */
     public function getName(): string
     {
-        return (string) Str::of(static::class)->classBasename()->headline();
+        return __(Str::of(static::class)->classBasename()->headline()->toString());
     }
 
     /**
@@ -232,10 +232,10 @@ abstract class Extract implements Arrayable
     /**
      * Map the items.
      *
-     * @param \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ExtractRequest  $request
      * @return array
      */
-    public function mapItems(Request $request): array
+    public function mapItems(ExtractRequest $request): array
     {
         $query = $this->resolveQuery($request);
 

@@ -3,6 +3,7 @@
 namespace DummyNamespace;
 
 use Cone\Root\Actions\Action;
+use Cone\Root\Http\Requests\ActionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -21,11 +22,11 @@ class DummyClass extends Action
     /**
      * Handle the action.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
      * @param  \Illuminate\Support\Collection  $models
      * @return void
      */
-    public function handle(Request $request, Collection $models): void
+    public function handle(ActionRequest $request, Collection $models): void
     {
         //
     }

@@ -124,7 +124,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getKey(): string
     {
-        return (string) Str::of($this->getModel())->classBasename()->plural()->kebab();
+        return Str::of($this->getModel())->classBasename()->plural()->kebab()->toString();
     }
 
     /**
@@ -134,7 +134,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getName(): string
     {
-        return (string) Str::of($this->getModel())->classBasename()->headline()->plural();
+        return __(Str::of($this->getModel())->classBasename()->headline()->plural()->toString());
     }
 
     /**
@@ -144,7 +144,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getModelName(): string
     {
-        return (string) Str::of($this->getModel())->classBasename();
+        return __(Str::of($this->getModel())->classBasename()->toString());
     }
 
     /**

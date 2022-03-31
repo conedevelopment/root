@@ -38,7 +38,7 @@ abstract class Filter implements Arrayable
      */
     public function getKey(): string
     {
-        return (string) Str::of(static::class)->classBasename()->kebab();
+        return Str::of(static::class)->classBasename()->kebab()->toString();
     }
 
     /**
@@ -48,7 +48,7 @@ abstract class Filter implements Arrayable
      */
     public function getName(): string
     {
-        return (string) Str::of(static::class)->classBasename()->headline();
+        return __(Str::of(static::class)->classBasename()->headline()->toString());
     }
 
     /**

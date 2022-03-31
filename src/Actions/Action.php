@@ -59,11 +59,11 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Handle the action.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
      * @param  \Illuminate\Support\Collection  $models
      * @return void
      */
-    abstract public function handle(Request $request, Collection $models): void;
+    abstract public function handle(ActionRequest $request, Collection $models): void;
 
     /**
      * Get the key.
@@ -72,7 +72,7 @@ abstract class Action implements Arrayable, Responsable
      */
     public function getKey(): string
     {
-        return (string) Str::of(static::class)->classBasename()->kebab();
+        return Str::of(static::class)->classBasename()->kebab()->toString();
     }
 
     /**
@@ -82,7 +82,7 @@ abstract class Action implements Arrayable, Responsable
      */
     public function getName(): string
     {
-        return (string) Str::of(static::class)->classBasename()->headline();
+        return __(Str::of(static::class)->classBasename()->headline()->toString());
     }
 
     /**
