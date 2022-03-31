@@ -47,11 +47,13 @@
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
     import Actions from './../../Components/Actions/Actions';
+    import Widget from './../../Components/Handler';
 
     export default {
         components: {
             Actions,
             Link,
+            Widget,
         },
 
         props: {
