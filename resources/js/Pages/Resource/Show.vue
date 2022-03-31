@@ -63,6 +63,10 @@
                 type: Object,
                 required: true,
             },
+            widgets: {
+                type: Array,
+                default: () => [],
+            },
         },
 
         layout: function (h, page) {
