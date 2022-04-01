@@ -79,12 +79,10 @@ class Media extends MorphToMany
      */
     public function mapOption(Request $request, Model $model, Model $related): array
     {
-        return array_merge($related->toArray(), [
-            'pivot_fields' => $this->resolvePivotFields($request)
-                                    ->available($request, $model, $related)
-                                    ->mapToForm($request, $related)
-                                    ->toArray()
-        ]);
+        return array_merge(
+            parent::mapOption($request, $model, $related),
+            $related->toArray()
+        );
     }
 
     /**

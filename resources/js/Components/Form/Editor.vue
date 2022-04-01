@@ -6,6 +6,7 @@
         </label>
         <div ref="input" class="editor" spellcheck="false"></div>
         <Media ref="media" :url="media_url" :title="__('Media')"></Media>
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 

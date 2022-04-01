@@ -28,9 +28,9 @@ trait Authorizable
 
         $resolver = $this->authorizationResolver;
 
-        return $this->authorize(static function (Request $request, ...$params) use ($callback, $resolver): bool {
-            return call_user_func_array($callback, [$request, ...$params])
-                && call_user_func_array($resolver, [$request, ...$params]);
+        return $this->authorize(static function (Request $request, ...$parameters) use ($callback, $resolver): bool {
+            return call_user_func_array($callback, [$request, ...$parameters])
+                && call_user_func_array($resolver, [$request, ...$parameters]);
         });
     }
 

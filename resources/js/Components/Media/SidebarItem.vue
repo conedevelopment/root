@@ -26,8 +26,18 @@
                 <li v-if="dimensions">
                     <strong>{{ __('Dimensions') }}</strong>: <span v-html="dimensions"></span>
                 </li>
-                <!-- Pivot fields -->
             </ul>
+            <div class="form-group-stack">
+                <FormHandler
+                    v-for="field in item.pivot_fields"
+                    v-bind="field"
+                    v-model="$parent.$parent.value[item.id][field.name]"
+                    :form="$parent.$parent.$parent.$parent.form"
+                    :key="`${item.id}-${field.name}`"
+                    :id="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
+                    :name="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
+                ></FormHandler>
+            </div>
         </div>
     </div>
 </template>

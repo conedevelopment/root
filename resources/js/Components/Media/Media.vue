@@ -103,6 +103,10 @@
                     return this.__('Media');
                 },
             },
+            selectResolver: {
+                type: Function,
+                default: (value, options) => value,
+            },
         },
 
         inheritAttrs: false,
@@ -141,6 +145,7 @@
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 selection: [],
+                value: JSON.parse(JSON.stringify(this.modelValue)),
             };
         },
 
@@ -183,6 +188,16 @@
                     && this.response.next_page_url !== null
                     && this.response.data.length > 0
                     && (el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
+            },
+            select() {
+                this.update();
+                this.close();
+            },
+            update() {
+                this.$emit(
+                    'update:modelValue',
+                    this.selectResolver(this.value, this.selection)
+                );
             },
         },
     }

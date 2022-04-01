@@ -31,8 +31,6 @@
 
         methods: {
             deselect(selected) {
-                // handle items as v-model
-
                 this.items.splice(this.items.findIndex((item) => item.id === selected.id), 1);
             },
         },

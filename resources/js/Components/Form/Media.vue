@@ -4,12 +4,30 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <span v-if="error">{{ error }}</span>
+        <div>
+            <button type="button" class="btn btn--sm btn--tertiary" @click="$refs.media.open">
+                {{ __('Select :label', { label }) }}
+            </button>
+            <Media
+                ref="media"
+                :url="url"
+                :title="label"
+                :modelValue="modelValue"
+                @update:modelValue="$emit('update:modelValue', $event)"
+            ></Media>
+        </div>
+        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 
 <script>
+    import Media from './../Media/Media';
+
     export default {
+        components: {
+            Media
+        },
+
         props: {
             class: {
                 type: [String, Array, Object],
@@ -35,6 +53,10 @@
                 type: String,
                 default: null,
             },
+            url: {
+                type: String,
+                required: true,
+            },
         },
 
         inheritAttrs: false,
@@ -42,9 +64,7 @@
         emits: ['update:modelValue'],
 
         methods: {
-            update(event) {
-                this.$emit('update:modelValue', event.target.value);
-            },
+            //
         },
     }
 </script>

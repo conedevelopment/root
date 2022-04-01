@@ -117,11 +117,9 @@ class BelongsToMany extends BelongsTo
                 $fields = call_user_func_array($this->pivotFieldsResolver, [$request, $fields]);
             }
 
-            $fields->each->mergeAuthorizationResolver(function (Request $request, ...$params): bool {
-                return $this->authorized($request, ...$params);
+            $this->resolved['pivot_fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request, ...$parameters): bool {
+                return $this->authorized($request, ...$parameters);
             });
-
-            $this->resolved['pivot_fields'] = $fields;
         }
 
         return $this->resolved['pivot_fields'];

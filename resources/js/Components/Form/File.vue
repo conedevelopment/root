@@ -29,7 +29,7 @@
                 default: null,
             },
             modelValue: {
-                type: Array,
+                type: [Array, Object],
                 default: () => [],
             },
             label: {
