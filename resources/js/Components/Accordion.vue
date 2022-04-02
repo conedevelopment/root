@@ -2,7 +2,9 @@
     <div class="accordion">
         <h2 class="accordion__title">
             <button type="button" :aria-expanded="isOpen" @click="toggle">
-                {{ title }}
+                <slot name="header">
+                    {{ title }}
+                </slot>
                 <svg aria-hidden="true" focusable="false" height="24px" viewBox="0 0 24 24" width="24px">
                     <path d="M12,2c-5.52,0 -10,4.48 -10,10c0,5.52 4.48,10 10,10c5.52,0 10,-4.48 10,-10c0,-5.52 -4.48,-10 -10,-10Zm0,18c-4.41,0 -8,-3.59 -8,-8c0,-4.41 3.59,-8 8,-8c4.41,0 8,3.59 8,8c0,4.41 -3.59,8 -8,8Z" fill="currentColor"></path>
                     <path d="M7,12c0,0.55 0.45,1 1,1l8,0c0.55,0 1,-0.45 1,-1c0,-0.55 -0.45,-1 -1,-1l-8,0c-0.55,0 -1,0.45 -1,1Z" fill="currentColor"></path>
@@ -25,7 +27,7 @@
         props: {
             title: {
                 type: String,
-                required: true,
+                default: null,
             },
         },
     }

@@ -81,7 +81,8 @@ class Media extends MorphToMany
     {
         return array_merge(
             parent::mapOption($request, $model, $related),
-            $related->toArray()
+            $related->toArray(),
+            ['created_at' => $related->created_at->format('Y-m-d H:i')],
         );
     }
 

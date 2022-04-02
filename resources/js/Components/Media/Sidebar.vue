@@ -2,7 +2,7 @@
     <div class="media-sidebar">
         <div class="media-sidebar__section">
             <h3 class="media-sidebar__title">{{ __(':count selected file', { count: items.length }) }}</h3>
-            <div class="media-accordions">
+            <div class="accordion-wrapper">
                 <Item
                     v-for="item in items"
                     :key="item.id"

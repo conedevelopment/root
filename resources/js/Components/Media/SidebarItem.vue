@@ -1,49 +1,49 @@
 <template>
-    <div class="media-accordion">
-        <div class="media-accordion__heading">
-            <h3 class="media-accordion__title d-flex align-items-center">
-                <div class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }" v-if="item.is_image">
-                    <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
-                </div>
-                <Icon v-else name="file" class="media-accordion__icon"></Icon>
-                <span style="text-overflow: ellipsis; max-width: 190px; display: inline-block; overflow: hidden; white-space: nowrap;">
-                    {{ item.file_name }}
-                </span>
-            </h3>
-            <button
-                type="button"
-                class="btn btn--secondary media-remove-item btn--sm btn--icon"
-                :aria-label="__('Remove')"
-                @click="deselect"
-            >
-                <Icon name="close" class="btn__icon btn__icon--sm"></Icon>
-            </button>
-        </div>
-        <div class="media-accordion__content is-open">
-            <ul class="media-sidebar__list mt-3 mb-3">
-                <li><strong>{{ __('Created at') }}</strong>: {{ item.created_at }}</li>
-                <li><strong>{{ __('Size') }}</strong>: {{ size }}</li>
-                <li v-if="dimensions">
-                    <strong>{{ __('Dimensions') }}</strong>: <span v-html="dimensions"></span>
-                </li>
-            </ul>
-            <div class="form-group-stack">
-                <FormHandler
-                    v-for="field in item.pivot_fields"
-                    v-bind="field"
-                    v-model="$parent.$parent.value[item.id][field.name]"
-                    :form="$parent.$parent.$parent.$parent.form"
-                    :key="`${item.id}-${field.name}`"
-                    :id="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
-                    :name="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
-                ></FormHandler>
+    <Accordion :title="item.file_name">
+        <template #header>
+            <div class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }" v-if="item.is_image">
+                <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
+            </div>
+            <Icon v-else name="file" class="media-accordion__icon"></Icon>
+            <span style="text-overflow: ellipsis; max-width: 190px; display: inline-block; overflow: hidden; white-space: nowrap;">
+                {{ item.file_name }}
+            </span>
+        </template>
+
+        <ul class="media-sidebar__list mt-3 mb-3">
+            <li><strong>{{ __('Created at') }}</strong>: {{ item.created_at }}</li>
+            <li><strong>{{ __('Size') }}</strong>: {{ size }}</li>
+            <li v-if="dimensions">
+                <strong>{{ __('Dimensions') }}</strong>: <span v-html="dimensions"></span>
+            </li>
+        </ul>
+        <div class="form-group-stack">
+            <FormHandler
+                v-for="field in item.pivot_fields"
+                v-bind="field"
+                v-model="$parent.$parent.value[item.id][field.name]"
+                :form="$parent.$parent.$parent.$parent.form"
+                :key="`${item.id}-${field.name}`"
+                :id="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
+                :name="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
+            ></FormHandler>
+            <div class="form-group">
+                <button type="button" class="btn btn--delete btn--sm btn--tertiary" @click="deselect">
+                    {{ __('Remove') }}
+                </button>
             </div>
         </div>
-    </div>
+    </Accordion>
 </template>
 
 <script>
+    import Accordion from './../Accordion';
+
     export default {
+        components: {
+            Accordion,
+        },
+
         props: {
             item: {
                 type: Object,
