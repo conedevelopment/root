@@ -6,7 +6,7 @@
             </span>
         </div>
         <div class="modal-footer-actions">
-            <button type="button" class="btn btn--primary" :disabled="$parent.processing" @click="$parent.select">
+            <button type="button" class="btn btn--primary" :disabled="$parent.processing" @click="$parent.updateSelection">
                 {{ __('Select') }}
             </button>
             <button type="button" class="btn btn--tertiary" :disabled="$parent.processing" @click="$parent.close">

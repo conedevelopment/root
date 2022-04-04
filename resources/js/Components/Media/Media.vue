@@ -196,7 +196,26 @@
                     && this.response.data.length > 0
                     && (el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
             },
-            select() {
+            select(item) {
+                if (this.multiple) {
+                    this.selection.push(item);
+                } else {
+                    this.value = {};
+                    this.selection = [item];
+                }
+
+                this.value[item.id] = item.pivot_fields.reduce((pivotValues, field) => {
+                    return Object.assign(pivotValues, { [field.name]: field.value });
+                }, {});
+            },
+            deselect(item) {
+                const index = this.selection.findIndex((selected) => selected.id === item.id);
+
+                this.selection.splice(index, 1);
+
+                delete this.value[item.id];
+            },
+            updateSelection() {
                 this.update();
                 this.close();
             },

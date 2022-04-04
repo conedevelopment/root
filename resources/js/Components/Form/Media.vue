@@ -14,7 +14,28 @@
                 :title="label"
                 :modelValue="modelValue"
                 @update:modelValue="$emit('update:modelValue', $event)"
+                :select-resolver="selectResolver"
             ></Media>
+        </div>
+        <div>
+            <div
+                v-for="medium in items"
+                class="selected-media-item"
+                :key="medium.id"
+            >
+                <button type="button" class="selected-media-item__remove" @click="remove(medium)">
+                    <Icon name="close"></Icon>
+                </button>
+                <img
+                    v-if="medium.is_image"
+                    :src="medium.urls.thumb || medium.urls.original"
+                    :alt="medium.file_name"
+                >
+                <span v-else class="selected-media-item__document" :title="medium.file_name">
+                    <Icon name="file"></Icon>
+                    <span>{{ medium.file_name }}</span>
+                </span>
+            </div>
         </div>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
@@ -68,11 +89,25 @@
         emits: ['update:modelValue'],
 
         mounted() {
-            this.$refs.media.selection = JSON.parse(JSON.stringify(this.selection));
+            this.$refs.media.selection = this.items;
+        },
+
+        data() {
+            return {
+                items: JSON.parse(JSON.stringify(this.selection)),
+            };
         },
 
         methods: {
-            //
+            remove(item) {
+                this.$refs.media.deselect(item);
+                this.items = this.$refs.media.selection;
+            },
+            selectResolver(value, selection) {
+                this.items = selection;
+
+                return value;
+            }
         },
     }
 </script>

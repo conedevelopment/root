@@ -41,28 +41,9 @@
         },
 
         methods: {
-            select() {
-                if (this.$parent.multiple) {
-                    this.$parent.selection.push(this.item);
-                } else {
-                    this.$parent.value = {};
-                    this.$parent.selection = [this.item];
-                }
-
-                this.$parent.value[this.item.id] = this.item.pivot_fields.reduce((pivotValues, field) => {
-                    return Object.assign(pivotValues, { [field.name]: field.value });
-                }, {});
-            },
-            deselect() {
-                const index = this.$parent.selection.findIndex((item) => item.id === this.item.id);
-
-                this.$parent.selection.splice(index, 1);
-
-                delete this.$parent.value[this.item.id];
-            },
             toggle() {
                 if (! this.$parent.processing) {
-                    this.selected ? this.deselect() : this.select();
+                    this.selected ? this.$parent.deselect(this.item) : this.$parent.select(this.item);
                 }
             },
             reload() {
