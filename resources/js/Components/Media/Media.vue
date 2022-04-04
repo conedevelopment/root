@@ -117,6 +117,12 @@
             isOpen(newValue, oldValue) {
                 document.body.classList.toggle('has-modal-open', newValue);
             },
+            query: {
+                handler(newValue, oldValue) {
+                    this.fetch();
+                },
+                deep: true,
+            },
         },
 
         mounted() {
@@ -141,6 +147,7 @@
                 processing: false,
                 query: {
                     type: null,
+                    search: null,
                 },
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },

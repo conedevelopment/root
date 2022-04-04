@@ -57,11 +57,19 @@
                 type: String,
                 required: true,
             },
+            selection: {
+                type: Array,
+                default: () => [],
+            },
         },
 
         inheritAttrs: false,
 
         emits: ['update:modelValue'],
+
+        mounted() {
+            this.$refs.media.selection = JSON.parse(JSON.stringify(this.selection));
+        },
 
         methods: {
             //
