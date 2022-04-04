@@ -13,8 +13,9 @@
                 :url="url"
                 :title="label"
                 :modelValue="modelValue"
-                @update:modelValue="$emit('update:modelValue', $event)"
                 :select-resolver="selectResolver"
+                :multiple="multiple"
+                @update:modelValue="$emit('update:modelValue', $event)"
             ></Media>
         </div>
         <div>
@@ -81,6 +82,10 @@
             selection: {
                 type: Array,
                 default: () => [],
+            },
+            multiple: {
+                type: Boolean,
+                default: false,
             },
         },
 
