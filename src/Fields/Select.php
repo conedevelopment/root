@@ -85,6 +85,28 @@ class Select extends Field
     }
 
     /**
+     * Format the value.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return mixed
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): mixed {
+                $options = array_column(
+                    $this->resolveOptions($request, $model), 'value', 'formatted_value'
+                );
+
+                return $options[$value] ?? $value;
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
