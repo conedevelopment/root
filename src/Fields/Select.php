@@ -23,6 +23,26 @@ class Select extends Field
     protected ?Closure $optionsResolver = null;
 
     /**
+     * Indicates if the field should be nullable.
+     *
+     * @var bool
+     */
+    protected bool $nullable = false;
+
+    /**
+     * Set the nullable attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function nullable(bool $value = true): static
+    {
+        $this->nullable = $value;
+
+        return $this;
+    }
+
+    /**
      * Set the options attribute.
      *
      * @param  array|\Closure  $value
@@ -70,6 +90,7 @@ class Select extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
+            'nullable' => $this->nullable,
             'options' => $this->resolveOptions($request, $model),
         ]);
     }
