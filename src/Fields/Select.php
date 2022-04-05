@@ -96,7 +96,7 @@ class Select extends Field
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): mixed {
                 $options = array_column(
-                    $this->resolveOptions($request, $model), 'value', 'formatted_value'
+                    $this->resolveOptions($request, $model), 'formatted_value', 'value'
                 );
 
                 return $options[$value] ?? $value;
