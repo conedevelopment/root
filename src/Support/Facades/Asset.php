@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array scripts()
  * @method static array styles()
  *
- * @see \Cone\Root\Interfaces\Registries\AssetRegistry
+ * @see \Cone\Root\Interfaces\Support\Collections\Assets
  */
 class Asset extends Facade
 {
