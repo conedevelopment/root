@@ -219,10 +219,10 @@ abstract class Field implements Arrayable
     /**
      * Set the label attribute.
      *
-     * @param  string  $value
+     * @param  string|\Closure  $value
      * @return $this
      */
-    public function label(string $value): static
+    public function label(string|Closure $value): static
     {
         return $this->setAttribute('label', $value);
     }
@@ -230,10 +230,10 @@ abstract class Field implements Arrayable
     /**
      * Set the name attribute.
      *
-     * @param  string  $value
+     * @param  string|\Closure  $value
      * @return $this
      */
-    public function name(string $value): static
+    public function name(string|Closure $value): static
     {
         return $this->setAttribute('name', $value);
     }
@@ -241,10 +241,10 @@ abstract class Field implements Arrayable
     /**
      * Set the id attribute.
      *
-     * @param  string  $value
+     * @param  string|\Closure  $value
      * @return $this
      */
-    public function id(string $value): static
+    public function id(string|Closure $value): static
     {
         return $this->setAttribute('id', $value);
     }
@@ -252,10 +252,10 @@ abstract class Field implements Arrayable
     /**
      * Set the readonly attribute.
      *
-     * @param  bool  $value
+     * @param  bool|\Closure  $value
      * @return $this
      */
-    public function readonly(bool $value = true): static
+    public function readonly(bool|Closure $value = true): static
     {
         return $this->setAttribute('readonly', $value);
     }
@@ -263,10 +263,10 @@ abstract class Field implements Arrayable
     /**
      * Set the disabled attribute.
      *
-     * @param  bool  $value
+     * @param  bool|\Closure  $value
      * @return $this
      */
-    public function disabled(bool $value = true): static
+    public function disabled(bool|Closure $value = true): static
     {
         return $this->setAttribute('disabled', $value);
     }
@@ -274,10 +274,10 @@ abstract class Field implements Arrayable
     /**
      * Set the required attribute.
      *
-     * @param  bool  $value
+     * @param  bool|\Closure  $value
      * @return $this
      */
-    public function required(bool $value = true): static
+    public function required(bool|Closure $value = true): static
     {
         return $this->setAttribute('required', $value);
     }
@@ -285,10 +285,10 @@ abstract class Field implements Arrayable
     /**
      * Set the type attribute.
      *
-     * @param  string  $value
+     * @param  string|\Closure  $value
      * @return $this
      */
-    public function type(string $value): static
+    public function type(string|Closure $value): static
     {
         return $this->setAttribute('type', $value);
     }
@@ -296,10 +296,10 @@ abstract class Field implements Arrayable
     /**
      * Set the placeholder attribute.
      *
-     * @param  string  $value
+     * @param  string|\Closure  $value
      * @return $this
      */
-    public function placeholder(string $value): static
+    public function placeholder(string|Closure $value): static
     {
         return $this->setAttribute('placeholder', $value);
     }
@@ -307,10 +307,10 @@ abstract class Field implements Arrayable
     /**
      * Set the sortable attribute.
      *
-     * @param  bool  $value
+     * @param  bool|\Closure  $value
      * @return $this
      */
-    public function sortable(bool $value = true): static
+    public function sortable(bool|Closure $value = true): static
     {
         $this->sortable = $value;
 
@@ -330,10 +330,10 @@ abstract class Field implements Arrayable
     /**
      * Set the searachable attribute.
      *
-     * @param  bool  $value
+     * @param  bool|\Closure  $value
      * @return $this
      */
-    public function searchable(bool $value = true): static
+    public function searchable(bool|Closure $value = true): static
     {
         $this->searchable = $value;
 
@@ -502,6 +502,22 @@ abstract class Field implements Arrayable
     }
 
     /**
+     * Resolve the attributes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function resolveAttributes(Request $request, Model $model)
+    {
+        return array_map(static function (mixed $attribute) use ($request, $model): mixed {
+            return $attribute instanceof Closure
+                ? call_user_func_array($attribute, [$request, $model])
+                : $attribute;
+        }, $this->attributes);
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -520,7 +536,7 @@ abstract class Field implements Arrayable
      */
     public function toDisplay(Request $request, Model $model): array
     {
-        return array_merge($this->toArray(), [
+        return array_merge($this->resolveAttributes($request, $model), [
             'formatted_value' => $this->resolveFormat($request, $model),
             'searchable' => $this->isSearchable(),
             'sortable' => $this->isSortable(),
@@ -537,7 +553,7 @@ abstract class Field implements Arrayable
      */
     public function toInput(Request $request, Model $model): array
     {
-        return array_merge($this->toArray(), [
+        return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
             'formatted_value' => $this->resolveFormat($request, $model),
             'value' => $this->resolveDefault($request, $model),

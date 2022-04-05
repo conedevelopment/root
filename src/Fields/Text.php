@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
+
 class Text extends Field
 {
     /**
@@ -21,10 +23,10 @@ class Text extends Field
     /**
      * Set the size attribute.
      *
-     * @param  int  $value
+     * @param  int|\Closure  $value
      * @return $this
      */
-    public function size(int $value): static
+    public function size(int|Closure $value): static
     {
         return $this->setAttribute('size', $value);
     }
@@ -32,10 +34,10 @@ class Text extends Field
     /**
      * Set the minlength attribute.
      *
-     * @param  int  $value
+     * @param  int|\Closure  $value
      * @return $this
      */
-    public function minlength(int $value): static
+    public function minlength(int|Closure $value): static
     {
         return $this->setAttribute('minlength', $value);
     }
@@ -43,10 +45,10 @@ class Text extends Field
     /**
      * Set the maxlength attribute.
      *
-     * @param  int  $value
+     * @param  int|\Closure  $value
      * @return $this
      */
-    public function maxlength(int $value): static
+    public function maxlength(int|Closure $value): static
     {
         return $this->setAttribute('maxlength', $value);
     }

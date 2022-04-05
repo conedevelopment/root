@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
+
 class Number extends Field
 {
     /**
@@ -21,10 +23,10 @@ class Number extends Field
     /**
      * Set the "min" attribute.
      *
-     * @param  int  $value
+     * @param  int|float|\Closure  $value
      * @return $this
      */
-    public function min(int|float $value): static
+    public function min(int|float|Closure $value): static
     {
         return $this->setAttribute('min', $value);
     }
@@ -32,10 +34,10 @@ class Number extends Field
     /**
      * Set the "max" attribute.
      *
-     * @param  int  $value
+     * @param  int|float|\Closure  $value
      * @return $this
      */
-    public function max(int|float $value): static
+    public function max(int|float|Closure $value): static
     {
         return $this->setAttribute('max', $value);
     }
@@ -43,10 +45,10 @@ class Number extends Field
     /**
      * Set the "step" attribute.
      *
-     * @param  int|float  $value
+     * @param  int|float|\Closure  $value
      * @return $this
      */
-    public function step(int|float $value): static
+    public function step(int|float|Closure $value): static
     {
         return $this->setAttribute('step', $value);
     }

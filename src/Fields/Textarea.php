@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
+
 class Textarea extends Field
 {
     /**
@@ -14,10 +16,10 @@ class Textarea extends Field
     /**
      * Set the rows attribute.
      *
-     * @param  int  $value
+     * @param  int|\Closure  $value
      * @return $this
      */
-    public function rows(int $value): static
+    public function rows(int|Closure $value): static
     {
         return $this->setAttribute('rows', $value);
     }
@@ -25,10 +27,10 @@ class Textarea extends Field
     /**
      * Set the cols attribute.
      *
-     * @param  int  $value
+     * @param  int|\Closure  $value
      * @return $this
      */
-    public function cols(int $value): static
+    public function cols(int|Closure $value): static
     {
         return $this->setAttribute('cols', $value);
     }
