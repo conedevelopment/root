@@ -12,9 +12,9 @@ class DummyClass extends SelectFilter
     /**
      * The Vue component.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $component = 'DummyComponent';
+    protected ?string $component = 'DummyComponent';
 {{/component}}
 {{multiple}}
     /**

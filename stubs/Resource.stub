@@ -2,6 +2,7 @@
 
 namespace DummyNamespace;
 
+use Cone\Root\Fields\ID;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,9 @@ class DummyClass extends Resource
      */
     public function fields(Request $request): array
     {
-        return [];
+        return array_merge(parent::fields($request), [
+            ID::make()->sortable()->searchable(),
+        ]);
     }
 
     /**
@@ -26,7 +29,9 @@ class DummyClass extends Resource
      */
     public function filters(Request $request): array
     {
-        return [];
+        return array_merge(parent::filters($request), [
+            //
+        ]);
     }
 
     /**
@@ -37,7 +42,9 @@ class DummyClass extends Resource
      */
     public function actions(Request $request): array
     {
-        return [];
+        return array_merge(parent::actions($request), [
+            //
+        ]);
     }
 
     /**
@@ -48,7 +55,9 @@ class DummyClass extends Resource
      */
     public function extracts(Request $request): array
     {
-        return [];
+        return array_merge(parent::extracts($request), [
+            //
+        ]);
     }
 
     /**
@@ -59,6 +68,8 @@ class DummyClass extends Resource
      */
     public function widgets(Request $request): array
     {
-        return [];
+        return array_merge(parent::fields($request), [
+            //
+        ]);
     }
 }

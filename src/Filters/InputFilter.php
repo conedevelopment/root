@@ -7,7 +7,7 @@ abstract class InputFilter extends Filter
     /**
      * The Vue component.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $component = 'Input';
+    protected ?string $component = 'Input';
 }

@@ -5,8 +5,9 @@ namespace Cone\Root\Resources;
 use Closure;
 use Cone\Root\Actions\Action;
 use Cone\Root\Extracts\Extract;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
-use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ShowRequest;
@@ -281,7 +282,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function filters(Request $request): array
     {
-        return [];
+        return [
+            Search::make(),
+            Sort::make(),
+        ];
     }
 
     /**
@@ -619,7 +623,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
-            'filters' => $this->resolveFilters($request)->available($request)->toArray(),
+            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),

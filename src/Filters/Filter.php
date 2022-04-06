@@ -6,7 +6,6 @@ use Cone\Root\Traits\Authorizable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Filter implements Arrayable
@@ -16,9 +15,9 @@ abstract class Filter implements Arrayable
     /**
      * The Vue component.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $component;
+    protected ?string $component = null;
 
     /**
      * Make a new filter instance.
@@ -54,9 +53,9 @@ abstract class Filter implements Arrayable
     /**
      * Get the Vue component.
      *
-     * @return string
+     * @return string|null
      */
-    public function getComponent(): string
+    public function getComponent(): ?string
     {
         return $this->component;
     }
@@ -103,6 +102,16 @@ abstract class Filter implements Arrayable
     }
 
     /**
+     * Determine if the filter is functional.
+     *
+     * @return bool
+     */
+    public function functional(): bool
+    {
+        return is_null($this->getComponent());
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -110,12 +119,23 @@ abstract class Filter implements Arrayable
     public function toArray(): array
     {
         return [
-            'active' => App::call([$this, 'active']),
-            'component' => $this->getComponent(),
-            'default' => App::call([$this, 'default']),
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'nullable' => true,
+            'component' => $this->getComponent(),
         ];
+    }
+
+    /**
+     * Get the input representation of the filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toInput(Request $request): array
+    {
+        return array_merge($this->toArray(), [
+            'active' => $this->active($request),
+            'default' => $this->default($request),
+        ]);
     }
 }

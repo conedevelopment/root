@@ -45,6 +45,17 @@ class Filters extends Collection
     }
 
     /**
+     * Map the filters to form.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Support\Collection
+     */
+    public function mapToForm(Request $request): Collection
+    {
+        return $this->reject->functional()->map->toInput($request)->toBase();
+    }
+
+    /**
      * Map the filters into their query representation.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -4,16 +4,15 @@ namespace Cone\Root\Filters;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 
 abstract class SelectFilter extends Filter
 {
     /**
      * The Vue component.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $component = 'Select';
+    protected ?string $component = 'Select';
 
     /**
      * Indicates if mulitple options can be selected.
@@ -56,11 +55,12 @@ abstract class SelectFilter extends Filter
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toInput(Request $request): array
     {
-        $options = App::call([$this, 'options']);
+        $options = $this->options($request);
 
         return array_merge(parent::toArray(), [
+            'nullable' => true,
             'multiple' => $this->multiple,
             'options' => array_map(static function (mixed $value, mixed $key): array {
                 return [

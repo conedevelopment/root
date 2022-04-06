@@ -310,7 +310,7 @@ abstract class Extract implements Arrayable
     {
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
-            'filters' => $this->resolveFilters($request)->available($request)->toArray(),
+            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
             'resource' => $request->resource()->toArray(),
             'title' => $this->getName(),
