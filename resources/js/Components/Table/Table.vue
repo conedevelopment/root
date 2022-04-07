@@ -7,6 +7,11 @@
                 :filters="filters"
                 @update:query="fetch"
             ></Filters>
+            <Search
+                v-model="query.search"
+                :placeholder="__('Search')"
+                @update:modelValue="fetch"
+            ></Search>
             <Actions
                 v-if="actions.length > 0"
                 :selection="selection"
@@ -49,6 +54,7 @@
     import Head from './Head';
     import Pagination from './Pagination';
     import Row from './Row';
+    import Search from './Search';
 
     export default {
         components: {
@@ -58,6 +64,7 @@
             Head,
             Pagination,
             Row,
+            Search,
         },
 
         props: {

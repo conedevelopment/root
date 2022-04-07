@@ -26,6 +26,20 @@ abstract class Relation extends Field
     protected string $relation;
 
     /**
+     * The searchable columns.
+     *
+     * @var array
+     */
+    protected array $searchableColumns = ['id'];
+
+    /**
+     * The sortable column.
+     *
+     * @var string
+     */
+    protected string $sortableColumn = 'id';
+
+    /**
      * Indicates if the field should be nullable.
      *
      * @var bool
@@ -97,6 +111,54 @@ abstract class Relation extends Field
         $this->nullable = $value;
 
         return $this;
+    }
+
+    /**
+     * Set the searachable attribute.
+     *
+     * @param  bool|\Closure  $value
+     * @param  array  $columns
+     * @return $this
+     */
+    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
+    {
+        $this->searchableColumns = $columns;
+
+        return parent::searchable($value);
+    }
+
+    /**
+     * Get the searchable columns.
+     *
+     * @return array
+     */
+    public function getSearchableColumns(): array
+    {
+        return $this->searchableColumns;
+    }
+
+    /**
+     * Set the sortable attribute.
+     *
+     * @param  bool|\Closure  $value
+     * @param  string  $column
+     * @return $this
+     */
+    public function sortable(bool|Closure $value = true, string $column = 'id'): static
+    {
+        $this->sortableColumn = $column;
+
+        return parent::sortable($value);
+    }
+
+    /**
+     * Get the sortable columns.
+     *
+     * @return string
+     */
+    public function getSortableColumn(): string
+    {
+        return $this->sortableColumn;
     }
 
     /**

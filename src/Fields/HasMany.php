@@ -10,6 +10,14 @@ class HasMany extends Relation
     /**
      * {@inheritdoc}
      */
+    public function isSortable(Request $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);

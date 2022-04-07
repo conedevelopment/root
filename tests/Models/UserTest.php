@@ -28,15 +28,4 @@ class UserTest extends TestCase
 
         $this->assertTrue($this->admin->records->pluck('id')->contains($record->id));
     }
-
-    /** @test */
-    public function a_user_has_query_scopes()
-    {
-        $query = User::query()->search('test');
-        $this->assertSame(
-            'select * from "users" where ("users"."name" like ? or "users"."email" like ?) and "users"."deleted_at" is null',
-            $query->toSql()
-        );
-        $this->assertSame(['%test%', '%test%'], $query->getBindings());
-    }
 }

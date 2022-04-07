@@ -48,6 +48,14 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
+    public function isSortable(Request $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function resolveDefault(Request $request, Model $model): mixed
     {
         if (is_null($this->defaultResolver)) {

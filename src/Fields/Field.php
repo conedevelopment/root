@@ -21,16 +21,16 @@ abstract class Field implements Arrayable
     /**
      * Indicates if the field is sortable.
      *
-     * @var bool
+     * @var bool|\Closure
      */
-    protected bool $sortable = false;
+    protected bool|Closure $sortable = false;
 
     /**
      * Indicates if the field is searchable.
      *
-     * @var bool
+     * @var bool|\Closure
      */
-    protected bool $searchable = false;
+    protected bool|Closure $searchable = false;
 
     /**
      * The field attributes.
@@ -320,10 +320,15 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is sortable.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    public function isSortable(): bool
+    public function isSortable(Request $request): bool
     {
+        if ($this->sortable instanceof Closure) {
+            return call_user_func_array($this->sortable, [$request]);
+        }
+
         return $this->sortable;
     }
 
@@ -343,10 +348,15 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is searchable.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    public function isSearchable(): bool
+    public function isSearchable(Request $request): bool
     {
+        if ($this->searchable instanceof Closure) {
+            return call_user_func_array($this->searchable, [$request]);
+        }
+
         return $this->searchable;
     }
 
@@ -538,8 +548,8 @@ abstract class Field implements Arrayable
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'formatted_value' => $this->resolveFormat($request, $model),
-            'searchable' => $this->isSearchable(),
-            'sortable' => $this->isSortable(),
+            'searchable' => $this->isSearchable($request),
+            'sortable' => $this->isSortable($request),
             'value' => $this->resolveDefault($request, $model),
         ]);
     }

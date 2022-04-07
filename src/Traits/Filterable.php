@@ -24,38 +24,4 @@ trait Filterable
 
         return $query;
     }
-
-    /**
-     * Exclude the given models from the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array|null  $value
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeExclude(Builder $query, ?array $value = []): Builder
-    {
-        if (empty($value)) {
-            return $query;
-        }
-
-        return $query->whereNotIn($query->getModel()->getQualifiedKeyName(), $value);
-    }
-
-    /**
-     * Sort the query by the given order.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array|null  $value
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSort(Builder $query, ?array $value = []): Builder
-    {
-        $value = array_replace(['by' => 'id', 'order' => 'desc'], (array) $value);
-
-        if ($value['by'] === 'id') {
-            $value['by'] = $query->getModel()->getKeyName();
-        }
-
-        return $query->orderBy($query->qualifyColumn($value['by']), $value['order']);
-    }
 }

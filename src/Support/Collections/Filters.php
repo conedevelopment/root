@@ -35,13 +35,7 @@ class Filters extends Collection
             $filter->apply($request, $query, $request->input($filter->getKey()));
         });
 
-        return tap($query, static function (Builder $query) use ($request): void {
-            $model = $query->getModel();
-
-            if ($model->hasNamedScope('filter')) {
-                $model->callNamedScope('filter', [$query, $request]);
-            }
-        });
+        return $query;
     }
 
     /**
@@ -52,7 +46,7 @@ class Filters extends Collection
      */
     public function mapToForm(Request $request): Collection
     {
-        return $this->reject->functional()->map->toInput($request)->toBase();
+        return $this->reject->functional()->map->toInput($request)->values()->toBase();
     }
 
     /**
@@ -64,17 +58,11 @@ class Filters extends Collection
      */
     public function mapToQuery(Request $request, Builder $query): array
     {
-        $model = $query->getModel();
-
-        return $this->reduce(static function (array $query, Filter $filter) use ($request): array {
-            return array_replace($query, [$filter->getKey() => $filter->default($request)]);
+        return $this->reduce(static function (array $values, Filter $filter) use ($request): array {
+            return array_replace($values, [$filter->getKey() => $filter->default($request)]);
         }, [
             'page' => (int) $request->query('page', 1),
-            'per_page' => (int) $request->query('per_page', $model->getPerPage()),
-            'sort' => [
-                'by' => $request->query('sort.by', $model->getCreatedAtColumn()),
-                'order' => $request->query('sort.order', 'desc'),
-            ],
+            'per_page' => (int) $request->query('per_page', $query->getModel()->getPerPage()),
         ]);
     }
 }

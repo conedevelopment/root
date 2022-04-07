@@ -236,8 +236,8 @@ class FieldTest extends TestCase
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
                 'formatted_value' => $this->model->name,
-                'searchable' => $this->field->isSearchable(),
-                'sortable' => $this->field->isSortable(),
+                'searchable' => $this->field->isSearchable($this->app['request']),
+                'sortable' => $this->field->isSortable($this->app['request']),
                 'value' => $this->model->name,
             ]),
             $this->field->toDisplay($this->app['request'], $this->model)
@@ -260,20 +260,20 @@ class FieldTest extends TestCase
     /** @test */
     public function a_field_can_be_searchable()
     {
-        $this->assertFalse($this->field->isSearchable());
+        $this->assertFalse($this->field->isSearchable($this->app['request']));
 
         $this->field->searchable();
 
-        $this->assertTrue($this->field->isSearchable());
+        $this->assertTrue($this->field->isSearchable($this->app['request']));
     }
 
     /** @test */
     public function a_field_can_be_sortable()
     {
-        $this->assertFalse($this->field->isSortable());
+        $this->assertFalse($this->field->isSortable($this->app['request']));
 
         $this->field->sortable();
 
-        $this->assertTrue($this->field->isSortable());
+        $this->assertTrue($this->field->isSortable($this->app['request']));
     }
 }

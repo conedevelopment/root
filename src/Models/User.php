@@ -10,7 +10,6 @@ use Cone\Root\Resources\UserResource;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Cone\Root\Traits\InteractsWithResource;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -139,25 +138,6 @@ class User extends Authenticatable implements Contract, Resourceable
     public function getAvatarAttribute(): string
     {
         return sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($this->email));
-    }
-
-    /**
-     * Scope the query only to the given search term.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $value
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSearch(Builder $query, ?string $value = null): Builder
-    {
-        if (is_null($value)) {
-            return $query;
-        }
-
-        return $query->where(static function (Builder $query) use ($value): Builder {
-            return $query->where($query->qualifyColumn('name'), 'like', "%{$value}%")
-                        ->orWhere($query->qualifyColumn('email'), 'like', "%{$value}%");
-        });
     }
 
     /**

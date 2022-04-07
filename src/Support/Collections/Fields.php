@@ -27,6 +27,28 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the searchable fields.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function searchable(Request $request): static
+    {
+        return $this->filter->isSearchable($request);
+    }
+
+    /**
+     * Filter the sortable fields.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return static
+     */
+    public function sortable(Request $request): static
+    {
+        return $this->filter->isSortable($request);
+    }
+
+    /**
      * Map the fields to display.
      *
      * @param  \Illuminate\Http\Request  $request
