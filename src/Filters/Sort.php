@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class Sort extends Filter
 {
     /**
-     * The searchable fields.
+     * The sortable fields.
      *
      * @var \Cone\Root\Support\Collections\Fields
      */

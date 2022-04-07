@@ -26,6 +26,6 @@ class DummyClass extends InputFilter
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        return parent::apply($request, $query, $value);
+        return $query;
     }
 }

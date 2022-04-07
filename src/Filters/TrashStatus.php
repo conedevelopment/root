@@ -20,16 +20,16 @@ class TrashStatus extends SelectFilter
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         if (! in_array(SoftDeletes::class, class_uses_recursive($query->getModel()))) {
-            return parent::apply($request, $query, $value);
+            return $query;
         }
 
         switch ($value) {
             case 'all':
-                return parent::apply($request, $query, $value)->withTrashed();
+                return $query->withTrashed();
             case 'trashed':
-                return parent::apply($request, $query, $value)->onlyTrashed();
+                return $query->onlyTrashed();
             default:
-                return parent::apply($request, $query, $value);
+                return $query;
         }
     }
 
