@@ -35,6 +35,10 @@
                 type: Object,
                 required: true,
             },
+            columns: {
+                type: Array,
+                required: true,
+            },
         },
 
         emits: ['update:query'],
@@ -46,15 +50,6 @@
         },
 
         computed: {
-            columns() {
-                const fields = this.items?.[0]?.fields || [];
-
-                return fields.map((field) => ({
-                    label: field.label,
-                    name: field.name,
-                    sortable: field.sortable,
-                }));
-            },
             selected: {
                 get() {
                     return this.selection.length > 0

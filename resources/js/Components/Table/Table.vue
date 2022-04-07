@@ -8,6 +8,7 @@
                 @update:query="fetch"
             ></Filters>
             <Search
+                v-if="searchable"
                 v-model="query.search"
                 :placeholder="__('Search')"
                 @update:modelValue="fetch"
@@ -31,6 +32,7 @@
                             :items="items.data"
                             :query="query"
                             :selection="selection"
+                            :columns="columns"
                             @update:query="fetch"
                         ></Head>
                         <tbody>
@@ -92,6 +94,22 @@
                 processing: false,
                 query: this.$inertia.form(window.location.href, this.items.query),
             };
+        },
+
+        computed: {
+            columns() {
+                const fields = this.items.data?.[0]?.fields || [];
+
+                return fields.map((field) => ({
+                    label: field.label,
+                    name: field.name,
+                    sortable: field.sortable,
+                    searchable: field.searchable,
+                }));
+            },
+            searchable() {
+                return this.columns.some((column) => column.searchable);
+            },
         },
 
         methods: {
