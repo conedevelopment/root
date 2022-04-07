@@ -56,7 +56,7 @@ class Sort extends Filter
             return $query->orderBy($query->qualifyColumn($value['by']), $value['order']);
         }
 
-        $relation = EloquentRelation::noConstraints(static function () use ($query, $value) {
+        $relation = EloquentRelation::noConstraints(static function () use ($query, $value): EloquentRelation {
             $relation = call_user_func([$query->getModel(), $value['by']]);
 
             return $relation->whereColumn(
