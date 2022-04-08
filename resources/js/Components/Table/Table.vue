@@ -27,7 +27,7 @@
         <div class="app-list">
             <div class="card">
                 <div class="table-responsive">
-                    <table class="table table--striped" v-if="items.data.length">
+                    <table class="table table--striped table--clear-border" v-if="items.data.length">
                         <Head
                             :items="items.data"
                             :query="query"

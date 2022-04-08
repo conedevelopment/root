@@ -35,11 +35,18 @@
             </div>
         </div>
         <div class="app-card card">
-            <ul class="preview-list">
-                <li v-for="field in model.fields" :key="field.name">
-                    <strong>{{ field.label }}</strong>: <span v-html="field.formatted_value"></span>
-                </li>
-            </ul>
+            <div class="table-responsive">
+                <table class="table table--striped table--clear-border table--sm">
+                    <tbody>
+                        <tr v-for="field in model.fields" :key="field.name">
+                            <th style="width: 10rem; text-align: end;">{{ field.label }}</th>
+                            <td>
+                                <div v-html="field.formatted_value"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>

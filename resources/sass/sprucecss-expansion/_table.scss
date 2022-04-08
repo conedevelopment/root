@@ -14,8 +14,6 @@
 
     th,
     td {
-        border-bottom: none;
-
         &:first-child {
             border-start-start-radius: spruce.$border-radius-lg;
             border-end-start-radius: spruce.$border-radius-lg;

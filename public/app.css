@@ -1529,7 +1529,7 @@ figure figcaption {
 }
 .table--sm th,
 .table--sm td {
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem;
 }
 .table--rounded th:first-child,
 .table--rounded td:first-child {
@@ -3543,10 +3543,6 @@ select option[disabled]:first-child {
 .table thead tr th {
   background-color: var(--spruce-base-color-primary);
   color: #fff;
-}
-.table th,
-.table td {
-  border-bottom: none;
 }
 .table th:first-child,
 .table td:first-child {
