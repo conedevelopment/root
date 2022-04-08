@@ -9,8 +9,13 @@
     row-gap: spruce.spacer(s);
 
     &__edit {
+        background-color: spruce.color(background);
+        border-radius: spruce.$btn-border-radius;
+        box-shadow: var(--box-shadow);
         display: flex;
         flex-wrap: wrap;
-        gap: spruce.spacer(s);
+        gap: spruce.spacer(xs);
+        margin-inline-start: auto;
+        padding: spruce.spacer(xs);
     }
 }

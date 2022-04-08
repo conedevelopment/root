@@ -17,7 +17,7 @@
             <div class="app-operation__edit">
                 <button
                     type="button"
-                    class="btn btn--icon btn--delete"
+                    class="btn btn--icon btn--sm btn--delete"
                     v-if="model.abilities.delete"
                     @click="destroy"
                     :aria-label="__('Delete')"
@@ -26,7 +26,7 @@
                 </button>
                 <Link
                     v-if="model.abilities.update"
-                    class="btn btn--icon btn--primary"
+                    class="btn btn--icon btn--sm btn--tertiary"
                     :href="model.urls.edit"
                     :aria-label="__('Edit')"
                 >
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="app-card card">
-            <ul class="clear-list">
+            <ul class="preview-list">
                 <li v-for="field in model.fields" :key="field.name">
                     <strong>{{ field.label }}</strong>: <span v-html="field.formatted_value"></span>
                 </li>

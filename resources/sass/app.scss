@@ -12,6 +12,7 @@
 :root {
     --gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)});
     --gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)});
+    --box-shadow: 0 0.25rem 2rem 0 hsl(223 42% 50% / 0.15);
 }
 
 .hidden {
