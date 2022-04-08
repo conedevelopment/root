@@ -36,7 +36,7 @@
         </div>
         <div class="app-card card">
             <div class="table-responsive">
-                <table class="table table--striped table--clear-border table--sm">
+                <table class="table table--striped table--clear-border table--rounded table--sm">
                     <tbody>
                         <tr v-for="field in model.fields" :key="field.name">
                             <th style="width: 10rem; text-align: end;">{{ field.label }}</th>

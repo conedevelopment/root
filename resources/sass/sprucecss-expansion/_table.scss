@@ -8,25 +8,8 @@
     thead tr {
         th {
         background-color: spruce.color(primary);
-        color: #fff;
+        color: hsl(0 0% 100%);
         }
-    }
-
-    th,
-    td {
-        &:first-child {
-            border-start-start-radius: spruce.$border-radius-lg;
-            border-end-start-radius: spruce.$border-radius-lg;
-        }
-
-        &:last-child {
-            border-start-end-radius: spruce.$border-radius-lg;
-            border-end-end-radius: spruce.$border-radius-lg;
-        }
-    }
-
-    td {
-        color: spruce.color(text);
     }
 
     .select-row-wrapper {

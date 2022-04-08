@@ -3540,20 +3540,7 @@ select option[disabled]:first-child {
 }
 .table thead tr th {
   background-color: var(--spruce-base-color-primary);
-  color: #fff;
-}
-.table th:first-child,
-.table td:first-child {
-  border-start-start-radius: 0.5rem;
-  border-end-start-radius: 0.5rem;
-}
-.table th:last-child,
-.table td:last-child {
-  border-start-end-radius: 0.5rem;
-  border-end-end-radius: 0.5rem;
-}
-.table td {
-  color: var(--spruce-base-color-text);
+  color: hsl(0deg, 0%, 100%);
 }
 .table .select-row-wrapper {
   display: flex;
