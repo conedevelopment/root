@@ -197,7 +197,9 @@ select {
         cursor: pointer;
         display: flex;
         padding: 0 0.5em;
-        transition: background-color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+        transition-duration: spruce.transition(duration);
+        transition-property: background-color;
+        transition-timing-function: spruce.transition(timing-function);
 
         &:hover {
             background-color: color.adjust(spruce.color(primary, $only-color: true), $lightness: -15%);
