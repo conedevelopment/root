@@ -1286,6 +1286,7 @@ template {
 }
 
 :root {
+  --spruce-base-color-primary-light: hsl(215deg, 100%, 96%);
   --spruce-base-color-heading: hsl(238deg, 69%, 22%);
   --spruce-base-color-text: hsl(207deg, 44%, 20%);
   --spruce-base-color-primary: hsl(214deg, 98%, 49%);
@@ -2794,15 +2795,15 @@ legend {
   text-align: left;
   width: 100%;
 }
-.accordion__title button svg {
+.accordion__title button[aria-expanded=true] .vert {
+  display: none;
+}
+.accordion__icon {
   color: var(--spruce-base-color-primary);
   height: 1.5rem;
   -webkit-margin-start: 0.5rem;
           margin-inline-start: 0.5rem;
   width: 1.5rem;
-}
-.accordion__title button[aria-expanded=true] .vert {
-  display: none;
 }
 .accordion__content {
   margin-top: 0.5rem;
@@ -3107,10 +3108,11 @@ legend {
   width: 1.5rem;
 }
 .media-accordion__icon {
-  color: rgba(0, 0, 0, 0.2);
+  color: var(--spruce-base-color-primary);
   height: 1.5rem;
-  margin-right: 0.3rem;
-  width: 1.5rem;
+  -webkit-margin-end: 0.5rem;
+          margin-inline-end: 0.5rem;
+  width: 1.5rem !important;
 }
 .media-accordion__caption {
   overflow: hidden;

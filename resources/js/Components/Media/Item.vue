@@ -2,7 +2,7 @@
     <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
         <img v-if="item.is_image" :src="url" :alt="item.name" @error="reload" @load="loading = false">
         <span v-else class="media-item__caption">
-            <Icon name="file"></Icon>
+            <Icon name="description"></Icon>
             <span>{{ item.file_name }}</span>
         </span>
     </div>

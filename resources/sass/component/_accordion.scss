@@ -33,17 +33,17 @@
             text-align: left;
             width: 100%;
 
-            svg {
-                color: spruce.color(primary);
-                height: 1.5rem;
-                margin-inline-start: spruce.spacer(xs);
-                width: 1.5rem;
-            }
-
             &[aria-expanded='true'] .vert {
                 display: none;
             }
         }
+    }
+
+    &__icon {
+        color: spruce.color(primary);
+        height: 1.5rem;
+        margin-inline-start: spruce.spacer(xs);
+        width: 1.5rem;
     }
 
     &__content {

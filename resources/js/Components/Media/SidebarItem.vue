@@ -4,7 +4,9 @@
             <div class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }" v-if="item.is_image">
                 <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
             </div>
-            <Icon v-else name="file" class="media-accordion__icon"></Icon>
+            <span v-else class="media-accordion__icon">
+                <Icon name="description"></Icon>
+            </span>
             <span class="media-accrodion__caption">
                 {{ item.file_name }}
             </span>

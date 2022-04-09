@@ -337,10 +337,10 @@
     }
 
     &__icon {
-        color: rgba(0, 0, 0, 0.2);
+        color: spruce.color(primary);
         height: 1.5rem;
-        margin-right: 0.3rem;
-        width: 1.5rem;
+        margin-inline-end: spruce.spacer(xs);
+        width: 1.5rem !important;
     }
 
     &__caption {
