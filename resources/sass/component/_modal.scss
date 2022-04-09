@@ -27,7 +27,7 @@
     width: 30rem;
 
     &--media {
-        inset: spruce.spacer(m);
+        inset: spruce.spacer(s);
         max-width: 100%;
         position: fixed;
         width: auto;
@@ -73,9 +73,13 @@
     }
 
     &-body {
+        @include spruce.scrollbar(
+            $border-radius: 3px
+        );
         flex: 1 1 auto;
         overflow-x: visible;
         overflow-y: auto;
+        padding-inline-end: spruce.spacer(s);
         padding-block: spruce.spacer(s);
     }
 

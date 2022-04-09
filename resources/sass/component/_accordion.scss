@@ -1,19 +1,20 @@
 @use '~sprucecss/scss/spruce';
 
 .accordion-wrapper {
-    @include spruce.layout-stack(spruce.spacer(s));
+    > * + * {
+        border-block-start: 1px solid spruce.color(border);
+    }
 }
 
 .accordion {
     background-color: spruce.color(background, form);
     border-radius: spruce.$border-radius-sm;
-    border: 1px solid spruce.color(border, form);
-    padding: spruce.spacer(s);
+    padding-block: 0.75rem;
 
     &__title {
         color: spruce.color(label, form);
         font-family: spruce.$font-family-base;
-        font-size: spruce.responsive-font-size(1.2rem);
+        font-size: spruce.responsive-font-size(1rem);
         margin: 0;
 
         span {
@@ -26,7 +27,7 @@
             border: 0;
             cursor: pointer;
             display: flex;
-            font-weight: 700;
+            font-weight: 600;
             justify-content: space-between;
             padding: 0;
             text-align: left;

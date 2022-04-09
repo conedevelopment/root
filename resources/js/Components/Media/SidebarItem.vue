@@ -5,7 +5,7 @@
                 <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
             </div>
             <Icon v-else name="file" class="media-accordion__icon"></Icon>
-            <span style="text-overflow: ellipsis; max-width: 190px; display: inline-block; overflow: hidden; white-space: nowrap;">
+            <span class="media-accrodion__caption">
                 {{ item.file_name }}
             </span>
         </template>
