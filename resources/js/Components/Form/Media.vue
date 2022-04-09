@@ -18,7 +18,7 @@
                 @update:modelValue="$emit('update:modelValue', $event)"
             ></Media>
         </div>
-        <div class="media-item-list__body">
+        <div class="selected-media-item-list">
             <div
                 v-for="medium in items"
                 class="selected-media-item"
