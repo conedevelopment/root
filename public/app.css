@@ -3038,8 +3038,8 @@ legend {
   width: 2.5rem;
 }
 
-.modal-content.has-active-dropzone::before {
-  background-color: rgba(var(--spruce-base-color-primary), 0.35);
+.modal-body.has-active-dropzone::before {
+  background-color: rgba(2, 109, 247, 0.6);
   border: 5px dashed var(--spruce-base-color-primary);
   bottom: 0;
   content: "";
@@ -3050,7 +3050,7 @@ legend {
   top: 0;
   z-index: 5;
 }
-.modal-content.has-active-dropzone::after {
+.modal-body.has-active-dropzone::after {
   align-items: center;
   bottom: 0;
   color: #fff;

@@ -18,7 +18,7 @@
                 @update:modelValue="$emit('update:modelValue', $event)"
             ></Media>
         </div>
-        <div>
+        <div class="media-item-list__body">
             <div
                 v-for="medium in items"
                 class="selected-media-item"
@@ -33,7 +33,7 @@
                     :alt="medium.file_name"
                 >
                 <span v-else class="selected-media-item__document" :title="medium.file_name">
-                    <Icon name="file"></Icon>
+                    <Icon name="description"></Icon>
                     <span>{{ medium.file_name }}</span>
                 </span>
             </div>

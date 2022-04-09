@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '~sprucecss/scss/spruce';
 
 .media-item-list {
@@ -254,10 +255,10 @@
     }
 }
 
-.modal-content {
+.modal-body {
     &.has-active-dropzone {
         &::before {
-            background-color: rgba(spruce.color(primary), 0.35);
+            background-color: color.adjust(spruce.color(primary, $only-color: true), $alpha: -0.4);
             border: 5px dashed spruce.color(primary);
             bottom: 0;
             content: '';
