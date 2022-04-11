@@ -9,7 +9,8 @@ mix.webpackConfig({
 
 mix.setPublicPath('./public')
     .js('resources/js/app.js', 'app.js')
-    .vue({ version: 3, runtimeOnly: true })
+    .vue({ runtimeOnly: true })
+    .extract(['vue'])
     .sass('resources/sass/app.scss', 'app.css')
     .options({ processCssUrls: false })
     .sourceMaps()

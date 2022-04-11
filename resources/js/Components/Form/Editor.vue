@@ -40,6 +40,10 @@
                 type: String,
                 required: true,
             },
+            error: {
+                type: String,
+                default: null,
+            },
         },
 
         inheritAttrs: false,

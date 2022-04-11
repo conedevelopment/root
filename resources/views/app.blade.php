@@ -34,6 +34,8 @@
     @foreach(Cone\Root\Support\Facades\Asset::scripts() as $key => $script)
         <script id="script-{{ $key }}" src="{{ $script->getUrl() }}"></script>
     @endforeach
-    <script src="{{ URL::asset('vendor/root/app.js') }}" defer></script>
+    <script src="{{ URL::asset('vendor/root/manifest.js') }}"></script>
+    <script src="{{ URL::asset('vendor/root/vendor.js') }}"></script>
+    <script src="{{ URL::asset('vendor/root/app.js') }}"></script>
 </body>
 </html>
