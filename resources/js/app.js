@@ -1,7 +1,9 @@
-import { createApp, resolveComponent, h } from 'vue';
+import * as Vue from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import Root from './Plugins/Root';
 import Layout from './Components/Layout/Layout';
+
+window.Vue = Vue;
 
 createInertiaApp({
     resolve: (name) => {
@@ -10,7 +12,7 @@ createInertiaApp({
         try {
             page = require(`./Pages/${name}`).default;
         } catch (error) {
-            page = resolveComponent(name);
+            page = Vue.resolveComponent(name);
         }
 
         page.resolveDefaultLayout = () => Layout;
@@ -18,7 +20,7 @@ createInertiaApp({
         return page;
     },
     setup({ el, App, props, plugin }) {
-        const app = createApp({ render: () => h(App, props) });
+        const app = Vue.createApp({ render: () => Vue.h(App, props) });
 
         app.use(plugin);
         app.use(Root, window.Root);
