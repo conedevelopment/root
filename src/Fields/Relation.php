@@ -253,7 +253,7 @@ abstract class Relation extends Field
                 } elseif ($default instanceof Collection) {
                     return $default->map(function (Model $related) use ($request): mixed {
                         return $this->resolveDisplay($request, $related);
-                    })->join(', ');
+                    })->toArray();
                 }
 
                 return $default;
