@@ -33,7 +33,7 @@ class Install extends Command
     {
         $status = $this->call('migrate');
 
-        File::ensureDirectoryExists(Storage::disk('local')->path('chunks'));
+        File::ensureDirectoryExists(Storage::disk('local')->path('root-chunks'));
 
         if ($this->option('seed')) {
             $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
