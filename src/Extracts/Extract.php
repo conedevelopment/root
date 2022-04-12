@@ -5,6 +5,8 @@ namespace Cone\Root\Extracts;
 use Closure;
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
@@ -141,7 +143,10 @@ abstract class Extract implements Arrayable
      */
     public function filters(Request $request): array
     {
-        return [];
+        return [
+            Search::make($this->resolveFields($request)->available($request)->searchable($request)),
+            Sort::make($this->resolveFields($request)->available($request)->sortable($request)),
+        ];
     }
 
     /**

@@ -3,8 +3,7 @@
         <div class="app-operation">
             <Link :href="resource.urls.index" class="btn btn--primary btn--icon">
                 <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ __('Go back to') }}
-                {{ resource.name }}
+                {{ __('Go back to :resource', { resource: resource.name }) }}
             </Link>
         </div>
         <div class="app-widget">
