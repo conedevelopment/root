@@ -48,6 +48,10 @@ export default {
             type: Object,
             required: true,
         },
+        componentResolver: {
+            type: Function,
+            default: (component) => resolveComponent(component),
+        },
     },
 
     inheritAttrs: false,
@@ -55,7 +59,7 @@ export default {
     emits: ['update:modelValue'],
 
     render() {
-        return h(resolveComponent(this.component), {
+        return h(this.componentResolver(this.component), {
             ...this.$attrs,
             name: this.name,
             modelValue: this.modelValue,
