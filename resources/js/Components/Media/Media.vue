@@ -152,7 +152,7 @@
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 selection: [],
-                value: JSON.parse(JSON.stringify(this.modelValue)),
+                value: Object.assign({}, JSON.parse(JSON.stringify(this.modelValue))),
             };
         },
 
@@ -204,9 +204,11 @@
                     this.selection = [item];
                 }
 
-                this.value[item.id] = item.pivot_fields.reduce((pivotValues, field) => {
-                    return Object.assign(pivotValues, { [field.name]: field.value });
-                }, {});
+                this.value = Object.assign(this.value, {
+                    [item.id]: item.pivot_fields.reduce((pivotValues, field) => {
+                        return Object.assign(pivotValues, { [field.name]: field.value });
+                    }, {}),
+                });
             },
             deselect(item) {
                 const index = this.selection.findIndex((selected) => selected.id === item.id);

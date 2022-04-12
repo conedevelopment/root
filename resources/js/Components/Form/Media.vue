@@ -15,7 +15,7 @@
                 :modelValue="modelValue"
                 :select-resolver="selectResolver"
                 :multiple="multiple"
-                @update:modelValue="$emit('update:modelValue', $event)"
+                @update:modelValue="update"
             ></Media>
         </div>
         <div class="selected-media-item-list">
@@ -94,7 +94,7 @@
         emits: ['update:modelValue'],
 
         mounted() {
-            this.$refs.media.selection = this.items;
+            this.$refs.media.selection = Array.from(this.items);
         },
 
         data() {
@@ -112,7 +112,10 @@
                 this.items = selection;
 
                 return value;
-            }
+            },
+            update(value) {
+                this.$emit('update:modelValue', value);
+            },
         },
     }
 </script>
