@@ -9,7 +9,7 @@
                 :name="name"
                 :select-resolver="selectResolver"
             ></FormHandler>
-            <div class="accordion-wrapper">
+            <div v-if="hasPivotFields" class="accordion-wrapper">
                 <div v-for="(pivot, key) in modelValue" :key="key">
                     <Accordion v-if="pivotFields?.[key] && pivotFields[key].length > 0" :title="formattedValue[key]">
                         <div class="form-group-stack">
@@ -83,6 +83,9 @@
         computed: {
             component() {
                 return this.async ? 'AsyncSelect' : 'Select';
+            },
+            hasPivotFields() {
+                return Object.values(this.pivotFields).some((fields) => fields.length > 0);
             },
             value: {
                 set(value) {
