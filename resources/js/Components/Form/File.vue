@@ -11,7 +11,7 @@
             @input="update($event.target.files)"
         >
         <progress v-if="$parent.form.progress" :value="$parent.form.progress.percentage" max="100">
-            {{ form.progress.percentage }}%
+            {{ $parent.form.progress.percentage }}%
         </progress>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
@@ -32,6 +32,18 @@
                 type: [Array, Object],
                 default: () => [],
             },
+            value: {
+                type: [Array, Object],
+                default: () => [],
+            },
+            formatted_value: {
+                type: [Array, Object],
+                default: () => [],
+            },
+            pivot_fields: {
+                type: [Array, Object],
+                default: () => [],
+            },
             label: {
                 type: String,
                 required: true,
@@ -40,7 +52,17 @@
                 type: String,
                 default: null,
             },
+            options: {
+                type: Array,
+                default: () => [],
+            },
+            selection: {
+                type: Array,
+                default: () => [],
+            },
         },
+
+        inheritAttrs: false,
 
         methods: {
             update(value) {
