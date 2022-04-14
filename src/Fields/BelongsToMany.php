@@ -59,26 +59,40 @@ class BelongsToMany extends BelongsTo
     public function resolveDefault(Request $request, Model $model): mixed
     {
         if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = function (Request $request, Model $model, mixed $value): mixed {
-                $relation = $this->getRelation($model);
-
-                return $value->mapWithKeys(function (Model $related) use ($request, $model, $relation) {
+            $this->defaultResolver = function (Request $request, Model $model, mixed $value): array {
+                return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
                     return [
-                        $related->getKey() => $this->resolvePivotFields($request)
-                                                    ->available($request, $model, $related)
-                                                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation) {
-                                                        return [
-                                                            $field->name => $field->resolveDefault(
-                                                                $request, $related->getRelation($relation->getPivotAccessor())
-                                                            ),
-                                                        ];
-                                                    }),
+                        $related->getKey() => $this->mapPivotValues($request, $model, $related),
                     ];
-                });
+                })->toArray();
             };
         }
 
         return parent::resolveDefault($request, $model);
+    }
+
+    /**
+     * Map the pivot values.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return array
+     */
+    protected function mapPivotValues(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        return $this->resolvePivotFields($request)
+                    ->available($request, $model, $related)
+                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
+                        return [
+                            $field->name => $field->resolveDefault(
+                                $request, $related->getRelation($relation->getPivotAccessor())
+                            ),
+                        ];
+                    })
+                    ->toArray();
     }
 
     /**
