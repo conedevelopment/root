@@ -7,8 +7,8 @@
 
     thead tr {
         th {
-        background-color: spruce.color(primary);
-        color: hsl(0 0% 100%);
+            background-color: spruce.color(primary);
+            color: hsl(0 0% 100%);
         }
     }
 
@@ -39,7 +39,9 @@
         display: inline-flex;
         height: 0.85rem;
         opacity: 0.5;
-        transition: opacity var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+        transition-duration: spruce.transition(duration);
+        transition-property: opacity;
+        transition-timing-function: spruce.transition(timing-function);
         width: 0.85rem;
 
         &:hover,

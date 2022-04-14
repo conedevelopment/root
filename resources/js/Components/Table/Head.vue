@@ -2,10 +2,30 @@
     <thead>
         <tr>
             <th v-if="$parent.actions.length > 0" scope="col">
-                <label class="form-check" style="position: relative; top: 3px;">
-                    <input ref="input" class="form-check__control" type="checkbox" v-model="selected">
-                    <span class="form-label form-check__label" aria-label=""></span>
-                </label>
+                <div class="th-helper">
+                    <label class="form-check">
+                        <input ref="input" class="form-check__control" type="checkbox" v-model="selected" style="margin-inline-end: 0;">
+                        <span class="form-label form-check__label" aria-label=""></span>
+                    </label>
+                    <div class="dropdown">
+                        <button
+                            type="button"
+                            class="dropdown__btn"
+                            aria-expanded="false"
+                            aria-controls="table-actions"
+                        >
+                            <Icon name="more-vert"></Icon>
+                        </button>
+                        <ul class="dropdown__menu" id="table-actions">
+                            <li class="dropdown__item">
+                                <label class="form-check">
+                                    <input class="form-check__control" type="checkbox" value="own" name="property-ownership2">
+                                    <span class="form-label form-check__label">Select all matching</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
                 <div class="th-helper">

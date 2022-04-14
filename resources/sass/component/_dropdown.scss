@@ -1,0 +1,73 @@
+@use '~sprucecss/scss/spruce';
+
+.dropdown {
+    $this: &;
+
+    display: grid;
+    position: relative;
+
+    &__btn {
+        @include spruce.clear-btn;
+        display: inline-flex;
+        height: 0.85rem;
+        opacity: 0.5;
+        transition-duration: spruce.transition(duration);
+        transition-property: opacity;
+        transition-timing-function: spruce.transition(timing-function);
+        width: 0.85rem;
+
+        &[aria-expanded='true'] + #{$this}__menu {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &:hover {
+            opacity: 0.75;
+        }
+
+        svg {
+            height: auto;
+            width: 100%;
+        }
+    }
+
+    &__menu {
+        @include spruce.clear-list;
+        background-color: spruce.color(background);
+        border-radius: spruce.$border-radius-sm;
+        box-shadow: var(--box-shadow);
+        display: none;
+        font-weight: 400;
+        left: 0;
+        min-width: 22ch;
+        padding-block: spruce.spacer(xs);
+        position: absolute;
+        top: calc(100% + 0.25rem);
+
+        > li + li {
+            margin-block-start: 0;
+        }
+
+        a {
+          &:hover,
+          &:focus {
+              color: spruce.color(primary);
+          }
+
+          &[aria-current="page"] {
+              font-weight: 700;
+          }
+        }
+    }
+
+    &__item {
+        color: spruce.color(text);
+        display: flex;
+        padding: spruce.spacer(xxs) spruce.spacer(s);
+    }
+
+    &__devider {
+        border-top: 1px solid spruce.color(border);
+        height: 0;
+    }
+}
