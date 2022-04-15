@@ -137,6 +137,7 @@
                 this.selection = this.items.data.map((item) => item.id);
             },
             clearSelection() {
+                this.allMatching = false;
                 this.selection = [];
             },
             fetch() {
