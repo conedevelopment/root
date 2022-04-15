@@ -7,24 +7,20 @@
                         <input ref="input" class="form-check__control" type="checkbox" v-model="selected" style="margin-inline-end: 0;">
                         <span class="form-label form-check__label" aria-label=""></span>
                     </label>
-                    <div class="dropdown">
-                        <button
-                            type="button"
-                            class="dropdown__btn"
-                            aria-expanded="false"
-                            aria-controls="table-actions"
-                        >
-                            <Icon name="more-vert"></Icon>
-                        </button>
-                        <ul class="dropdown__menu" id="table-actions">
-                            <li class="dropdown__item">
-                                <label class="form-check">
-                                    <input class="form-check__control" type="checkbox" value="own" name="property-ownership2">
-                                    <span class="form-label form-check__label">Select all matching</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
+                    <Dropdown id="table-selection-control">
+                        <li class="dropdown__item">
+                            {{ __(':count items are selected', { count: totalItems }) }}
+                        </li>
+                        <hr class="dropdown__divider">
+                        <li class="dropdown__item">
+                            <label class="form-check">
+                                <input class="form-check__control" type="checkbox" v-model="allMatching">
+                                <span class="form-label form-check__label">
+                                    {{ __('Select all matching (:count)', { count: $parent.items.total }) }}
+                                </span>
+                            </label>
+                        </li>
+                    </Dropdown>
                 </div>
             </th>
             <th v-for="column in columns" :key="column.name" scope="col">
@@ -79,9 +75,20 @@
                     value ? this.$parent.selectAll() : this.$parent.clearSelection();
                 },
             },
+            allMatching: {
+                get() {
+                   return this.$parent.allMatching;
+                },
+                set(value) {
+                    value ? this.$parent.selectAll(true) : this.$parent.clearSelection();
+                },
+            },
             indeterminate() {
                 return this.selection.length > 0
                     && this.selection.length < this.items.length;
+            },
+            totalItems() {
+                return this.allMatching ? this.$parent.items.total : this.selection.length;
             },
         },
 

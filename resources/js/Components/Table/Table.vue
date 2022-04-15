@@ -15,8 +15,9 @@
             ></Search>
             <Actions
                 v-if="actions.length > 0"
-                :selection="selection"
                 :actions="actions"
+                :all-matching="allMatching"
+                :selection="selection"
                 @success="clearSelection"
             ></Actions>
             <Extracts
@@ -91,6 +92,7 @@
         data() {
             return {
                 selection: [],
+                allMatching: false,
                 processing: false,
                 query: this.$inertia.form(window.location.href, this.items.query),
             };
@@ -127,9 +129,11 @@
                 if (index !== -1) {
                     this.selection.splice(index, 1);
                 }
+
+                this.allMatching = false;
             },
             selectAll(matching = false) {
-                // append all matching to query string
+                this.allMatching = matching;
                 this.selection = this.items.data.map((item) => item.id);
             },
             clearSelection() {

@@ -103,7 +103,10 @@ abstract class Action implements Arrayable, Responsable
                 ->mapToValidate($request, $model)
         );
 
-        $this->handle($request, $query->findMany($request->input('models', [])));
+        $this->handle(
+            $request,
+            $request->boolean('all') ? $query->get() : $query->findMany($request->input('models', []))
+        );
 
         return $this->toResponse($request);
     }

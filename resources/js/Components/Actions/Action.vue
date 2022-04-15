@@ -30,6 +30,10 @@
                 type: Array,
                 required: true,
             },
+            allMatching: {
+                type: Boolean,
+                required: true,
+            },
         },
 
         emits: ['success', 'error'],
@@ -47,7 +51,7 @@
             submit() {
                 this.form.transform((data) => ({
                     ...data,
-                    all: false,
+                    all: this.allMatching,
                     models: this.selection,
                 })).post(this.action.url, {
                     onSuccess: () => {

@@ -23,6 +23,7 @@
                 v-for="action in actions"
                 ref="action"
                 :action="action"
+                :all-matching="allMatching"
                 :key="action.key"
                 :selection="selection"
                 @error="$emit('error', action)"
@@ -48,6 +49,10 @@
             selection: {
                 type: Array,
                 default: () => [],
+            },
+            allMatching: {
+                type: Boolean,
+                default: false,
             },
         },
 

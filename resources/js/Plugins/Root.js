@@ -2,6 +2,7 @@ import Axios from 'axios';
 import Cookie from './../Support/Cookie';
 import Debounce from './../Directives/Debounce';
 import DispatchesEvents from './../Mixins/DispatchesEvents';
+import Dropdown from './../Components/Dropdown';
 import FormHandler from './../Components/Form/Handler';
 import Icon from './../Components/Icon';
 import Modal from './../Components/Modal';
@@ -12,6 +13,7 @@ export default {
     install(app, options = {}) {
         app.mixin(DispatchesEvents);
 
+        app.component('Dropdown', Dropdown);
         app.component('FormHandler', FormHandler);
         app.component('Icon', Icon);
         app.component('Modal', Modal);
