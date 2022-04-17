@@ -82,5 +82,10 @@
         <symbol id="icon-more-vert" viewBox="0 0 24 24">
             <path d="M12,6c1.65,0 3,-1.35 3,-3c0,-1.65 -1.35,-3 -3,-3c-1.65,0 -3,1.35 -3,3c0,1.65 1.35,3 3,3Zm0,3c-1.65,0 -3,1.35 -3,3c0,1.65 1.35,3 3,3c1.65,0 3,-1.35 3,-3c0,-1.65 -1.35,-3 -3,-3Zm0,9c-1.65,0 -3,1.35 -3,3c0,1.65 1.35,3 3,3c1.65,0 3,-1.35 3,-3c0,-1.65 -1.35,-3 -3,-3Z" style="fill:currentColor;"/>
         </symbol>
+        @foreach(Cone\Root\Support\Facades\Asset::icons() as $icon)
+            <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
+                @include($icon->getPath())
+            </symbol>
+        @endforeach
     </defs>
 </svg>

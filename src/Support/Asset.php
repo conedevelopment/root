@@ -9,6 +9,7 @@ class Asset
 {
     public const SCRIPT = 'script';
     public const STYLE = 'style';
+    public const ICON = 'icon';
 
     /**
      * The asset key.
@@ -94,6 +95,10 @@ class Asset
     {
         if (! is_null($this->url)) {
             return $this->url;
+        }
+
+        if ($this->getType() === static::ICON) {
+            return sprintf('#icon-%s', $this->getKey());
         }
 
         $path = $this->getPath();

@@ -189,6 +189,19 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Set the resouce icon.
+     *
+     * @param  string  $icon
+     * @return $this
+     */
+    public function icon(string $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
      * Get the resource icon.
      *
      * @return string

@@ -39,6 +39,21 @@ class Assets extends Collection implements Contract
     }
 
     /**
+     * Register a new icon.
+     *
+     * @param  string  $key
+     * @param  string  $path
+     * @param  string|null  $url
+     * @return void
+     */
+    public function icon(string $key, string $path, ?string $url = null): void
+    {
+        $asset = new Asset($key, Asset::ICON, $path, $url);
+
+        $this->put($asset->getKey(), $asset);
+    }
+
+    /**
      * Get the registered scripts.
      *
      * @return \Cone\Root\Support\Collections\Assets
@@ -59,6 +74,18 @@ class Assets extends Collection implements Contract
     {
         return $this->filter(static function (Asset $asset): bool {
             return $asset->getType() === Asset::STYLE;
+        });
+    }
+
+    /**
+     * Get the registered icons.
+     *
+     * @return \Cone\Root\Support\Collections\Assets
+     */
+    public function icons(): static
+    {
+        return $this->filter(static function (Asset $asset): bool {
+            return $asset->getType() === Asset::ICON;
         });
     }
 }
