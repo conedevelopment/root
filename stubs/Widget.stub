@@ -48,6 +48,8 @@ class DummyClass extends Widget
      */
     public function data(Request $request): array
     {
-        return [];
+        return array_merge(parent::data($request), [
+            //
+        ]);
     }
 }

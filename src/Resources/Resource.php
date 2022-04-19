@@ -171,7 +171,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveRouteBinding(Request $request, mixed $value): Model
     {
-        $key = strtolower($this->getModelName());
+        $key = $this->getKey();
 
         if (($model = $request->route($key)) instanceof Model) {
             return $model;
