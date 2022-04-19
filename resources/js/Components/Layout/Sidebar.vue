@@ -2,7 +2,7 @@
     <aside class="app-sidebar" :class="{ 'app-sidebar--open': isOpen }">
         <div class="app-sidebar__header">
             <Link :href="$app.config.url">
-                <img class="app-sidebar__logo" src="/vendor/root/root-logo-dark.svg" :alt="$app.config.name">
+                <img class="app-sidebar__logo" :src="$app.config.branding.logo" :alt="$app.config.name">
             </Link>
         </div>
         <nav class="navigation app-sidebar__navigation" :aria-label="__('Site')">

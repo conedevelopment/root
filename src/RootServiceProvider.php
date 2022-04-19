@@ -157,6 +157,7 @@ class RootServiceProvider extends ServiceProvider
                 'config' => [
                     'name' => $app['config']->get('app.name'),
                     'url' => $app['url']->route('root.dashboard'),
+                    'branding' => $app['config']->get('root.branding'),
                 ],
             ]);
         });

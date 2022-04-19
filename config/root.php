@@ -1,6 +1,7 @@
 <?php
 
 use Cone\Root\Http\Middleware\HandleRootRequests;
+use Illuminate\Support\Facades\URL;
 
 return [
 
@@ -46,6 +47,21 @@ return [
         'verified',
         'can:viewRoot',
         HandleRootRequests::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Branding
+    |--------------------------------------------------------------------------
+    |
+    | You can specify the logo and the base colors. If you wish to customize
+    | the layout deeper, you might publish the assets and modify anything
+    | you need to.
+    |
+    */
+
+    'branding' => [
+        'logo' => URL::asset('vendor/root/root-logo-dark.svg'),
     ],
 
     /*

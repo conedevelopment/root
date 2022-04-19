@@ -2,7 +2,7 @@
     <div class="mobile-header">
         <div class="mobile-header__inner">
             <Link :href="$app.config.url">
-                <img class="mobile-header__logo" src="/vendor/root/root-logo-dark.svg" :alt="$app.config.name">
+                <img class="mobile-header__logo" :src="$app.config.branding.logo" :alt="$app.config.name">
             </Link>
             <div class="mobile-header__actions">
                 <button
