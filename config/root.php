@@ -1,7 +1,6 @@
 <?php
 
 use Cone\Root\Http\Middleware\HandleRootRequests;
-use Illuminate\Support\Facades\URL;
 
 return [
 
@@ -61,7 +60,7 @@ return [
     */
 
     'branding' => [
-        'logo' => URL::asset('vendor/root/root-logo-dark.svg'),
+        'logo' => '/vendor/root/root-logo-dark.svg',
     ],
 
     /*

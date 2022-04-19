@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Widgets;
 
+use Closure;
 use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -43,6 +44,13 @@ abstract class Widget implements Arrayable, Renderable
     protected string $template;
 
     /**
+     * The data resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $dataResolver = null;
+
+    /**
      * Make a new widget instance.
      *
      * @param  array  ...$parameters
@@ -52,14 +60,6 @@ abstract class Widget implements Arrayable, Renderable
     {
         return new static(...$parameters);
     }
-
-    /**
-     * Get the data.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    abstract public function data(Request $request): array;
 
     /**
      * Get the key.
@@ -115,13 +115,46 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
+     * Get the data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function data(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Set the data resolver.
+     *
+     * @param  array|\Closure  $data
+     * @return void
+     */
+    public function with(array|Closure $data): static
+    {
+        if (is_array($data)) {
+            $data = function () use ($data): array {
+                return $data;
+            };
+        }
+
+        $this->dataResolver = $data;
+
+        return $this;
+    }
+
+    /**
      * Get the evaluated contents of the object.
      *
      * @return string
      */
     public function render(): string
     {
-        return View::make($this->getTemplate(), App::call([$this, 'data']))->render();
+        return View::make($this->getTemplate(), array_merge(
+            App::call([$this, 'data']),
+            is_null($this->dataResolver) ? [] : App::call($this->dataResolver)
+        ))->render();
     }
 
     /**
