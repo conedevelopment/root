@@ -131,6 +131,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the route key.
+     *
+     * @return string
+     */
+    public function getRouteKey(): string
+    {
+        return Str::of($this->getKey())->singular()->toString();
+    }
+
+    /**
      * Get the name.
      *
      * @return string
@@ -171,7 +181,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveRouteBinding(Request $request, mixed $value): Model
     {
-        $key = $this->getKey();
+        $key = $this->getRouteKey();
 
         if (($model = $request->route($key)) instanceof Model) {
             return $model;
