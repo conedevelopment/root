@@ -16,11 +16,11 @@
             ></Actions>
             <div class="app-operation__edit">
                 <button
+                    v-if="model.abilities.delete"
                     type="button"
                     class="btn btn--icon btn--sm btn--delete"
-                    v-if="model.abilities.delete"
-                    @click="destroy"
                     :aria-label="__('Delete')"
+                    @click="destroy"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>

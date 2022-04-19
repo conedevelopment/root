@@ -9,6 +9,10 @@
     row-gap: spruce.spacer(s);
 
     &__edit {
+        &:empty {
+            display: none;
+        }
+
         background-color: spruce.color(background);
         border-radius: spruce.$btn-border-radius;
         box-shadow: var(--box-shadow);
