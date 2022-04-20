@@ -68,7 +68,7 @@ class DummyClass extends Resource
      */
     public function widgets(Request $request): array
     {
-        return array_merge(parent::fields($request), [
+        return array_merge(parent::widgets($request), [
             //
         ]);
     }
