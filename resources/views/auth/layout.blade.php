@@ -14,7 +14,7 @@
 <body>
     <main class="site-auth">
         <div class="site-auth__inner">
-            <img class="site-auth__logo" src="{{ asset('/vendor/root/root-logo-dark.svg') }}" alt="Root">
+            <img class="site-auth__logo" src="{{ Config::get('root.branding.logo') }}" alt="">
 
             {{-- Message --}}
             @if(Session::has('message'))
@@ -23,7 +23,7 @@
                 </div>
             @endif
 
-            {{-- Erros --}}
+            {{-- Errors --}}
             @if($errors->isNotEmpty())
                 <div role="alert" class="alert alert--danger">
                     {{ __('Error!') }}
@@ -36,8 +36,5 @@
             </div>
         </div>
     </main>
-
-    {{-- Icons --}}
-    @include('root::icons')
 </body>
 </html>

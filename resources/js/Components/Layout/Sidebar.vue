@@ -35,7 +35,7 @@
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
                     <ul class="navigation-submenu">
-                        <li>
+                        <li v-if="resource.abilities.viewAny">
                             <Link
                                 :href="resource.urls.index"
                                 :aria-current="resource.urls.index === $page.props.url ? 'page' : ''"
@@ -43,7 +43,7 @@
                                 {{ __('All :resource', { resource: resource.name }) }}
                             </Link>
                         </li>
-                        <li>
+                        <li v-if="resource.abilities.create">
                             <Link
                                 :href="resource.urls.create"
                                 :aria-current="resource.urls.create === $page.props.url ? 'page' : ''"
