@@ -48,7 +48,7 @@
                                 :href="resource.urls.create"
                                 :aria-current="resource.urls.create === $page.props.url ? 'page' : ''"
                             >
-                                {{ __('Create :model', { resource: resource.model_name }) }}
+                                {{ __('Create :model', { model: resource.model_name }) }}
                             </Link>
                         </li>
                     </ul>
