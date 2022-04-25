@@ -42,7 +42,7 @@ class Publish extends Command
         return $this->call('vendor:publish', array_merge(
             ['--provider' => RootServiceProvider::class],
             $this->option('force') ? ['--force' => true] : [],
-            ['--tag' => $this->option('tag') ?: ['root-compiled', 'root-config']]
+            ['--tag' => $this->option('tag') ?: ['root-compiled']]
         ));
     }
 
