@@ -92,6 +92,8 @@ class ResourceController extends Controller
 
         $model->save();
 
+        $resource->created($request, $model);
+
         return Redirect::route(sprintf('root.%s.show', $resource->getKey()), $model->getKey())
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
@@ -164,6 +166,8 @@ class ResourceController extends Controller
 
         $model->save();
 
+        $resource->updated($request, $model);
+
         return Redirect::route(sprintf('root.%s.edit', $resource->getKey()), $model->getKey())
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
@@ -187,6 +191,8 @@ class ResourceController extends Controller
         }
 
         $trashed ? $model->forceDelete() : $model->delete();
+
+        $resource->deleted($request, $model);
 
         return Redirect::route(sprintf('root.%s.index', $resource->getKey()))
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));

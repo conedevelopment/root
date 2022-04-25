@@ -10,6 +10,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Root;
@@ -592,6 +593,42 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
         ]);
+    }
+
+    /**
+     * Handle the created event.
+     *
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function created(CreateRequest $request, Model $model): void
+    {
+        //
+    }
+
+    /**
+     * Handle the updated event.
+     *
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function updated(UpdateRequest $request, Model $model): void
+    {
+        //
+    }
+
+    /**
+     * Handle the deleted event.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function deleted(ResourceRequest $request, Model $model): void
+    {
+        //
     }
 
     /**
