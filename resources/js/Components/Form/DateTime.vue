@@ -12,6 +12,7 @@
                 :class="{ 'form-control--invalid': error !== null }"
             >
             <input
+                v-if="with_time"
                 type="time"
                 step="1"
                 class="form-control"
@@ -47,6 +48,18 @@
                 type: String,
                 default: null,
             },
+            with_time: {
+                type: Boolean,
+                default: false,
+            },
+            value: {
+                type: String,
+                default: null,
+            },
+            formatted_value: {
+                type: String,
+                default: null,
+            },
         },
 
         inheritAttrs: false,
@@ -55,7 +68,7 @@
 
         data() {
             return {
-                value: new Date(this.modelValue),
+                _value: new Date(this.modelValue),
             };
         },
 
@@ -63,32 +76,32 @@
             date: {
                 set(value) {
                     value = value.split('-');
-                    this.value.setFullYear(value[0]);
-                    this.value.setMonth(value[1] - 1);
-                    this.value.setDate(value[2]);
-                    this.$emit('update:modelValue', this.value.toISOString());
+                    this._value.setFullYear(value[0]);
+                    this._value.setMonth(value[1] - 1);
+                    this._value.setDate(value[2]);
+                    this.$emit('update:modelValue', this._value.toISOString());
                 },
                 get() {
                     return this.modelValue ? [
-                        this.value.getFullYear(),
-                        (this.value.getMonth() + 1).toString().padStart(2, 0),
-                        this.value.getDate().toString().padStart(2, 0),
+                        this._value.getFullYear(),
+                        (this._value.getMonth() + 1).toString().padStart(2, 0),
+                        this._value.getDate().toString().padStart(2, 0),
                     ].join('-') : null;
                 },
             },
             time: {
                 set(value) {
                     value = value.split(':');
-                    this.value.setHours(value[0]);
-                    this.value.setMinutes(value[1]);
-                    this.value.setSeconds(value[2]);
-                    this.$emit('update:modelValue', this.value.toISOString());
+                    this._value.setHours(value[0]);
+                    this._value.setMinutes(value[1]);
+                    this._value.setSeconds(value[2]);
+                    this.$emit('update:modelValue', this._value.toISOString());
                 },
                 get() {
                     return this.modelValue ? [
-                        this.value.getHours().toString().padStart(2, 0),
-                        this.value.getMinutes().toString().padStart(2, 0),
-                        this.value.getSeconds().toString().padStart(2, 0),
+                        this._value.getHours().toString().padStart(2, 0),
+                        this._value.getMinutes().toString().padStart(2, 0),
+                        this._value.getSeconds().toString().padStart(2, 0),
                     ].join(':') : null;
                 },
             },
