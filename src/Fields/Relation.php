@@ -75,6 +75,13 @@ abstract class Relation extends Field
     protected ?Closure $queryResolver = null;
 
     /**
+     * The query scopes.
+     *
+     * @var array
+     */
+    protected static array $scopes = [];
+
+    /**
      * Create a new relation field instance.
      *
      * @param  string  $label
@@ -87,6 +94,17 @@ abstract class Relation extends Field
         parent::__construct($label, $name);
 
         $this->relation = $relation ?: Str::camel($label);
+    }
+
+    /**
+     * Add a new scope for the relation query.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public static function scopeQuery(Closure $callback): void
+    {
+        static::$scopes[static::class][] = $callback;
     }
 
     /**
@@ -286,6 +304,10 @@ abstract class Relation extends Field
     public function resolveQuery(Request $request, Model $model): Builder
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
+
+        foreach (static::$scopes[static::class] ?? [] as $scope) {
+            call_user_func_array($scope, [$request, $query]);
+        }
 
         if (! is_null($this->queryResolver)) {
             call_user_func_array($this->queryResolver, [$request, $query]);
