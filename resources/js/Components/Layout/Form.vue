@@ -41,7 +41,7 @@
 
         data() {
             return {
-                form: this.$inertia.form(window.location.pathname, Object.assign({}, this.model.data)),
+                form: this.$inertia.form(Object.assign({}, this.model.data)),
             };
         },
 

@@ -58,6 +58,31 @@ class Json extends Field
     }
 
     /**
+     * Resolve fields.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Cone\Root\Support\Collections\Fields
+     */
+    public function resolveFields(Request $request): Fields
+    {
+        if (! isset($this->resolved['fields'])) {
+            $fields = Fields::make();
+
+            if (! is_null($this->fieldsResolver)) {
+                $resolved = call_user_func_array($this->fieldsResolver, [$request]);
+
+                $fields = $fields->merge($resolved);
+            }
+
+            $this->resolved['fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
+                return $this->authorized($request);
+            });
+        }
+
+        return $this->resolved['fields'];
+    }
+
+    /**
      * Register the field routes.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -85,45 +110,24 @@ class Json extends Field
     }
 
     /**
-     * Resolve fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['fields'])) {
-            $fields = Fields::make();
-
-            if (! is_null($this->fieldsResolver)) {
-                $resolved = call_user_func_array($this->fieldsResolver, [$request]);
-
-                $fields = $fields->merge($resolved);
-            }
-
-            $this->resolved['fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['fields'];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
     {
         $data = parent::toInput($request, $model);
 
-        $json = TemporaryJson::make()->forceFill((array) $data['value']);
+        $data['value'] = (array) $data['value'];
+
+        $json = TemporaryJson::make()
+                            ->setRelation('parent', $model)
+                            ->forceFill($data['value']);
 
         $fields = $this->resolveFields($request)
                     ->available($request, $model)
                     ->mapToForm($request, $json)
                     ->toArray();
 
-        return array_merge($data, [
+        return array_replace_recursive($data, [
             'value' => array_column($fields, 'value', 'name'),
             'formatted_value' => array_column($fields, 'formatted_value', 'name'),
             'fields' => $fields,
