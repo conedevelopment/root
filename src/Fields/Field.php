@@ -400,7 +400,7 @@ abstract class Field implements Arrayable
      */
     public function getDefaultValue(Request $request, Model $model): mixed
     {
-        return $model->getAttribute($this->name);
+        return $model->getAttribute($this->getKey());
     }
 
     /**
@@ -457,7 +457,7 @@ abstract class Field implements Arrayable
      */
     public function getValueForHydrate(Request $request, Model $model): mixed
     {
-        return $request->input($this->name);
+        return $request->input($this->getKey());
     }
 
     /**
@@ -471,7 +471,7 @@ abstract class Field implements Arrayable
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $model->saving(function (Model $model) use ($value): void {
-            $model->setAttribute($this->name, $value);
+            $model->setAttribute($this->getKey(), $value);
         });
     }
 
@@ -592,7 +592,7 @@ abstract class Field implements Arrayable
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 
-        return [$this->name => Arr::flatten($rules, 1)];
+        return [$this->getKey() => Arr::flatten($rules, 1)];
     }
 
     /**

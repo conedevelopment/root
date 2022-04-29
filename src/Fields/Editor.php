@@ -83,7 +83,7 @@ class Editor extends Field
         //
     }
 
-        /**
+    /**
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request

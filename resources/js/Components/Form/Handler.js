@@ -5,6 +5,7 @@ import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
 import Input from './Input';
+import Json from './Json';
 import Media from './Media';
 import Radio from './Radio';
 import Range from './Range';
@@ -22,6 +23,7 @@ export default {
         DateTime,
         Editor,
         Input,
+        Json,
         Media,
         Radio,
         Range,
