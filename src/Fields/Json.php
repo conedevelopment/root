@@ -39,6 +39,25 @@ class Json extends Field
     protected array $resolved = [];
 
     /**
+     * Indicates of the fieldset legend is visible.
+     *
+     * @var bool
+     */
+    protected bool $withLegend = true;
+
+    /**
+     * Set the with legend attribute.
+     *
+     * @return $this
+     */
+    public function withoutLegend(): static
+    {
+        $this->widthLegend = false;
+
+        return $this;
+    }
+
+    /**
      * Set the fields resolver.
      *
      * @param  array|\Closure  $fields
@@ -128,9 +147,10 @@ class Json extends Field
                     ->toArray();
 
         return array_replace_recursive($data, [
-            'value' => array_column($fields, 'value', 'name'),
-            'formatted_value' => array_column($fields, 'formatted_value', 'name'),
             'fields' => $fields,
+            'formatted_value' => array_column($fields, 'formatted_value', 'name'),
+            'value' => array_column($fields, 'value', 'name'),
+            'with_legend' => $this->withLegend,
         ]);
     }
 

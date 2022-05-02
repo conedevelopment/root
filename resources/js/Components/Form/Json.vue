@@ -1,7 +1,7 @@
 <template>
-    <div class="form-group-stack">
-        <fieldset>
-            <legend>{{ label }}</legend>
+    <fieldset>
+        <legend v-if="with_legend">{{ label }}</legend>
+        <div class="form-group-stack">
             <FormHandler
                 v-for="field in fields"
                 v-bind="field"
@@ -11,8 +11,8 @@
                 :id="`${name}.${field.name}`"
                 :name="`${name}.${field.name}`"
             ></FormHandler>
-        </fieldset>
-    </div>
+        </div>
+    </fieldset>
 </template>
 
 <script>
@@ -33,6 +33,10 @@
             name: {
                 type: String,
                 required: true,
+            },
+            with_legend: {
+                type: Boolean,
+                default: true,
             },
         },
 
