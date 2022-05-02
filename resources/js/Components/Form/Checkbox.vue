@@ -12,7 +12,7 @@
                 :name="`${name}.${option.value}`"
                 :value="option.value"
             >
-            <span class="form-check__label">{{ option.formatted_value }}</span>
+            <span class="form-check__label" v-html="option.formatted_value"></span>
         </label>
         <label v-if="options.length === 0" class="form-check">
             <input
