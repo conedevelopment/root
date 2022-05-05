@@ -16,10 +16,10 @@ use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
-use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,6 +36,7 @@ use JsonSerializable;
 class Resource implements Arrayable, Jsonable, JsonSerializable
 {
     use Authorizable;
+    use ResolvesFields;
 
     /**
      * The model class.
@@ -50,13 +51,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * @var array
      */
     protected array $with = [];
-
-    /**
-     * The fields resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $fieldsResolver = null;
 
     /**
      * The filters resolver callback.
@@ -243,59 +237,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function query(): Builder
     {
         return $this->getModelInstance()->newQuery()->with($this->with);
-    }
-
-    /**
-     * Define the fields for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function fields(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Set the fields resolver.
-     *
-     * @param  array|\Closure  $fields
-     * @return $this
-     */
-    public function withFields(array|Closure $fields): static
-    {
-        if (is_array($fields)) {
-            $fields = static function (Request $request, Fields $collection) use ($fields): Fields {
-                return $collection->merge($fields);
-            };
-        }
-
-        $this->fieldsResolver = $fields;
-
-        return $this;
-    }
-
-    /**
-     * Resolve fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['fields'])) {
-            $fields = Fields::make($this->fields($request));
-
-            if (! is_null($this->fieldsResolver)) {
-                $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
-            }
-
-            $this->resolved['fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['fields'];
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace Cone\Root\Fields;
 
-use Closure;
-use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -11,19 +10,14 @@ use Illuminate\Support\Collection;
 
 class BelongsToMany extends BelongsTo
 {
+    use ResolvesFields;
+
     /**
      * The Vue compoent.
      *
      * @var string
      */
     protected string $component = 'BelongsToMany';
-
-    /**
-     * The pivot fields resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $pivotFieldsResolver = null;
 
     /**
      * The resolved components.
@@ -83,7 +77,7 @@ class BelongsToMany extends BelongsTo
     {
         $relation = $this->getRelation($model);
 
-        return $this->resolvePivotFields($request)
+        return $this->resolveFields($request)
                     ->available($request, $model, $related)
                     ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
                         return [
@@ -106,48 +100,6 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
-     * Set the pivot fields resolver.
-     *
-     * @param  array|\Closure  $fields
-     * @return $this
-     */
-    public function withPivotFields(array|Closure $fields): static
-    {
-        if (is_array($fields)) {
-            $fields = static function (Request $request, Fields $collection) use ($fields): Fields {
-                return $collection->merge($fields);
-            };
-        }
-
-        $this->pivotFieldsResolver = $fields;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the pivot fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolvePivotFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['pivot_fields'])) {
-            $fields = Fields::make();
-
-            if (! is_null($this->pivotFieldsResolver)) {
-                $fields = call_user_func_array($this->pivotFieldsResolver, [$request, $fields]);
-            }
-
-            $this->resolved['pivot_fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request, ...$parameters): bool {
-                return $this->authorized($request, ...$parameters);
-            });
-        }
-
-        return $this->resolved['pivot_fields'];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function mapOption(Request $request, Model $model, Model $related): array
@@ -155,10 +107,10 @@ class BelongsToMany extends BelongsTo
         $relation = $this->getRelation($model);
 
         return array_merge(parent::mapOption($request, $model, $related), [
-            'pivot_fields' => $this->resolvePivotFields($request)
-                                    ->available($request, $model, $related)
-                                    ->mapToForm($request, $relation->newPivot())
-                                    ->toArray(),
+            'fields' => $this->resolveFields($request)
+                            ->available($request, $model, $related)
+                            ->mapToForm($request, $relation->newPivot())
+                            ->toArray(),
         ]);
     }
 
@@ -174,7 +126,7 @@ class BelongsToMany extends BelongsTo
         parent::registerRoutes($request, $router);
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolvePivotFields($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($request, $router);
         });
     }
 
@@ -189,18 +141,18 @@ class BelongsToMany extends BelongsTo
 
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
-            'formatted_value' => $models->mapWithKeys(function (Model $related) use ($request): mixed {
-                return [$related->getKey() => $this->resolveDisplay($request, $related)];
-            }),
-            'multiple' => true,
-            'pivot_fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
+            'fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
                 return [
-                    $related->getKey() => $this->resolvePivotFields($request)
+                    $related->getKey() => $this->resolveFields($request)
                                                 ->available($request, $model, $related)
                                                 ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
                                                 ->toArray(),
                 ];
             }),
+            'formatted_value' => $models->mapWithKeys(function (Model $related) use ($request): mixed {
+                return [$related->getKey() => $this->resolveDisplay($request, $related)];
+            }),
+            'multiple' => true,
         ]);
     }
 
@@ -213,7 +165,7 @@ class BelongsToMany extends BelongsTo
      */
     public function toValidate(Request $request, Model $model): array
     {
-        $pivotRules = $this->resolvePivotFields($request)
+        $pivotRules = $this->resolveFields($request)
                             ->available($request, $model)
                             ->mapToValidate($request, $model);
 

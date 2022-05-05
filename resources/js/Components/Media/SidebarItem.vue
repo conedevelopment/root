@@ -21,7 +21,7 @@
         </ul>
         <div class="form-group-stack">
             <FormHandler
-                v-for="field in item.pivot_fields"
+                v-for="field in item.fields"
                 v-bind="field"
                 v-model="$parent.$parent.value[item.id][field.name]"
                 :form="$parent.$parent.$parent.$parent.form"

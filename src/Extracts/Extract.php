@@ -10,11 +10,11 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 abstract class Extract implements Arrayable
 {
     use Authorizable;
+    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
@@ -103,36 +104,6 @@ abstract class Extract implements Arrayable
         }
 
         return call_user_func_array($this->queryResolver, [$request]);
-    }
-
-    /**
-     * Define the fields for the extract.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function fields(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Resolve the fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['fields'])) {
-            $this->resolved['fields'] = Fields::make($this->fields($request));
-
-            $this->resolved['fields']->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['fields'];
     }
 
     /**

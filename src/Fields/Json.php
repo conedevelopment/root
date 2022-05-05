@@ -4,8 +4,8 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Models\TemporaryJson;
-use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 
 class Json extends Field
 {
+    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as defaultRegisterRotues;
     }
@@ -55,50 +56,6 @@ class Json extends Field
         $this->widthLegend = false;
 
         return $this;
-    }
-
-    /**
-     * Set the fields resolver.
-     *
-     * @param  array|\Closure  $fields
-     * @return $this
-     */
-    public function withFields(array|Closure $fields): static
-    {
-        if (is_array($fields)) {
-            $fields = static function () use ($fields): array {
-                return $fields;
-            };
-        }
-
-        $this->fieldsResolver = $fields;
-
-        return $this;
-    }
-
-    /**
-     * Resolve fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['fields'])) {
-            $fields = Fields::make();
-
-            if (! is_null($this->fieldsResolver)) {
-                $resolved = call_user_func_array($this->fieldsResolver, [$request]);
-
-                $fields = $fields->merge($resolved);
-            }
-
-            $this->resolved['fields'] = $fields->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['fields'];
     }
 
     /**

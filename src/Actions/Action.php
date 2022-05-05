@@ -7,9 +7,9 @@ use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Support\Alert;
-use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Action implements Arrayable, Responsable
 {
     use Authorizable;
+    use ResolvesFields;
     use ResolvesVisibility;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as defaultRegisterRoutes;
@@ -139,36 +140,6 @@ abstract class Action implements Arrayable, Responsable
         }
 
         return call_user_func_array($this->queryResolver, [$request]);
-    }
-
-    /**
-     * Define the fields for the action.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function fields(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Resolve the fields.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Fields
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (! isset($this->resolved['fields'])) {
-            $this->resolved['fields'] = Fields::make($this->fields($request));
-
-            $this->resolved['fields']->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['fields'];
     }
 
     /**
