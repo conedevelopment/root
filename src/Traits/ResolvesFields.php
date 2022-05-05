@@ -16,7 +16,7 @@ trait ResolvesFields
     protected ?Closure $fieldsResolver = null;
 
     /**
-     * Define the fields for the resource.
+     * Define the fields for the object.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array

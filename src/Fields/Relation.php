@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
@@ -93,7 +92,7 @@ abstract class Relation extends Field
     {
         parent::__construct($label, $name);
 
-        $this->relation = $relation ?: Str::camel($label);
+        $this->relation = $relation ?: $this->name;
     }
 
     /**
