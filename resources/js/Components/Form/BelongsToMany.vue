@@ -9,12 +9,12 @@
                 :name="name"
                 :select-resolver="selectResolver"
             ></FormHandler>
-            <div v-if="hasfields" class="accordion-wrapper">
+            <div v-if="hasFields" class="accordion-wrapper">
                 <div v-for="(pivot, key) in modelValue" :key="key">
-                    <Accordion v-if="fields?.[key] && fields[key].length > 0" :title="formattedValue[key]">
+                    <Accordion v-if="pivotFields?.[key] && pivotFields[key].length > 0" :title="formattedValue[key]">
                         <div class="form-group-stack">
                             <FormHandler
-                                v-for="field in fields[key]"
+                                v-for="field in pivotFields[key]"
                                 v-bind="field"
                                 v-model="modelValue[key][field.name]"
                                 :form="$parent.form"
@@ -75,7 +75,7 @@
 
         data() {
             return {
-                fields: Object.assign({}, this.fields),
+                pivotFields: Object.assign({}, this.fields),
                 formattedValue: Object.assign({}, this.formatted_value),
             };
         },
@@ -84,8 +84,8 @@
             component() {
                 return this.async ? 'AsyncSelect' : 'Select';
             },
-            hasfields() {
-                return Object.values(this.fields).some((fields) => fields.length > 0);
+            hasFields() {
+                return Object.values(this.pivotFields).some((fields) => fields.length > 0);
             },
             value: {
                 set(value) {
@@ -95,7 +95,7 @@
                         }
 
                         return Object.assign(values, {
-                            [key]: this.fields[key].reduce((pivotValues, field) => {
+                            [key]: this.pivotFields[key].reduce((pivotValues, field) => {
                                 return Object.assign(pivotValues, { [field.name]: field.value });
                             }, {}),
                         });
@@ -115,10 +115,10 @@
 
         methods: {
             selectResolver(value, options) {
-                this.fields = value.reduce((fields, key) => {
+                this.pivotFields = value.reduce((fields, key) => {
                     return Object.assign(fields, {
-                        [key]: this.fields.hasOwnProperty(key)
-                            ? this.fields[key]
+                        [key]: this.pivotFields.hasOwnProperty(key)
+                            ? this.pivotFields[key]
                             : options.find((option) => option.value === key).fields,
                     });
                 }, {});
