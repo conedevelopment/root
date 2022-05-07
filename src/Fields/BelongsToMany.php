@@ -20,13 +20,6 @@ class BelongsToMany extends BelongsTo
     protected string $component = 'BelongsToMany';
 
     /**
-     * The resolved components.
-     *
-     * @var array
-     */
-    protected array $resolved = [];
-
-    /**
      * Set the async attribute.
      *
      * @param  bool  $value

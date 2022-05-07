@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Closure;
 use Cone\Root\Models\TemporaryJson;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
@@ -24,20 +23,6 @@ class Json extends Field
      * @var string
      */
     protected string $component = 'Json';
-
-    /**
-     * The fields resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $fieldsResolver = null;
-
-    /**
-     * The resolved components.
-     *
-     * @var array
-     */
-    protected array $resolved = [];
 
     /**
      * Indicates of the fieldset legend is visible.

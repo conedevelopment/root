@@ -33,13 +33,6 @@ abstract class Action implements Arrayable, Responsable
     }
 
     /**
-     * The resolved components.
-     *
-     * @var array
-     */
-    protected array $resolved = [];
-
-    /**
      * The query resolver callback.
      *
      * @var \Closure|null

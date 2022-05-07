@@ -3,18 +3,18 @@
 namespace Cone\Root\Extracts;
 
 use Closure;
-use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Support\Collections\Filters;
-use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,16 +27,14 @@ abstract class Extract implements Arrayable
 {
     use Authorizable;
     use ResolvesFields;
+    use ResolvesFilters;
+    use ResolvesWidgets;
+    use ResolvesActions {
+        ResolvesActions::resolveActions as defaultResolveActions;
+    }
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
-
-    /**
-     * The resolved components.
-     *
-     * @var array
-     */
-    protected array $resolved = [];
 
     /**
      * The query resolver callback.
@@ -121,36 +119,6 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Resolve the filters.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Filters
-     */
-    public function resolveFilters(Request $request): Filters
-    {
-        if (! isset($this->resolved['filters'])) {
-            $this->resolved['filters'] = Filters::make($this->filters($request));
-
-            $this->resolved['filters']->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['filters'];
-    }
-
-    /**
-     * Define the actions for the extract.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function actions(Request $request): array
-    {
-        return [];
-    }
-
-    /**
      * Resolve the actions.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -158,51 +126,15 @@ abstract class Extract implements Arrayable
      */
     public function resolveActions(Request $request): Actions
     {
-        if (! isset($this->resolved['actions'])) {
-            $this->resolved['actions'] = Actions::make($this->actions($request));
+        if (is_null($this->resolvedActions)) {
+            $query = $this->resolveQuery($request);
 
-            $this->resolved['actions']->each(function (Action $action) use ($request): void {
-                $action->mergeAuthorizationResolver(function (Request $request): bool {
-                    return $this->authorized($request);
-                });
-
-                $action->withQuery(function () use ($request): Builder {
-                    return $this->resolveQuery($request);
-                });
+            $this->defaultResolveActions($request)->each->withQuery(function () use ($query): Builder {
+                return $query;
             });
         }
 
-        return $this->resolved['actions'];
-    }
-
-    /**
-     * Define the widgets for the extract.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function widgets(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Resolve the widgets.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Widgets
-     */
-    public function resolveWidgets(Request $request): Widgets
-    {
-        if (! isset($this->resolved['widgets'])) {
-            $this->resolved['widgets'] = Widgets::make($this->widgets($request));
-
-            $this->resolved['widgets']->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['widgets'];
+        return $this->resolvedActions;
     }
 
     /**

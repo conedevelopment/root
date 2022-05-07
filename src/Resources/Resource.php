@@ -3,8 +3,6 @@
 namespace Cone\Root\Resources;
 
 use Closure;
-use Cone\Root\Actions\Action;
-use Cone\Root\Extracts\Extract;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
@@ -16,10 +14,12 @@ use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Root;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Extracts;
-use Cone\Root\Support\Collections\Filters;
-use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,6 +37,14 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 {
     use Authorizable;
     use ResolvesFields;
+    use ResolvesFilters;
+    use ResolvesWidgets;
+    use ResolvesActions {
+        ResolvesActions::resolveActions as defaultResolveActions;
+    }
+    use ResolvesExtracts {
+        ResolvesExtracts::resolveExtracts as defaultResolveExtracts;
+    }
 
     /**
      * The model class.
@@ -51,41 +59,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * @var array
      */
     protected array $with = [];
-
-    /**
-     * The filters resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $filtersResolver = null;
-
-    /**
-     * The actions resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $actionsResolver = null;
-
-    /**
-     * The extracts resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $extractsResolver = null;
-
-    /**
-     * The widgets resolver callback.
-     *
-     * @var \Closure|null
-     */
-    protected ?Closure $widgetsResolver = null;
-
-    /**
-     * The resolved components.
-     *
-     * @var array
-     */
-    protected array $resolved = [];
 
     /**
      * The icon for the resource.
@@ -254,78 +227,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Set the filters resolver.
-     *
-     * @param  array|\Closure  $filters
-     * @return $this
-     */
-    public function withFilters(array|Closure $filters): static
-    {
-        if (is_array($filters)) {
-            $filters = static function (Request $request, Filters $collection) use ($filters): Filters {
-                return $collection->merge($filters);
-            };
-        }
-
-        $this->filtersResolver = $filters;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the filters.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Filters
-     */
-    public function resolveFilters(Request $request): Filters
-    {
-        if (! isset($this->resolved['filters'])) {
-            $filters = Filters::make($this->filters($request));
-
-            if (! is_null($this->filtersResolver)) {
-                $filters = call_user_func_array($this->filtersResolver, [$request, $filters]);
-            }
-
-            $this->resolved['filters'] = $filters->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['filters'];
-    }
-
-    /**
-     * Define the actions for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function actions(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Set the actions resolver.
-     *
-     * @param  array|\Closure  $actions
-     * @return $this
-     */
-    public function withActions(array|Closure $actions): static
-    {
-        if (is_array($actions)) {
-            $actions = static function (Request $request, Actions $collection) use ($actions): Actions {
-                return $collection->merge($actions);
-            };
-        }
-
-        $this->actionsResolver = $actions;
-
-        return $this;
-    }
-
-    /**
      * Resolve the actions.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -333,53 +234,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveActions(Request $request): Actions
     {
-        if (! isset($this->resolved['actions'])) {
-            $actions = Actions::make($this->actions($request));
-
-            if (! is_null($this->actionsResolver)) {
-                $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
-            }
-
-            $this->resolved['actions'] = $actions->each(function (Action $action): void {
-                $action->withQuery(function (): Builder {
-                    return $this->query();
-                })->mergeAuthorizationResolver(function (Request $request): bool {
-                    return $this->authorized($request);
-                });
+        if (is_null($this->resolvedActions)) {
+            $this->defaultResolveActions($request)->each->withQuery(function (): Builder {
+                return $this->query();
             });
         }
 
-        return $this->resolved['actions'];
-    }
-
-    /**
-     * Define the extracts for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function extracts(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Set the extracts resolver.
-     *
-     * @param  array|\Closure  $extracts
-     * @return $this
-     */
-    public function withExtracts(array|Closure $extracts): static
-    {
-        if (is_array($extracts)) {
-            $extracts = static function (Request $request, Extracts $collection) use ($extracts): Extracts {
-                return $collection->merge($extracts);
-            };
-        }
-
-        $this->extractsResolver = $extracts;
-
-        return $this;
+        return $this->resolvedActions;
     }
 
     /**
@@ -390,76 +251,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveExtracts(Request $request): Extracts
     {
-        if (! isset($this->resolved['extracts'])) {
-            $extracts = Extracts::make($this->extracts($request));
-
-            if (! is_null($this->extractsResolver)) {
-                $extracts = call_user_func_array($this->extractsResolver, [$request, $extracts]);
-            }
-
-            $this->resolved['extracts'] = $extracts->each(function (Extract $extract): void {
-                $extract->withQuery(function (): Builder {
-                    return $this->query();
-                })->mergeAuthorizationResolver(function (Request $request): bool {
-                    return $this->authorized($request);
-                });
+        if (is_null($this->resolvedExtracts)) {
+            $this->defaultResolveExtracts($request)->each->withQuery(function (): Builder {
+                return $this->query();
             });
         }
 
-        return $this->resolved['extracts'];
-    }
-
-    /**
-     * Define the widgets for the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function widgets(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Set the widgets resolver.
-     *
-     * @param  array|\Closure  $widgets
-     * @return $this
-     */
-    public function withWidgets(array|Closure $widgets): static
-    {
-        if (is_array($widgets)) {
-            $widgets = static function (Request $request, Widgets $collection) use ($widgets): Widgets {
-                return $collection->merge($widgets);
-            };
-        }
-
-        $this->widgetsResolver = $widgets;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the widgets.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Widgets
-     */
-    public function resolveWidgets(Request $request): Widgets
-    {
-        if (! isset($this->resolved['widgets'])) {
-            $widgets = Widgets::make($this->widgets($request));
-
-            if (! is_null($this->widgetsResolver)) {
-                $widgets = call_user_func_array($this->widgetsResolver, [$request, $widgets]);
-            }
-
-            $this->resolved['widgets'] = $widgets->each->mergeAuthorizationResolver(function (Request $request): bool {
-                return $this->authorized($request);
-            });
-        }
-
-        return $this->resolved['widgets'];
+        return $this->resolvedExtracts;
     }
 
     /**
