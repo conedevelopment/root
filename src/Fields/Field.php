@@ -518,7 +518,7 @@ abstract class Field implements Arrayable
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function resolveAttributes(Request $request, Model $model)
+    public function resolveAttributes(Request $request, Model $model): array
     {
         return array_map(static function (mixed $attribute) use ($request, $model): mixed {
             return $attribute instanceof Closure

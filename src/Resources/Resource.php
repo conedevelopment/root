@@ -220,9 +220,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function filters(Request $request): array
     {
+        $fields = $this->resolveFields($request)->available($request);
+
         return [
-            Search::make($this->resolveFields($request)->available($request)->searchable($request)),
-            Sort::make($this->resolveFields($request)->available($request)->sortable($request)),
+            Search::make($fields->searchable($request)),
+            Sort::make($fields->sortable($request)),
         ];
     }
 

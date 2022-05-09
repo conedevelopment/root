@@ -112,9 +112,11 @@ abstract class Extract implements Arrayable
      */
     public function filters(Request $request): array
     {
+        $fields = $this->resolveFields($request)->available($request);
+
         return [
-            Search::make($this->resolveFields($request)->available($request)->searchable($request)),
-            Sort::make($this->resolveFields($request)->available($request)->sortable($request)),
+            Search::make($fields->searchable($request)),
+            Sort::make($fields->sortable($request)),
         ];
     }
 
