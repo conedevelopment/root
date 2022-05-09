@@ -189,7 +189,7 @@ class BelongsToMany extends BelongsTo
             parent::toValidate($request, $model),
             Collection::make($pivotRules)
                     ->mapWithKeys(function (array $rules, string $key): array {
-                        return [$this->name.'.*.'.$key => $rules];
+                        return [sprintf('%s.*.%s', $this->name, $key) => $rules];
                     })
                     ->toArray(),
         );

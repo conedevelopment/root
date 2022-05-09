@@ -34,7 +34,7 @@ class Media extends MorphToMany
     protected ?Closure $storingResolver = null;
 
     /**
-     * Set the storage resolver callback.
+     * Set the storing resolver callback.
      *
      * @param  \Closure  $callback
      * @return $this
@@ -55,11 +55,11 @@ class Media extends MorphToMany
      */
     public function store(Request $request, string $path): Medium
     {
-        $medium = tap((Medium::proxy())::makeFrom($path), function (Medium $medium) use ($request): void {
-            if (! is_null($this->storingResolver)) {
-                call_user_func_array($this->storingResolver, [$request, $medium]);
-            }
-        });
+        $medium = (Medium::proxy())::makeFrom($path);
+
+        if (! is_null($this->storingResolver)) {
+            call_user_func_array($this->storingResolver, [$request, $medium]);
+        }
 
         $request->user()->uploads()->save($medium);
 

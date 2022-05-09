@@ -113,7 +113,7 @@ class Json extends Field
             parent::toValidate($request, $model),
             Collection::make($fieldRules)
                     ->mapWithKeys(function (array $rules, string $key): array {
-                        return [$this->name.'.'.$key => $rules];
+                        return [sprintf('%s.%s', $this->name, $key) => $rules];
                     })
                     ->toArray(),
         );

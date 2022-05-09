@@ -13,11 +13,11 @@ class HasOne extends Relation
     public function persist(Request $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {
+            $this->hydrate(
+                $request, $model, $this->getValueForHydrate($request, $model)
+            );
+
             $relation = $this->getRelation($model);
-
-            $value = $this->getValueForHydrate($request, $model);
-
-            $this->hydrate($request, $model, $value);
 
             $relation->save(
                 $model->getRelation($relation->getRelationName())
