@@ -443,9 +443,11 @@ abstract class Field implements Arrayable
      */
     public function persist(Request $request, Model $model): void
     {
-        $this->hydrate(
-            $request, $model, $this->getValueForHydrate($request, $model)
-        );
+        $model->saving(function (Model $model) use ($request): void {
+            $this->hydrate(
+                $request, $model, $this->getValueForHydrate($request, $model)
+            );
+        });
     }
 
     /**
@@ -470,9 +472,7 @@ abstract class Field implements Arrayable
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($value): void {
-            $model->setAttribute($this->getKey(), $value);
-        });
+        $model->setAttribute($this->getKey(), $value);
     }
 
     /**

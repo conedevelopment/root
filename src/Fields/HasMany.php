@@ -18,15 +18,31 @@ class HasMany extends Relation
     /**
      * {@inheritdoc}
      */
+    public function persist(Request $request, Model $model): void
+    {
+        $model->saved(function (Model $model) use ($request): void {
+            $relation = $this->getRelation($model);
+
+            $value = $this->getValueForHydrate($request, $model);
+
+            $this->hydrate($request, $model, $value);
+
+            $relation->saveMany(
+                $model->getRelation($relation->getRelationName())
+            );
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);
 
-        $models = $relation->getRelated()->newQuery()->findMany((array) $value);
+        $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
-        $model->saved(static function () use ($relation, $models): void {
-            $relation->saveMany($models);
-        });
+        $model->setRelation($relation->getRelationName(), $results);
     }
 
     /**

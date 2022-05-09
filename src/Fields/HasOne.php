@@ -10,14 +10,30 @@ class HasOne extends Relation
     /**
      * {@inheritdoc}
      */
+    public function persist(Request $request, Model $model): void
+    {
+        $model->saved(function (Model $model) use ($request): void {
+            $relation = $this->getRelation($model);
+
+            $value = $this->getValueForHydrate($request, $model);
+
+            $this->hydrate($request, $model, $value);
+
+            $relation->save(
+                $model->getRelation($relation->getRelationName())
+            );
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);
 
-        $related = $relation->getRelated()->newQuery()->find($value);
+        $result = $this->resolveQuery($request, $model)->find($value);
 
-        $model->saved(static function () use ($relation, $related): void {
-            $relation->save($related);
-        });
+        $model->setRelation($relation->getRelationName(), $result);
     }
 }

@@ -12,8 +12,6 @@ class BelongsTo extends Relation
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($value): void {
-            $this->getRelation($model)->associate($value);
-        });
+        $this->getRelation($model)->associate($value);
     }
 }

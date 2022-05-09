@@ -85,11 +85,34 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    public function persist(Request $request, Model $model): void
     {
-        $model->saved(function (Model $model) use ($value): void {
+        $model->saved(function (Model $model) use ($request): void {
+            $value = $this->getValueForHydrate($request, $model);
+
+            $this->hydrate($request, $model, $value);
+
             $this->getRelation($model)->sync($value);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hydrate(Request $request, Model $model, mixed $value): void
+    {
+        $relation = $this->getRelation($model);
+
+        $results = $this->resolveQuery($request, $model)
+                        ->findMany(array_keys($value))
+                        ->each(static function (Model $related) use ($relation, $value): void {
+                            $related->setRelation(
+                                $relation->getPivotAccessor(),
+                                $relation->newPivot($value[$related->getKey()])
+                            );
+                        });
+
+        $model->setRelation($relation->getRelationName(), $results);
     }
 
     /**
