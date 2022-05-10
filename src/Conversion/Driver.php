@@ -51,7 +51,7 @@ abstract class Driver
         }
 
         $medium->properties = array_replace(
-            $medium->properties->getArrayCopy(),
+            (array) $medium->properties,
             ['conversions' => $conversions]
         );
 
