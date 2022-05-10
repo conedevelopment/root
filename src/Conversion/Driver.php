@@ -50,7 +50,10 @@ abstract class Driver
             $conversion[] = $conversion;
         }
 
-        $medium->properties = array_replace($medium->properties, ['conversions' => $conversions]);
+        $medium->properties = array_replace(
+            $medium->properties->getArrayCopy(),
+            ['conversions' => $conversions]
+        );
 
         $medium->save();
     }
