@@ -176,13 +176,13 @@ abstract class Extract implements Arrayable
     {
         $this->defaultRegisterRoutes($request, $router);
 
-        $router->prependGroupStackPrefix('api')
-                ->prefix($this->getKey())
-                ->group(function (Router $router) use ($request): void {
-                    $this->resolveFields($request)->registerRoutes($request, $router);
-                    $this->resolveActions($request)->registerRoutes($request, $router);
-                    $this->resolveWidgets($request)->registerRoutes($request, $router);
-                });
+        $router->group(['prefix' => $this->getKey()], function (Router $router) use ($request): void {
+            $router->prependGroupStackPrefix('api')->group([], function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+                $this->resolveActions($request)->registerRoutes($request, $router);
+                $this->resolveWidgets($request)->registerRoutes($request, $router);
+            });
+        });
     }
 
     /**
