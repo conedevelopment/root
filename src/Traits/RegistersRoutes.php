@@ -30,7 +30,10 @@ trait RegistersRoutes
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    abstract public function routes(Router $router): void;
+    public function routes(Router $router): void
+    {
+        //
+    }
 
     /**
      * Set the URI attribute.

@@ -67,17 +67,6 @@ class Editor extends Field
     }
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        //
-    }
-
-    /**
      * Get the default quill config.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -93,7 +82,7 @@ class Editor extends Field
                         [['header' => [1, 2, 3, 4, false]]],
                         ['bold', 'italic', 'underline'],
                         [['list' => 'ordered'], ['list' => 'bullet'], ['align' => []]],
-                        array_filter(['link', is_null($this->media) ? null : 'image']),
+                        ['link'],
                         ['clean'],
                     ],
                     'handlers' => (object) [],
@@ -101,7 +90,7 @@ class Editor extends Field
                 'clipboard' => ['matchVisual' => false],
             ],
             'theme' => 'snow',
-            'formats' => array_filter(['header', 'align', 'bold', 'underline', 'italic', 'list', 'link', is_null($this->media) ? null : 'image']),
+            'formats' => ['header', 'align', 'bold', 'underline', 'italic', 'list', 'link'],
             'placeholder' => $this->placeholder,
         ];
     }

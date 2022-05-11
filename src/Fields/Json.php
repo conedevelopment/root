@@ -60,17 +60,6 @@ class Json extends Field
     }
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        //
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function toInput(Request $request, Model $model): array
