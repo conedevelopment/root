@@ -37,7 +37,9 @@ class Editor extends Field
      */
     public function withMedia(?Closure $callback = null): static
     {
-        $this->media = Media::make(__('Media'), 'media');
+        if (is_null($this->media)) {
+            $this->media = Media::make(__('Media'), 'media');
+        }
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->media]);
