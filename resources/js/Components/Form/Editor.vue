@@ -5,7 +5,13 @@
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
         <div ref="input" class="editor" spellcheck="false"></div>
-        <Media ref="media" :url="media_url" :title="__('Media')"></Media>
+        <Media
+            v-if="with_media"
+            ref="media"
+            :url="media_url"
+            :title="__('Media')"
+            :select-resolver="selectResolver"
+        ></Media>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
@@ -32,9 +38,13 @@
                 type: String,
                 default: '',
             },
+            with_media: {
+                type: Boolean,
+                default: false,
+            },
             media_url: {
                 type: String,
-                required: true,
+                default: null,
             },
             label: {
                 type: String,
@@ -44,6 +54,10 @@
                 type: String,
                 default: null,
             },
+            config: {
+                type: Object,
+                requried: true,
+            },
         },
 
         inheritAttrs: false,
@@ -51,64 +65,50 @@
         emits: ['update:modelValue'],
 
         mounted() {
-            const editor = new Quill(this.$refs.input, {
-                modules: {
-                    toolbar: {
-                        container: [
-                            [{ header: [1, 2, 3, 4, false] }],
-                            ['bold', 'italic', 'underline'],
-                            [{ list: 'ordered'}, { list: 'bullet' }, { align: [] }],
-                            ['link', 'image'],
-                            ['clean'],
-                        ],
-                        handlers: {
-                            image: () => this.$refs.media.open(),
-                        },
-                    },
-                    clipboard: {
-                        matchVisual: false,
-                    },
-                },
-                theme: 'snow',
-                formats: ['header', 'align', 'bold', 'underline', 'italic', 'list', 'link', 'image'],
-                placeholder: this.$attrs.placeholder || '',
-            });
+            const config = JSON.parse(JSON.stringify(this.config));
+
+            if (this.with_media) {
+                config.modules.toolbar.handlers.image = () => {
+                    this.$refs.media.open();
+                };
+            }
+
+            const editor = new Quill(this.$refs.input, config);
 
             editor.root.innerHTML = this.modelValue;
             editor.enable(! this.$attrs.disabled);
-            editor.on('text-change', this.update);
-
-            this.$dispatcher.on('insertMedia', (event) => {
-                const range = editor.getSelection(true);
-                event.detail.forEach((value) => {
-                    if (value.is_image) {
-                        editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
-                        editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
-                    } else {
-                        editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
-                        editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
-                    }
-                });
-                this.$refs.media.selection = [];
+            editor.on('text-change', () => {
+                this.$emit('update:modelValue', editor.root.innerHTML === '<p><br></p>' ? '' : editor.root.innerHTML);
             });
 
-            this.quill = editor;
+            this.selectResolver = (values, selection) => {
+                this.insertMedia(editor, selection);
+
+                return values;
+            };
         },
 
         data() {
             return {
-                quill: null,
+                selectResolver: (values) => values,
             };
         },
 
         methods: {
-            update() {
-                const value = this.quill.root.innerHTML === '<p><br></p>' ? '' : this.quill.root.innerHTML;
+            insertMedia(editor, values) {
+                const range = editor.getSelection(true);
 
-                this.$emit('update:modelValue', value);
-            },
-            insertMedia(values) {
-                this.$dispatcher.emit('insertMedia', values);
+                values.forEach((value) => {
+                    if (value.is_image) {
+                        editor.editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
+                        editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
+                    } else {
+                        editor.editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
+                        editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
+                    }
+                });
+
+                this.$refs.media.clearSelection();
             },
         },
     }

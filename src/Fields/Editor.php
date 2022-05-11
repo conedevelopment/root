@@ -25,33 +25,23 @@ class Editor extends Field
     /**
      * The media field instance.
      *
-     * @var \Cone\Root\Fields\Media
+     * @var \Cone\Root\Fields\Media|null
      */
-    protected Media $media;
-
-    /**
-     * Create a new field instance.
-     *
-     * @param  string  $label
-     * @param  string|null  $name
-     * @return void
-     */
-    public function __construct(string $label, ?string $name = null)
-    {
-        parent::__construct($label, $name);
-
-        $this->media = Media::make(__('Media'), 'media');
-    }
+    protected ?Media $media = null;
 
     /**
      * Configure the media field.
      *
-     * @param  \Closure  $callback
+     * @param  \Closure|null  $callback
      * @return $this
      */
-    public function withMedia(Closure $callback): static
+    public function withMedia(?Closure $callback = null): static
     {
-        call_user_func_array($callback, [$this->media]);
+        $this->media = Media::make(__('Media'), 'media');
+
+        if (! is_null($callback)) {
+            call_user_func_array($callback, [$this->media]);
+        }
 
         return $this;
     }
@@ -67,9 +57,11 @@ class Editor extends Field
     {
         $this->defaultRegisterRotues($request, $router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->media->registerRoutes($request, $router);
-        });
+        if (! is_null($this->media)) {
+            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+                $this->media->registerRoutes($request, $router);
+            });
+        }
     }
 
     /**
@@ -84,6 +76,35 @@ class Editor extends Field
     }
 
     /**
+     * Get the default quill config.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function getDefaultConfig(Request $request, Model $model): array
+    {
+        return [
+            'modules' => [
+                'toolbar' => [
+                    'container' => [
+                        [['header' => [1, 2, 3, 4, false]]],
+                        ['bold', 'italic', 'underline'],
+                        [['list' => 'ordered'], ['list' => 'bullet'], ['align' => []]],
+                        array_filter(['link', is_null($this->media) ? null : 'image']),
+                        ['clean'],
+                    ],
+                    'handlers' => (object) [],
+                ],
+                'clipboard' => ['matchVisual' => false],
+            ],
+            'theme' => 'snow',
+            'formats' => array_filter(['header', 'align', 'bold', 'underline', 'italic', 'list', 'link', is_null($this->media) ? null : 'image']),
+            'placeholder' => $this->placeholder,
+        ];
+    }
+
+    /**
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -93,7 +114,9 @@ class Editor extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'media_url' => URL::to($this->media->getUri()),
+            'config' => $this->getDefaultConfig($request, $model),
+            'media_url' => is_null($this->media) ? null : URL::to($this->media->getUri()),
+            'with_media' => ! is_null($this->media),
         ]);
     }
 }

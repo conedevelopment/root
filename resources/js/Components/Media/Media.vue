@@ -205,7 +205,7 @@
                 }
 
                 this.value = Object.assign(this.value, {
-                    [item.id]: item.pivot_fields.reduce((pivotValues, field) => {
+                    [item.id]: item.fields.reduce((pivotValues, field) => {
                         return Object.assign(pivotValues, { [field.name]: field.value });
                     }, {}),
                 });
@@ -226,6 +226,11 @@
                     'update:modelValue',
                     this.selectResolver(this.value, this.selection)
                 );
+            },
+            clearSelection() {
+                this.value = {};
+                this.selection = [];
+                this.$emit('update:modelValue', this.value);
             },
         },
     }
