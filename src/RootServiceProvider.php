@@ -5,9 +5,7 @@ namespace Cone\Root;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
-use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 
 class RootServiceProvider extends ServiceProvider
 {
@@ -72,7 +70,6 @@ class RootServiceProvider extends ServiceProvider
 
         $this->registerComposers();
         $this->registerRoutes();
-        $this->registerMacros();
     }
 
     /**
@@ -160,32 +157,6 @@ class RootServiceProvider extends ServiceProvider
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);
-        });
-    }
-
-    /**
-     * Register the macros.
-     *
-     * @return void
-     */
-    protected function registerMacros(): void
-    {
-        $this->app['router']->macro('prependGroupStackPrefix', function (string $prefix): Router {
-            $attributes = $this->mergeWithLastGroup(['prefix' => $prefix], false);
-
-            if (! empty(Root::getPath())) {
-                $attributes = array_replace($attributes, [
-                    'prefix' => Str::replaceFirst(
-                        Root::getPath(),
-                        sprintf('%s/%s', Root::getPath(), $prefix),
-                        $this->getLastGroupPrefix()
-                    ),
-                ]);
-            }
-
-            $this->groupStack[array_key_last($this->groupStack)] = $attributes;
-
-            return $this;
         });
     }
 }

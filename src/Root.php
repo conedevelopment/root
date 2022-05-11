@@ -63,14 +63,13 @@ abstract class Root
      * Register the root routes.
      *
      * @param  \Closure  $callback
-     * @param  bool  $api
      * @return void
      */
-    public static function routes(Closure $callback, bool $api = false): void
+    public static function routes(Closure $callback): void
     {
         Route::as('root.')
             ->domain(static::getDomain())
-            ->prefix(static::getPath().($api ? '/api' : ''))
+            ->prefix(static::getPath())
             ->middleware(['root'])
             ->group($callback);
     }

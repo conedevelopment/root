@@ -506,13 +506,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             }
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
-        });
-
-        $this->routeGroup(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
-        }, true);
+        });
     }
 
     /**
@@ -536,13 +533,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * Wrap the given routes into the route group.
      *
      * @param  \Closure  $callback
-     * @param  bool  $api
      * @return void
      */
-    public function routeGroup(Closure $callback, bool $api = false): void
+    public function routeGroup(Closure $callback): void
     {
         Root::routes(function (Router $router) use ($callback): void {
             $router->group(['prefix' => $this->getKey(), 'resource' => $this->getKey()], $callback);
-        }, $api);
+        });
     }
 }
