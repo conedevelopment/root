@@ -57,10 +57,12 @@ class RootApplicationServiceProvider extends ServiceProvider
     protected function registerRoutes(): void
     {
         Root::routes(function (Router $router): void {
-            $this->app->make('root.widgets')->registerRoutes(
-                RootRequest::createFrom($this->app['request']), $router
-            );
-        }, true);
+            $router->prefix('dashboard')->group(function (Router $router): void {
+                $this->app->make('root.widgets')->registerRoutes(
+                    RootRequest::createFrom($this->app['request']), $router
+                );
+            });
+        });
     }
 
     /**
