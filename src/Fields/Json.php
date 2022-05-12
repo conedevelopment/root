@@ -39,7 +39,7 @@ class Json extends Field
      */
     public function withLegend(bool $value = true): static
     {
-        $this->widthLegend = $value;
+        $this->withLegend = $value;
 
         return $this;
     }
