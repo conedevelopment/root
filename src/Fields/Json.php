@@ -34,11 +34,12 @@ class Json extends Field
     /**
      * Set the with legend attribute.
      *
+     * @param  bool  $value
      * @return $this
      */
-    public function withoutLegend(): static
+    public function withLegend(bool $value = true): static
     {
-        $this->widthLegend = false;
+        $this->widthLegend = $value;
 
         return $this;
     }
