@@ -7,6 +7,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 class Editor extends Field
@@ -28,6 +29,40 @@ class Editor extends Field
      * @var \Cone\Root\Fields\Media|null
      */
     protected ?Media $media = null;
+
+    /**
+     * The editor config.
+     *
+     * @var array
+     */
+    protected array $config = [];
+
+    /**
+     * Create a new field instance.
+     *
+     * @param  string  $label
+     * @param  string|null  $name
+     * @return void
+     */
+    public function __construct(string $label, ?string $name = null)
+    {
+        parent::__construct($label, $name);
+
+        $this->config = Config::get('root.editor', []);
+    }
+
+    /**
+     * Set the configuration.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function withConfig(Closure $callback): static
+    {
+        $this->config = call_user_func_array($callback, [$this->config]);
+
+        return $this;
+    }
 
     /**
      * Configure the media field.
@@ -67,35 +102,6 @@ class Editor extends Field
     }
 
     /**
-     * Get the default quill config.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
-     */
-    public function getDefaultConfig(Request $request, Model $model): array
-    {
-        return [
-            'modules' => [
-                'toolbar' => [
-                    'container' => [
-                        [['header' => [1, 2, 3, 4, false]]],
-                        ['bold', 'italic', 'underline'],
-                        [['list' => 'ordered'], ['list' => 'bullet'], ['align' => []]],
-                        ['link'],
-                        ['clean'],
-                    ],
-                    'handlers' => (object) [],
-                ],
-                'clipboard' => ['matchVisual' => false],
-            ],
-            'theme' => 'snow',
-            'formats' => ['header', 'align', 'bold', 'underline', 'italic', 'list', 'link'],
-            'placeholder' => $this->placeholder,
-        ];
-    }
-
-    /**
      * Get the input representation of the field.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -105,7 +111,7 @@ class Editor extends Field
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'config' => $this->getDefaultConfig($request, $model),
+            'config' => $this->config,
             'media_url' => is_null($this->media) ? null : URL::to($this->media->getUri()),
             'with_media' => ! is_null($this->media),
         ]);

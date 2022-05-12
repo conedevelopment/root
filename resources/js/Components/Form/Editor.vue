@@ -54,6 +54,10 @@
                 type: String,
                 default: null,
             },
+            placeholder: {
+                type: String,
+                default: '',
+            },
             config: {
                 type: Object,
                 requried: true,
@@ -65,7 +69,9 @@
         emits: ['update:modelValue'],
 
         mounted() {
-            const config = JSON.parse(JSON.stringify(this.config));
+            const config = JSON.parse(JSON.stringify(
+                Object.assign({}, this.config, { placeholder: this.placeholder })
+            ));
 
             if (this.with_media) {
                 config.modules.toolbar.handlers.image = () => {

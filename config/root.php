@@ -88,4 +88,32 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Quill Editor Settings
+    |--------------------------------------------------------------------------
+    |
+    | You can specify the default Quill editor config here. For more info visit
+    | the official documentation: https://quilljs.com/docs/configuration/
+    |
+    */
+
+    'editor' => [
+        'modules' => [
+            'toolbar' => [
+                'container' => [
+                    [['header' => [1, 2, 3, 4, false]]],
+                    ['bold', 'italic', 'underline'],
+                    [['list' => 'ordered'], ['list' => 'bullet'], ['align' => []]],
+                    ['link'],
+                    ['clean'],
+                ],
+                'handlers' => [],
+            ],
+            'clipboard' => ['matchVisual' => false],
+        ],
+        'theme' => 'snow',
+        'formats' => ['header', 'align', 'bold', 'underline', 'italic', 'list', 'link'],
+    ],
+
 ];
