@@ -129,7 +129,7 @@ abstract class Widget implements Arrayable, Renderable
      * Set the data resolver.
      *
      * @param  array|\Closure  $data
-     * @return void
+     * @return static
      */
     public function with(array|Closure $data): static
     {
