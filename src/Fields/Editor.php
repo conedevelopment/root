@@ -74,6 +74,10 @@ class Editor extends Field
     {
         if (is_null($this->media)) {
             $this->media = Media::make(__('Media'), 'media');
+
+            $this->config['modules']['toolbar']['container'][3][] = 'image';
+
+            $this->config['formats'][] = 'image';
         }
 
         if (! is_null($callback)) {
