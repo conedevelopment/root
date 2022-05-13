@@ -99,6 +99,10 @@ class RootServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->path('Providers/RootServiceProvider.php'),
         ], 'root-provider');
+
+        $this->publishes([
+            __DIR__.'/../stubs/UserResource.stub' => $this->app->path('Root/Resources/UserResource.php'),
+        ], 'root-user-resource');
     }
 
     /**

@@ -39,7 +39,7 @@ class Install extends Command
             $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
         }
 
-        $status = $this->call('vendor:publish', ['--tag' => 'root-provider']);
+        $status = $this->call('vendor:publish', ['--tag' => ['root-provider', 'root-user-resource']]);
 
         $this->registerRootServiceProvider();
 
@@ -74,6 +74,12 @@ class Install extends Command
             ["namespace App\\Providers;", "use App\\Models\\User;"],
             ["namespace {$namespace}\\Providers;", "use {$namespace}\\Models\\User;"],
             file_get_contents(app_path('Providers/RootServiceProvider.php'))
+        ));
+
+        file_put_contents(app_path('Root/Resources/RootServiceProvider.php'), str_replace(
+            "namespace App\\Root\\Resources;",
+            "namespace {$namespace}\\Root\\Resources;",
+            file_get_contents(app_path('Root/Resources/RootServiceProvider.php'))
         ));
     }
 }
