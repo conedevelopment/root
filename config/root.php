@@ -108,7 +108,7 @@ return [
                     ['link'],
                     ['clean'],
                 ],
-                'handlers' => [],
+                'handlers' => (object) [],
             ],
             'clipboard' => ['matchVisual' => false],
         ],
