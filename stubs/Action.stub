@@ -4,8 +4,8 @@ namespace DummyNamespace;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Http\Requests\ActionRequest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class DummyClass extends Action
 {
@@ -23,7 +23,7 @@ class DummyClass extends Action
      * Handle the action.
      *
      * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @param  \Illuminate\Support\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
      */
     public function handle(ActionRequest $request, Collection $models): void
@@ -39,6 +39,8 @@ class DummyClass extends Action
      */
     public function fields(Request $request): array
     {
-        return [];
+        return array_merge(parent::fields($request), [
+            //
+        ]);
     }
 }

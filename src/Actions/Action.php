@@ -14,10 +14,10 @@ use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -40,6 +40,20 @@ abstract class Action implements Arrayable, Responsable
     protected ?Closure $queryResolver = null;
 
     /**
+     * Indicates if the action is descrtuctive.
+     *
+     * @var bool
+     */
+    protected bool $destructive = false;
+
+    /**
+     * Indicates if the action is confirmable.
+     *
+     * @var bool
+     */
+    protected bool $confirmable = false;
+
+    /**
      * Make a new action instance.
      *
      * @param  array  ...$parameters
@@ -54,7 +68,7 @@ abstract class Action implements Arrayable, Responsable
      * Handle the action.
      *
      * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @param  \Illuminate\Support\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Collection  $models
      * @return void
      */
     abstract public function handle(ActionRequest $request, Collection $models): void;
@@ -77,6 +91,32 @@ abstract class Action implements Arrayable, Responsable
     public function getName(): string
     {
         return __(Str::of(static::class)->classBasename()->headline()->toString());
+    }
+
+    /**
+     * Set the destructive property.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function destructive(bool $value = true): static
+    {
+        $this->destructive = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the confirmable property.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function confirmable(bool $value = true): static
+    {
+        $this->confirmable = $value;
+
+        return $this;
     }
 
     /**
@@ -170,6 +210,8 @@ abstract class Action implements Arrayable, Responsable
     public function toArray(): array
     {
         return [
+            'confirmable' => $this->confirmable,
+            'destructive' => $this->destructive,
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'url' => URL::to($this->getUri()),
@@ -185,7 +227,10 @@ abstract class Action implements Arrayable, Responsable
      */
     public function toForm(Request $request, Model $model): array
     {
-        $fields = $this->resolveFields($request)->available($request, $model)->mapToForm($request, $model)->toArray();
+        $fields = $this->resolveFields($request)
+                        ->available($request, $model)
+                        ->mapToForm($request, $model)
+                        ->toArray();
 
         return array_merge($this->toArray(), [
             'data' => array_column($fields, 'value', 'name'),

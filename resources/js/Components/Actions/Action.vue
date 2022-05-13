@@ -11,7 +11,11 @@
             ></FormHandler>
 
             <template #footer>
-                <button type="submit" class="btn btn--primary">
+                <button
+                    type="submit"
+                    class="btn"
+                    :class="{ 'btn--delete': action.destructive, 'btn--primary': ! action.destructive }"
+                >
                     {{ __('Run') }}
                 </button>
             </template>
@@ -54,6 +58,11 @@
                     all: this.allMatching,
                     models: this.selection,
                 })).post(this.action.url, {
+                    onBefore: () => {
+                        if (this.action.confirmable) {
+                            return window.confirm(this.__('Are you sure?'));
+                        }
+                    },
                     onSuccess: () => {
                         this.$emit('success');
                         this.$refs.modal.close();

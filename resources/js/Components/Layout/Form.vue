@@ -67,7 +67,7 @@
             },
             destroy() {
                 this.$inertia.delete(this.model.urls.destroy, {
-                    onBefore: () => confirm(this.__('Are you sure?')),
+                    onBefore: () => window.confirm(this.__('Are you sure?')),
                 });
             },
         },
