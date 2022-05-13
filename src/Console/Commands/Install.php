@@ -76,10 +76,10 @@ class Install extends Command
             file_get_contents(app_path('Providers/RootServiceProvider.php'))
         ));
 
-        file_put_contents(app_path('Root/Resources/RootServiceProvider.php'), str_replace(
+        file_put_contents(app_path('Root/Resources/UserResource.php'), str_replace(
             "namespace App\\Root\\Resources;",
             "namespace {$namespace}\\Root\\Resources;",
-            file_get_contents(app_path('Root/Resources/RootServiceProvider.php'))
+            file_get_contents(app_path('Root/Resources/UserResource.php'))
         ));
     }
 }
