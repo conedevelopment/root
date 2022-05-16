@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @property string  $name
+ * @property string  $label
+ * @property string  $id
+ */
 abstract class Field implements Arrayable
 {
     use Authorizable;
