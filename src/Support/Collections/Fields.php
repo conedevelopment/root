@@ -3,9 +3,9 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
@@ -14,11 +14,11 @@ class Fields extends Collection
     /**
      * Filter the fields that are available for the given request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  array ...$parameters
      * @return static
      */
-    public function available(Request $request, ...$parameters): static
+    public function available(RootRequest $request, ...$parameters): static
     {
         return $this->filter(static function (Field $field) use ($request, $parameters): bool {
             return $field->authorized($request, ...$parameters)
@@ -29,10 +29,10 @@ class Fields extends Collection
     /**
      * Filter the searchable fields.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return static
      */
-    public function searchable(Request $request): static
+    public function searchable(RootRequest $request): static
     {
         return $this->filter->isSearchable($request);
     }
@@ -40,10 +40,10 @@ class Fields extends Collection
     /**
      * Filter the sortable fields.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return static
      */
-    public function sortable(Request $request): static
+    public function sortable(RootRequest $request): static
     {
         return $this->filter->isSortable($request);
     }
@@ -51,11 +51,11 @@ class Fields extends Collection
     /**
      * Map the fields to display.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Support\Collection
      */
-    public function mapToDisplay(Request $request, Model $model): Collection
+    public function mapToDisplay(RootRequest $request, Model $model): Collection
     {
         return $this->map->toDisplay($request, $model)->toBase();
     }
@@ -63,11 +63,11 @@ class Fields extends Collection
     /**
      * Map the fields to form.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Support\Collection
      */
-    public function mapToForm(Request $request, Model $model): Collection
+    public function mapToForm(RootRequest $request, Model $model): Collection
     {
         return $this->map->toInput($request, $model)->toBase();
     }
@@ -75,11 +75,11 @@ class Fields extends Collection
     /**
      * Map the fields to validate.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function mapToValidate(Request $request, Model $model): array
+    public function mapToValidate(RootRequest $request, Model $model): array
     {
         return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
             return array_merge_recursive($rules, $field->toValidate($request, $model));
@@ -89,11 +89,11 @@ class Fields extends Collection
     /**
      * Register the field routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $router->prefix('fields')->group(function (Router $router) use ($request): void {
             $this->each(static function (Field $field) use ($request, $router): void {

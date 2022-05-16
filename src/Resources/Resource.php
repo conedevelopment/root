@@ -29,7 +29,6 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
@@ -141,13 +140,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Model
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function resolveRouteBinding(Request $request, mixed $value): Model
+    public function resolveRouteBinding(RootRequest $request, mixed $value): Model
     {
         $key = $this->getRouteKey();
 
@@ -305,10 +304,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the URLs.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function mapUrls(Request $request): array
+    public function mapUrls(RootRequest $request): array
     {
         $actions = array_fill_keys(['create', 'index'], null);
 
@@ -332,10 +331,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the abilities.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function mapAbilities(Request $request): array
+    public function mapAbilities(RootRequest $request): array
     {
         $policy = $this->getPolicy();
 
@@ -353,10 +352,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the items.
      *
-     * @param \Illuminate\Http\Request  $request
+     * @param \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function mapItems(Request $request): array
+    public function mapItems(RootRequest $request): array
     {
         $query = $this->query();
 
@@ -522,10 +521,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resource registered event.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return void
      */
-    public function registered(Request $request): void
+    public function registered(RootRequest $request): void
     {
         $this->registerRoutes($request);
     }
@@ -533,10 +532,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Register the routes for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return void
      */
-    protected function registerRoutes(Request $request): void
+    protected function registerRoutes(RootRequest $request): void
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
