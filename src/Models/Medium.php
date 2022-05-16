@@ -47,7 +47,7 @@ class Medium extends Model implements Contract
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'properties' => 'json',
