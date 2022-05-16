@@ -5,7 +5,7 @@ namespace Cone\Root\Fields;
 class Checkbox extends Select
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

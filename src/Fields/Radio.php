@@ -5,7 +5,7 @@ namespace Cone\Root\Fields;
 class Radio extends Select
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

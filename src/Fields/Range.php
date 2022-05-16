@@ -5,7 +5,7 @@ namespace Cone\Root\Fields;
 class Range extends Number
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

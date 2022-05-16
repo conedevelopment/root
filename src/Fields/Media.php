@@ -20,7 +20,7 @@ class Media extends MorphToMany
     protected bool $async = true;
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

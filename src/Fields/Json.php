@@ -18,7 +18,7 @@ class Json extends Field
     }
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

@@ -53,7 +53,7 @@ abstract class Relation extends Field
     protected bool $async = false;
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

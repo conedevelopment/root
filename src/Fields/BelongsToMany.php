@@ -13,7 +13,7 @@ class BelongsToMany extends BelongsTo
     use ResolvesFields;
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

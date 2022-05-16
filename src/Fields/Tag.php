@@ -5,7 +5,7 @@ namespace Cone\Root\Fields;
 class Tag extends Field
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */
