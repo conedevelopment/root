@@ -7,7 +7,7 @@ use Closure;
 class Textarea extends Field
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

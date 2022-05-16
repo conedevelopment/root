@@ -65,7 +65,7 @@ abstract class Field implements Arrayable
     ];
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

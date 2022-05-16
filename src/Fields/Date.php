@@ -30,7 +30,7 @@ class Date extends Field
     protected bool $withTime = false;
 
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */

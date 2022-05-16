@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Select extends Field
 {
     /**
-     * The Vue compoent.
+     * The Vue component.
      *
      * @var string
      */
