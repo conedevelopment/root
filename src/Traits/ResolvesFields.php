@@ -3,8 +3,9 @@
 namespace Cone\Root\Traits;
 
 use Closure;
+use Cone\Root\Fields\Field;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
-use Illuminate\Http\Request;
 
 trait ResolvesFields
 {
@@ -25,10 +26,10 @@ trait ResolvesFields
     /**
      * Define the fields for the object.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function fields(Request $request): array
+    public function fields(RootRequest $request): array
     {
         return [];
     }
@@ -42,7 +43,7 @@ trait ResolvesFields
     public function withFields(array|Closure $fields): static
     {
         if (is_array($fields)) {
-            $fields = static function (Request $request, Fields $collection) use ($fields): Fields {
+            $fields = static function (RootRequest $request, Fields $collection) use ($fields): Fields {
                 return $collection->merge($fields);
             };
         }
@@ -55,10 +56,10 @@ trait ResolvesFields
     /**
      * Resolve the fields.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Cone\Root\Support\Collections\Fields
      */
-    public function resolveFields(Request $request): Fields
+    public function resolveFields(RootRequest $request): Fields
     {
         if (is_null($this->resolvedFields)) {
             $fields = Fields::make($this->fields($request));
@@ -67,11 +68,23 @@ trait ResolvesFields
                 $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
             }
 
-            $this->resolvedFields = $fields->each->mergeAuthorizationResolver(function (...$parameters): bool {
-                return $this->authorized(...$parameters);
+            $this->resolvedFields = $fields->each(function (Field $field) use ($request): void {
+                $this->resolveField($request, $field);
             });
         }
 
         return $this->resolvedFields;
+    }
+
+    /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        //
     }
 }

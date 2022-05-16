@@ -3,8 +3,9 @@
 namespace Cone\Root\Traits;
 
 use Closure;
+use Cone\Root\Actions\Action;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Actions;
-use Illuminate\Http\Request;
 
 trait ResolvesActions
 {
@@ -25,10 +26,10 @@ trait ResolvesActions
     /**
      * Define the actions for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function actions(Request $request): array
+    public function actions(RootRequest $request): array
     {
         return [];
     }
@@ -42,7 +43,7 @@ trait ResolvesActions
     public function withActions(array|Closure $actions): static
     {
         if (is_array($actions)) {
-            $actions = static function (Request $request, Actions $collection) use ($actions): Actions {
+            $actions = static function (RootRequest $request, Actions $collection) use ($actions): Actions {
                 return $collection->merge($actions);
             };
         }
@@ -55,10 +56,10 @@ trait ResolvesActions
     /**
      * Resolve the actions.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Cone\Root\Support\Collections\Actions
      */
-    public function resolveActions(Request $request): Actions
+    public function resolveActions(RootRequest $request): Actions
     {
         if (is_null($this->resolvedActions)) {
             $actions = Actions::make($this->actions($request));
@@ -67,11 +68,23 @@ trait ResolvesActions
                 $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
             }
 
-            $this->resolvedActions = $actions->each->mergeAuthorizationResolver(function (...$parameters): bool {
-                return $this->authorized(...$parameters);
+            $this->resolvedActions = $actions->each(function (Action $action) use ($request): void {
+                $this->resolveAction($request, $action);
             });
         }
 
         return $this->resolvedActions;
+    }
+
+    /**
+     * Handle the resolving event on the action instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Actions\Action  $action
+     * @return void
+     */
+    protected function resolveAction(RootRequest $request, Action $action): void
+    {
+        //
     }
 }

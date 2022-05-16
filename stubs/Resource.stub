@@ -4,17 +4,17 @@ namespace DummyNamespace;
 
 use Cone\Root\Fields\ID;
 use Cone\Root\Resources\Resource;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 
 class DummyClass extends Resource
 {
     /**
      * Define the fields for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function fields(Request $request): array
+    public function fields(RootRequest $request): array
     {
         return array_merge(parent::fields($request), [
             ID::make()->sortable()->searchable(),
@@ -24,10 +24,10 @@ class DummyClass extends Resource
     /**
      * Define the filters for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function filters(Request $request): array
+    public function filters(RootRequest $request): array
     {
         return array_merge(parent::filters($request), [
             //
@@ -37,10 +37,10 @@ class DummyClass extends Resource
     /**
      * Define the actions for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function actions(Request $request): array
+    public function actions(RootRequest $request): array
     {
         return array_merge(parent::actions($request), [
             //
@@ -50,10 +50,10 @@ class DummyClass extends Resource
     /**
      * Define the extracts for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function extracts(Request $request): array
+    public function extracts(RootRequest $request): array
     {
         return array_merge(parent::extracts($request), [
             //
@@ -63,10 +63,10 @@ class DummyClass extends Resource
     /**
      * Define the widgets for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function widgets(Request $request): array
+    public function widgets(RootRequest $request): array
     {
         return array_merge(parent::widgets($request), [
             //

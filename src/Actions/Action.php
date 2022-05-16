@@ -4,8 +4,10 @@ namespace Cone\Root\Actions;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Requests\ActionRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -16,7 +18,6 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
@@ -161,12 +162,12 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Resolve the query for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Database\Eloquent\Builder
      *
      * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
-    public function resolveQuery(Request $request): Builder
+    public function resolveQuery(RootRequest $request): Builder
     {
         if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
@@ -175,14 +176,29 @@ abstract class Action implements Arrayable, Responsable
         return call_user_func_array($this->queryResolver, [$request]);
     }
 
+
+    /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
+
     /**
      * Register the action routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $this->defaultRegisterRoutes($request, $router);
 
@@ -221,11 +237,11 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Get the form representation of the action.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toForm(Request $request, Model $model): array
+    public function toForm(RootRequest $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
                         ->available($request, $model)
@@ -241,7 +257,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Create an HTTP response that represents the object.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function toResponse($request): Response

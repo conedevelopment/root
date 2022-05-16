@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Filters;
 
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Support\Arr;
 
 abstract class SelectFilter extends Filter
@@ -24,10 +24,10 @@ abstract class SelectFilter extends Filter
     /**
      * Get the filter options.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    abstract public function options(Request $request): array;
+    abstract public function options(RootRequest $request): array;
 
     /**
      * Set the multiple attribute.
@@ -45,7 +45,7 @@ abstract class SelectFilter extends Filter
     /**
      * {@inheritdoc}
      */
-    public function default(Request $request): mixed
+    public function default(RootRequest $request): mixed
     {
         $default = parent::default($request);
 
@@ -55,7 +55,7 @@ abstract class SelectFilter extends Filter
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request): array
+    public function toInput(RootRequest $request): array
     {
         $options = $this->options($request);
 

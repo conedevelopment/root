@@ -6,7 +6,7 @@ use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Validation\Rule;
 
 class UserResource extends Resource
@@ -14,7 +14,7 @@ class UserResource extends Resource
     /**
      * {@inheritdoc}
      */
-    public function fields(Request $request): array
+    public function fields(RootRequest $request): array
     {
         return array_merge(parent::fields($request), [
             ID::make(),

@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
@@ -35,7 +35,7 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function isSortable(Request $request): bool
+    public function isSortable(RootRequest $request): bool
     {
         return false;
     }
@@ -43,10 +43,10 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function resolveDefault(Request $request, Model $model): mixed
+    public function resolveDefault(RootRequest $request, Model $model): mixed
     {
         if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = function (Request $request, Model $model, mixed $value): array {
+            $this->defaultResolver = function (RootRequest $request, Model $model, mixed $value): array {
                 return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
                     return [
                         $related->getKey() => $this->mapPivotValues($request, $model, $related),
@@ -61,12 +61,12 @@ class BelongsToMany extends BelongsTo
     /**
      * Map the pivot values.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return array
      */
-    protected function mapPivotValues(Request $request, Model $model, Model $related): array
+    protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
     {
         $relation = $this->getRelation($model);
 
@@ -85,7 +85,7 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(RootRequest $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
@@ -99,7 +99,7 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);
 
@@ -118,7 +118,7 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function mapOption(Request $request, Model $model, Model $related): array
+    public function mapOption(RootRequest $request, Model $model, Model $related): array
     {
         $relation = $this->getRelation($model);
 
@@ -131,13 +131,27 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
+
+    /**
      * Register the field routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         parent::registerRoutes($request, $router);
 
@@ -149,7 +163,7 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         $models = $this->getDefaultValue($request, $model);
 
@@ -175,11 +189,11 @@ class BelongsToMany extends BelongsTo
     /**
      * Get the validation representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toValidate(Request $request, Model $model): array
+    public function toValidate(RootRequest $request, Model $model): array
     {
         $pivotRules = $this->resolveFields($request)
                             ->available($request, $model)

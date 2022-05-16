@@ -3,22 +3,25 @@
 namespace Cone\Root\Extracts;
 
 use Closure;
+use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Fields\Field;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -26,12 +29,10 @@ use Illuminate\Support\Str;
 abstract class Extract implements Arrayable
 {
     use Authorizable;
+    use ResolvesActions;
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
-    use ResolvesActions {
-        ResolvesActions::resolveActions as defaultResolveActions;
-    }
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
@@ -90,12 +91,12 @@ abstract class Extract implements Arrayable
     /**
      * Resolve the query for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Database\Eloquent\Builder
      *
      * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
-    public function resolveQuery(Request $request): Builder
+    public function resolveQuery(RootRequest $request): Builder
     {
         if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
@@ -107,10 +108,10 @@ abstract class Extract implements Arrayable
     /**
      * Define the filters for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function filters(Request $request): array
+    public function filters(RootRequest $request): array
     {
         $fields = $this->resolveFields($request)->available($request);
 
@@ -121,22 +122,61 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Resolve the actions.
+     * Handle the resolving event on the field instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Actions
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
      */
-    public function resolveActions(Request $request): Actions
+    protected function resolveField(RootRequest $request, Field $field): void
     {
-        if (is_null($this->resolvedActions)) {
-            $query = $this->resolveQuery($request);
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
 
-            $this->defaultResolveActions($request)->each->withQuery(function () use ($query): Builder {
-                return $query;
-            });
-        }
+    /**
+     * Handle the resolving event on the filter instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Filters\Filter  $filter
+     * @return void
+     */
+    protected function resolveFilter(RootRequest $request, Filter $filter): void
+    {
+        $filter->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
 
-        return $this->resolvedActions;
+    /**
+     * Handle the resolving event on the action instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Actions\Action  $action
+     * @return void
+     */
+    protected function resolveAction(RootRequest $request, Action $action): void
+    {
+        $action->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        })->withQuery(function () use ($request): Builder {
+            return $this->resolveQuery($request);
+        });
+    }
+
+    /**
+     * Handle the resolving event on the widget instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Widgets\Widget  $widget
+     * @return void
+     */
+    protected function resolveWidget(RootRequest $request, Widget $widget): void
+    {
+        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
     }
 
     /**
@@ -168,11 +208,11 @@ abstract class Extract implements Arrayable
     /**
      * Register the extract routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $this->defaultRegisterRoutes($request, $router);
 

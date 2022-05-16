@@ -3,8 +3,9 @@
 namespace Cone\Root\Traits;
 
 use Closure;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Widgets;
-use Illuminate\Http\Request;
+use Cone\Root\Widgets\Widget;
 
 trait ResolvesWidgets
 {
@@ -25,10 +26,10 @@ trait ResolvesWidgets
     /**
      * Define the widgets for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function widgets(Request $request): array
+    public function widgets(RootRequest $request): array
     {
         return [];
     }
@@ -42,7 +43,7 @@ trait ResolvesWidgets
     public function withWidgets(array|Closure $widgets): static
     {
         if (is_array($widgets)) {
-            $widgets = static function (Request $request, Widgets $collection) use ($widgets): Widgets {
+            $widgets = static function (RootRequest $request, Widgets $collection) use ($widgets): Widgets {
                 return $collection->merge($widgets);
             };
         }
@@ -55,10 +56,10 @@ trait ResolvesWidgets
     /**
      * Resolve the widgets.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Cone\Root\Support\Collections\Widgets
      */
-    public function resolveWidgets(Request $request): Widgets
+    public function resolveWidgets(RootRequest $request): Widgets
     {
         if (is_null($this->resolvedWidgets)) {
             $widgets = Widgets::make($this->widgets($request));
@@ -67,11 +68,23 @@ trait ResolvesWidgets
                 $widgets = call_user_func_array($this->widgetsResolver, [$request, $widgets]);
             }
 
-            $this->resolvedWidgets = $widgets->each->mergeAuthorizationResolver(function (...$parameters): bool {
-                return $this->authorized(...$parameters);
+            $this->resolvedWidgets = $widgets->each(function (Widget $widget) use ($request): void {
+                $this->resolveWidget($request, $widget);
             });
         }
 
         return $this->resolvedWidgets;
+    }
+
+    /**
+     * Handle the resolving event on the widget instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Widgets\Widget  $widget
+     * @return void
+     */
+    protected function resolveWidget(RootRequest $request, Widget $widget): void
+    {
+        //
     }
 }

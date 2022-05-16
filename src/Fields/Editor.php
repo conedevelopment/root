@@ -3,9 +3,9 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
@@ -90,11 +90,11 @@ class Editor extends Field
     /**
      * Register the routes using the given router.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $this->defaultRegisterRotues($request, $router);
 
@@ -108,11 +108,11 @@ class Editor extends Field
     /**
      * Get the input representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'config' => $this->config,

@@ -2,11 +2,11 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\TemporaryJson;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
@@ -45,13 +45,27 @@ class Json extends Field
     }
 
     /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
+
+    /**
      * Register the field routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $this->defaultRegisterRotues($request, $router);
 
@@ -63,7 +77,7 @@ class Json extends Field
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         $data = parent::toInput($request, $model);
 
@@ -89,11 +103,11 @@ class Json extends Field
     /**
      * Get the validation representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toValidate(Request $request, Model $model): array
+    public function toValidate(RootRequest $request, Model $model): array
     {
         $fieldRules = $this->resolveFields($request)
                             ->available($request, $model)

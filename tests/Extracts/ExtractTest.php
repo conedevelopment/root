@@ -25,7 +25,7 @@ class ExtractTest extends TestCase
     public function an_extract_registers_routes()
     {
         $this->app['router']->prefix('api/posts/extracts')->group(function ($router) {
-            $this->extract->registerRoutes($this->app['request'], $router);
+            $this->extract->registerRoutes($this->request, $router);
         });
 
         $this->assertSame('api/posts/extracts/long-posts', $this->extract->getUri());
@@ -39,7 +39,7 @@ class ExtractTest extends TestCase
     /** @test */
     public function a_extract_has_fields()
     {
-        $fields = $this->extract->resolveFields($this->app['request']);
+        $fields = $this->extract->resolveFields($this->request);
 
         $this->assertTrue($fields->contains(function ($field) {
             return $field->getKey() === 'title';
@@ -49,7 +49,7 @@ class ExtractTest extends TestCase
     /** @test */
     public function a_extract_has_filters()
     {
-        $filters = $this->extract->resolveFilters($this->app['request']);
+        $filters = $this->extract->resolveFilters($this->request);
 
         $this->assertTrue($filters->contains(function ($field) {
             return $field->getKey() === 'type';
@@ -59,7 +59,7 @@ class ExtractTest extends TestCase
     /** @test */
     public function a_extract_has_actions()
     {
-        $actions = $this->extract->resolveActions($this->app['request']);
+        $actions = $this->extract->resolveActions($this->request);
 
         $this->assertTrue($actions->contains(function ($field) {
             return $field->getKey() === 'publish-posts';
@@ -69,7 +69,7 @@ class ExtractTest extends TestCase
     /** @test */
     public function a_extract_has_widgets()
     {
-        $widgets = $this->extract->resolveWidgets($this->app['request']);
+        $widgets = $this->extract->resolveWidgets($this->request);
 
         $this->assertTrue($widgets->contains(function ($widget) {
             return $widget->getKey() === 'posts-count';

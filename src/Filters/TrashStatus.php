@@ -3,21 +3,21 @@
 namespace Cone\Root\Filters;
 
 use Cone\Root\Filters\SelectFilter;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
 
 class TrashStatus extends SelectFilter
 {
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Request $request, Builder $query, mixed $value): Builder
+    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
         if (! in_array(SoftDeletes::class, class_uses_recursive($query->getModel()))) {
             return $query;
@@ -36,10 +36,10 @@ class TrashStatus extends SelectFilter
     /**
      * Get the filter options.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function options(Request $request): array
+    public function options(RootRequest $request): array
     {
         return [
             'available' => __('Available'),

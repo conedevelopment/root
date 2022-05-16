@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\User;
 use Cone\Root\Tests\CreatesApplication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,13 +14,15 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected $admin;
+    protected $admin, $request;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->withoutMix();
+
+        $this->request = RootRequest::createFrom($this->app['request']);
 
         Storage::fake('local');
         Storage::fake('public');

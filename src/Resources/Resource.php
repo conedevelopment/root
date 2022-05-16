@@ -3,23 +3,27 @@
 namespace Cone\Root\Resources;
 
 use Closure;
+use Cone\Root\Actions\Action;
+use Cone\Root\Extracts\Extract;
+use Cone\Root\Fields\Field;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Root;
-use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Support\Collections\Extracts;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,15 +40,11 @@ use JsonSerializable;
 class Resource implements Arrayable, Jsonable, JsonSerializable
 {
     use Authorizable;
+    use ResolvesActions;
+    use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
-    use ResolvesActions {
-        ResolvesActions::resolveActions as defaultResolveActions;
-    }
-    use ResolvesExtracts {
-        ResolvesExtracts::resolveExtracts as defaultResolveExtracts;
-    }
 
     /**
      * The model class.
@@ -215,10 +215,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Define the filters for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function filters(Request $request): array
+    public function filters(RootRequest $request): array
     {
         $fields = $this->resolveFields($request)->available($request);
 
@@ -229,37 +229,77 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Resolve the actions.
+     * Handle the resolving event on the field instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Actions
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
      */
-    public function resolveActions(Request $request): Actions
+    protected function resolveField(RootRequest $request, Field $field): void
     {
-        if (is_null($this->resolvedActions)) {
-            $this->defaultResolveActions($request)->each->withQuery(function (): Builder {
-                return $this->query();
-            });
-        }
-
-        return $this->resolvedActions;
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
     }
 
     /**
-     * Resolve the extracts.
+     * Handle the resolving event on the filter instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Cone\Root\Support\Collections\Extracts
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Filters\Filter  $filter
+     * @return void
      */
-    public function resolveExtracts(Request $request): Extracts
+    protected function resolveFilter(RootRequest $request, Filter $filter): void
     {
-        if (is_null($this->resolvedExtracts)) {
-            $this->defaultResolveExtracts($request)->each->withQuery(function (): Builder {
-                return $this->query();
-            });
-        }
+        $filter->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
 
-        return $this->resolvedExtracts;
+    /**
+     * Handle the resolving event on the action instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Actions\Action  $action
+     * @return void
+     */
+    protected function resolveAction(RootRequest $request, Action $action): void
+    {
+        $action->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        })->withQuery(function (): Builder {
+            return $this->query();
+        });
+    }
+
+    /**
+     * Handle the resolving event on the extract instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Extracts\Extract  $extract
+     * @return void
+     */
+    protected function resolveExtract(RootRequest $request, Extract $extract): void
+    {
+        $extract->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        })->withQuery(function (): Builder {
+            return $this->query();
+        });
+    }
+
+    /**
+     * Handle the resolving event on the widget instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Widgets\Widget  $widget
+     * @return void
+     */
+    protected function resolveWidget(RootRequest $request, Widget $widget): void
+    {
+        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
     }
 
     /**

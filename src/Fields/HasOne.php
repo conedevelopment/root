@@ -2,15 +2,15 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class HasOne extends Relation
 {
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(RootRequest $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {
             $this->hydrate(
@@ -28,7 +28,7 @@ class HasOne extends Relation
     /**
      * {@inheritdoc}
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);
 

@@ -3,7 +3,7 @@
 namespace Cone\Root\Traits;
 
 use Cone\Root\Http\Middleware\AuthorizeResolved;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
@@ -59,11 +59,11 @@ trait RegistersRoutes
     /**
      * Register the routes using the given router.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(RootRequest $request, Router $router): void
     {
         $this->setUri(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
 

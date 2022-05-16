@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 use Cone\Root\Widgets\Widget;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 
 class DummyClass extends Widget
 {
@@ -43,10 +43,10 @@ class DummyClass extends Widget
     /**
      * Get the data.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function data(Request $request): array
+    public function data(RootRequest $request): array
     {
         return array_merge(parent::data($request), [
             //
