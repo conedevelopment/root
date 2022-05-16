@@ -2,15 +2,15 @@
 
 namespace Cone\Root\Interfaces\Support\Collections;
 
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 
 interface Resources
 {
     /**
      * Filter the available resources.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Cone\Root\Interfaces\Support\Collections\Resources
      */
-    public function available(Request $request): static;
+    public function available(RootRequest $request): static;
 }
