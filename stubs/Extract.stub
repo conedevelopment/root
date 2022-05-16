@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 use Cone\Root\Extracts\Extract;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 
 class DummyClass extends Extract
@@ -11,10 +11,10 @@ class DummyClass extends Extract
     /**
      * Get the query for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function resolveQuery(Request $request): Builder
+    public function resolveQuery(RootRequest $request): Builder
     {
         return parent::resolveQuery($request);
     }
@@ -22,10 +22,10 @@ class DummyClass extends Extract
     /**
      * Define the fields for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function fields(Request $request): array
+    public function fields(RootRequest $request): array
     {
         return array_merge(parent::fields($request), [
             //
@@ -35,10 +35,10 @@ class DummyClass extends Extract
     /**
      * Define the filters for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function filters(Request $request): array
+    public function filters(RootRequest $request): array
     {
         return array_merge(parent::filters($request), [
             //
@@ -48,10 +48,10 @@ class DummyClass extends Extract
     /**
      * Define the actions for the extract.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function actions(Request $request): array
+    public function actions(RootRequest $request): array
     {
         return array_merge(parent::actions($request), [
             //
@@ -61,10 +61,10 @@ class DummyClass extends Extract
     /**
      * Define the widgets for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function widgets(Request $request): array
+    public function widgets(RootRequest $request): array
     {
         return array_merge(parent::widgets($request), [
             //

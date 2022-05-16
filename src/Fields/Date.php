@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date as BaseDate;
 
 class Date extends Field
@@ -81,10 +81,10 @@ class Date extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(RootRequest $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
+            $this->formatResolver = function (RootRequest $request, Model $model, mixed $value): ?string {
                 return is_null($value) ? $value : BaseDate::parse($value)->tz($this->timezone)->format($this->format);
             };
         }
@@ -95,11 +95,11 @@ class Date extends Field
     /**
      * Get the input representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'with_time' => $this->withTime,

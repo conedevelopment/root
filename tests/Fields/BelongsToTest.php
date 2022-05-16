@@ -33,7 +33,7 @@ class BelongsToTest extends TestCase
             Author::query()->get()->map(function ($model) {
                 return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
             })->toArray(),
-            $this->field->resolveOptions($this->app['request'], $post)
+            $this->field->resolveOptions($this->request, $post)
         );
     }
 
@@ -48,7 +48,7 @@ class BelongsToTest extends TestCase
             Author::query()->get()->map(function ($model) {
                 return ['value' => $model->getKey(), 'formatted_value' => $model->name];
             })->toArray(),
-            $this->field->resolveOptions($this->app['request'], $post)
+            $this->field->resolveOptions($this->request, $post)
         );
 
         $closure = function ($request, $model) {
@@ -59,9 +59,9 @@ class BelongsToTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) use ($closure) {
-                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->app['request'], $model)];
+                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->request, $model)];
             })->toArray(),
-            $this->field->resolveOptions($this->app['request'], $post)
+            $this->field->resolveOptions($this->request, $post)
         );
     }
 
@@ -72,14 +72,14 @@ class BelongsToTest extends TestCase
 
         $this->assertSame(
             'select * from "authors"',
-            $this->field->resolveQuery($this->app['request'], $post)->getQuery()->toSql()
+            $this->field->resolveQuery($this->request, $post)->getQuery()->toSql()
         );
 
         $this->field->withQuery(function ($request, $query) {
             return $query->where('authors.name', 'Foo');
         });
 
-        $query = $this->field->resolveQuery($this->app['request'], $post)->getQuery();
+        $query = $this->field->resolveQuery($this->request, $post)->getQuery();
 
         $this->assertSame('select * from "authors" where "authors"."name" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());

@@ -3,8 +3,8 @@
 namespace DummyNamespace;
 
 use Cone\Root\Filters\InputFilter;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class DummyClass extends InputFilter
 {
@@ -19,12 +19,12 @@ class DummyClass extends InputFilter
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Request $request, Builder $query, mixed $value): Builder
+    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
         return $query;
     }

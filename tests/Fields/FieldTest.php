@@ -162,7 +162,7 @@ class FieldTest extends TestCase
     {
         $this->assertSame(
             $this->model->name,
-            $this->field->resolveDefault($this->app['request'], $this->model)
+            $this->field->resolveDefault($this->request, $this->model)
         );
 
         $this->field->default(function ($request, $model, $value) {
@@ -171,7 +171,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             '__fake__',
-            $this->field->resolveDefault($this->app['request'], $this->model)
+            $this->field->resolveDefault($this->request, $this->model)
         );
     }
 
@@ -180,7 +180,7 @@ class FieldTest extends TestCase
     {
         $this->assertSame(
             $this->model->name,
-            $this->field->resolveFormat($this->app['request'], $this->model)
+            $this->field->resolveFormat($this->request, $this->model)
         );
 
         $this->field->format(function ($request, $model, $value) {
@@ -189,7 +189,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             strtoupper($this->model->name),
-            $this->field->resolveFormat($this->app['request'], $this->model)
+            $this->field->resolveFormat($this->request, $this->model)
         );
     }
 
@@ -199,7 +199,7 @@ class FieldTest extends TestCase
         $this->assertNotSame('Root User', $this->model->name);
 
         $this->field->hydrate(
-            $this->app['request'], $this->model, 'Root User'
+            $this->request, $this->model, 'Root User'
         );
 
         $this->model->save();
@@ -216,7 +216,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             [$this->field->name => ['required']],
-            $this->field->toValidate($this->app['request'], $this->model)
+            $this->field->toValidate($this->request, $this->model)
         );
 
         $this->assertSame(
@@ -236,11 +236,11 @@ class FieldTest extends TestCase
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
                 'formatted_value' => $this->model->name,
-                'searchable' => $this->field->isSearchable($this->app['request']),
-                'sortable' => $this->field->isSortable($this->app['request']),
+                'searchable' => $this->field->isSearchable($this->request),
+                'sortable' => $this->field->isSortable($this->request),
                 'value' => $this->model->name,
             ]),
-            $this->field->toDisplay($this->app['request'], $this->model)
+            $this->field->toDisplay($this->request, $this->model)
         );
     }
 
@@ -253,27 +253,27 @@ class FieldTest extends TestCase
                 'formatted_value' => $this->model->name,
                 'value' => $this->model->name,
             ]),
-            $this->field->toInput($this->app['request'], $this->model)
+            $this->field->toInput($this->request, $this->model)
         );
     }
 
     /** @test */
     public function a_field_can_be_searchable()
     {
-        $this->assertFalse($this->field->isSearchable($this->app['request']));
+        $this->assertFalse($this->field->isSearchable($this->request));
 
         $this->field->searchable();
 
-        $this->assertTrue($this->field->isSearchable($this->app['request']));
+        $this->assertTrue($this->field->isSearchable($this->request));
     }
 
     /** @test */
     public function a_field_can_be_sortable()
     {
-        $this->assertFalse($this->field->isSortable($this->app['request']));
+        $this->assertFalse($this->field->isSortable($this->request));
 
         $this->field->sortable();
 
-        $this->assertTrue($this->field->isSortable($this->app['request']));
+        $this->assertTrue($this->field->isSortable($this->request));
     }
 }

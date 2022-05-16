@@ -25,7 +25,7 @@ class ActionTest extends TestCase
     public function an_action_registers_routes()
     {
         $this->app['router']->prefix('api/posts/actions')->group(function ($router) {
-            $this->action->registerRoutes($this->app['request'], $router);
+            $this->action->registerRoutes($this->request, $router);
         });
 
         $this->assertSame('api/posts/actions/publish-posts', $this->action->getUri());
@@ -39,7 +39,7 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_has_fields()
     {
-        $fields = $this->action->resolveFields($this->app['request']);
+        $fields = $this->action->resolveFields($this->request);
 
         $this->assertTrue($fields->contains(function ($field) {
             return $field->getKey() === 'title';
@@ -51,14 +51,14 @@ class ActionTest extends TestCase
     {
         $model = new Post();
 
-        $fields = $this->action->resolveFields($this->app['request'])->mapToForm($this->app['request'], $model)->toArray();
+        $fields = $this->action->resolveFields($this->request)->mapToForm($this->request, $model)->toArray();
 
         $this->assertSame(
             array_merge($this->action->toArray(), [
                 'data' => array_column($fields, 'value', 'name'),
                 'fields' => $fields,
             ]),
-            $this->action->toForm($this->app['request'], $model)
+            $this->action->toForm($this->request, $model)
         );
     }
 }

@@ -4,9 +4,9 @@ namespace Cone\Root\Filters;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class Search extends Filter
 {
@@ -31,12 +31,12 @@ class Search extends Filter
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(Request $request, Builder $query, mixed $value): Builder
+    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
         if (empty($value)) {
             return $query;

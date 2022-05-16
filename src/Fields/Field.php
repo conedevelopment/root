@@ -4,12 +4,12 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -320,10 +320,10 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is sortable.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return bool
      */
-    public function isSortable(Request $request): bool
+    public function isSortable(RootRequest $request): bool
     {
         if ($this->sortable instanceof Closure) {
             return call_user_func_array($this->sortable, [$request]);
@@ -348,10 +348,10 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is searchable.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return bool
      */
-    public function isSearchable(Request $request): bool
+    public function isSearchable(RootRequest $request): bool
     {
         if ($this->searchable instanceof Closure) {
             return call_user_func_array($this->searchable, [$request]);
@@ -376,11 +376,11 @@ abstract class Field implements Arrayable
     /**
      * Resolve the default value.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function resolveDefault(Request $request, Model $model): mixed
+    public function resolveDefault(RootRequest $request, Model $model): mixed
     {
         $value = $this->getDefaultValue($request, $model);
 
@@ -394,11 +394,11 @@ abstract class Field implements Arrayable
     /**
      * Get the default value from the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function getDefaultValue(Request $request, Model $model): mixed
+    public function getDefaultValue(RootRequest $request, Model $model): mixed
     {
         return $model->getAttribute($this->getKey());
     }
@@ -419,11 +419,11 @@ abstract class Field implements Arrayable
     /**
      * Format the value.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(RootRequest $request, Model $model): mixed
     {
         $value = $this->resolveDefault($request, $model);
 
@@ -437,11 +437,11 @@ abstract class Field implements Arrayable
     /**
      * Persist the request value on the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return void
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(RootRequest $request, Model $model): void
     {
         $model->saving(function (Model $model) use ($request): void {
             $this->hydrate(
@@ -453,11 +453,11 @@ abstract class Field implements Arrayable
     /**
      * Get the value for hydrating the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function getValueForHydrate(Request $request, Model $model): mixed
+    public function getValueForHydrate(RootRequest $request, Model $model): mixed
     {
         return $request->input($this->getKey());
     }
@@ -465,12 +465,12 @@ abstract class Field implements Arrayable
     /**
      * Hydrate the model.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  mixed  $value
      * @return void
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
         $model->setAttribute($this->getKey(), $value);
     }
@@ -514,11 +514,11 @@ abstract class Field implements Arrayable
     /**
      * Resolve the attributes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function resolveAttributes(Request $request, Model $model): array
+    public function resolveAttributes(RootRequest $request, Model $model): array
     {
         return array_map(static function (mixed $attribute) use ($request, $model): mixed {
             return $attribute instanceof Closure
@@ -540,11 +540,11 @@ abstract class Field implements Arrayable
     /**
      * Get the display representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toDisplay(Request $request, Model $model): array
+    public function toDisplay(RootRequest $request, Model $model): array
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'formatted_value' => $this->resolveFormat($request, $model),
@@ -557,11 +557,11 @@ abstract class Field implements Arrayable
     /**
      * Get the input representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
@@ -573,11 +573,11 @@ abstract class Field implements Arrayable
     /**
      * Get the validation representation of the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toValidate(Request $request, Model $model): array
+    public function toValidate(RootRequest $request, Model $model): array
     {
         $key = match (get_class($request)) {
             CreateRequest::class => 'create',

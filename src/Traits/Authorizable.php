@@ -3,7 +3,7 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Illuminate\Http\Request;
+use Cone\Root\Http\Requests\RootRequest;
 
 trait Authorizable
 {
@@ -28,7 +28,7 @@ trait Authorizable
 
         $resolver = $this->authorizationResolver;
 
-        return $this->authorize(static function (Request $request, ...$parameters) use ($callback, $resolver): bool {
+        return $this->authorize(static function (RootRequest $request, ...$parameters) use ($callback, $resolver): bool {
             return call_user_func_array($callback, [$request, ...$parameters])
                 && call_user_func_array($resolver, [$request, ...$parameters]);
         });
@@ -50,11 +50,11 @@ trait Authorizable
     /**
      * Resolve the authorization.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  array  ...$parameters
      * @return bool
      */
-    public function authorized(Request $request, ...$parameters): bool
+    public function authorized(RootRequest $request, ...$parameters): bool
     {
         return is_null($this->authorizationResolver)
             || call_user_func_array($this->authorizationResolver, [$request, ...$parameters]);

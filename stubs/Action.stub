@@ -4,8 +4,8 @@ namespace DummyNamespace;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Http\Requests\ActionRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 
 class DummyClass extends Action
 {
@@ -33,11 +33,11 @@ class DummyClass extends Action
 
     /**
      * Define the fields for the action.
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function fields(Request $request): array
+    public function fields(RootRequest $request): array
     {
         return array_merge(parent::fields($request), [
             //

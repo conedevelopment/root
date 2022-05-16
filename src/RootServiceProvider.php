@@ -151,10 +151,12 @@ class RootServiceProvider extends ServiceProvider
         $this->app['view']->composer('root::app', static function (View $view): void {
             $app = $view->getFactory()->getContainer();
 
+            $request = RootRequest::createFrom($app['request']);
+
             $view->with('root', [
-                'resources' => Support\Facades\Resource::available($app['request'])->values(),
+                'resources' => Support\Facades\Resource::available($request)->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $app['request']->user()->toRoot(),
+                'user' => $request->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
                     'url' => $app['url']->route('root.dashboard'),

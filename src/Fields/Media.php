@@ -5,9 +5,9 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Requests\ResourceRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 
 class Media extends MorphToMany
@@ -49,11 +49,11 @@ class Media extends MorphToMany
     /**
      * Store the file using the given path and request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  string  $path
      * @return \Cone\Root\Models\Medium
      */
-    public function store(Request $request, string $path): Medium
+    public function store(RootRequest $request, string $path): Medium
     {
         $medium = (Medium::proxy())::makeFrom($path);
 
@@ -69,7 +69,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(RootRequest $request, Model $model): array
     {
         return [];
     }
@@ -77,7 +77,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function mapOption(Request $request, Model $model, Model $related): array
+    public function mapOption(RootRequest $request, Model $model, Model $related): array
     {
         return array_merge(
             parent::mapOption($request, $model, $related),
@@ -120,7 +120,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'selection' => $this->getDefaultValue($request, $model)

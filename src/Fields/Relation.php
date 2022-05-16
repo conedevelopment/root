@@ -4,11 +4,11 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
@@ -187,7 +187,7 @@ abstract class Relation extends Field
     public function display(Closure|string $callback): static
     {
         if (is_string($callback)) {
-            $callback = static function (Request $request, Model $model) use ($callback) {
+            $callback = static function (RootRequest $request, Model $model) use ($callback) {
                 return $model->getAttribute($callback);
             };
         }
@@ -200,11 +200,11 @@ abstract class Relation extends Field
     /**
      * Resolve the display format or the query result.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return mixed
      */
-    public function resolveDisplay(Request $request, Model $related): mixed
+    public function resolveDisplay(RootRequest $request, Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
             $this->display($related->getKeyName());
@@ -231,10 +231,10 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveDefault(Request $request, Model $model): mixed
+    public function resolveDefault(RootRequest $request, Model $model): mixed
     {
         if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = static function (Request $request, Model $model, mixed $value): mixed {
+            $this->defaultResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
                 if ($value instanceof Model) {
                     return $value->getKey();
                 } elseif ($value instanceof Collection) {
@@ -251,7 +251,7 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function getDefaultValue(Request $request, Model $model): mixed
+    public function getDefaultValue(RootRequest $request, Model $model): mixed
     {
         return $model->getAttribute($this->relation);
     }
@@ -259,10 +259,10 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(RootRequest $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model): mixed {
+            $this->formatResolver = function (RootRequest $request, Model $model): mixed {
                 $default = $this->getDefaultValue($request, $model);
 
                 if ($default instanceof Model) {
@@ -296,11 +296,11 @@ abstract class Relation extends Field
     /**
      * Resolve the related model's eloquent query.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function resolveQuery(Request $request, Model $model): Builder
+    public function resolveQuery(RootRequest $request, Model $model): Builder
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
@@ -318,11 +318,11 @@ abstract class Relation extends Field
     /**
      * Resolve the options for the field.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(RootRequest $request, Model $model): array
     {
         return $this->resolveQuery($request, $model)
                     ->get()
@@ -335,12 +335,12 @@ abstract class Relation extends Field
     /**
      * Map the given option.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return array
      */
-    public function mapOption(Request $request, Model $model, Model $related): array
+    public function mapOption(RootRequest $request, Model $model, Model $related): array
     {
         return [
             'value' => $related->getKey(),
@@ -364,7 +364,7 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->nullable,

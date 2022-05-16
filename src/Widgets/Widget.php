@@ -4,12 +4,12 @@ namespace Cone\Root\Widgets;
 
 use Closure;
 use Cone\Root\Http\Controllers\WidgetController;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -117,10 +117,10 @@ abstract class Widget implements Arrayable, Renderable
     /**
      * Get the data.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function data(Request $request): array
+    public function data(RootRequest $request): array
     {
         return [];
     }

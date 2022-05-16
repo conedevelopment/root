@@ -2,15 +2,15 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class HasMany extends Relation
 {
     /**
      * {@inheritdoc}
      */
-    public function isSortable(Request $request): bool
+    public function isSortable(RootRequest $request): bool
     {
         return false;
     }
@@ -18,7 +18,7 @@ class HasMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(RootRequest $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {
             $relation = $this->getRelation($model);
@@ -36,7 +36,7 @@ class HasMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function hydrate(Request $request, Model $model, mixed $value): void
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
         $relation = $this->getRelation($model);
 
@@ -48,7 +48,7 @@ class HasMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,

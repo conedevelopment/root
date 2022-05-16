@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Filters;
 
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 abstract class Filter implements Arrayable
@@ -33,12 +33,12 @@ abstract class Filter implements Arrayable
     /**
      * Apply the filter on the query.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    abstract public function apply(Request $request, Builder $query, mixed $value): Builder;
+    abstract public function apply(RootRequest $request, Builder $query, mixed $value): Builder;
 
     /**
      * Get the key.
@@ -73,10 +73,10 @@ abstract class Filter implements Arrayable
     /**
      * The default value of the filter.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return mixed
      */
-    public function default(Request $request): mixed
+    public function default(RootRequest $request): mixed
     {
         return $request->query($this->getKey());
     }
@@ -84,10 +84,10 @@ abstract class Filter implements Arrayable
     /**
      * Determine if the filter is active.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return bool
      */
-    public function active(Request $request): bool
+    public function active(RootRequest $request): bool
     {
         return ! empty($request->query($this->getKey()));
     }
@@ -119,10 +119,10 @@ abstract class Filter implements Arrayable
     /**
      * Get the input representation of the filter.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
-    public function toInput(Request $request): array
+    public function toInput(RootRequest $request): array
     {
         return array_merge($this->toArray(), [
             'active' => $this->active($request),
