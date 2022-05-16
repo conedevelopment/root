@@ -82,7 +82,7 @@ abstract class Field implements Arrayable
     {
         $this->label($label);
         $this->name($name ??= Str::of($label)->lower()->snake()->toString());
-        $this->id($name);
+        $this->id($this->name);
     }
 
     /**
