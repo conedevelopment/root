@@ -47,7 +47,7 @@ abstract class Driver
         foreach (Conversion::all() as $conversion => $callback) {
             $this->convert($medium, $conversion, $callback);
 
-            $conversion[] = $conversion;
+            $conversions[] = $conversion;
         }
 
         $medium->properties = array_replace(
