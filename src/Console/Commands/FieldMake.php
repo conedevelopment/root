@@ -72,13 +72,13 @@ class FieldMake extends GeneratorCommand
     {
         if ($component = $this->option('component')) {
             return str_replace(
-                [PHP_EOL.'{{component}}', '{{/component}}', 'DummyComponent'],
+                [PHP_EOL.'%%component%%', '%%/component%%', '{{ component }}'],
                 ['', '', $component],
                 $class
             );
         }
 
-        return preg_replace('/\n{{component}}.*{{\/component}}/s', '', $class);
+        return preg_replace('/\n%%component%%.*%%\/component%%/s', '', $class);
     }
 
     /**

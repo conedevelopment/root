@@ -1,13 +1,13 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Collection;
 
-class DummyClass extends Action
+class {{ class }} extends Action
 {
     /**
      * Create a new action instance.

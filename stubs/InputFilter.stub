@@ -1,21 +1,21 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Filters\InputFilter;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 
-class DummyClass extends InputFilter
+class {{ class }} extends InputFilter
 {
-{{component}}
+%%component%%
     /**
      * The Vue component.
      *
      * @var string|null
      */
-    protected ?string $component = 'DummyComponent';
-{{/component}}
+    protected ?string $component = '{{ component }}';
+%%/component%%
     /**
      * Apply the filter on the query.
      *

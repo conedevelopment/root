@@ -1,12 +1,12 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Fields\ID;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Http\Requests\RootRequest;
 
-class DummyClass extends Resource
+class {{ class }} extends Resource
 {
     /**
      * Define the fields for the resource.

@@ -1,29 +1,29 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Cone\Root\Http\Requests\RootRequest;
 
-class DummyClass extends SelectFilter
+class {{ class }} extends SelectFilter
 {
-{{component}}
+%%component%%
     /**
      * The Vue component.
      *
      * @var string|null
      */
-    protected ?string $component = 'DummyComponent';
-{{/component}}
-{{multiple}}
+    protected ?string $component = '{{ component }}';
+%%/component%%
+%%multiple%%
     /**
      * Indicates if mulitple options can be selected.
      *
      * @var bool
      */
     protected bool $multiple = true;
-{{/multiple}}
+%%/multiple%%
     /**
      * Apply the filter on the query.
      *

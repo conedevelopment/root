@@ -1,34 +1,34 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Widgets\Widget;
 use Cone\Root\Http\Requests\RootRequest;
 
-class DummyClass extends Widget
+class {{ class }} extends Widget
 {
-{{async}}
+%%async%%
     /**
      * Indicates if the widget is async.
      *
      * @var bool
      */
     protected bool $async = true;
-{{/async}}
-{{component}}
+%%/async%%
+%%component%%
     /**
      * The Vue component.
      *
      * @var string
      */
-    protected string $component = 'DummyComponent';
-{{/component}}
+    protected string $component = '{{ component }}';
+%%/component%%
     /**
      * The Blade template.
      *
      * @var string
      */
-    protected string $template = 'DummyTemplate';
+    protected string $template = '{{ template }}';
 
     /**
      * Create a new widget instance.

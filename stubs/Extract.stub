@@ -1,12 +1,12 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 
-class DummyClass extends Extract
+class {{ class }} extends Extract
 {
     /**
      * Get the query for the extract.

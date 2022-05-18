@@ -1,19 +1,19 @@
 <?php
 
-namespace DummyNamespace;
+namespace {{ namespace }};
 
 use Cone\Root\Fields\Field;
 
-class DummyClass extends Field
+class {{ class }} extends Field
 {
-{{component}}
+%%component%%
     /**
      * The Vue component.
      *
      * @var string
      */
-    protected string $component = 'DummyComponent';
-{{/component}}
+    protected string $component = '{{ component }}';
+%%/component%%
     /**
      * Create a new field instance.
      *
