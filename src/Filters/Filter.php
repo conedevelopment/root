@@ -6,6 +6,7 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 abstract class Filter implements Arrayable
@@ -17,7 +18,14 @@ abstract class Filter implements Arrayable
      *
      * @var string|null
      */
-    protected ?string $component = null;
+    protected ?string $component = 'Select';
+
+    /**
+     * Indicates if mulitple options can be selected.
+     *
+     * @var bool
+     */
+    protected bool $multiple = false;
 
     /**
      * Make a new filter instance.
@@ -78,7 +86,9 @@ abstract class Filter implements Arrayable
      */
     public function default(RootRequest $request): mixed
     {
-        return $request->query($this->getKey());
+        $default = $request->query($this->getKey());
+
+        return $this->multiple ? Arr::wrap($default) : $default;
     }
 
     /**
@@ -103,6 +113,30 @@ abstract class Filter implements Arrayable
     }
 
     /**
+     * Get the filter options.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function options(RootRequest $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Set the multiple attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function multiple(bool $value = true): static
+    {
+        $this->multiple = $value;
+
+        return $this;
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -124,9 +158,19 @@ abstract class Filter implements Arrayable
      */
     public function toInput(RootRequest $request): array
     {
+        $options = $this->options($request);
+
         return array_merge($this->toArray(), [
             'active' => $this->active($request),
             'default' => $this->default($request),
+            'nullable' => true,
+            'multiple' => $this->multiple,
+            'options' => array_map(static function (mixed $value, mixed $key): array {
+                return [
+                    'value' => $key,
+                    'formatted_value' => $value,
+                ];
+            }, $options, array_keys($options)),
         ]);
     }
 }

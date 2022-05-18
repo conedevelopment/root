@@ -2,11 +2,11 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Filters\SelectFilter;
+use Cone\Root\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Cone\Root\Http\Requests\RootRequest;
 
-class {{ class }} extends SelectFilter
+class {{ class }} extends Filter
 {
 %%component%%
     /**

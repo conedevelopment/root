@@ -2,12 +2,11 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Filters\SelectFilter;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TrashStatus extends SelectFilter
+class TrashStatus extends Filter
 {
     /**
      * Apply the filter on the query.

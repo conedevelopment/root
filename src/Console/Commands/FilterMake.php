@@ -35,9 +35,7 @@ class FilterMake extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return $this->option('type') === 'select'
-            ? __DIR__.'/../../../stubs/SelectFilter.stub'
-            : __DIR__.'/../../../stubs/InputFilter.stub';
+        return __DIR__.'/../../../stubs/Filter.stub';
     }
 
     /**
@@ -110,7 +108,6 @@ class FilterMake extends GeneratorCommand
         return [
             ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
             ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
-            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
         ];
     }
 }
