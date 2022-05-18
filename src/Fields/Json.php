@@ -84,8 +84,8 @@ class Json extends Field
         $data['value'] = (array) $data['value'];
 
         $json = TemporaryJson::make()
-                            ->setRelation('parent', $model)
-                            ->forceFill($data['value']);
+                    ->setRelation('parent', $model)
+                    ->forceFill($data['value']);
 
         $fields = $this->resolveFields($request)
                     ->available($request, $model)
@@ -109,13 +109,13 @@ class Json extends Field
      */
     public function toValidate(RootRequest $request, Model $model): array
     {
-        $fieldRules = $this->resolveFields($request)
-                            ->available($request, $model)
-                            ->mapToValidate($request, $model);
+        $rules = $this->resolveFields($request)
+                    ->available($request, $model)
+                    ->mapToValidate($request, $model);
 
         return array_merge(
             parent::toValidate($request, $model),
-            Collection::make($fieldRules)
+            Collection::make($rules)
                     ->mapWithKeys(function (array $rules, string $key): array {
                         return [sprintf('%s.%s', $this->name, $key) => $rules];
                     })
