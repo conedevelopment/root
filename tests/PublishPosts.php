@@ -24,7 +24,7 @@ class PublishPosts extends Action
 
     public function routes(Router $router): void
     {
-        $router->post($this->getKey(), function () {
+        $router->post('/', function () {
             //
         });
     }
