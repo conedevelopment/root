@@ -134,7 +134,7 @@ abstract class Widget implements Arrayable, Renderable
     public function with(array|Closure $data): static
     {
         if (is_array($data)) {
-            $data = function () use ($data): array {
+            $data = static function () use ($data): array {
                 return $data;
             };
         }
@@ -166,7 +166,7 @@ abstract class Widget implements Arrayable, Renderable
     public function routes(Router $router): void
     {
         if ($this->async) {
-            $router->get($this->getKey(), WidgetController::class);
+            $router->get('/', WidgetController::class);
         }
     }
 

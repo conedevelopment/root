@@ -112,9 +112,9 @@ class Media extends MorphToMany
      */
     public function routes(Router $router): void
     {
-        $router->get($this->getKey(), [MediaController::class, 'index']);
-        $router->post($this->getKey(), [MediaController::class, 'store']);
-        $router->delete($this->getKey(), [MediaController::class, 'destroy']);
+        $router->get('/', [MediaController::class, 'index']);
+        $router->post('/', [MediaController::class, 'store']);
+        $router->delete('/', [MediaController::class, 'destroy']);
     }
 
     /**

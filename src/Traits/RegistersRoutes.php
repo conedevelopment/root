@@ -74,12 +74,11 @@ trait RegistersRoutes
         });
 
         if (! App::routesAreCached()) {
-            $router->group(
-                ['middleware' => [AuthorizeResolved::class]],
-                function (Router $router): void {
+            $router->prefix($this->getKey())
+                ->middleware([AuthorizeResolved::class])
+                ->group(function (Router $router): void {
                     $this->routes($router);
-                }
-            );
+                });
         }
     }
 }

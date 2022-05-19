@@ -357,7 +357,7 @@ abstract class Relation extends Field
     public function routes(Router $router): void
     {
         if ($this->async) {
-            $router->get($this->getKey(), RelationController::class);
+            $router->get('/', RelationController::class);
         }
     }
 

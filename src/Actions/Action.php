@@ -215,7 +215,7 @@ abstract class Action implements Arrayable, Responsable
      */
     public function routes(Router $router): void
     {
-        $router->post($this->getKey(), ActionController::class);
+        $router->post('/', ActionController::class);
     }
 
     /**

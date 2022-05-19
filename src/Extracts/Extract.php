@@ -231,7 +231,7 @@ abstract class Extract implements Arrayable
      */
     public function routes(Router $router): void
     {
-        $router->get($this->getKey(), ExtractController::class);
+        $router->get('/', ExtractController::class);
     }
 
     /**
