@@ -3,11 +3,15 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class BelongsToMany extends BelongsTo
 {
+    use ResolvesFields;
+
     /**
      * The Vue component.
      *
@@ -124,6 +128,32 @@ class BelongsToMany extends BelongsTo
                             ->mapToForm($request, $relation->newPivot())
                             ->toArray(),
         ]);
+    }
+
+    /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerRoutes(RootRequest $request, Router $router): void
+    {
+        parent::registerRoutes($request, $router);
+
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**

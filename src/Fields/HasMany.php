@@ -48,6 +48,17 @@ class HasMany extends HasOne
     /**
      * {@inheritdoc}
      */
+    public function mapOption(RootRequest $request, Model $model, Model $related): array
+    {
+        return [
+            'value' => $related->getKey(),
+            'formatted_value' => $this->resolveDisplay($request, $related),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
