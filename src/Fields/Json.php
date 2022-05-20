@@ -14,7 +14,7 @@ class Json extends Field
 {
     use ResolvesFields;
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRotues;
+        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
     }
 
     /**
@@ -59,7 +59,7 @@ class Json extends Field
     }
 
     /**
-     * Register the field routes.
+     * Register the routes using the given router.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router
@@ -67,7 +67,7 @@ class Json extends Field
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
-        $this->defaultRegisterRotues($request, $router);
+        $this->defaultRegisterRoutes($request, $router);
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);

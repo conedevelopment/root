@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
@@ -15,7 +16,10 @@ use Illuminate\Support\Facades\URL;
 
 abstract class Relation extends Field
 {
-    use RegistersRoutes;
+    use ResolvesFields;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
+    }
 
     /**
      * The relation name on the model.
@@ -346,6 +350,36 @@ abstract class Relation extends Field
             'value' => $related->getKey(),
             'formatted_value' => $this->resolveDisplay($request, $related),
         ];
+    }
+
+    /**
+     * Handle the resolving event on the field instance.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Fields\Field  $field
+     * @return void
+     */
+    protected function resolveField(RootRequest $request, Field $field): void
+    {
+        $field->mergeAuthorizationResolver(function (...$parameters): bool {
+            return $this->authorized(...$parameters);
+        });
+    }
+
+    /**
+     * Register the routes using the given router.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function registerRoutes(RootRequest $request, Router $router): void
+    {
+        $this->defaultRegisterRoutes($request, $router);
+
+        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**

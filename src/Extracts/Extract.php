@@ -201,7 +201,7 @@ abstract class Extract implements Arrayable
     }
 
     /**
-     * Register the extract routes.
+     * Register the routes using the given router.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Routing\Router  $router

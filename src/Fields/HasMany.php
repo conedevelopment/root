@@ -5,7 +5,7 @@ namespace Cone\Root\Fields;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
 
-class HasMany extends Relation
+class HasMany extends HasOne
 {
     /**
      * {@inheritdoc}
