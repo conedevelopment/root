@@ -1,3 +1,4 @@
+import { debounce } from './../../Support/Helpers';
 import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
 import BelongsToMany from './BelongsToMany';
@@ -52,6 +53,10 @@ export default {
             type: Function,
             default: (component) => resolveComponent(component),
         },
+        debounce: {
+            type: Number,
+            default: 0,
+        },
     },
 
     inheritAttrs: false,
@@ -66,10 +71,10 @@ export default {
             error: this.form.errors[this.name],
             disabled: this.form.processing || ! [undefined, 'false', false].includes(this.$attrs.disabled),
             required: ! [undefined, 'false', false].includes(this.$attrs.required),
-            'onUpdate:modelValue': (value) => {
+            'onUpdate:modelValue': debounce((value) => {
                 this.$emit('update:modelValue', value);
                 this.form.clearErrors(this.name);
-            },
+            }, this.debounce || 0),
         }, this.$slots);
     },
 }

@@ -7,9 +7,8 @@
         <input
             class="form-control"
             v-bind="$attrs"
+            v-model="_value"
             :class="{ 'form-control--invalid': error !== null }"
-            :value="modelValue"
-            @input="update"
         >
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
@@ -42,15 +41,28 @@
                 type: String,
                 default: null,
             },
+            value: {
+                type: [String, Number],
+                default: null,
+            },
+            formatted_value: {
+                type: [String, Number],
+                default: null,
+            },
         },
 
         inheritAttrs: false,
 
         emits: ['update:modelValue'],
 
-        methods: {
-            update(event) {
-                this.$emit('update:modelValue', event.target.value);
+        computed: {
+            _value: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return this.modelValue;
+                }
             },
         },
     }

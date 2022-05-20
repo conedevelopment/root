@@ -85,4 +85,14 @@ class Search extends Filter
             ];
         })->toArray();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toInput(RootRequest $request): array
+    {
+        return array_merge(parent::toInput($request), [
+            'debounce' => 300,
+        ]);
+    }
 }
