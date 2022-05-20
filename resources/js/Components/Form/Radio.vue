@@ -8,7 +8,7 @@
             <input
                 v-bind="$attrs"
                 class="form-check__control"
-                v-model="selection"
+                v-model="_value"
                 :value="option.value"
             >
             <span class="form-check__label" v-html="option.formatted_value"></span>
@@ -59,7 +59,7 @@
         emits: ['update:modelValue'],
 
         computed: {
-            selection: {
+            _value: {
                 set(value) {
                     this.$emit('update:modelValue', value);
                 },

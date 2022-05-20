@@ -62,7 +62,7 @@
                 },
                 get() {
                     return this.modelValue;
-                }
+                },
             },
         },
     }

@@ -7,7 +7,7 @@
         <select
             class="form-control"
             v-bind="$attrs"
-            v-model="value"
+            v-model="_value"
             :class="{ 'form-control--invalid': error !== null }"
         >
             <option
@@ -37,6 +37,14 @@
                 default: null,
             },
             modelValue: {
+                type: [String, Number, Array, Object],
+                default: null,
+            },
+            value: {
+                type: [String, Number, Array, Object],
+                default: null,
+            },
+            formatted_value: {
                 type: [String, Number, Array, Object],
                 default: null,
             },
@@ -71,7 +79,7 @@
         emits: ['update:modelValue'],
 
         computed: {
-            value: {
+            _value: {
                 set(value) {
                     this.$emit('update:modelValue', this.selectResolver(value, this.options));
                 },

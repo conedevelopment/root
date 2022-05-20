@@ -61,6 +61,10 @@
                 type: Array,
                 default: () => [],
             },
+            formatted_value: {
+                type: Array,
+                default: () => [],
+            },
         },
 
         inheritAttrs: false,

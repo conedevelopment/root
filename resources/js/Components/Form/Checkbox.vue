@@ -8,7 +8,7 @@
             <input
                 v-bind="$attrs"
                 class="form-check__control"
-                v-model="selection"
+                v-model="_value"
                 :name="`${name}.${option.value}`"
                 :value="option.value"
             >
@@ -18,7 +18,7 @@
             <input
                 v-bind="$attrs"
                 class="form-check__control"
-                v-model="selection"
+                v-model="_value"
                 :id="id"
                 :name="name"
             >
@@ -74,7 +74,7 @@
         emits: ['update:modelValue'],
 
         computed: {
-            selection: {
+            _value: {
                 set(value) {
                     this.$emit('update:modelValue', value);
                 },

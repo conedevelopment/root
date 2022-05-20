@@ -38,6 +38,14 @@
                 type: String,
                 default: '',
             },
+            value: {
+                type: String,
+                default: '',
+            },
+            formatted_value: {
+                type: String,
+                default: '',
+            },
             with_media: {
                 type: Boolean,
                 default: false,

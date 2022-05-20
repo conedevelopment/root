@@ -8,9 +8,8 @@
             ref="input"
             class="form-range"
             v-bind="$attrs"
+            v-model="_value"
             :class="{ 'form-control--invalid': error !== null }"
-            :value="modelValue"
-            @input="update"
         >
         <div class="form-range-display">
             <span class="form-range-display__item is-min">
@@ -60,9 +59,14 @@
 
         emits: ['update:modelValue'],
 
-        methods: {
-            update(event) {
-                this.$emit('update:modelValue', event.target.value);
+        computed: {
+            _value: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return this.modelValue;
+                },
             },
         },
     }

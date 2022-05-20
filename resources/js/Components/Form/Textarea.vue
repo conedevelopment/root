@@ -7,9 +7,8 @@
         <textarea
             class="form-control"
             v-bind="$attrs"
-            :value="modelValue"
+            v-model="_value"
             :class="{ 'form-control--invalid': error !== null }"
-            @input="update"
         ></textarea>
         <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
@@ -27,6 +26,10 @@
                 default: null,
             },
             modelValue: {
+                type: [String, Number],
+                default: null,
+            },
+            formatted_value: {
                 type: [String, Number],
                 default: null,
             },
@@ -48,9 +51,14 @@
 
         emits: ['update:modelValue'],
 
-        methods: {
-            update(event) {
-                this.$emit('update:modelValue', event.target.value);
+        computed: {
+            _value: {
+                set(value) {
+                    this.$emit('update:modelValue', value);
+                },
+                get() {
+                    return this.modelValue;
+                },
             },
         },
     }
