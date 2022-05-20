@@ -106,10 +106,14 @@ abstract class Extract implements Arrayable
     {
         $fields = $this->resolveFields($request)->available($request);
 
-        return [
-            Search::make($fields->searchable($request)),
-            Sort::make($fields->sortable($request)),
-        ];
+        $searchables = $fields->searchable($request);
+
+        $sortables = $fields->sortable($request);
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? Search::make($searchables) : null,
+            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
+        ]));
     }
 
     /**

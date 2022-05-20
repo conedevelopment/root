@@ -7,12 +7,6 @@
                 :filters="filters"
                 @update:query="fetch"
             ></Filters>
-            <Search
-                v-if="searchable"
-                v-model="query.search"
-                :placeholder="__('Search')"
-                @update:modelValue="fetch"
-            ></Search>
             <Actions
                 v-if="actions.length > 0"
                 :actions="actions"
@@ -57,7 +51,6 @@
     import Head from './Head';
     import Pagination from './Pagination';
     import Row from './Row';
-    import Search from './Search';
 
     export default {
         components: {
@@ -67,7 +60,6 @@
             Head,
             Pagination,
             Row,
-            Search,
         },
 
         props: {
@@ -108,9 +100,6 @@
                     sortable: field.sortable,
                     searchable: field.searchable,
                 }));
-            },
-            searchable() {
-                return this.columns.some((column) => column.searchable);
             },
         },
 

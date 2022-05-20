@@ -20,6 +20,13 @@ class Sort extends Filter
     protected Fields $fields;
 
     /**
+     * The Vue component.
+     *
+     * @var string|null
+     */
+    protected ?string $component = null;
+
+    /**
      * Create a new filter instance.
      *
      * @param  \Cone\Root\Support\Collections\Fields  $fields
