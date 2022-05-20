@@ -14,14 +14,6 @@ class HasOne extends Relation
     /**
      * {@inheritdoc}
      */
-    public function async(bool $value = true): static
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function persist(RootRequest $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {

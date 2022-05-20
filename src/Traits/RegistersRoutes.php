@@ -67,12 +67,6 @@ trait RegistersRoutes
     {
         $this->setUri(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
 
-        $router->matched(function (RouteMatched $event): void {
-            if ($event->route->uri() === $this->getUri()) {
-                $event->route->setParameter('resolved', $this);
-            }
-        });
-
         if (! App::routesAreCached()) {
             $router->prefix($this->getKey())
                 ->middleware([AuthorizeResolved::class])
@@ -80,5 +74,11 @@ trait RegistersRoutes
                     $this->routes($router);
                 });
         }
+
+        $router->matched(function (RouteMatched $event): void {
+            if (str_starts_with($event->route->uri(), $this->getUri())) {
+                $event->route->setParameter('resolved', $this);
+            }
+        });
     }
 }
