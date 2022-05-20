@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
@@ -19,6 +20,7 @@ use Illuminate\Support\Str;
 abstract class Widget implements Arrayable, Renderable
 {
     use Authorizable;
+    use Makeable;
     use RegistersRoutes;
     use ResolvesVisibility;
 
@@ -49,17 +51,6 @@ abstract class Widget implements Arrayable, Renderable
      * @var \Closure|null
      */
     protected ?Closure $dataResolver = null;
-
-    /**
-     * Make a new widget instance.
-     *
-     * @param  array  ...$parameters
-     * @return static
-     */
-    public static function make(...$parameters): static
-    {
-        return new static(...$parameters);
-    }
 
     /**
      * Get the key.

@@ -10,6 +10,7 @@ use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesVisibility;
@@ -27,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Action implements Arrayable, Responsable
 {
     use Authorizable;
+    use Makeable;
     use ResolvesFields;
     use ResolvesVisibility;
     use RegistersRoutes {
@@ -53,17 +55,6 @@ abstract class Action implements Arrayable, Responsable
      * @var bool
      */
     protected bool $confirmable = false;
-
-    /**
-     * Make a new action instance.
-     *
-     * @param  array  ...$parameters
-     * @return static
-     */
-    public static function make(...$parameters): static
-    {
-        return new static(...$parameters);
-    }
 
     /**
      * Handle the action.

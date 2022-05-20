@@ -13,6 +13,7 @@ use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -29,6 +30,7 @@ use Illuminate\Support\Str;
 abstract class Extract implements Arrayable
 {
     use Authorizable;
+    use Makeable;
     use ResolvesActions;
     use ResolvesFields;
     use ResolvesFilters;
@@ -43,17 +45,6 @@ abstract class Extract implements Arrayable
      * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
-
-    /**
-     * Make a new extract instance.
-     *
-     * @param  array  ...$parameters
-     * @return static
-     */
-    public static function make(...$parameters): static
-    {
-        return new static(...$parameters);
-    }
 
     /**
      * Get the key.

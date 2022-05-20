@@ -4,6 +4,7 @@ namespace Cone\Root\Filters;
 
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 abstract class Filter implements Arrayable
 {
     use Authorizable;
+    use Makeable;
 
     /**
      * The Vue component.
@@ -26,17 +28,6 @@ abstract class Filter implements Arrayable
      * @var bool
      */
     protected bool $multiple = false;
-
-    /**
-     * Make a new filter instance.
-     *
-     * @param  array  ...$parameters
-     * @return static
-     */
-    public static function make(...$parameters): static
-    {
-        return new static(...$parameters);
-    }
 
     /**
      * Apply the filter on the query.

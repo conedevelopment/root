@@ -7,6 +7,7 @@ use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 abstract class Field implements Arrayable
 {
     use Authorizable;
+    use Makeable;
     use ResolvesVisibility;
 
     /**
@@ -83,17 +85,6 @@ abstract class Field implements Arrayable
         $this->label($label);
         $this->name($name ??= Str::of($label)->lower()->snake()->toString());
         $this->id($name);
-    }
-
-    /**
-     * Make a new field instance.
-     *
-     * @param  array  ...$parameters
-     * @return static
-     */
-    public static function make(...$parameters): static
-    {
-        return new static(...$parameters);
     }
 
     /**
