@@ -5,6 +5,7 @@ mix.webpackConfig({
         publicPath: '/vendor/root/',
         chunkFilename: '[name].js',
     },
+    devtool: 'inline-source-map'
 });
 
 mix.setPublicPath('./public')
@@ -13,5 +14,5 @@ mix.setPublicPath('./public')
     .extract(['vue'])
     .sass('resources/sass/app.scss', 'app.css')
     .options({ processCssUrls: false })
-    .sourceMaps()
+    .sourceMaps(! mix.inProduction())
     .version();
