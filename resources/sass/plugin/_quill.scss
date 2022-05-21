@@ -11,10 +11,10 @@
 }
 
 .ql-container {
-    height: 100%;
     border-radius: 0 0 spruce.$form-control-border-radius spruce.$form-control-border-radius;
     font-family: spruce.$font-family-base;
     font-size: spruce.$font-size-base;
+    height: auto;
     margin-block-start: 0;
     padding: 1rem;
 
