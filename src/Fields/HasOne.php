@@ -66,12 +66,4 @@ class HasOne extends Relation
             $this->resolveFields($request)->registerRoutes($request, $router);
         });
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function routes(Router $router): void
-    {
-        parent::routes($router);
-    }
 }
