@@ -137,7 +137,9 @@
     display: inline-flex;
     height: 1.15rem;
     margin-right: 0;
-    transition: color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+    transition-duration: spruce.transition(duration);
+    transition-property: color;
+    transition-timing-function: spruce.transition(timing-function);
     width: 1.15rem;
   }
 }
@@ -156,11 +158,12 @@
     color: spruce.color(heading);
     display: block;
     font-weight: 500;
-    padding-bottom: 0.2em;
-    padding-inline: calc(2rem + 0.5rem) 1rem;
-    padding-top: 0.2em;
+    padding-block: 0.2em;
+    padding-inline: calc(1.15rem + #{spruce.spacer(xs)}) 1rem;
     text-decoration: none;
-    transition: var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+    transition-duration: spruce.transition(duration);
+    transition-property: color;
+    transition-timing-function: spruce.transition(timing-function);
 
     &:hover,
     &:focus,
