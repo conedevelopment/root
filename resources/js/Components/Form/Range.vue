@@ -16,7 +16,7 @@
                 {{ $attrs.min }}
             </span>
             <span class="form-range-display__item is-current">
-                {{ modelValue || '-' }}
+                {{ _value || '-' }}
             </span>
             <span class="form-range-display__item is-max">
                 {{ $attrs.max }}
@@ -38,6 +38,14 @@
                 default: null,
             },
             modelValue: {
+                type: [String, Number],
+                default: null,
+            },
+            value: {
+                type: [String, Number],
+                default: null,
+            },
+            formatted_value: {
                 type: [String, Number],
                 default: null,
             },

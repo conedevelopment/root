@@ -25,17 +25,6 @@ trait RegistersRoutes
     abstract public function getKey(): string;
 
     /**
-     * The routes that should be registerd.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    public function routes(Router $router): void
-    {
-        //
-    }
-
-    /**
      * Set the URI attribute.
      *
      * @param  string  $uri
@@ -80,5 +69,16 @@ trait RegistersRoutes
                 $event->route->setParameter('resolved', $this);
             }
         });
+    }
+
+    /**
+     * The routes that should be registerd.
+     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function routes(Router $router): void
+    {
+        //
     }
 }
