@@ -35,7 +35,7 @@
         @include spruce.clear-list;
         background-color: spruce.color(background);
         border-radius: spruce.$border-radius-sm;
-        box-shadow: var(--box-shadow);
+        box-shadow: var(--root-box-shadow);
         display: none;
         font-weight: 400;
         left: 0;

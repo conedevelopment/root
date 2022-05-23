@@ -5,10 +5,11 @@
         text-decoration: none;
     }
 
-    thead tr {
+    thead {
         th {
             background-color: spruce.color(primary);
             color: hsl(0 0% 100%);
+            line-height: spruce.$line-height-sm;
         }
     }
 

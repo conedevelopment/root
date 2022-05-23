@@ -26,7 +26,7 @@
     }
 
     &__logo {
-        height: 1.35rem;
+        height: var(--root-logo-height);
         width: auto;
     }
 

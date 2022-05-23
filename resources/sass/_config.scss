@@ -4,6 +4,9 @@ $color-primary-light: hsl(215 100% 96%);
 $color-primary: hsl(214 98% 49%);
 
 @use '~sprucecss/scss/spruce' with (
+    $settings: (
+        prefix: root
+    ),
     $color-primary: $color-primary,
     $color-secondary: hsl(214 98% 25%),
     $colors: (

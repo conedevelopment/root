@@ -14,7 +14,7 @@
         display: flex;
         gap: spruce.spacer(m);
         justify-content: space-between;
-        padding-inline: var(--gutter-lg);
+        padding-inline: var(--root-gutter-lg);
     }
 
     &__logo {

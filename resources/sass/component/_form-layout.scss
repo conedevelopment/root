@@ -4,5 +4,5 @@
     align-items: start;
     display: grid;
     gap: spruce.spacer(s);
-    margin-block-end: calc(var(--gutter-lg) + var(--gutter-md) * 2  + 2 * 0.75em + #{spruce.$font-size-base});
+    margin-block-end: calc(var(--root-gutter-lg) + var(--root-gutter-md) * 2  + 2 * 0.75em + #{spruce.$font-size-base});
 }
