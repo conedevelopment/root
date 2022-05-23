@@ -38,7 +38,9 @@
         display: flex;
         height: 1.5rem;
         justify-content: center;
-        transition: opacity var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+        transition-duration: spruce.transition(duration);
+        transition-property: opacity;
+        transition-timing-function: spruce.transition(timing-function);
         width: 1.5rem;
 
         &:hover,

@@ -95,7 +95,9 @@
         line-height: spruce.$line-height-md;
         padding: 0;
         text-decoration: none;
-        transition: color var(--#{spruce.setting(prefix)}-transition-duration) var(--#{spruce.setting(prefix)}-transition-timing-function);
+        transition-duration: spruce.transition(duration);
+        transition-property: color;
+        transition-timing-function: spruce.transition(timing-function);
         width: 100%;
 
         &:hover,

@@ -245,7 +245,9 @@
         position: absolute;
         right: 0.5rem;
         top: 0.5rem;
-        transition: 0.15s ease;
+        transition-duration: spruce.transition(duration);
+        transition-property: all;
+        transition-timing-function: spruce.transition(timing-function);
         width: 1.4rem;
 
         &:hover {
