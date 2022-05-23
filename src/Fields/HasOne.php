@@ -65,8 +65,6 @@ class HasOne extends Relation
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
         });
-
-        // $router->resource($this->getKey());
     }
 
     /**
