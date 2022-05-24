@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Support\Collections\Fields;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 
