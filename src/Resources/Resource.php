@@ -16,6 +16,7 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesActions;
@@ -361,16 +362,18 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function mapItems(RootRequest $request): array
     {
-        $query = $this->query();
-
         $filters = $this->resolveFilters($request)->available($request);
+
+        $query = $this->query();
 
         $items = $filters->apply($request, $query)
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request): array {
-                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
+                        return (new ModelResource($model))->toDisplay(
+                            $request, $this->resolveFields($request)->available($request, $model)
+                        );
                     })
                     ->toArray();
 
@@ -485,7 +488,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $model = $this->getModelInstance();
 
         return array_merge($this->toArray(), [
-            'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
+            'model' => (new ModelResource($model))->toForm(
+                $request, $this->resolveFields($request)->available($request, $model)
+            ),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ]);
     }
@@ -501,7 +506,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         return array_merge($this->toArray(), [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
-            'model' => $model->toDisplay($request, $this->resolveFields($request)->available($request, $model)),
+            'model' => (new ModelResource($model))->toDisplay(
+                $request, $this->resolveFields($request)->available($request, $model)
+            ),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
         ]);
@@ -517,7 +524,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function toEdit(UpdateRequest $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'model' => $model->toForm($request, $this->resolveFields($request)->available($request, $model)),
+            'model' => (new ModelResource($model))->toForm(
+                $request, $this->resolveFields($request)->available($request, $model)
+            ),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ]);
     }
