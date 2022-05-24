@@ -1,14 +1,13 @@
 <?php
 
-namespace Cone\Root\Traits;
+namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 
-trait InteractsWithResource
+class ModelResource extends JsonResource
 {
     /**
      * Map the abilities for the model.
@@ -16,7 +15,7 @@ trait InteractsWithResource
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    public function mapAbilities(ResourceRequest $request): array
+    protected function mapAbilities(ResourceRequest $request): array
     {
         $policy = $request->resource()->getPolicy();
 
@@ -24,7 +23,7 @@ trait InteractsWithResource
             ['view', 'update', 'delete', 'restore', 'forceDelete'],
             function (array $stack, string $ability) use ($request, $policy): array {
                 return array_merge($stack, [
-                    $ability => is_null($policy) || $request->user()->can($ability, $this),
+                    $ability => is_null($policy) || $request->user()->can($ability, $this->resource),
                 ]);
             },
             []
@@ -37,9 +36,9 @@ trait InteractsWithResource
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    public function mapUrls(ResourceRequest $request): array
+    protected function mapUrls(ResourceRequest $request): array
     {
-        if (! $this->exists) {
+        if (! $this->resource->exists) {
             return [];
         }
 
@@ -48,7 +47,7 @@ trait InteractsWithResource
         $actions = array_fill_keys(['show', 'update', 'edit', 'destroy'], null);
 
         foreach ($actions as $action => $value) {
-            $actions[$action] = URL::route(sprintf('root.%s.%s', $key, $action), $this);
+            $actions[$action] = URL::route(sprintf('root.%s.%s', $key, $action), $this->resource);
         }
 
         return $actions;
@@ -63,13 +62,9 @@ trait InteractsWithResource
      */
     public function toDisplay(ResourceRequest $request, Fields $fields): array
     {
-        return [
-            'abilities' => $this->mapAbilities($request),
-            'fields' => $fields->mapToDisplay($request, $this)->toArray(),
-            'id' => $this->getKey(),
-            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this)) && $this->trashed(),
-            'urls' => $this->mapUrls($request),
-        ];
+        return array_merge($this->toArray($request), [
+            'fields' => $fields->mapToDisplay($request, $this->resource)->toArray(),
+        ]);
     }
 
     /**
@@ -81,24 +76,27 @@ trait InteractsWithResource
      */
     public function toForm(ResourceRequest $request, Fields $fields): array
     {
-        $fields = $fields->mapToForm($request, $this)->toArray();
+        $fields = $fields->mapToForm($request, $this->resource)->toArray();
 
-        return [
-            'abilities' => $this->mapAbilities($request),
+        return array_merge($this->toArray($request), [
             'data' => array_column($fields, 'value', 'name'),
             'fields' => $fields,
-            'id' => $this->getKey(),
-            'urls' => $this->mapUrls($request),
-        ];
+        ]);
     }
 
     /**
-     * Get the resource representation of the model.
+     * Transform the resource into an array.
      *
-     * @return \Cone\Root\Resources\Resource
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
      */
-    public static function toResource(): Resource
+    public function toArray($request): array
     {
-        return new Resource(static::class);
+        return [
+            'abilities' => $this->mapAbilities($request),
+            'id' => $this->resource->getKey(),
+            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->resource)) && $this->resource->trashed(),
+            'urls' => $this->mapUrls($request),
+        ];
     }
 }

@@ -12,6 +12,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -191,7 +192,9 @@ abstract class Extract implements Arrayable
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request): array {
-                        return $model->toDisplay($request, $this->resolveFields($request)->available($request, $model));
+                        return (new ModelResource($model))->toDisplay(
+                            $request, $this->resolveFields($request)->available($request, $model)
+                        );
                     })
                     ->toArray();
 
