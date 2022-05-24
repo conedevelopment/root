@@ -357,10 +357,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the items.
      *
-     * @param \Cone\Root\Http\Requests\RootRequest  $request
+     * @param \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    public function mapItems(RootRequest $request): array
+    public function mapItems(ResourceRequest $request): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
