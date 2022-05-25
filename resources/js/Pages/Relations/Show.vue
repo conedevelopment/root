@@ -1,19 +1,10 @@
 <template>
     <div>
-        <div class="app-widget">
-            <Widget
-                v-for="widget in widgets"
-                :key="widget.key"
-                v-bind="widget"
-            ></Widget>
-        </div>
         <div class="app-operation">
-            <Actions
-                v-if="actions.length > 0"
-                :selection="[model.id]"
-                :actions="actions"
-                @success="clearSelection"
-            ></Actions>
+            <Link :href="field.url" class="btn btn--primary btn--icon">
+                <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
+                {{ field.name }}
+            </Link>
             <div class="app-operation__edit">
                 <button
                     v-if="model.abilities.delete"
@@ -27,7 +18,7 @@
                 <Link
                     v-if="model.abilities.update"
                     class="btn btn--icon btn--sm btn--tertiary"
-                    :href="model.urls.edit"
+                    :href="`${model.url}/edit`"
                     :aria-label="__('Edit')"
                 >
                     <Icon class="btn__icon" name="edit"></Icon>
@@ -53,28 +44,24 @@
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
-    import Actions from './../../Components/Actions/Actions';
-    import Widget from './../../Components/Widgets/Handler';
 
     export default {
         components: {
-            Actions,
             Link,
-            Widget,
         },
 
         props: {
-            actions: {
-                type: Array,
-                default: () => [],
-            },
             model: {
                 type: Object,
                 required: true,
             },
-            widgets: {
-                type: Array,
-                default: () => [],
+            resource: {
+                type: Object,
+                required: true,
+            },
+            field: {
+                type: Object,
+                required: true,
             },
         },
 
@@ -84,7 +71,7 @@
 
         methods: {
             destroy() {
-                this.$inertia.delete(this.model.urls.destroy, {
+                this.$inertia.delete(this.model.url, {
                     onBefore: () => confirm(this.__('Are you sure?')),
                 });
             },

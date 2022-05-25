@@ -14,11 +14,15 @@
 
     export default {
         props: {
-            urls: {
+            model: {
                 type: Object,
                 required: true,
             },
-            model: {
+            resource: {
+                type: Object,
+                required: true,
+            },
+            parent: {
                 type: Object,
                 required: true,
             },
@@ -27,7 +31,6 @@
         layout: function (h, page) {
             return h(this.resolveDefaultLayout(), () => h(Form, {
                 model: page.props.model,
-                url: page.props.urls.index,
             }, () => page));
         },
     }

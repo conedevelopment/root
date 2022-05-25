@@ -99,16 +99,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Get the route key.
-     *
-     * @return string
-     */
-    public function getRouteKey(): string
-    {
-        return Str::of($this->getKey())->singular()->toString();
-    }
-
-    /**
      * Get the name.
      *
      * @return string
@@ -139,31 +129,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Retrieve the model for a bound value.
+     * Get the policy.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Model
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return mixed
      */
-    public function resolveRouteBinding(RootRequest $request, mixed $value): Model
+    public function getPolicy(): mixed
     {
-        $key = $this->getRouteKey();
-
-        if (($model = $request->route($key)) instanceof Model) {
-            return $model;
-        }
-
-        $model = $this->getModelInstance()->resolveRouteBinding($value);
-
-        if (is_null($model)) {
-            throw (new ModelNotFoundException())->setModel($this->getModel(), $value);
-        }
-
-        $request->route()->setParameter($key, $model);
-
-        return $model;
+        return Gate::getPolicyFor($this->getModel());
     }
 
     /**
@@ -324,16 +296,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Get the policy.
-     *
-     * @return mixed
-     */
-    public function getPolicy(): mixed
-    {
-        return Gate::getPolicyFor($this->getModel());
-    }
-
-    /**
      * Map the abilities.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
@@ -341,7 +303,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function mapAbilities(RootRequest $request): array
     {
-        $policy = $this->getPolicy();
+        $policy = Gate::getPolicyFor($this->getModel());
 
         return array_reduce(
             ['viewAny', 'create'],
@@ -575,10 +537,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $router->get('/', [ResourceController::class, 'index'])->name('index');
         $router->get('/create', [ResourceController::class, 'create'])->name('create');
         $router->post('/', [ResourceController::class, 'store'])->name('store');
-        $router->get('/{id}', [ResourceController::class, 'show'])->name('show');
-        $router->get('/{id}/edit', [ResourceController::class, 'edit'])->name('edit');
-        $router->patch('/{id}', [ResourceController::class, 'update'])->name('update');
-        $router->delete('/{id}', [ResourceController::class, 'destroy'])->name('destroy');
+        $router->get('/{rootResource}', [ResourceController::class, 'show'])->name('show');
+        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit'])->name('edit');
+        $router->patch('/{rootResource}', [ResourceController::class, 'update'])->name('update');
+        $router->delete('/{rootResource}', [ResourceController::class, 'destroy'])->name('destroy');
     }
 
     /**

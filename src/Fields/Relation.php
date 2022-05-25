@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
@@ -115,6 +116,16 @@ abstract class Relation extends Field
     public function getRelation(Model $model): EloquentRelation
     {
         return call_user_func([$model, $this->relation]);
+    }
+
+    /**
+     * Get the related model name.
+     *
+     * @return string
+     */
+    public function getRelatedName(): string
+    {
+        return Str::of($this->label)->singular()->toString();
     }
 
     /**

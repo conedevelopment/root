@@ -33,10 +33,6 @@
                 type: Object,
                 required: true,
             },
-            url: {
-                type: String,
-                required: true,
-            },
         },
 
         data() {
@@ -56,7 +52,7 @@
 
         methods: {
             submit() {
-                this.form.submit(this.method, this.url, {
+                this.form.submit(this.method, this.model.url, {
                     onStart: () => {
                         this.form.clearErrors();
                     },
@@ -66,7 +62,7 @@
                 });
             },
             destroy() {
-                this.$inertia.delete(this.model.urls.destroy, {
+                this.$inertia.delete(this.model.url, {
                     onBefore: () => window.confirm(this.__('Are you sure?')),
                 });
             },
