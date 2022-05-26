@@ -13,13 +13,6 @@ class BelongsToMany extends BelongsTo
     use ResolvesFields;
 
     /**
-     * The Vue component.
-     *
-     * @var string
-     */
-    protected string $component = 'BelongsToMany';
-
-    /**
      * Set the async attribute.
      *
      * @param  bool  $value

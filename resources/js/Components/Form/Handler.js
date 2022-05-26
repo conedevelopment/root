@@ -11,6 +11,7 @@ import Media from './Media';
 import Radio from './Radio';
 import Range from './Range';
 import Select from './Select';
+import SubResource from './SubResource';
 import Tag from './Tag';
 import Textarea from './Textarea';
 
@@ -29,6 +30,7 @@ export default {
         Radio,
         Range,
         Select,
+        SubResource,
         Tag,
         Textarea,
     },

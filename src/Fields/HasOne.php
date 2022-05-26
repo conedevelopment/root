@@ -3,13 +3,27 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 
 class HasOne extends Relation
 {
-    use ResolvesFields;
+    use AsSubResource;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function async(bool $value = true): static
+    {
+        parent::async($value);
+
+        if ($this->asSubResource) {
+            $this->component = 'SubResource';
+        }
+
+        return $this;
+    }
 
     /**
      * {@inheritdoc}
@@ -64,6 +78,7 @@ class HasOne extends Relation
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveActions($request)->registerRoutes($request, $router);
         });
     }
 }
