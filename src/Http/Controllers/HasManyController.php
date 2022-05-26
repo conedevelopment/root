@@ -67,7 +67,7 @@ class HasManyController extends Controller
 
         $relation->save($related);
 
-        $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey);
+        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey);
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
