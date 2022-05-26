@@ -7,6 +7,7 @@ use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Http\Resources\RelatedResource;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
@@ -61,7 +62,7 @@ trait AsSubResource
                         ->through(function (Model $related) use ($request, $model): array {
                             $related->setRelation('parent', $model);
 
-                            return (new RelatedResource($related))->toDisplay(
+                            return $this->mapItem($request, $model, $related)->toDisplay(
                                 $request, $this->resolveFields($request)->available($request, $model, $related)
                             );
                         })
@@ -70,6 +71,19 @@ trait AsSubResource
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
         ]);
+    }
+
+    /**
+     * Map the related model.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illumunate\Database\Eloquent\Model  $model
+     * @param  \Illumunate\Database\Eloquent\Model  $related
+     * @return \Cone\Root\Http\Resources\ModelResource
+     */
+    public function mapItem(ResourceRequest $request, Model $model, Model $related): ModelResource
+    {
+        return new RelatedResource($related);
     }
 
     /**
@@ -144,7 +158,7 @@ trait AsSubResource
             'model' => (new RelatedResource($related))->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
-            'title' => __('Create :model', ['model' => $this->label]),
+            'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $model->getKey()]),
         ]);
     }
 

@@ -1,7 +1,6 @@
 import { debounce } from './../../Support/Helpers';
 import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
-import BelongsToMany from './BelongsToMany';
 import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
@@ -20,7 +19,6 @@ export default {
 
     components: {
         AsyncSelect,
-        BelongsToMany,
         Checkbox,
         DateTime,
         Editor,

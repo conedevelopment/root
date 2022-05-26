@@ -23,6 +23,10 @@ class HasMany extends HasOne
      */
     public function persist(RootRequest $request, Model $model): void
     {
+        if ($this->asSubResource) {
+            return;
+        }
+
         $model->saved(function (Model $model) use ($request): void {
             $relation = $this->getRelation($model);
 
@@ -31,7 +35,7 @@ class HasMany extends HasOne
             $this->hydrate($request, $model, $value);
 
             $relation->saveMany(
-                $model->getRelation($relation->getRelationName())
+                $model->getRelation($this->relation)
             );
         });
     }
@@ -41,11 +45,9 @@ class HasMany extends HasOne
      */
     public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $relation = $this->getRelation($model);
-
         $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
-        $model->setRelation($relation->getRelationName(), $results);
+        $model->setRelation($this->relation, $results);
     }
 
     /**

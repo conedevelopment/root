@@ -2,15 +2,17 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Http\Resources\ModelResource;
+use Cone\Root\Http\Resources\RelatedResource;
+use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Collection;
 
 class BelongsToMany extends BelongsTo
 {
-    use ResolvesFields;
+    use AsSubResource;
 
     /**
      * Set the async attribute.
@@ -36,50 +38,12 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function resolveDefault(RootRequest $request, Model $model): mixed
-    {
-        if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = function (RootRequest $request, Model $model, mixed $value): array {
-                return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
-                    return [
-                        $related->getKey() => $this->mapPivotValues($request, $model, $related),
-                    ];
-                })->toArray();
-            };
-        }
-
-        return parent::resolveDefault($request, $model);
-    }
-
-    /**
-     * Map the pivot values.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
-     */
-    protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
-    {
-        $relation = $this->getRelation($model);
-
-        return $this->resolveFields($request)
-                    ->available($request, $model, $related)
-                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
-                        return [
-                            $field->name => $field->resolveDefault(
-                                $request, $related->getRelation($relation->getPivotAccessor())
-                            ),
-                        ];
-                    })
-                    ->toArray();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function persist(RootRequest $request, Model $model): void
     {
+        if ($this->asSubResource) {
+            return;
+        }
+
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
 
@@ -96,31 +60,26 @@ class BelongsToMany extends BelongsTo
     {
         $relation = $this->getRelation($model);
 
-        $results = $this->resolveQuery($request, $model)
-                        ->findMany(array_keys($value))
-                        ->each(static function (Model $related) use ($relation, $value): void {
-                            $related->setRelation(
-                                $relation->getPivotAccessor(),
-                                $relation->newPivot($value[$related->getKey()])
-                            );
-                        });
+        $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
         $model->setRelation($relation->getRelationName(), $results);
     }
 
     /**
-     * {@inheritdoc}
+     * Map the related model.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return \Cone\Root\Http\Resources\ModelResource
      */
-    public function mapOption(RootRequest $request, Model $model, Model $related): array
+    public function mapItem(ResourceRequest $request, Model $model, Model $related): ModelResource
     {
         $relation = $this->getRelation($model);
 
-        return array_merge(parent::mapOption($request, $model, $related), [
-            'fields' => $this->resolveFields($request)
-                            ->available($request, $model, $related)
-                            ->mapToForm($request, $relation->newPivot())
-                            ->toArray(),
-        ]);
+        return new RelatedResource(
+            $related->getRelation($relation->getPivotAccessor())
+        );
     }
 
     /**
@@ -154,47 +113,9 @@ class BelongsToMany extends BelongsTo
      */
     public function toInput(RootRequest $request, Model $model): array
     {
-        $models = $this->getDefaultValue($request, $model);
-
-        $relation = $this->getRelation($model);
-
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
-            'fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
-                return [
-                    $related->getKey() => $this->resolveFields($request)
-                                                ->available($request, $model, $related)
-                                                ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
-                                                ->toArray(),
-                ];
-            }),
-            'formatted_value' => $models->mapWithKeys(function (Model $related) use ($request): mixed {
-                return [$related->getKey() => $this->resolveDisplay($request, $related)];
-            }),
             'multiple' => true,
         ]);
-    }
-
-    /**
-     * Get the validation representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
-     */
-    public function toValidate(RootRequest $request, Model $model): array
-    {
-        $pivotRules = $this->resolveFields($request)
-                            ->available($request, $model)
-                            ->mapToValidate($request, $model);
-
-        return array_merge(
-            parent::toValidate($request, $model),
-            Collection::make($pivotRules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.*.%s', $this->name, $key) => $rules];
-                    })
-                    ->toArray(),
-        );
     }
 }
