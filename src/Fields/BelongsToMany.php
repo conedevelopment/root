@@ -97,7 +97,7 @@ class BelongsToMany extends BelongsTo
     public function fields(RootRequest $request): array
     {
         return [
-            Text::make($this->label, $this->name)
+            Text::make($this->getRelatedName(), $this->name)
                 ->disabled()
                 ->default(function (ResourceRequest $request, Model $model): string {
                     return $this->resolveDisplay($request, $model->related);
