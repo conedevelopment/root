@@ -35,7 +35,7 @@
         "laravel/laravel": "^9.0",
         "mockery/mockery": "^1.4.4",
         "phpunit/phpunit": "^9.5.10",
-        "nunomaduro/larastan": "^1.0"
+        "nunomaduro/larastan": "^2.1.6"
     },
     "extra": {
         "laravel": {
