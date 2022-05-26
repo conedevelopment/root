@@ -333,7 +333,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $model) use ($request): array {
-                        return (new ModelResource($model))->toDisplay(
+                        return $this->mapItem($request, $model)->toDisplay(
                             $request, $this->resolveFields($request)->available($request, $model)
                         );
                     })
@@ -342,6 +342,18 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
         ]);
+    }
+
+/**
+     * Map the related model.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Cone\Root\Http\Resources\ModelResource
+     */
+    public function mapItem(ResourceRequest $request, Model $model): ModelResource
+    {
+        return new ModelResource($model);
     }
 
     /**

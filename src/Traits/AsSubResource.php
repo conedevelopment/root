@@ -60,8 +60,6 @@ trait AsSubResource
                         ->paginate($request->input('per_page'))
                         ->withQueryString()
                         ->through(function (Model $related) use ($request, $model): array {
-                            $related->setRelation('parent', $model);
-
                             return $this->mapItem($request, $model, $related)->toDisplay(
                                 $request, $this->resolveFields($request)->available($request, $model, $related)
                             );
@@ -77,12 +75,14 @@ trait AsSubResource
      * Map the related model.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illumunate\Database\Eloquent\Model  $model
-     * @param  \Illumunate\Database\Eloquent\Model  $related
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Cone\Root\Http\Resources\ModelResource
      */
     public function mapItem(ResourceRequest $request, Model $model, Model $related): ModelResource
     {
+        $related->setRelation('parent', $model);
+
         return new RelatedResource($related);
     }
 
