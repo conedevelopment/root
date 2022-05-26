@@ -142,7 +142,9 @@ class BelongsToManyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(ResourceRequest $request, Model $model, string $id)
