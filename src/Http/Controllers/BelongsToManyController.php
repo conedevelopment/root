@@ -76,7 +76,9 @@ class BelongsToManyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
     public function show(ShowRequest $request, Model $model, string $id)
