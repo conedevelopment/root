@@ -81,7 +81,7 @@ class ModelResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
     public function toArray($request): array
