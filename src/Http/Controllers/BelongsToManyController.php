@@ -3,55 +3,23 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
 
-class BelongsToManyController extends Controller
+class BelongsToManyController extends HasManyController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(IndexRequest $request, Model $model)
-    {
-        $field = $request->resolved();
-
-        return Inertia::render(
-            'Relations/Index',
-            $field->toIndex($request, $model)
-        );
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(CreateRequest $request, Model $model)
-    {
-        $field = $request->resolved();
-
-        return Inertia::render(
-            'Relations/Form',
-            $field->toCreate($request, $model)
-        );
-    }
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateRequest $request, Model $model)
+    public function store(CreateRequest $request, Model $model): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -67,48 +35,10 @@ class BelongsToManyController extends Controller
 
         $relation->save($related);
 
-        $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey);
+        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ShowRequest $request, Model $model, string $id)
-    {
-        $field = $request->resolved();
-
-        $related = $field->getRelation($model)->findOrFail($id);
-
-        return Inertia::render(
-            'Relations/Show',
-            $field->toShow($request, $model, $related)
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(UpdateRequest $request, Model $model, string $id)
-    {
-        $field = $request->resolved();
-
-        $related = $field->getRelation($model)->findOrFail($id);
-
-        return Inertia::render(
-            'Relations/Form',
-            $field->toEdit($request, $model, $related)
-        );
     }
 
     /**
@@ -117,9 +47,9 @@ class BelongsToManyController extends Controller
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, string $id)
+    public function update(UpdateRequest $request, Model $model, string $id): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -142,18 +72,18 @@ class BelongsToManyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, string $id)
+    public function destroy(ResourceRequest $request, Model $model, string $id): RedirectResponse
     {
         $field = $request->resolved();
 
         $related = $field->getRelation($model)->findOrFail($id);
 
-        $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();
-
-        $trashed ? $related->forceDelete() : $related->delete();
+        $related->delete();
 
         $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey());
 

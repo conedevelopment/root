@@ -83,6 +83,8 @@ class BelongsToMany extends BelongsTo
                     ? $related->getRelation($relation->getPivotAccessor())
                     : $relation->newPivot();
 
+        // $pivot->setAttribute($pivot->getRelatedKey(), $related->getKey());
+
         $pivot->setRelation('related', $related);
 
         return new RelatedResource($pivot);
@@ -97,11 +99,7 @@ class BelongsToMany extends BelongsTo
     public function fields(RootRequest $request): array
     {
         return [
-            Text::make($this->getRelatedName(), $this->name)
-                ->disabled()
-                ->default(function (ResourceRequest $request, Model $model): string {
-                    return $this->resolveDisplay($request, $model->related);
-                }),
+            //
         ];
     }
 
