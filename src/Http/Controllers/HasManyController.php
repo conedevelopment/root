@@ -10,17 +10,21 @@ use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class HasManyController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Inertia\Response
      */
-    public function index(IndexRequest $request, Model $model)
+    public function index(IndexRequest $request, Model $model): Response
     {
         $field = $request->resolved();
 
@@ -33,9 +37,11 @@ class HasManyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Inertia\Response
      */
-    public function create(CreateRequest $request, Model $model)
+    public function create(CreateRequest $request, Model $model): Response
     {
         $field = $request->resolved();
 
@@ -48,10 +54,11 @@ class HasManyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateRequest $request, Model $model)
+    public function store(CreateRequest $request, Model $model): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -76,10 +83,12 @@ class HasManyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, Model $model, string $id)
+    public function show(ShowRequest $request, Model $model, string $id): Response
     {
         $field = $request->resolved();
 
@@ -97,9 +106,9 @@ class HasManyController extends Controller
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $id
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, Model $model, string $id)
+    public function edit(UpdateRequest $request, Model $model, string $id): Response
     {
         $field = $request->resolved();
 
@@ -117,9 +126,9 @@ class HasManyController extends Controller
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, string $id)
+    public function update(UpdateRequest $request, Model $model, string $id): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -142,10 +151,12 @@ class HasManyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, string $id)
+    public function destroy(ResourceRequest $request, Model $model, string $id): RedirectResponse
     {
         $field = $request->resolved();
 
