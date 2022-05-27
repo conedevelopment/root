@@ -57,13 +57,15 @@ class HasMany extends HasOne
     {
         parent::routes($router);
 
-        $router->get('{rootResource}', [HasManyController::class, 'index']);
-        $router->post('{rootResource}', [HasManyController::class, 'store']);
-        $router->get('{rootResource}/create', [HasManyController::class, 'create']);
-        $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
-        $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
-        $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
-        $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [HasManyController::class, 'index']);
+            $router->post('{rootResource}', [HasManyController::class, 'store']);
+            $router->get('{rootResource}/create', [HasManyController::class, 'create']);
+            $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
+            $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
+            $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
+            $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        }
     }
 
     /**

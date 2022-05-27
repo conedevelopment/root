@@ -78,9 +78,11 @@ class HasOne extends Relation
     {
         parent::registerRoutes($request, $router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-            $this->resolveActions($request)->registerRoutes($request, $router);
-        });
+        if ($this->asSubResource) {
+            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+                $this->resolveActions($request)->registerRoutes($request, $router);
+            });
+        }
     }
 }

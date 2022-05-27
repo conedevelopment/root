@@ -83,8 +83,6 @@ class BelongsToMany extends BelongsTo
                     ? $related->getRelation($relation->getPivotAccessor())
                     : $relation->newPivot();
 
-        // $pivot->setAttribute($pivot->getRelatedKey(), $related->getKey());
-
         $pivot->setRelation('related', $related);
 
         return new RelatedResource($pivot);
@@ -124,9 +122,12 @@ class BelongsToMany extends BelongsTo
     {
         parent::registerRoutes($request, $router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
+        if ($this->asSubResource) {
+            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+                $this->resolveActions($request)->registerRoutes($request, $router);
+            });
+        }
     }
 
     /**
@@ -136,13 +137,15 @@ class BelongsToMany extends BelongsTo
     {
         parent::routes($router);
 
-        $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
-        // $router->post('{rootResource}', [HasManyController::class, 'store']);
-        // $router->get('{rootResource}/create', [HasManyController::class, 'create']);
-        // $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
-        // $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
-        // $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
-        // $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
+            // $router->post('{rootResource}', [HasManyController::class, 'store']);
+            // $router->get('{rootResource}/create', [HasManyController::class, 'create']);
+            // $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
+            // $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
+            // $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
+            // $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        }
     }
 
     /**
