@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Controllers\BelongsToManyController;
+use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Resources\ModelResource;
@@ -17,7 +18,9 @@ use Illuminate\Support\Facades\URL;
 
 class BelongsToMany extends BelongsTo
 {
-    use AsSubResource;
+    use AsSubResource {
+        AsSubResource::toCreate as defaultToCreate;
+    }
 
     /**
      * Set the async attribute.
@@ -103,8 +106,8 @@ class BelongsToMany extends BelongsTo
             BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
                 return $model->belongsTo(
                     get_class($model->getRelation('related')),
-                    $model->getForeignKey(),
                     $model->getRelatedKey(),
+                    $model->getForeignKey(),
                     'related'
                 );
             })
@@ -156,7 +159,7 @@ class BelongsToMany extends BelongsTo
 
         if ($this->asSubResource) {
             $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
-            // $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
+            $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
             $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
             // $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
             // $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
@@ -175,6 +178,20 @@ class BelongsToMany extends BelongsTo
             'multiple' => true,
             'related_name' => $this->getRelatedName(),
             'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+        ]);
+    }
+
+    /**
+     * Get the create representation of the field.
+     *
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toCreate(CreateRequest $request, Model $model): array
+    {
+        return array_merge($this->defaultToCreate($request, $model), [
+            'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
         ]);
     }
 }

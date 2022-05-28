@@ -27,15 +27,19 @@ class BelongsToManyController extends HasManyController
 
         $related = $relation->getRelated();
 
+        $pivot = $relation->newPivot([$relation->getForeignPivotKeyName() => $model->getKey()]);
+
+        $pivot->setRelation('related', $related);
+
         $fields = $field->resolveFields($request)->available($request, $model, $related);
 
-        $request->validate($fields->mapToValidate($request, $related));
+        $request->validate($fields->mapToValidate($request, $pivot));
 
-        $fields->each->persist($request, $related);
+        $fields->each->persist($request, $pivot);
 
-        $relation->save($related);
+        $pivot->save();
 
-        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
+        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $pivot->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
