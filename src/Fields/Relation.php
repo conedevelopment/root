@@ -21,9 +21,9 @@ abstract class Relation extends Field
     /**
      * The relation name on the model.
      *
-     * @var string
+     * @var string|\Closure
      */
-    protected string $relation;
+    protected string|Closure $relation;
 
     /**
      * The searchable columns.
@@ -86,10 +86,10 @@ abstract class Relation extends Field
      *
      * @param  string  $label
      * @param  string|null  $name
-     * @param  string|null  $relation
+     * @param  string|\Closure|null  $relation
      * @return void
      */
-    public function __construct(string $label, ?string $name = null, ?string $relation = null)
+    public function __construct(string $label, ?string $name = null, string|Closure $relation = null)
     {
         parent::__construct($label, $name);
 
@@ -115,6 +115,10 @@ abstract class Relation extends Field
      */
     public function getRelation(Model $model): EloquentRelation
     {
+        if ($this->relation instanceof Closure) {
+            return call_user_func_array($this->relation, [$model]);
+        }
+
         return call_user_func([$model, $this->relation]);
     }
 
@@ -264,6 +268,14 @@ abstract class Relation extends Field
      */
     public function getDefaultValue(RootRequest $request, Model $model): mixed
     {
+        if ($this->relation instanceof Closure) {
+            if ($model->relationLoaded($this->name)) {
+                return $model->getAttribute($this->name);
+            }
+
+            return call_user_func_array($this->relation, [$model]);
+        }
+
         return $model->getAttribute($this->relation);
     }
 

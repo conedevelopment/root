@@ -8,7 +8,10 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Http\Resources\RelatedResource;
 use Cone\Root\Traits\AsSubResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
 
@@ -97,7 +100,21 @@ class BelongsToMany extends BelongsTo
     public function fields(RootRequest $request): array
     {
         return [
-            //
+            BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
+                return $model->belongsTo(
+                    get_class($model->getRelation('related')),
+                    $model->getForeignKey(),
+                    $model->getRelatedKey(),
+                    'related'
+                );
+            })
+            ->async($this->async)
+            ->withQuery(function (RootRequest $request, Model $model): Builder {
+                return $this->resolveQuery($request, $model);
+            })
+            ->display(function (RootRequest $request, Model $related) {
+                return $this->resolveDisplay($request, $related);
+            }),
         ];
     }
 
