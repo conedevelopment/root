@@ -21,9 +21,9 @@ abstract class Relation extends Field
     /**
      * The relation name on the model.
      *
-     * @var string|\Closure
+     * @var \Closure|string
      */
-    protected string|Closure $relation;
+    protected Closure|string $relation;
 
     /**
      * The searchable columns.
@@ -86,10 +86,10 @@ abstract class Relation extends Field
      *
      * @param  string  $label
      * @param  string|null  $name
-     * @param  string|\Closure|null  $relation
+     * @param  \Closure|string|null  $relation
      * @return void
      */
-    public function __construct(string $label, ?string $name = null, string|Closure $relation = null)
+    public function __construct(string $label, ?string $name = null, Closure|string $relation = null)
     {
         parent::__construct($label, $name);
 
@@ -328,11 +328,11 @@ abstract class Relation extends Field
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            call_user_func_array($scope, [$request, $query]);
+            call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query]);
+            call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;

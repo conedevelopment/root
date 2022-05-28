@@ -109,8 +109,8 @@ class BelongsToMany extends BelongsTo
                 );
             })
             ->async($this->async)
-            ->withQuery(function (RootRequest $request, Model $model): Builder {
-                return $this->resolveQuery($request, $model);
+            ->withQuery(function (RootRequest $request, Builder $query, Model $model): Builder {
+                return $this->resolveQuery($request, $model->pivotParent);
             })
             ->display(function (RootRequest $request, Model $related) {
                 return $this->resolveDisplay($request, $related);
@@ -156,12 +156,12 @@ class BelongsToMany extends BelongsTo
 
         if ($this->asSubResource) {
             $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
-            // $router->post('{rootResource}', [HasManyController::class, 'store']);
-            // $router->get('{rootResource}/create', [HasManyController::class, 'create']);
-            // $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
-            // $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
-            // $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
-            // $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+            // $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
+            $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
+            // $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
+            // $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
+            // $router->patch('{rootResource}/{related}', [BelongsToManyController::class, 'update']);
+            // $router->delete('{rootResource}/{related}', [BelongsToManyController::class, 'destroy']);
         }
     }
 

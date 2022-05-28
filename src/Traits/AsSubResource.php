@@ -135,7 +135,7 @@ trait AsSubResource
         $related = $this->getRelation($model)->getRelated()->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'model' => (new RelatedResource($related))->toForm(
+            'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
             'title' => __('Create :model', ['model' => $this->label]),
@@ -155,7 +155,7 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'model' => (new RelatedResource($related))->toDisplay(
+            'model' => $this->mapItem($request, $model, $related)->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
             'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $model->getKey()]),
@@ -175,7 +175,7 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'model' => (new RelatedResource($related))->toForm(
+            'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
             'title' => __('Edit :model: :id', ['model' => $this->getRelatedName(), 'id' => $related->getKey()]),
