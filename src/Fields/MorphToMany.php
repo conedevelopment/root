@@ -10,11 +10,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToRelation;
 
 class MorphToMany extends BelongsToMany
 {
-        /**
-     * Define the fields for the object.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
+    /**
+     * {@inheritdoc}
      */
     public function fields(RootRequest $request): array
     {
@@ -31,7 +28,7 @@ class MorphToMany extends BelongsToMany
             ->withQuery(function (RootRequest $request, Model $model): Builder {
                 return $this->resolveQuery($request, $model);
             })
-            ->display(function (RootRequest $request, Model $related) {
+            ->display(function (RootRequest $request, Model $related): mixed {
                 return $this->resolveDisplay($request, $related);
             }),
         ];
