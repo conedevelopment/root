@@ -74,6 +74,26 @@ class BelongsToMany extends BelongsTo
     }
 
     /**
+     * Get the related model by its pivot ID.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getRelatedByPivot(Model $model, string $id): Model
+    {
+        $relation = $this->getRelation($model);
+
+        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+
+        return tap($related, static function (Model $related) use ($relation, $id): void {
+            $pivot = $related->getRelation($relation->getPivotAccessor());
+
+            $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
+        });
+    }
+
+    /**
      * Map the related model.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
@@ -88,6 +108,10 @@ class BelongsToMany extends BelongsTo
         $pivot = $related->relationLoaded($relation->getPivotAccessor())
                     ? $related->getRelation($relation->getPivotAccessor())
                     : $relation->newPivot();
+
+        if ($pivot->exists) {
+            $pivot->setAttribute($pivot->getKeyName(), $pivot->getKey());
+        }
 
         $pivot->setRelation('related', $related);
 
@@ -155,16 +179,16 @@ class BelongsToMany extends BelongsTo
      */
     public function routes(Router $router): void
     {
-        parent::routes($router);
-
         if ($this->asSubResource) {
             $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
             $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
             $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
-            // $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
-            // $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
-            // $router->patch('{rootResource}/{related}', [BelongsToManyController::class, 'update']);
-            // $router->delete('{rootResource}/{related}', [BelongsToManyController::class, 'destroy']);
+            $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
+            $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('{rootResource}/{related}', [BelongsToManyController::class, 'update']);
+            $router->delete('{rootResource}/{related}', [BelongsToManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
         }
     }
 

@@ -4,11 +4,14 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
+use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BelongsToManyController extends HasManyController
 {
@@ -46,6 +49,46 @@ class BelongsToManyController extends HasManyController
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Inertia\Response
+     */
+    public function show(ShowRequest $request, Model $model, string $id): Response
+    {
+        $field = $request->resolved();
+
+        $related = $field->getRelatedByPivot($model, $id);
+
+        return Inertia::render(
+            'Relations/Show',
+            $field->toShow($request, $model, $related)
+        );
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Inertia\Response
+     */
+    public function edit(UpdateRequest $request, Model $model, string $id): Response
+    {
+        $field = $request->resolved();
+
+        $related = $field->getRelatedByPivot($model, $id);
+
+        return Inertia::render(
+            'Relations/Form',
+            $field->toEdit($request, $model, $related)
+        );
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
@@ -57,15 +100,17 @@ class BelongsToManyController extends HasManyController
     {
         $field = $request->resolved();
 
-        $related = $field->getRelation($model)->findOrFail($id);
+        $relation = $field->getRelation($model);
+
+        $related = $field->getRelatedByPivot($model, $id);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
 
         $fields = $field->resolveFields($request)->available($request, $model, $related);
 
-        $request->validate($fields->mapToValidate($request, $related));
+        $request->validate($fields->mapToValidate($request, $pivot));
 
-        $fields->each->persist($request, $related);
-
-        $related->save();
+        $fields->each->persist($request, $pivot);
 
         $path = sprintf('%s/%s/%s/edit', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
 
@@ -85,9 +130,13 @@ class BelongsToManyController extends HasManyController
     {
         $field = $request->resolved();
 
-        $related = $field->getRelation($model)->findOrFail($id);
+        $relation = $field->getRelation($model);
 
-        $related->delete();
+        $related = $field->getRelatedByPivot($model, $id);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->delete();
 
         $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey());
 

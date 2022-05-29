@@ -55,8 +55,6 @@ class HasMany extends HasOne
      */
     public function routes(Router $router): void
     {
-        parent::routes($router);
-
         if ($this->asSubResource) {
             $router->get('{rootResource}', [HasManyController::class, 'index']);
             $router->post('{rootResource}', [HasManyController::class, 'store']);
@@ -65,6 +63,8 @@ class HasMany extends HasOne
             $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
             $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
             $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
         }
     }
 

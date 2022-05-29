@@ -61,7 +61,7 @@
 
         methods: {
             destroy() {
-                this.$inertia.delete(this.item.urls.destroy, {
+                this.$inertia.delete(this.item.url, {
                     onBefore: () => confirm(this.__('Are you sure?')),
                     onStart: (visit) => this.$parent.deselect(this.item),
                 });
