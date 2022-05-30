@@ -82,6 +82,7 @@ class BelongsToMany extends BelongsTo
      */
     public function getRelatedByPivot(Model $model, string $id): Model
     {
+        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relation */
         $relation = $this->getRelation($model);
 
         $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
