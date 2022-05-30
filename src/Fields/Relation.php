@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
@@ -20,9 +21,9 @@ abstract class Relation extends Field
     /**
      * The relation name on the model.
      *
-     * @var string
+     * @var \Closure|string
      */
-    protected string $relation;
+    protected Closure|string $relation;
 
     /**
      * The searchable columns.
@@ -85,10 +86,10 @@ abstract class Relation extends Field
      *
      * @param  string  $label
      * @param  string|null  $name
-     * @param  string|null  $relation
+     * @param  \Closure|string|null  $relation
      * @return void
      */
-    public function __construct(string $label, ?string $name = null, ?string $relation = null)
+    public function __construct(string $label, ?string $name = null, Closure|string $relation = null)
     {
         parent::__construct($label, $name);
 
@@ -114,7 +115,21 @@ abstract class Relation extends Field
      */
     public function getRelation(Model $model): EloquentRelation
     {
+        if ($this->relation instanceof Closure) {
+            return call_user_func_array($this->relation, [$model]);
+        }
+
         return call_user_func([$model, $this->relation]);
+    }
+
+    /**
+     * Get the related model name.
+     *
+     * @return string
+     */
+    public function getRelatedName(): string
+    {
+        return Str::of($this->label)->singular()->toString();
     }
 
     /**
@@ -253,6 +268,14 @@ abstract class Relation extends Field
      */
     public function getDefaultValue(RootRequest $request, Model $model): mixed
     {
+        if ($this->relation instanceof Closure) {
+            if ($model->relationLoaded($this->name)) {
+                return $model->getAttribute($this->name);
+            }
+
+            return call_user_func_array($this->relation, [$model]);
+        }
+
         return $model->getAttribute($this->relation);
     }
 
@@ -270,7 +293,7 @@ abstract class Relation extends Field
                 } elseif ($default instanceof Collection) {
                     return $default->map(function (Model $related) use ($request): mixed {
                         return $this->resolveDisplay($request, $related);
-                    })->toArray();
+                    })->join(', ');
                 }
 
                 return $default;
@@ -305,11 +328,11 @@ abstract class Relation extends Field
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            call_user_func_array($scope, [$request, $query]);
+            call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query]);
+            call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;

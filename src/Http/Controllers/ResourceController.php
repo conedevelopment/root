@@ -10,6 +10,7 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -43,7 +44,7 @@ class ResourceController extends Controller
         }
 
         return Inertia::render(
-            'Resource/Index',
+            'Resources/Index',
             $resource->toIndex($request)
         );
     }
@@ -63,7 +64,7 @@ class ResourceController extends Controller
         }
 
         return Inertia::render(
-            'Resource/Create',
+            'Resources/Form',
             $resource->toCreate($request)
         );
     }
@@ -102,20 +103,19 @@ class ResourceController extends Controller
      * Display the specified resource.
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request): Response
+    public function show(ShowRequest $request, Model $model): Response
     {
         $resource = $request->resource();
-
-        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('view', $model);
         }
 
         return Inertia::render(
-            'Resource/Show',
+            'Resources/Show',
             $resource->toShow($request, $model)
         );
     }
@@ -124,20 +124,19 @@ class ResourceController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
+          * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request): Response
+    public function edit(UpdateRequest $request, Model $model): Response
     {
         $resource = $request->resource();
-
-        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
         return Inertia::render(
-            'Resource/Edit',
+            'Resources/Form',
             $resource->toEdit($request, $model)
         );
     }
@@ -146,13 +145,12 @@ class ResourceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request): RedirectResponse
+    public function update(UpdateRequest $request, Model $model): RedirectResponse
     {
         $resource = $request->resource();
-
-        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
@@ -176,13 +174,12 @@ class ResourceController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request): RedirectResponse
+    public function destroy(ResourceRequest $request, Model $model): RedirectResponse
     {
         $resource = $request->resource();
-
-        $model = $resource->resolveRouteBinding($request, $request->route('id'));
 
         $trashed = class_uses_recursive(SoftDeletes::class) && $model->trashed();
 

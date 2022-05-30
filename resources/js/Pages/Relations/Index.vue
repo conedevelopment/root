@@ -1,32 +1,32 @@
 <template>
     <div>
         <div class="app-operation">
-            <Link :href="resource.urls.index" class="btn btn--primary btn--icon">
+            <Link :href="`${parent.url}/edit`" class="btn btn--primary btn--icon">
                 <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ __('Go back to :resource', { resource: resource.name }) }}
+                {{ resource.model_name }}
             </Link>
+            <div class="app-operation__edit">
+                <Link
+                    class="btn btn--icon btn--sm btn--tertiary"
+                    :href="`${field.url}/create`"
+                    :aria-label="__('Add :model', { model: field.related_name })"
+                >
+                    <Icon class="btn__icon" name="add-circle"></Icon>
+                </Link>
+            </div>
         </div>
-        <div class="app-widget">
-            <Widget
-                v-for="widget in widgets"
-                v-bind="widget"
-                :key="widget.key"
-            ></Widget>
-        </div>
-        <Table :actions="actions" :filters="filters" :items="items"></Table>
+        <Table :filters="filters" :items="items"></Table>
     </div>
 </template>
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
     import Table from './../../Components/Table/Table';
-    import Widget from './../../Components/Widgets/Handler';
 
     export default {
         components: {
             Link,
             Table,
-            Widget,
         },
 
         props: {
@@ -38,15 +38,15 @@
                 type: Array,
                 default: () => [],
             },
-            actions: {
-                type: Array,
-                default: () => [],
-            },
-            widgets: {
-                type: Array,
-                default: () => [],
-            },
             resource: {
+                type: Object,
+                required: true,
+            },
+            parent: {
+                type: Object,
+                required: true,
+            },
+            field: {
                 type: Object,
                 required: true,
             },

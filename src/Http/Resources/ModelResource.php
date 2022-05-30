@@ -6,6 +6,7 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 class ModelResource extends JsonResource
@@ -18,7 +19,7 @@ class ModelResource extends JsonResource
      */
     protected function mapAbilities(ResourceRequest $request): array
     {
-        $policy = $request->resource()->getPolicy();
+        $policy = Gate::getPolicyFor($this->resource);
 
         return array_reduce(
             ['view', 'update', 'delete', 'restore', 'forceDelete'],
@@ -35,23 +36,15 @@ class ModelResource extends JsonResource
      * Map the URL for the model.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return array
+     * @return string
      */
-    protected function mapUrls(ResourceRequest $request): array
+    protected function mapUrl(ResourceRequest $request): string
     {
-        if (! $this->resource->exists) {
-            return [];
-        }
-
         $key = $request->resource()->getKey();
 
-        $actions = array_fill_keys(['show', 'update', 'edit', 'destroy'], null);
-
-        foreach ($actions as $action => $value) {
-            $actions[$action] = URL::route(sprintf('root.%s.%s', $key, $action), $this->resource);
-        }
-
-        return $actions;
+        return $this->resource->exists
+            ? URL::route(sprintf('root.%s.show', $key), $this->resource)
+            : URL::route(sprintf('root.%s.index', $key));
     }
 
     /**
@@ -95,9 +88,10 @@ class ModelResource extends JsonResource
     {
         return [
             'abilities' => $this->mapAbilities($request),
+            'exists' => $this->resource->exists,
             'id' => $this->resource->getKey(),
             'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->resource)) && $this->resource->trashed(),
-            'urls' => $this->mapUrls($request),
+            'url' => $this->mapUrl($request),
         ];
     }
 }

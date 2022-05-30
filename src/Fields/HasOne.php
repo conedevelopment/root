@@ -3,19 +3,32 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne as HasOneRelation;
 use Illuminate\Routing\Router;
 
-class HasOne extends Relation
+class HasOne extends HasOneOrMany
 {
-    use ResolvesFields;
+    /**
+     * Get the relation instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function getRelation(Model $model): HasOneRelation
+    {
+        return parent::getRelation($model);
+    }
 
     /**
      * {@inheritdoc}
      */
     public function persist(RootRequest $request, Model $model): void
     {
+        if ($this->asSubResource) {
+            return;
+        }
+
         $model->saved(function (Model $model) use ($request): void {
             $this->hydrate(
                 $request, $model, $this->getValueForHydrate($request, $model)
@@ -24,7 +37,7 @@ class HasOne extends Relation
             $relation = $this->getRelation($model);
 
             $relation->save(
-                $model->getRelation($relation->getRelationName())
+                $model->getRelation($this->relation)
             );
         });
     }
@@ -34,36 +47,26 @@ class HasOne extends Relation
      */
     public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $relation = $this->getRelation($model);
-
         $result = $this->resolveQuery($request, $model)->find($value);
 
-        $model->setRelation($relation->getRelationName(), $result);
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Fields\Field  $field
-     * @return void
-     */
-    protected function resolveField(RootRequest $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
+        $model->setRelation($this->relation, $result);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function routes(Router $router): void
     {
-        parent::registerRoutes($request, $router);
-
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [HasManyController::class, 'index']);
+            $router->post('{rootResource}', [HasManyController::class, 'store']);
+            $router->get('{rootResource}/create', [HasManyController::class, 'create']);
+            $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
+            $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
+            $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
+            $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
+        }
     }
 }

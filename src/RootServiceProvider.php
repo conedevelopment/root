@@ -2,9 +2,11 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -112,6 +114,14 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
+        $this->app['router']->bind('rootResource', function (string $id): Model {
+            static $request;
+
+            $request = ResourceRequest::createFrom($this->app['request']);
+
+            return $request->resource()->getModelInstance()->resolveRouteBinding($id);
+        });
+
         $this->app['router']->middlewareGroup(
             'root', $this->app['config']->get('root.middleware', [])
         );

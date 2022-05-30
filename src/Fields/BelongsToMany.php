@@ -2,22 +2,37 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\BelongsToManyController;
+use Cone\Root\Http\Requests\CreateRequest;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Http\Resources\ModelResource;
+use Cone\Root\Http\Resources\RelatedResource;
+use Cone\Root\Traits\AsSubResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany as BelongsToManyRelation;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 
-class BelongsToMany extends BelongsTo
+class BelongsToMany extends Relation
 {
-    use ResolvesFields;
+    use AsSubResource {
+        AsSubResource::toCreate as defaultToCreate;
+    }
 
     /**
-     * The Vue component.
+     * Get the relation instance.
      *
-     * @var string
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    protected string $component = 'BelongsToMany';
+    public function getRelation(Model $model): BelongsToManyRelation
+    {
+        return parent::getRelation($model);
+    }
 
     /**
      * Set the async attribute.
@@ -43,50 +58,12 @@ class BelongsToMany extends BelongsTo
     /**
      * {@inheritdoc}
      */
-    public function resolveDefault(RootRequest $request, Model $model): mixed
-    {
-        if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = function (RootRequest $request, Model $model, mixed $value): array {
-                return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
-                    return [
-                        $related->getKey() => $this->mapPivotValues($request, $model, $related),
-                    ];
-                })->toArray();
-            };
-        }
-
-        return parent::resolveDefault($request, $model);
-    }
-
-    /**
-     * Map the pivot values.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
-     */
-    protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
-    {
-        $relation = $this->getRelation($model);
-
-        return $this->resolveFields($request)
-                    ->available($request, $model, $related)
-                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
-                        return [
-                            $field->name => $field->resolveDefault(
-                                $request, $related->getRelation($relation->getPivotAccessor())
-                            ),
-                        ];
-                    })
-                    ->toArray();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function persist(RootRequest $request, Model $model): void
     {
+        if ($this->asSubResource) {
+            return;
+        }
+
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
 
@@ -103,31 +80,81 @@ class BelongsToMany extends BelongsTo
     {
         $relation = $this->getRelation($model);
 
-        $results = $this->resolveQuery($request, $model)
-                        ->findMany(array_keys($value))
-                        ->each(static function (Model $related) use ($relation, $value): void {
-                            $related->setRelation(
-                                $relation->getPivotAccessor(),
-                                $relation->newPivot($value[$related->getKey()])
-                            );
-                        });
+        $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
         $model->setRelation($relation->getRelationName(), $results);
     }
 
     /**
-     * {@inheritdoc}
+     * Get the related model by its pivot ID.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $id
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function mapOption(RootRequest $request, Model $model, Model $related): array
+    public function getRelatedByPivot(Model $model, string $id): Model
     {
         $relation = $this->getRelation($model);
 
-        return array_merge(parent::mapOption($request, $model, $related), [
-            'fields' => $this->resolveFields($request)
-                            ->available($request, $model, $related)
-                            ->mapToForm($request, $relation->newPivot())
-                            ->toArray(),
-        ]);
+        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+
+        return tap($related, static function (Model $related) use ($relation, $id): void {
+            $pivot = $related->getRelation($relation->getPivotAccessor());
+
+            $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
+        });
+    }
+
+    /**
+     * Map the related model.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return \Cone\Root\Http\Resources\ModelResource
+     */
+    public function mapItem(ResourceRequest $request, Model $model, Model $related): ModelResource
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->relationLoaded($relation->getPivotAccessor())
+                    ? $related->getRelation($relation->getPivotAccessor())
+                    : $relation->newPivot();
+
+        if ($pivot->exists) {
+            $pivot->setAttribute($pivot->getKeyName(), $pivot->getKey());
+        }
+
+        $pivot->setRelation('related', $related);
+
+        return new RelatedResource($pivot);
+    }
+
+    /**
+     * Define the fields for the object.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function fields(RootRequest $request): array
+    {
+        return [
+            BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
+                return $model->belongsTo(
+                    get_class($model->getRelation('related')),
+                    $model->getRelatedKey(),
+                    $model->getForeignKey(),
+                    'related'
+                );
+            })
+            ->async($this->async)
+            ->withQuery(function (RootRequest $request, Builder $query, Model $model): Builder {
+                return $this->resolveQuery($request, $model->pivotParent);
+            })
+            ->display(function (RootRequest $request, Model $related) {
+                return $this->resolveDisplay($request, $related);
+            }),
+        ];
     }
 
     /**
@@ -151,9 +178,30 @@ class BelongsToMany extends BelongsTo
     {
         parent::registerRoutes($request, $router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
+        if ($this->asSubResource) {
+            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+                $this->resolveActions($request)->registerRoutes($request, $router);
+            });
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
+            $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
+            $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
+            $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
+            $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('{rootResource}/{related}', [BelongsToManyController::class, 'update']);
+            $router->delete('{rootResource}/{related}', [BelongsToManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
+        }
     }
 
     /**
@@ -161,47 +209,25 @@ class BelongsToMany extends BelongsTo
      */
     public function toInput(RootRequest $request, Model $model): array
     {
-        $models = $this->getDefaultValue($request, $model);
-
-        $relation = $this->getRelation($model);
-
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->async,
-            'fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
-                return [
-                    $related->getKey() => $this->resolveFields($request)
-                                                ->available($request, $model, $related)
-                                                ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
-                                                ->toArray(),
-                ];
-            }),
-            'formatted_value' => $models->mapWithKeys(function (Model $related) use ($request): mixed {
-                return [$related->getKey() => $this->resolveDisplay($request, $related)];
-            }),
             'multiple' => true,
+            'related_name' => $this->getRelatedName(),
+            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
         ]);
     }
 
     /**
-     * Get the validation representation of the field.
+     * Get the create representation of the field.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toCreate(CreateRequest $request, Model $model): array
     {
-        $pivotRules = $this->resolveFields($request)
-                            ->available($request, $model)
-                            ->mapToValidate($request, $model);
-
-        return array_merge(
-            parent::toValidate($request, $model),
-            Collection::make($pivotRules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.*.%s', $this->name, $key) => $rules];
-                    })
-                    ->toArray(),
-        );
+        return array_merge($this->defaultToCreate($request, $model), [
+            'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
+        ]);
     }
 }

@@ -1,4 +1,10 @@
 <template>
+    <div class="app-operation">
+        <Link :href="model.url" class="btn btn--primary btn--icon">
+            <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
+            {{ model_name }}
+        </Link>
+    </div>
     <div class="form-layout">
         <div class="app-card card card--edit">
             <div class="card__inner">
@@ -27,13 +33,19 @@
 </template>
 
 <script>
+    import { Link } from '@inertiajs/inertia-vue3';
+
     export default {
+        components: {
+            Link,
+        },
+
         props: {
             model: {
                 type: Object,
                 required: true,
             },
-            url: {
+            model_name: {
                 type: String,
                 required: true,
             },
@@ -46,17 +58,14 @@
         },
 
         computed: {
-            exists() {
-                return this.model.id !== null;
-            },
             method() {
-                return this.exists ? 'patch' : 'post';
+                return this.model.exists ? 'patch' : 'post';
             },
         },
 
         methods: {
             submit() {
-                this.form.submit(this.method, this.url, {
+                this.form.submit(this.method, this.model.url, {
                     onStart: () => {
                         this.form.clearErrors();
                     },
@@ -66,7 +75,7 @@
                 });
             },
             destroy() {
-                this.$inertia.delete(this.model.urls.destroy, {
+                this.$inertia.delete(this.model.url, {
                     onBefore: () => window.confirm(this.__('Are you sure?')),
                 });
             },

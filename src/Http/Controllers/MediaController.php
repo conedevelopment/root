@@ -21,7 +21,9 @@ class MediaController extends Controller
     {
         $field = $request->resolved();
 
-        return new JsonResponse($field->mapItems($request));
+        $model = $request->resource()->getModelInstance();
+
+        return new JsonResponse($field->mapItems($request, $model));
     }
 
     /**

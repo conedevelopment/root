@@ -1,7 +1,6 @@
 import { debounce } from './../../Support/Helpers';
 import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect';
-import BelongsToMany from './BelongsToMany';
 import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
@@ -11,6 +10,7 @@ import Media from './Media';
 import Radio from './Radio';
 import Range from './Range';
 import Select from './Select';
+import SubResource from './SubResource';
 import Tag from './Tag';
 import Textarea from './Textarea';
 
@@ -19,7 +19,6 @@ export default {
 
     components: {
         AsyncSelect,
-        BelongsToMany,
         Checkbox,
         DateTime,
         Editor,
@@ -29,6 +28,7 @@ export default {
         Radio,
         Range,
         Select,
+        SubResource,
         Tag,
         Textarea,
     },

@@ -89,13 +89,12 @@ class Media extends MorphToMany
     /**
      * Map the items.
      *
-     * @param \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function mapItems(ResourceRequest $request): array
+    public function mapItems(ResourceRequest $request, Model $model): array
     {
-        $model = $request->resource()->getModelInstance();
-
         return $this->resolveQuery($request, $model)
                     ->filter($request)
                     ->latest()

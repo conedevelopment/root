@@ -2,11 +2,26 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\HasManyController;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasOneManyRelation;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\URL;
 
-class HasMany extends HasOne
+class HasMany extends HasOneOrMany
 {
+    /**
+     * Get the relation instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function getRelation(Model $model): HasOneManyRelation
+    {
+        return parent::getRelation($model);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -20,6 +35,10 @@ class HasMany extends HasOne
      */
     public function persist(RootRequest $request, Model $model): void
     {
+        if ($this->asSubResource) {
+            return;
+        }
+
         $model->saved(function (Model $model) use ($request): void {
             $relation = $this->getRelation($model);
 
@@ -28,7 +47,7 @@ class HasMany extends HasOne
             $this->hydrate($request, $model, $value);
 
             $relation->saveMany(
-                $model->getRelation($relation->getRelationName())
+                $model->getRelation($this->relation)
             );
         });
     }
@@ -38,11 +57,27 @@ class HasMany extends HasOne
      */
     public function hydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $relation = $this->getRelation($model);
-
         $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
-        $model->setRelation($relation->getRelationName(), $results);
+        $model->setRelation($this->relation, $results);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [HasManyController::class, 'index']);
+            $router->post('{rootResource}', [HasManyController::class, 'store']);
+            $router->get('{rootResource}/create', [HasManyController::class, 'create']);
+            $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
+            $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
+            $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
+            $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
+        }
     }
 
     /**
@@ -52,6 +87,8 @@ class HasMany extends HasOne
     {
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
+            'related_name' => $this->getRelatedName(),
+            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
         ]);
     }
 }
