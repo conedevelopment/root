@@ -4,22 +4,10 @@ namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne as HasOneRelation;
 use Illuminate\Routing\Router;
 
 class HasOne extends HasOneOrMany
 {
-    /**
-     * Get the relation instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function getRelation(Model $model): HasOneRelation
-    {
-        return parent::getRelation($model);
-    }
-
     /**
      * {@inheritdoc}
      */
