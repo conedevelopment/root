@@ -18,7 +18,7 @@ class BelongsToManyController extends HasManyController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
+     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Http\RedirectResponse
      */
