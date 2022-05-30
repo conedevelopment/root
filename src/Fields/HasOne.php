@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\HasManyController;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
