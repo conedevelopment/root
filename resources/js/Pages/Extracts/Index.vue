@@ -3,7 +3,7 @@
         <div class="app-operation">
             <Link :href="resource.urls.index" class="btn btn--primary btn--icon">
                 <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ __('Go back to :resource', { resource: resource.name }) }}
+                {{ resource.name }}
             </Link>
         </div>
         <div v-if="widgets.length > 0" class="app-widget">

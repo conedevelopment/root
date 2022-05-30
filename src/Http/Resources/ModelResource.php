@@ -88,6 +88,7 @@ class ModelResource extends JsonResource
     {
         return [
             'abilities' => $this->mapAbilities($request),
+            'exists' => $this->resource->exists,
             'id' => $this->resource->getKey(),
             'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->resource)) && $this->resource->trashed(),
             'url' => $this->mapUrl($request),

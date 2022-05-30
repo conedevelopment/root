@@ -5,6 +5,10 @@
                 <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
                 {{ resource.model_name }}
             </Link>
+            <Link :href="`${field.url}/create`" class="btn btn--primary btn--icon">
+                <Icon name="add-circle" class="btn__icon btn__icon--sm"></Icon>
+                {{ __('Add :model', { model: field.related_name }) }}
+            </Link>
         </div>
         <Table :filters="filters" :items="items"></Table>
     </div>

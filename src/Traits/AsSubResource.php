@@ -53,11 +53,11 @@ trait AsSubResource
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->getRelation($model)->getQuery();
+        $relation = $this->getRelation($model);
 
-        $items = $filters->apply($request, $query)
-                        ->latest()
-                        ->paginate($request->input('per_page'))
+        $query = $filters->apply($request, $relation->getQuery())->latest();
+
+        $items = $relation->paginate($request->input('per_page'))
                         ->withQueryString()
                         ->through(function (Model $related) use ($request, $model): array {
                             return $this->mapItem($request, $model, $related)->toDisplay(

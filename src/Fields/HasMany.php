@@ -5,11 +5,23 @@ namespace Cone\Root\Fields;
 use Cone\Root\Http\Controllers\HasManyController;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasOneManyRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
 
-class HasMany extends HasOne
+class HasMany extends HasOneOrMany
 {
+    /**
+     * Get the relation instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function getRelation(Model $model): HasOneManyRelation
+    {
+        return parent::getRelation($model);
+    }
+
     /**
      * {@inheritdoc}
      */
