@@ -101,6 +101,7 @@ trait AsSubResource
                 'url' => URL::route(sprintf('root.%s.show', $request->resource()->getKey()), $model),
             ],
             'field' => [
+                // 'abilities' => [],
                 'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
                 'name' => $this->label,
                 'related_name' => $this->getRelatedName(),

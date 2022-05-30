@@ -5,10 +5,15 @@
                 <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
                 {{ resource.model_name }}
             </Link>
-            <Link :href="`${field.url}/create`" class="btn btn--primary btn--icon">
-                <Icon name="add-circle" class="btn__icon btn__icon--sm"></Icon>
-                {{ __('Add :model', { model: field.related_name }) }}
-            </Link>
+            <div class="app-operation__edit">
+                <Link
+                    class="btn btn--icon btn--sm btn--tertiary"
+                    :href="`${field.url}/create`"
+                    :aria-label="__('Add :model', { model: field.related_name })"
+                >
+                    <Icon class="btn__icon" name="add-circle"></Icon>
+                </Link>
+            </div>
         </div>
         <Table :filters="filters" :items="items"></Table>
     </div>
