@@ -16,16 +16,11 @@ class RelatedResource extends ModelResource
      */
     protected function mapUrl(ResourceRequest $request): string
     {
-        if ($this->resource instanceof Pivot) {
-            return URL::to(sprintf(
-                '%s/%s/%s',
-                $request->resolved()->getUri(),
-                $this->resource->pivotParent->getKey(),
-                $this->resource->related->getKey()
-            ));
-        }
-
-        $path = sprintf('%s/%s', $request->resolved()->getUri(), $this->resource->parent->getKey());
+        $path = sprintf(
+            '%s/%s',
+            $request->resolved()->getUri(),
+            $this->resource instanceof Pivot ? $this->resource->pivotParent->getKey() : $this->resource->parent->getKey()
+        );
 
         return $this->resource->exists
             ? URL::to(sprintf('%s/%s', $path, $this->resource->getKey()))

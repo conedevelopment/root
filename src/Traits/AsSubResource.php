@@ -158,7 +158,7 @@ trait AsSubResource
             'model' => $this->mapItem($request, $model, $related)->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
-            'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $related->getKey()]),
+            'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $this->resolveDisplay($request, $related)]),
         ]);
     }
 
@@ -178,7 +178,7 @@ trait AsSubResource
             'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
-            'title' => __('Edit :model: :id', ['model' => $this->getRelatedName(), 'id' => $related->getKey()]),
+            'title' => __('Edit :model: :id', ['model' => $this->getRelatedName(), 'id' => $this->resolveDisplay($request, $related)]),
         ]);
     }
 }
