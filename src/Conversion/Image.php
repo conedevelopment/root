@@ -44,9 +44,9 @@ class Image
      * @var array
      */
     protected array $attributes = [
-        'width' => 0,
         'height' => 0,
         'quality' => 70,
+        'width' => 0,
     ];
 
     /**

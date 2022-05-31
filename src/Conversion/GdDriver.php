@@ -43,10 +43,8 @@ class GdDriver extends Driver
      */
     protected function createImage(Medium $medium): Image
     {
-        $image = new Image($medium);
-
-        return $image->setQuality(
-            $this->config['quality'] ?? 70
-        );
+        return tap(new Image($medium), function (Image $image): void {
+            $image->setQuality($this->config['quality'] ?? 70);
+        });
     }
 }
