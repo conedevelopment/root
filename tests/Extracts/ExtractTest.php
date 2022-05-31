@@ -4,10 +4,9 @@ namespace Cone\Root\Tests\Extracts;
 
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Tests\LongPosts;
+use Cone\Root\Support\Facades\Resource;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
-use Illuminate\Routing\Route;
 
 class ExtractTest extends TestCase
 {
@@ -18,61 +17,12 @@ class ExtractTest extends TestCase
         parent::setUp();
 
         $this->extract = new LongPosts();
-    }
 
-    /** @test */
-    public function an_extract_registers_routes()
-    {
-        $this->app['router']->prefix('posts/extracts')->group(function ($router) {
-            $this->extract->registerRoutes($this->request, $router);
+        Resource::resolve('posts')->routeGroup(function ($router) {
+            $router->prefix('extracts')->group(function ($router) {
+                $this->extract->registerRoutes($this->request, $router);
+            });
         });
-
-        $this->assertSame('posts/extracts/long-posts', $this->extract->getUri());
-
-        $this->assertArrayHasKey(
-            $this->extract->getUri(),
-            $this->app['router']->getRoutes()->get('GET')
-        );
-    }
-
-    /** @test */
-    public function an_extract_has_fields()
-    {
-        $fields = $this->extract->resolveFields($this->request);
-
-        $this->assertTrue($fields->contains(function ($field) {
-            return $field->getKey() === 'title';
-        }));
-    }
-
-    /** @test */
-    public function an_extract_has_filters()
-    {
-        $filters = $this->extract->resolveFilters($this->request);
-
-        $this->assertTrue($filters->contains(function ($field) {
-            return $field->getKey() === 'type';
-        }));
-    }
-
-    /** @test */
-    public function an_extract_has_actions()
-    {
-        $actions = $this->extract->resolveActions($this->request);
-
-        $this->assertTrue($actions->contains(function ($field) {
-            return $field->getKey() === 'publish-posts';
-        }));
-    }
-
-    /** @test */
-    public function an_extract_has_widgets()
-    {
-        $widgets = $this->extract->resolveWidgets($this->request);
-
-        $this->assertTrue($widgets->contains(function ($widget) {
-            return $widget->getKey() === 'posts-count';
-        }));
     }
 
     /** @test */
@@ -81,23 +31,23 @@ class ExtractTest extends TestCase
         $request = ExtractRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return new Route('GET', '/', ['resource' => 'posts']);
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/extracts/long-posts'];
         });
 
         $this->extract->withQuery(function () {
             return Post::query();
         });
 
-        $this->assertSame([
-            'actions' => $this->extract->resolveActions($request)->available($request)->toArray(),
-            'extract' => $this->extract->toArray(),
-            'filters' => $this->extract->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
-            'items' => $this->extract->mapItems($request),
-            'resource' => $request->resource()->toArray(),
-            'title' => $this->extract->getName(),
-            'widgets' => $this->extract->resolveWidgets($request)->available($request)->toArray(),
-
-        ], $this->extract->toIndex($request));
+        $this->actingAs($this->admin)
+            ->get('/root/posts/extracts/long-posts')
+            ->assertOk()
+            ->assertViewIs('root::app')
+            ->assertViewHas([
+                'page.component' => 'Extracts/Index',
+                'page.props' => function ($props) use ($request) {
+                    return empty(array_diff_key($this->extract->toIndex($request), $props));
+                },
+            ]);
     }
 
     /** @test */

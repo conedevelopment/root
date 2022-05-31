@@ -6,7 +6,6 @@ use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\Published;
-use Cone\Root\Tests\PublishPosts;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 

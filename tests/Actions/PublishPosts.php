@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests;
+namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Text;
