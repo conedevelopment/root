@@ -550,7 +550,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index'])->name('index')->getName();
+        $router->get('/', [ResourceController::class, 'index'])->name('index');
         $router->get('/create', [ResourceController::class, 'create'])->name('create');
         $router->post('/', [ResourceController::class, 'store'])->name('store');
         $router->get('/{rootResource}', [ResourceController::class, 'show'])->name('show');
