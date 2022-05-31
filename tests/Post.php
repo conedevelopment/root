@@ -21,6 +21,7 @@ class Post extends Model
 
         $builder->shouldReceive('getModel')->andReturn($this);
         $builder->shouldReceive('get')->andReturn($this->results());
+        $builder->shouldReceive('findMany')->andReturn($this->results());
 
         return $builder;
     }
@@ -41,5 +42,10 @@ class Post extends Model
             new static(['id' => 1, 'title' => 'Post One']),
             new static(['id' => 2, 'title' => 'Post Two']),
         ]);
+    }
+
+    public function publish()
+    {
+        Published::dispatch();
     }
 }

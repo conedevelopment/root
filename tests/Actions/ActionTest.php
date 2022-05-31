@@ -2,9 +2,12 @@
 
 namespace Cone\Root\Tests\Actions;
 
+use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Tests\Post;
+use Cone\Root\Tests\Published;
 use Cone\Root\Tests\PublishPosts;
 use Cone\Root\Tests\TestCase;
+use Illuminate\Support\Facades\Event;
 
 class ActionTest extends TestCase
 {
@@ -60,5 +63,47 @@ class ActionTest extends TestCase
             ]),
             $this->action->toForm($this->request, $model)
         );
+    }
+
+    /** @test */
+    public function an_action_can_be_destructive()
+    {
+        $this->assertFalse($this->action->toArray()['destructive']);
+
+        $this->action->destructive();
+
+        $this->assertTrue($this->action->toArray()['destructive']);
+
+        $this->action->destructive(false);
+
+        $this->assertFalse($this->action->toArray()['destructive']);
+    }
+
+    /** @test */
+    public function an_action_can_be_confirmable()
+    {
+        $this->assertFalse($this->action->toArray()['confirmable']);
+
+        $this->action->confirmable();
+
+        $this->assertTrue($this->action->toArray()['confirmable']);
+
+        $this->action->confirmable(false);
+
+        $this->assertFalse($this->action->toArray()['confirmable']);
+    }
+
+    /** @test */
+    public function an_action_can_be_berformed()
+    {
+        Event::fake([Published::class]);
+
+        $request = ActionRequest::createFrom(
+            $this->app['request']
+        );
+
+        $this->action->perform($request);
+
+        Event::assertDispatched(Published::class);
     }
 }
