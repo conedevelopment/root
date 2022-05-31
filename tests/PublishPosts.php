@@ -5,7 +5,6 @@ namespace Cone\Root\Tests;
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Text;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class PublishPosts extends Action
@@ -20,12 +19,5 @@ class PublishPosts extends Action
         return [
             Text::make('Title'),
         ];
-    }
-
-    public function routes(Router $router): void
-    {
-        $router->post('/', function () {
-            //
-        });
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Tests\Actions;
 
+use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Requests\ActionRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\Published;
 use Cone\Root\Tests\PublishPosts;
@@ -18,10 +20,6 @@ class ActionTest extends TestCase
         parent::setUp();
 
         $this->action = new PublishPosts();
-
-        $this->action->withQuery(function () {
-            return Post::query();
-        });
     }
 
     /** @test */
@@ -94,13 +92,25 @@ class ActionTest extends TestCase
     }
 
     /** @test */
+    public function an_action_can_throw_query_resolution_exception()
+    {
+        $request = RootRequest::create($this->app['request']);
+
+        $this->expectException(QueryResolutionException::class);
+
+        $this->action->resolveQuery($request);
+    }
+
+    /** @test */
     public function an_action_can_be_berformed()
     {
+        $this->action->withQuery(function () {
+            return Post::query();
+        });
+
         Event::fake([Published::class]);
 
-        $request = ActionRequest::createFrom(
-            $this->app['request']
-        );
+        $request = ActionRequest::createFrom($this->app['request']);
 
         $this->action->perform($request);
 
