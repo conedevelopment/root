@@ -6,7 +6,6 @@ use Cone\Root\Http\Controllers\HasManyController;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\URL;
 
 class HasMany extends HasOneOrMany
 {
@@ -75,8 +74,6 @@ class HasMany extends HasOneOrMany
     {
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
-            'related_name' => $this->getRelatedName(),
-            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
         ]);
     }
 }

@@ -7,6 +7,7 @@ use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany as HasOneOrManyRelation;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\URL;
 
 abstract class HasOneOrMany extends Relation
 {
@@ -64,5 +65,16 @@ abstract class HasOneOrMany extends Relation
                 $this->resolveActions($request)->registerRoutes($request, $router);
             });
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toInput(RootRequest $request, Model $model): array
+    {
+        return array_merge(parent::toInput($request, $model), [
+            'related_name' => $this->getRelatedName(),
+            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+        ]);
     }
 }
