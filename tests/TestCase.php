@@ -4,6 +4,7 @@ namespace Cone\Root\Tests;
 
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\User;
+use Cone\Root\Support\Facades\Resource;
 use Cone\Root\Tests\CreatesApplication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -19,6 +20,10 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        Resource::register('posts', new PostResource(Post::class));
+
+        $this->app['router']->getRoutes()->refreshNameLookups();
 
         $this->withoutMix();
 

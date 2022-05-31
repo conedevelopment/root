@@ -5,6 +5,7 @@ namespace Cone\Root\Tests;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 
 class Post extends Model
@@ -19,9 +20,13 @@ class Post extends Model
 
         $builder->setQuery(parent::newQuery()->getQuery());
 
-        $builder->shouldReceive('getModel')->andReturn($this);
+        $builder->shouldReceive('getModel')->andReturn(new static());
         $builder->shouldReceive('get')->andReturn($this->results());
         $builder->shouldReceive('findMany')->andReturn($this->results());
+        $builder->shouldReceive('latest')->andReturn($builder);
+        $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator(
+            $this->results(), 2, 15, 1
+        ));
 
         return $builder;
     }

@@ -50,6 +50,10 @@
                 type: Object,
                 required: true,
             },
+            extract: {
+                type: Object,
+                required: true,
+            },
         },
 
         layout: function (h, page) {

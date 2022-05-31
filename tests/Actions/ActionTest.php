@@ -4,7 +4,6 @@ namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Requests\ActionRequest;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\Published;
 use Cone\Root\Tests\PublishPosts;
@@ -94,11 +93,9 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_can_throw_query_resolution_exception()
     {
-        $request = RootRequest::create($this->app['request']);
-
         $this->expectException(QueryResolutionException::class);
 
-        $this->action->resolveQuery($request);
+        $this->action->resolveQuery($this->request);
     }
 
     /** @test */
@@ -110,7 +107,7 @@ class ActionTest extends TestCase
 
         Event::fake([Published::class]);
 
-        $request = ActionRequest::createFrom($this->app['request']);
+        $request = ActionRequest::createFrom($this->request);
 
         $this->action->perform($request);
 

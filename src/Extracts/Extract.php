@@ -254,13 +254,14 @@ abstract class Extract implements Arrayable
      */
     public function toIndex(ExtractRequest $request): array
     {
-        return array_merge($this->toArray(), [
+        return [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
+            'extract' => $this->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
             'resource' => $request->resource()->toArray(),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
-        ]);
+        ];
     }
 }
