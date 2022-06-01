@@ -56,7 +56,12 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_store()
     {
-        $this->assertTrue(true);
+        $this->actingAs($this->admin)
+            ->post('/root/posts', [
+                'title' => 'Post Two',
+            ])
+            ->assertRedirect('/root/posts/2')
+            ->assertSessionHas('alerts.resource-created');
     }
 
     /** @test */
@@ -108,12 +113,20 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_update()
     {
-        $this->assertTrue(true);
+        $this->actingAs($this->admin)
+            ->patch('/root/posts/2', [
+                'title' => 'Post Two',
+            ])
+            ->assertRedirect('/root/posts/2/edit')
+            ->assertSessionHas('alerts.resource-updated');
     }
 
     /** @test */
     public function a_resource_controller_has_destroy()
     {
-        $this->assertTrue(true);
+        $this->actingAs($this->admin)
+            ->delete('/root/posts/2')
+            ->assertRedirect('/root/posts')
+            ->assertSessionHas('alerts.resource-deleted');
     }
 }

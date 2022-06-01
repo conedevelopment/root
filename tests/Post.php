@@ -47,6 +47,16 @@ class Post extends Model
         ]);
     }
 
+    public function save(array $options = [])
+    {
+        $this->setAttribute($this->getKeyName(), 2);
+    }
+
+    public function delete()
+    {
+        //
+    }
+
     public function publish()
     {
         Published::dispatch();
