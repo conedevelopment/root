@@ -16,13 +16,13 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected $admin, $request;
+    protected $admin, $request, $resource;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        ResourceRegistry::register('posts', new Resource(Post::class));
+        ResourceRegistry::register('posts', $this->resource = new Resource(Post::class));
 
         $this->app['router']->getRoutes()->refreshNameLookups();
 

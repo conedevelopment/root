@@ -24,9 +24,7 @@ class Post extends Model
         $builder->shouldReceive('get')->andReturn($this->results());
         $builder->shouldReceive('findMany')->andReturn($this->results());
         $builder->shouldReceive('latest')->andReturn($builder);
-        $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator(
-            $this->results(), 2, 15, 1
-        ));
+        $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator($this->results(), 2, 15, 1));
 
         return $builder;
     }

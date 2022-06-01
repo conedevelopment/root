@@ -4,7 +4,6 @@ namespace Cone\Root\Tests\Extracts;
 
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Support\Facades\Resource;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
@@ -18,7 +17,7 @@ class ExtractTest extends TestCase
 
         $this->extract = new LongPosts();
 
-        Resource::resolve('posts')->routeGroup(function ($router) {
+        $this->resource->routeGroup(function ($router) {
             $router->prefix('extracts')->group(function ($router) {
                 $this->extract->registerRoutes($this->request, $router);
             });
