@@ -84,4 +84,12 @@ class HasManyTest extends TestCase
         $this->assertSame('select * from "posts" where "posts"."title" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());
     }
+
+    /** @test */
+    public function a_has_many_field_can_be_async()
+    {
+        $this->field->async();
+
+        $this->assertSame('AsyncSelect', $this->field->getComponent());
+    }
 }
