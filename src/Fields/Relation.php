@@ -129,7 +129,7 @@ abstract class Relation extends Field
      */
     public function getRelatedName(): string
     {
-        return Str::of($this->label)->singular()->toString();
+        return __(Str::of($this->name)->singular()->headline()->toString());
     }
 
     /**

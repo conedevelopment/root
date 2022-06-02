@@ -1,3 +1,4 @@
+import Accordion from './../Components/Accordion';
 import Axios from 'axios';
 import Cookie from './../Support/Cookie';
 import Debounce from './../Directives/Debounce';
@@ -13,6 +14,7 @@ export default {
     install(app, options = {}) {
         app.mixin(DispatchesEvents);
 
+        app.component('Accordion', Accordion);
         app.component('Dropdown', Dropdown);
         app.component('FormHandler', FormHandler);
         app.component('Icon', Icon);

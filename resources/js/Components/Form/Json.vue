@@ -34,10 +34,6 @@
                 type: String,
                 required: true,
             },
-            with_legend: {
-                type: Boolean,
-                default: true,
-            },
         },
 
         inheritAttrs: false,
