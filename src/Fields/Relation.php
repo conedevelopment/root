@@ -266,7 +266,7 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function getDefaultValue(RootRequest $request, Model $model): mixed
+    public function getValue(RootRequest $request, Model $model): mixed
     {
         if ($this->relation instanceof Closure) {
             if ($model->relationLoaded($this->name)) {
@@ -286,7 +286,7 @@ abstract class Relation extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (RootRequest $request, Model $model): mixed {
-                $default = $this->getDefaultValue($request, $model);
+                $default = $this->getValue($request, $model);
 
                 if ($default instanceof Model) {
                     return $this->resolveDisplay($request, $default);

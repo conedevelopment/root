@@ -158,20 +158,20 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_has_default_value()
+    public function a_field_has_value()
     {
         $this->assertSame(
             $this->model->name,
-            $this->field->resolveDefault($this->request, $this->model)
+            $this->field->resolveValue($this->request, $this->model)
         );
 
-        $this->field->default(function ($request, $model, $value) {
+        $this->field->value(function ($request, $model, $value) {
             return '__fake__';
         });
 
         $this->assertSame(
             '__fake__',
-            $this->field->resolveDefault($this->request, $this->model)
+            $this->field->resolveValue($this->request, $this->model)
         );
     }
 

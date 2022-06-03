@@ -122,7 +122,7 @@ class Media extends MorphToMany
     public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'selection' => $this->getDefaultValue($request, $model)
+            'selection' => $this->getValue($request, $model)
                                 ->map(function (Model $related) use ($request, $model): array {
                                     return $this->mapOption($request, $model, $related);
                                 }),

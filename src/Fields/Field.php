@@ -49,11 +49,11 @@ abstract class Field implements Arrayable
     protected ?Closure $formatResolver = null;
 
     /**
-     * The default value resolver callback.
+     * The value resolver callback.
      *
      * @var \Closure|null
      */
-    protected ?Closure $defaultResolver = null;
+    protected ?Closure $valueResolver = null;
 
     /**
      * The validation rules.
@@ -352,34 +352,34 @@ abstract class Field implements Arrayable
     }
 
     /**
-     * Set the default resolver.
+     * Set the value resolver.
      *
      * @param  \Closure  $callback
      * @return $this
      */
-    public function default(Closure $callback): static
+    public function value(Closure $callback): static
     {
-        $this->defaultResolver = $callback;
+        $this->valueResolver = $callback;
 
         return $this;
     }
 
     /**
-     * Resolve the default value.
+     * Resolve the value.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function resolveDefault(RootRequest $request, Model $model): mixed
+    public function resolveValue(RootRequest $request, Model $model): mixed
     {
-        $value = $this->getDefaultValue($request, $model);
+        $value = $this->getValue($request, $model);
 
-        if (is_null($this->defaultResolver)) {
+        if (is_null($this->valueResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->defaultResolver, [$request, $model, $value]);
+        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
     }
 
     /**
@@ -389,7 +389,7 @@ abstract class Field implements Arrayable
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return mixed
      */
-    public function getDefaultValue(RootRequest $request, Model $model): mixed
+    public function getValue(RootRequest $request, Model $model): mixed
     {
         return $model->getAttribute($this->getKey());
     }
@@ -416,7 +416,7 @@ abstract class Field implements Arrayable
      */
     public function resolveFormat(RootRequest $request, Model $model): mixed
     {
-        $value = $this->resolveDefault($request, $model);
+        $value = $this->resolveValue($request, $model);
 
         if (is_null($this->formatResolver)) {
             return $value;
@@ -541,7 +541,7 @@ abstract class Field implements Arrayable
             'formatted_value' => $this->resolveFormat($request, $model),
             'searchable' => $this->isSearchable($request),
             'sortable' => $this->isSortable($request),
-            'value' => $this->resolveDefault($request, $model),
+            'value' => $this->resolveValue($request, $model),
         ]);
     }
 
@@ -557,7 +557,7 @@ abstract class Field implements Arrayable
         return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
             'formatted_value' => $this->resolveFormat($request, $model),
-            'value' => $this->resolveDefault($request, $model),
+            'value' => $this->resolveValue($request, $model),
         ]);
     }
 
