@@ -14,6 +14,7 @@ use Cone\Root\Tests\Extracts\LongPosts;
 use Cone\Root\Tests\Widgets\PostsCount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 abstract class TestCase extends BaseTestCase
@@ -41,6 +42,9 @@ abstract class TestCase extends BaseTestCase
         Storage::disk('local')->makeDirectory('chunks');
 
         $this->admin = User::factory()->create();
+
+        Gate::policy(Post::class, ModelPolicy::class);
+        Gate::policy(Author::class, ModelPolicy::class);
     }
 
     protected function setUpResource()

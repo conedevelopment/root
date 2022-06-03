@@ -29,6 +29,10 @@ class ExtractControllerTest extends TestCase
     {
         $request = ExtractRequest::createFrom($this->request);
 
+        $request->setUserResolver(function () {
+            return $this->admin;
+        });
+
         $request->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/extracts/long-posts'];
         });

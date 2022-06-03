@@ -9,7 +9,7 @@ class PostsCount extends Widget
 {
     protected bool $async = true;
 
-    protected string $template = 'widgets.posts-count';
+    protected string $template = 'root::widgets.welcome';
 
     public function data(RootRequest $request): array
     {
