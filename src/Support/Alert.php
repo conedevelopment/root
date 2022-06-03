@@ -10,7 +10,7 @@ class Alert implements Arrayable, Jsonable, Stringable
 {
     public const INFO = 'info';
     public const SUCCESS = 'success';
-    public const ERROR = 'error';
+    public const ERROR = 'danger';
     public const WARNING = 'warning';
 
     /**
