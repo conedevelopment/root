@@ -4,6 +4,7 @@ import AsyncSelect from './AsyncSelect';
 import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
+import Hidden from './Hidden';
 import Input from './Input';
 import Json from './Json';
 import Media from './Media';
@@ -22,6 +23,7 @@ export default {
         Checkbox,
         DateTime,
         Editor,
+        Hidden,
         Input,
         Json,
         Media,

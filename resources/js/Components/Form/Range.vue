@@ -53,10 +53,6 @@
                 type: String,
                 required: true,
             },
-            name: {
-                type: String,
-                required: true,
-            },
             error: {
                 type: String,
                 default: null,

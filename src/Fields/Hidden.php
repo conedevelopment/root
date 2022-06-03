@@ -5,6 +5,13 @@ namespace Cone\Root\Fields;
 class Hidden extends Field
 {
     /**
+     * The Vue component.
+     *
+     * @var string
+     */
+    protected string $component = 'Hidden';
+
+    /**
      * Create a new field instance.
      *
      * @param  string  $label
