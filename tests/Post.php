@@ -56,9 +56,4 @@ class Post extends Model
     {
         //
     }
-
-    public function publish()
-    {
-        Published::dispatch();
-    }
 }

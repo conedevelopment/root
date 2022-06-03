@@ -11,7 +11,7 @@ class PublishPosts extends Action
 {
     public function handle(Request $request, Collection $models): void
     {
-        $models->each->publish();
+        //
     }
 
     public function fields(Request $request): array
