@@ -36,7 +36,7 @@ return [
     |
     | These middleware will get attached onto each Root route, giving you
     | the chance to add your own middleware to this list or change any
-    | of the existing middleware.
+    | of the existing middleware.
     |
     */
 
