@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }};
+namespace {{ namespace }};
 
 use Cone\Root\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
