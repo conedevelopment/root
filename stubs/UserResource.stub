@@ -4,9 +4,9 @@ namespace App\Root\Resources;
 
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Validation\Rule;
 
 class UserResource extends Resource
@@ -26,7 +26,7 @@ class UserResource extends Resource
                 ->type('email')
                 ->rules(['required', 'string', 'email', 'max:256'])
                 ->createRules(['unique:users'])
-                ->updateRules(static function (Request $request, Model $model): array {
+                ->updateRules(static function (RootRequest $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
         ]);
