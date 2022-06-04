@@ -92,10 +92,10 @@ class FilterMake extends GeneratorCommand
     protected function replaceMultiple(string $class): string
     {
         if ($this->option('multiple')) {
-            $class = str_replace([PHP_EOL.'{{multiple}}', '{{/multiple}}'], '', $class);
+            $class = str_replace([PHP_EOL.'%%multiple%%', '%%/multiple%%'], '', $class);
         }
 
-        return preg_replace('/\s{{multiple}}.*{{\/multiple}}/s', '', $class);
+        return preg_replace('/\s%%multiple%%.*%%\/multiple%%/s', '', $class);
     }
 
     /**
