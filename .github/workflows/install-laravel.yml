@@ -50,6 +50,19 @@ jobs:
           php artisan key:generate
           php artisan root:install --seed
           php artisan root:publish --packages --mix
+
+      - name: "Check stubs"
+        run: |
+          cd laravel/
+          composer require --prefer-dist --no-interaction --dev nunomaduro/larastan
+          php artisan root:action FooBar
+          php artisan root:extract FooBar
+          php artisan root:field FooBar
+          php artisan root:filter FooBar
+          php artisan root:resource FooBar
+          php artisan root:widget FooBar
+          vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
+
       - name: "Install front-end dependencies"
         run: "npm install --production"
 
