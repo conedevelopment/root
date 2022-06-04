@@ -246,10 +246,10 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveDefault(RootRequest $request, Model $model): mixed
+    public function resolveValue(RootRequest $request, Model $model): mixed
     {
-        if (is_null($this->defaultResolver)) {
-            $this->defaultResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
+        if (is_null($this->valueResolver)) {
+            $this->valueResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
                 if ($value instanceof Model) {
                     return $value->getKey();
                 } elseif ($value instanceof Collection) {
@@ -260,7 +260,7 @@ abstract class Relation extends Field
             };
         }
 
-        return parent::resolveDefault($request, $model);
+        return parent::resolveValue($request, $model);
     }
 
     /**
