@@ -41,8 +41,8 @@ jobs:
       - name: "Run tests"
         run: "yarn run test --color"
 
-      # - name: "Run SASS linter"
-        # run: "yarn run lint-sass"
+      - name: "Run SASS linter"
+        run: "yarn run lint-sass"
 
   build:
     name: "Build"
