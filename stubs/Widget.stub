@@ -28,7 +28,7 @@ class {{ class }} extends Widget
      *
      * @var string
      */
-    protected string $template = '{{ template }}';
+    protected string $template = '{{ template }}';
 
     /**
      * Create a new widget instance.
