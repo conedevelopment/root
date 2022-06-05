@@ -21,6 +21,8 @@
     ],
     "color-function-notation": "modern",
     "selector-class-pattern": null,
+    "selector-no-qualifying-type": null,
+    "selector-max-compound-selectors": 4,
     "scss/percent-placeholder-pattern": null
   }
 }
