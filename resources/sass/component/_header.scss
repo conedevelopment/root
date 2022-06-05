@@ -2,9 +2,9 @@
 
 .app-header {
     align-items: center;
+    column-gap: spruce.spacer(l);
     display: flex;
     flex-wrap: wrap;
-    column-gap: spruce.spacer(l);
     justify-content: space-between;
     padding-block-start: spruce.spacer(m);
     row-gap: spruce.spacer(s);

@@ -7,8 +7,8 @@
     inset: 0;
     justify-content: center;
     margin-block: 0;
-    position: fixed;
     overflow-y: auto;
+    position: fixed;
     z-index: 140;
 
     &--visible {
@@ -19,7 +19,7 @@
 .modal {
     background-color: spruce.color(background);
     border-radius: spruce.$border-radius-lg;
-    box-shadow: 0 0.25rem 2rem 0 rgba(74, 104, 179, 0.15);
+    box-shadow: 0 0.25rem 2rem 0 rgb(74 104 179 / 0.15);
     margin-block: spruce.spacer(m);
     margin-inline: spruce.spacer(s);
     max-width: 40rem;
@@ -40,8 +40,8 @@
     }
 
     &-header {
-        border-bottom: 1px solid hsl(0 0% 0% / 0.05);
         align-items: center;
+        border-bottom: 1px solid hsl(0 0% 0% / 0.05);
         display: flex;
         justify-content: space-between;
         padding-block-end: spruce.spacer(s);
@@ -64,9 +64,9 @@
     &-filter {
         align-items: center;
         border-bottom: 1px solid hsl(0 0% 0% / 0.05);
+        column-gap: spruce.spacer(m);
         display: flex;
         flex-wrap: wrap;
-        column-gap: spruce.spacer(m);
         margin-block-end: spruce.spacer(s);
         padding-block-end: spruce.spacer(s);
         row-gap: spruce.spacer(s);
@@ -79,8 +79,8 @@
         flex: 1 1 auto;
         overflow-x: visible;
         overflow-y: auto;
-        padding-inline-end: spruce.spacer(s);
         padding-block: spruce.spacer(s);
+        padding-inline-end: spruce.spacer(s);
     }
 
     &-footer {

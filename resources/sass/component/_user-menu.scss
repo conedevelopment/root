@@ -8,7 +8,7 @@
 .user-menu {
     align-items: center;
     background-color: transparent;
-    border: none;
+    border: 0;
     cursor: pointer;
     display: flex;
     gap: spruce.spacer(s);
@@ -24,7 +24,7 @@
     &__toggle {
         align-items: center;
         background-color: spruce.color(active, sidebar);
-        border: none;
+        border: 0;
         border-radius: spruce.$border-radius-lg;
         display: flex;
         gap: spruce.spacer(s);
