@@ -1,9 +1,11 @@
 import * as Vue from 'vue';
+import Quill from 'quill';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import Root from './Plugins/Root';
 import Layout from './Components/Layout/Layout';
 
 window.Vue = Vue;
+window.Quill = Quill;
 
 createInertiaApp({
     resolve: (name) => {
