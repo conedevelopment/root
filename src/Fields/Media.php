@@ -36,6 +36,22 @@ class Media extends MorphToMany
     protected ?Closure $storingResolver = null;
 
     /**
+     * {@inheritdoc}
+     */
+    public function async(bool $value = true): static
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function asSubResource(bool $value = true): static
+    {
+        return $this;
+    }
+
+    /**
      * Set the storing resolver callback.
      *
      * @param  \Closure  $callback

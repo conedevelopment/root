@@ -23,14 +23,27 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Set the async attribute.
-     *
-     * @param  bool  $value
-     * @return $this
+     * {@inheritdoc}
+     */
+    public function visible(RootRequest $request): bool
+    {
+        if ($this->asSubResource && $request instanceof CreateRequest) {
+            return false;
+        }
+
+        return parent::visible($request);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function async(bool $value = true): static
     {
-        $this->async = $value;
+        parent::async($value);
+
+        if ($this->asSubResource) {
+            $this->component = 'SubResource';
+        }
 
         return $this;
     }

@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany as HasOneOrManyRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
 
@@ -14,14 +14,15 @@ abstract class HasOneOrMany extends Relation
     use AsSubResource;
 
     /**
-     * Get the relation instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Relations\HasOneOrMany
+     * {@inheritdoc}
      */
-    public function getRelation(Model $model): HasOneOrManyRelation
+    public function visible(RootRequest $request): bool
     {
-        return parent::getRelation($model);
+        if ($this->asSubResource && $request instanceof CreateRequest) {
+            return false;
+        }
+
+        return parent::visible($request);
     }
 
     /**
