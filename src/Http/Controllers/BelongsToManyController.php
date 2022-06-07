@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BelongsToManyController extends HasManyController
+class BelongsToManyController extends HasOneOrManyController
 {
     /**
      * Store a newly created resource in storage.
