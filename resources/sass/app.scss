@@ -14,6 +14,7 @@
     --root-gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)});
     --root-gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)});
     --root-logo-height: 1.35rem;
+    --root-mobile-logo-height: 1.15rem;
 }
 
 .hidden {
