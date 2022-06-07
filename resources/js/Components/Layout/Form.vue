@@ -16,7 +16,7 @@
                                 {{ __('Save') }}
                             </button>
                             <button
-                                v-if="exists"
+                                v-if="model.exists"
                                 type="button"
                                 class="btn btn--delete"
                                 :disabled="form.processing"

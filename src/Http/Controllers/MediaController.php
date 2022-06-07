@@ -62,7 +62,12 @@ class MediaController extends Controller
      */
     public function destroy(ResourceRequest $request): JsonResponse
     {
-        // $medium->delete();
+        $field = $request->resolved();
+
+        $field->resolveQuery($request, $request->resource()->getModelInstance())
+              ->find($request->input('models', []))
+              ->each
+              ->delete();
 
         return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
     }

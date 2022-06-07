@@ -9,6 +9,8 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 
 class Media extends MorphToMany
 {
@@ -69,6 +71,39 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function persist(RootRequest $request, Model $model): void
+    {
+        $model->saved(function (Model $model) use ($request): void {
+            $value = $this->getValueForHydrate($request, $model);
+
+            $this->hydrate($request, $model, $value);
+
+            $this->getRelation($model)->sync($value);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    {
+        $relation = $this->getRelation($model);
+
+        $results = $this->resolveQuery($request, $model)
+                        ->findMany(array_keys($value))
+                        ->each(static function (Model $related) use ($relation, $value): void {
+                            $related->setRelation(
+                                $relation->getPivotAccessor(),
+                                $relation->newPivot($value[$related->getKey()])
+                            );
+                        });
+
+        $model->setRelation($relation->getRelationName(), $results);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function fields(RootRequest $request): array
     {
         return [];
@@ -85,12 +120,62 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function resolveValue(RootRequest $request, Model $model): mixed
+    {
+        if (is_null($this->valueResolver)) {
+            $this->valueResolver = function (RootRequest $request, Model $model, mixed $value): array {
+                return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
+                    return [
+                        $related->getKey() => $this->mapPivotValues($request, $model, $related),
+                    ];
+                })->toArray();
+            };
+        }
+
+        return parent::resolveValue($request, $model);
+    }
+
+    /**
+     * Map the pivot values.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
+     * @return array
+     */
+    protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        return $this->resolveFields($request)
+                    ->available($request, $model, $related)
+                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
+                        return [
+                            $field->name => $field->resolveValue(
+                                $request, $related->getRelation($relation->getPivotAccessor())
+                            ),
+                        ];
+                    })
+                    ->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function mapOption(RootRequest $request, Model $model, Model $related): array
     {
+        $relation = $this->getRelation($model);
+
         return array_merge(
             parent::mapOption($request, $model, $related),
             $related->toArray(),
-            ['created_at' => $related->created_at->format('Y-m-d H:i')],
+            [
+                'created_at' => $related->created_at->format('Y-m-d H:i'),
+                'fields' => $this->resolveFields($request)
+                                ->available($request, $model, $related)
+                                ->mapToForm($request, $relation->newPivot())
+                                ->toArray(),
+            ],
         );
     }
 
@@ -129,11 +214,42 @@ class Media extends MorphToMany
      */
     public function toInput(RootRequest $request, Model $model): array
     {
+        $models = $this->getValue($request, $model);
+
+        $relation = $this->getRelation($model);
+
         return array_merge(parent::toInput($request, $model), [
-            'selection' => $this->getValue($request, $model)
-                                ->map(function (Model $related) use ($request, $model): array {
-                                    return $this->mapOption($request, $model, $related);
-                                }),
+            'fields' => $models->mapWithKeys(function (Model $related) use ($request, $model, $relation): array {
+                return [
+                    $related->getKey() => $this->resolveFields($request)
+                                            ->available($request, $model, $related)
+                                            ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
+                                            ->toArray(),
+                ];
+            }),
+            'url' => URL::to($this->getUri()),
+            'selection' => $models->map(function (Model $related) use ($request, $model): array {
+                return $this->mapOption($request, $model, $related);
+            }),
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toValidate(RootRequest $request, Model $model): array
+    {
+        $pivotRules = $this->resolveFields($request)
+                            ->available($request, $model)
+                            ->mapToValidate($request, $model);
+
+        return array_merge(
+            parent::toValidate($request, $model),
+            Collection::make($pivotRules)
+                    ->mapWithKeys(function (array $rules, string $key): array {
+                        return [sprintf('%s.*.%s', $this->name, $key) => $rules];
+                    })
+                    ->toArray(),
+        );
     }
 }
