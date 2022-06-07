@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\HasOneOrManyController;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\AsSubResource;
@@ -65,6 +66,24 @@ abstract class HasOneOrMany extends Relation
                 $this->resolveFields($request)->registerRoutes($request, $router);
                 $this->resolveActions($request)->registerRoutes($request, $router);
             });
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->asSubResource) {
+            $router->get('{rootResource}', [HasOneOrManyController::class, 'index']);
+            $router->post('{rootResource}', [HasOneOrManyController::class, 'store']);
+            $router->get('{rootResource}/create', [HasOneOrManyController::class, 'create']);
+            $router->get('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'show']);
+            $router->get('{rootResource}/{rootRelated}/edit', [HasOneOrManyController::class, 'edit']);
+            $router->patch('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'update']);
+            $router->delete('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'destroy']);
+        } else {
+            parent::routes($router);
         }
     }
 

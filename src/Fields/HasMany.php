@@ -2,10 +2,8 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Controllers\HasManyController;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Router;
 
 class HasMany extends HasOneOrMany
 {
@@ -47,24 +45,6 @@ class HasMany extends HasOneOrMany
         $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
         $model->setRelation($this->relation, $results);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function routes(Router $router): void
-    {
-        if ($this->asSubResource) {
-            $router->get('{rootResource}', [HasManyController::class, 'index']);
-            $router->post('{rootResource}', [HasManyController::class, 'store']);
-            $router->get('{rootResource}/create', [HasManyController::class, 'create']);
-            $router->get('{rootResource}/{rootRelated}', [HasManyController::class, 'show']);
-            $router->get('{rootResource}/{rootRelated}/edit', [HasManyController::class, 'edit']);
-            $router->patch('{rootResource}/{rootRelated}', [HasManyController::class, 'update']);
-            $router->delete('{rootResource}/{rootRelated}', [HasManyController::class, 'destroy']);
-        } else {
-            parent::routes($router);
-        }
     }
 
     /**

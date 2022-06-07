@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class HasManyController extends Controller
+class HasOneOrManyController extends Controller
 {
     /**
      * Display a listing of the resource.
