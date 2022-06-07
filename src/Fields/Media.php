@@ -69,6 +69,14 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function fields(RootRequest $request): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function resolveOptions(RootRequest $request, Model $model): array
     {
         return [];
