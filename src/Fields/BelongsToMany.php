@@ -196,10 +196,10 @@ class BelongsToMany extends Relation
             $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
             $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
             $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
-            $router->get('{rootResource}/{related}', [BelongsToManyController::class, 'show']);
-            $router->get('{rootResource}/{related}/edit', [BelongsToManyController::class, 'edit']);
-            $router->patch('{rootResource}/{related}', [BelongsToManyController::class, 'update']);
-            $router->delete('{rootResource}/{related}', [BelongsToManyController::class, 'destroy']);
+            $router->get('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'show']);
+            $router->get('{rootResource}/{rootRelated}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'update']);
+            $router->delete('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }

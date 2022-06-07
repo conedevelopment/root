@@ -50,10 +50,10 @@ class HasOne extends HasOneOrMany
             $router->get('{rootResource}', [HasManyController::class, 'index']);
             $router->post('{rootResource}', [HasManyController::class, 'store']);
             $router->get('{rootResource}/create', [HasManyController::class, 'create']);
-            $router->get('{rootResource}/{related}', [HasManyController::class, 'show']);
-            $router->get('{rootResource}/{related}/edit', [HasManyController::class, 'edit']);
-            $router->patch('{rootResource}/{related}', [HasManyController::class, 'update']);
-            $router->delete('{rootResource}/{related}', [HasManyController::class, 'destroy']);
+            $router->get('{rootResource}/{rootRelated}', [HasManyController::class, 'show']);
+            $router->get('{rootResource}/{rootRelated}/edit', [HasManyController::class, 'edit']);
+            $router->patch('{rootResource}/{rootRelated}', [HasManyController::class, 'update']);
+            $router->delete('{rootResource}/{rootRelated}', [HasManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }

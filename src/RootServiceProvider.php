@@ -114,6 +114,11 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
+        $this->app['router']->patterns([
+            'rootResource' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+            'rootRelated' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+        ]);
+
         $this->app['router']->bind('rootResource', function (string $id): Model {
             static $request;
 
