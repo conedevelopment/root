@@ -20,7 +20,7 @@
                     </button>
                 </div>
                 <div
-                    class="modal-body"
+                    class="modal-body modal-body--media"
                     :class="{ 'has-active-dropzone': dragging }"
                     :data-dropzone-text="__('Drop your files here')"
                     @dragstart.prevent

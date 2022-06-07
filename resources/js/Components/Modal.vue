@@ -7,8 +7,10 @@
             :aria-label="title"
             :class="{ 'hidden': ! isOpen }"
         >
-            <h2 class="modal-title">{{ title }}</h2>
-            <div class="modal-inner">
+            <div class="modal-header">
+                <h2 class="modal-title">{{ title }}</h2>
+            </div>
+            <div class="modal-body">
                 <slot></slot>
             </div>
             <div class="modal-action">

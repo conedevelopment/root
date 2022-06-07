@@ -79,8 +79,13 @@
         flex: 1 1 auto;
         overflow-x: visible;
         overflow-y: auto;
-        padding-inline-end: spruce.spacer(s);
+        margin-inline: calc(-1 * #{spruce.spacer(s)});
+        padding-inline: spruce.spacer(s);
         padding-block: spruce.spacer(s);
+
+        &--media {
+            margin-inline-end: 0;
+        }
     }
 
     &-footer {
