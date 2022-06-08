@@ -115,11 +115,15 @@ abstract class Relation extends Field
      */
     public function getRelation(Model $model): EloquentRelation
     {
-        if ($this->relation instanceof Closure) {
-            return call_user_func_array($this->relation, [$model]);
+        $relation = $this->relation instanceof Closure
+            ? call_user_func_array($this->relation, [$model])
+            : call_user_func([$model, $this->relation]);
+
+        if (!is_object($relation) || !$relation instanceof EloquentRelation) {
+            throw new \UnexpectedValueException('Bla-bla ifObject -> get_class($relation) does not extend Illuminate\Database\Eloquent\Relations\Relation');
         }
 
-        return call_user_func([$model, $this->relation]);
+        return $relation;
     }
 
     /**
