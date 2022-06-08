@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests;
 
 use Cone\Root\Fields\Text;
-use Cone\Root\Filters\TrashStatus;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
@@ -11,6 +10,7 @@ use Cone\Root\Support\Facades\Resource as ResourceRegistry;
 use Cone\Root\Tests\Actions\PublishPosts;
 use Cone\Root\Tests\CreatesApplication;
 use Cone\Root\Tests\Extracts\LongPosts;
+use Cone\Root\Tests\Filters\Published;
 use Cone\Root\Tests\Widgets\PostsCount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -52,7 +52,7 @@ abstract class TestCase extends BaseTestCase
         $this->resource = (new Resource(Post::class))
                             ->with(['author'])
                             ->withFields([Text::make('Title')])
-                            ->withFilters([TrashStatus::make()])
+                            ->withFilters([Published::make()])
                             ->withActions([PublishPosts::make()])
                             ->withExtracts([LongPosts::make()])
                             ->withWidgets([PostsCount::make()]);
