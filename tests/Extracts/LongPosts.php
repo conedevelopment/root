@@ -13,9 +13,9 @@ class LongPosts extends Extract
 {
     public function filters(RootRequest $request): array
     {
-        return [
+        return array_merge(parent::filters($request), [
             Published::make()->multiple(),
-        ];
+        ]);
     }
 
     public function actions(RootRequest $request): array
@@ -28,7 +28,7 @@ class LongPosts extends Extract
     public function fields(RootRequest $request): array
     {
         return [
-            Text::make('Title'),
+            Text::make('Title')->sortable()->searchable(),
         ];
     }
 

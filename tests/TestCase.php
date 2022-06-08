@@ -51,7 +51,7 @@ abstract class TestCase extends BaseTestCase
     {
         $this->resource = (new Resource(Post::class))
                             ->with(['author'])
-                            ->withFields([Text::make('Title')])
+                            ->withFields([Text::make('Title')->sortable()->searchable()])
                             ->withFilters([Published::make()])
                             ->withActions([PublishPosts::make()])
                             ->withExtracts([LongPosts::make()])
