@@ -35,7 +35,7 @@
                 default: null,
             },
             formatted_value: {
-                type: [Array, Object],
+                type: [Array, Object, String],
                 default: null,
             },
             label: {

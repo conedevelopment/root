@@ -27,3 +27,47 @@
         margin: 0;
     }
 }
+
+.breadcrumbs {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+
+    li {
+      align-items: center;
+      display: inline-flex;
+      margin: 0;
+    }
+
+    > li + li {
+        &::before {
+            border-bottom: 2px solid spruce.color(arrow, breadcrumb);
+            border-right: 2px solid spruce.color(arrow, breadcrumb);
+            content: '';
+            display: inline-flex;
+            height: 0.4rem;
+            margin: 0 spruce.spacer(xs);
+            transform: rotate(-45deg);
+            width: 0.4rem;
+        }
+    }
+
+    span {
+        align-items: center;
+        display: inline-flex;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    [aria-current='page'] {
+        display: inline-block;
+        max-width: 30rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

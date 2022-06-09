@@ -2,13 +2,20 @@
     <header class="app-header">
         <div class="app-header__heading">
             <h1 class="app-header__title">{{ title }}</h1>
+            <!-- <Breadcrumbs></Breadcrumbs> -->
         </div>
         <div class="app-header__actions"></div>
     </header>
 </template>
 
 <script>
+    import Breadcrumbs from './Breadcrumbs';
+
     export default {
+        components: {
+            Breadcrumbs,
+        },
+
         props: {
             title: {
                 type: String,

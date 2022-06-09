@@ -122,6 +122,8 @@
                     }
                 });
 
+                editor.emitter.emit('text-change');
+
                 this.$refs.media.clearSelection();
             },
         },

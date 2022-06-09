@@ -99,6 +99,16 @@ abstract class Action implements Arrayable, Responsable
     }
 
     /**
+     * Determine if the action is destructive.
+     *
+     * @return bool
+     */
+    public function isDestructive(): bool
+    {
+        return $this->destructive;
+    }
+
+    /**
      * Set the confirmable property.
      *
      * @param  bool  $value
@@ -109,6 +119,16 @@ abstract class Action implements Arrayable, Responsable
         $this->confirmable = $value;
 
         return $this;
+    }
+
+    /**
+     * Determine if the action is confirmable.
+     *
+     * @return bool
+     */
+    public function isConfirmable(): bool
+    {
+        return $this->confirmable;
     }
 
     /**
@@ -217,8 +237,8 @@ abstract class Action implements Arrayable, Responsable
     public function toArray(): array
     {
         return [
-            'confirmable' => $this->confirmable,
-            'destructive' => $this->destructive,
+            'confirmable' => $this->isConfirmable(),
+            'destructive' => $this->isDestructive(),
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'url' => URL::to($this->getUri()),
