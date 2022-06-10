@@ -26,13 +26,13 @@
         "ext-gd": "*",
         "ext-exif": "*",
         "php": "^8.0",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^9.15",
         "inertiajs/inertia-laravel": "^0.5.4",
         "laravel/fortify": "^1.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "laravel/laravel": "^9.15",
+        "laravel/laravel": "^9.0",
         "mockery/mockery": "^1.4.4",
         "phpunit/phpunit": "^9.5.10",
         "nunomaduro/larastan": "^2.1.6"
