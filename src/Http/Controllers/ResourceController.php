@@ -181,7 +181,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        $trashed = class_uses_recursive(SoftDeletes::class) && $model->trashed();
+        $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
         if ($resource->getPolicy()) {
             $this->authorize($trashed ? 'forceDelete' : 'delete', $model);
