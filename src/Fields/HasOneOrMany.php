@@ -12,6 +12,10 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\HasOneOrMany
+ * @extends  \Cone\Root\Fields\Relation<TRelation>
+ */
 abstract class HasOneOrMany extends Relation
 {
     use AsSubResource;

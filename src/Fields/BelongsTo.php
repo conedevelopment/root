@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentRelation;
 
 /**
- * @extends \Cone\Root\Fields\Relation<\Illuminate\Database\Eloquent\Relations\BelongsTo>
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsTo
+ * @extends  \Cone\Root\Fields\Relation<TRelation>
  */
 class BelongsTo extends Relation
 {

@@ -6,6 +6,9 @@ use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 
+/**
+ * @extends \Cone\Root\Fields\MorphOneOrMany<\Illuminate\Database\Eloquent\Relations\MorphOne>
+ */
 class MorphOne extends MorphOneOrMany
 {
     /**

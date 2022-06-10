@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToRelation;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as EloquentRelation;
 
+/**
+ * @extends \Cone\Root\Fields\BelongsToMany<\Illuminate\Database\Eloquent\Relations\MorphToMany>
+ */
 class MorphToMany extends BelongsToMany
 {
     /**
