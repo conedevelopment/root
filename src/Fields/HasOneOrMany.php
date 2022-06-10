@@ -7,12 +7,22 @@ use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
 
 abstract class HasOneOrMany extends Relation
 {
     use AsSubResource;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRelation(Model $model): EloquentRelation
+    {
+        return parent::getRelation($model);
+    }
 
     /**
      * {@inheritdoc}
@@ -38,6 +48,38 @@ abstract class HasOneOrMany extends Relation
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function persist(RootRequest $request, Model $model): void
+    {
+        if ($this->asSubResource) {
+            return;
+        }
+
+        $model->saved(function (Model $model) use ($request): void {
+            $relation = $this->getRelation($model);
+
+            $value = $this->getValueForHydrate($request, $model);
+
+            $this->hydrate($request, $model, $value);
+
+            foreach (Arr::wrap($model->getRelation($this->name)) as $related) {
+                $relation->save($related);
+            }
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    {
+        $related = $this->resolveQuery($request, $model)->find($value);
+
+        $model->setRelation($this->name, $related);
     }
 
     /**

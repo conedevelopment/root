@@ -2,9 +2,10 @@
 
 namespace Cone\Root\Fields;
 
-use Illuminate\Database\Eloquent\Relations\MorphTo as EloquentRelation;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOneOrMany as EloquentRelation;
 
-class MorphTo extends BelongsTo
+abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**
      * {@inheritdoc}

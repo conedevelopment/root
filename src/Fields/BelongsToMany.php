@@ -12,6 +12,7 @@ use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
@@ -20,6 +21,14 @@ class BelongsToMany extends Relation
 {
     use AsSubResource {
         AsSubResource::toCreate as defaultToCreate;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRelation(Model $model): EloquentRelation
+    {
+        return parent::getRelation($model);
     }
 
     /**
