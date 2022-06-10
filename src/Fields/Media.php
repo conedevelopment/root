@@ -101,20 +101,26 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $relation = $this->getRelation($model);
+        if (is_null($this->hydrateResolver)) {
+            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+                $relation = $this->getRelation($model);
 
-        $results = $this->resolveQuery($request, $model)
-                        ->findMany(array_keys($value))
-                        ->each(static function (Model $related) use ($relation, $value): void {
-                            $related->setRelation(
-                                $relation->getPivotAccessor(),
-                                $relation->newPivot($value[$related->getKey()])
-                            );
-                        });
+                $results = $this->resolveQuery($request, $model)
+                                ->findMany(array_keys($value))
+                                ->each(static function (Model $related) use ($relation, $value): void {
+                                    $related->setRelation(
+                                        $relation->getPivotAccessor(),
+                                        $relation->newPivot($value[$related->getKey()])
+                                    );
+                                });
 
-        $model->setRelation($relation->getRelationName(), $results);
+                $model->setRelation($relation->getRelationName(), $results);
+            };
+        }
+
+        parent::resolveHydrate($request, $model, $value);
     }
 
     /**
