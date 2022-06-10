@@ -14,6 +14,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\Relation
+ */
 abstract class Relation extends Field
 {
     use RegistersRoutes;
@@ -111,7 +114,7 @@ abstract class Relation extends Field
      * Get the relation instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return TRelation
      */
     public function getRelation(Model $model): EloquentRelation
     {
