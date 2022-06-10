@@ -19,8 +19,14 @@ class BelongsTo extends Relation
     /**
      * {@inheritdoc}
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $this->getRelation($model)->associate($value);
+        if (is_null($this->hydrateResolver)) {
+            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+                $this->getRelation($model)->associate($value);
+            };
+        }
+
+        parent::resolveHydrate($request, $model, $value);
     }
 }

@@ -75,11 +75,17 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $related = $this->resolveQuery($request, $model)->find($value);
+        if (is_null($this->hydrateResolver)) {
+            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+                $related = $this->resolveQuery($request, $model)->find($value);
 
-        $model->setRelation($this->name, $related);
+                $model->setRelation($this->name, $related);
+            };
+        }
+
+        parent::resolveHydrate($request, $model, $value);
     }
 
     /**

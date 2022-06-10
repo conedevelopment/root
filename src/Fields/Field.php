@@ -56,6 +56,13 @@ abstract class Field implements Arrayable
     protected ?Closure $valueResolver = null;
 
     /**
+     * The hydrate resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $hydrateResolver = null;
+
+    /**
      * The validation rules.
      *
      * @var array
@@ -435,7 +442,7 @@ abstract class Field implements Arrayable
     public function persist(RootRequest $request, Model $model): void
     {
         $model->saving(function (Model $model) use ($request): void {
-            $this->hydrate(
+            $this->resolveHydrate(
                 $request, $model, $this->getValueForHydrate($request, $model)
             );
         });
@@ -454,6 +461,19 @@ abstract class Field implements Arrayable
     }
 
     /**
+     * Set the hydrate resolver.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function hydrate(Closure $callback): static
+    {
+        $this->hydrateResolver = $callback;
+
+        return $this;
+    }
+
+    /**
      * Hydrate the model.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
@@ -461,9 +481,13 @@ abstract class Field implements Arrayable
      * @param  mixed  $value
      * @return void
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $model->setAttribute($this->getKey(), $value);
+        if (is_null($this->hydrateResolver)) {
+            $model->setAttribute($this->getKey(), $value);
+        } else {
+            call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
+        }
     }
 
     /**

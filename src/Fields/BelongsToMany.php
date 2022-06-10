@@ -86,13 +86,19 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
-        $relation = $this->getRelation($model);
+        if (is_null($this->hydrateResolver)) {
+            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+                $relation = $this->getRelation($model);
 
-        $results = $this->resolveQuery($request, $model)->findMany((array) $value);
+                $results = $this->resolveQuery($request, $model)->findMany((array) $value);
 
-        $model->setRelation($relation->getRelationName(), $results);
+                $model->setRelation($relation->getRelationName(), $results);
+            };
+        }
+
+        parent::resolveHydrate($request, $model, $value);
     }
 
     /**

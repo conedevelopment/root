@@ -198,13 +198,21 @@ class FieldTest extends TestCase
     {
         $this->assertNotSame('Root User', $this->model->name);
 
-        $this->field->hydrate(
+        $this->field->resolveHydrate(
             $this->request, $this->model, 'Root User'
         );
 
-        $this->model->save();
-
         $this->assertSame('Root User', $this->model->name);
+
+        $this->field->hydrate(function ($request, $model, $value) {
+            $model->setAttribute($this->field->name, strtoupper($value));
+        });
+
+        $this->field->resolveHydrate(
+            $this->request, $this->model, 'Root User'
+        );
+
+        $this->assertSame('ROOT USER', $this->model->name);
     }
 
     /** @test */
