@@ -64,7 +64,7 @@ abstract class HasOneOrMany extends Relation
 
             $value = $this->getValueForHydrate($request, $model);
 
-            $this->hydrate($request, $model, $value);
+            $this->resolveHydrate($request, $model, $value);
 
             foreach (Arr::wrap($model->getRelation($this->name)) as $related) {
                 $relation->save($related);
