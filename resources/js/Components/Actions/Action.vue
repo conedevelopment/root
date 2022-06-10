@@ -57,7 +57,7 @@
                     ...data,
                     all: this.allMatching,
                     models: this.selection,
-                })).post(this.action.url, {
+                })).post(this.action.url + window.location.search, {
                     onBefore: () => {
                         if (this.action.confirmable) {
                             return window.confirm(this.__('Are you sure?'));

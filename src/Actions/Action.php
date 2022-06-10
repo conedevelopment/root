@@ -187,7 +187,6 @@ abstract class Action implements Arrayable, Responsable
         return call_user_func_array($this->queryResolver, [$request]);
     }
 
-
     /**
      * Handle the resolving event on the field instance.
      *

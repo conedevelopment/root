@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e87716842c485c7b58d589a45c8202c",
+    "content-hash": "edd77889c9378767e155c458be792f61",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1725,16 +1725,16 @@
         },
         {
             "name": "paragonie/constant_time_encoding",
-            "version": "v2.5.0",
+            "version": "v2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/constant_time_encoding.git",
-                "reference": "9229e15f2e6ba772f0c55dd6986c563b937170a8"
+                "reference": "3f3bf06406244a94aeffd5818ba05b41a1754ae5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/9229e15f2e6ba772f0c55dd6986c563b937170a8",
-                "reference": "9229e15f2e6ba772f0c55dd6986c563b937170a8",
+                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/3f3bf06406244a94aeffd5818ba05b41a1754ae5",
+                "reference": "3f3bf06406244a94aeffd5818ba05b41a1754ae5",
                 "shasum": ""
             },
             "require": {
@@ -1788,7 +1788,7 @@
                 "issues": "https://github.com/paragonie/constant_time_encoding/issues",
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
-            "time": "2022-01-17T05:32:27+00:00"
+            "time": "2022-06-10T07:38:28+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -5242,16 +5242,16 @@
         },
         {
             "name": "laravel/laravel",
-            "version": "9.x-dev",
+            "version": "v9.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/laravel.git",
-                "reference": "1f9eee06ddb38abf86e2f7df37a20281cd774e3d"
+                "reference": "93cc51ed00dd84df64ff028bfc31be2165c3dcfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/1f9eee06ddb38abf86e2f7df37a20281cd774e3d",
-                "reference": "1f9eee06ddb38abf86e2f7df37a20281cd774e3d",
+                "url": "https://api.github.com/repos/laravel/laravel/zipball/93cc51ed00dd84df64ff028bfc31be2165c3dcfe",
+                "reference": "93cc51ed00dd84df64ff028bfc31be2165c3dcfe",
                 "shasum": ""
             },
             "require": {
@@ -5269,7 +5269,6 @@
                 "phpunit/phpunit": "^9.5.10",
                 "spatie/laravel-ignition": "^1.0"
             },
-            "default-branch": true,
             "type": "project",
             "extra": {
                 "laravel": {
@@ -5293,9 +5292,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/laravel/tree/9.x"
+                "source": "https://github.com/laravel/laravel/tree/v9.1.10"
             },
-            "time": "2022-06-08T09:02:46+00:00"
+            "time": "2022-06-07T15:03:59+00:00"
         },
         {
             "name": "laravel/sanctum",
