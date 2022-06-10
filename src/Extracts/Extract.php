@@ -157,7 +157,9 @@ abstract class Extract implements Arrayable
         $action->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         })->withQuery(function () use ($request): Builder {
-            return $this->resolveQuery($request);
+            return $this->resolveFilters($request)
+                        ->available($request)
+                        ->apply($request, $this->resolveQuery($request));
         });
     }
 

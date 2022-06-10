@@ -242,8 +242,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $action->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (): Builder {
-            return $this->query();
+        })->withQuery(function () use ($request): Builder {
+            return $this->resolveFilters($request)
+                        ->available($request)
+                        ->apply($request, $this->query());
         });
     }
 
