@@ -92,7 +92,7 @@ class Media extends MorphToMany
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
 
-            $this->hydrate($request, $model, $value);
+            $this->resolveHydrate($request, $model, $value);
 
             $this->getRelation($model)->sync($value);
         });
