@@ -8,6 +8,5 @@ module.exports = {
         "plugin:vue/strongly-recommended",
         "plugin:vue/recommended"
     ],
-    rules: {
-    }
+    rules: {}
 }

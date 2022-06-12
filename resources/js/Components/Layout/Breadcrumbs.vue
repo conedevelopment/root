@@ -1,5 +1,5 @@
 <template>
-    <nav class="app-header__breadcrumbs" aria-label="Breadcrumbs">
+    <nav class="app-header__breadcrumbs" :aria-label="__('Breadcrumbs')">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
                 <a href="#">Dashboard</a>
@@ -17,6 +17,13 @@
     export default {
         components: {
             Link,
+        },
+
+        props: {
+            items: {
+                type: Array,
+                default: () => [],
+            },
         },
     }
 </script>
