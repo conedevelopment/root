@@ -8,6 +8,7 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 
 class Sort extends Filter
@@ -66,9 +67,11 @@ class Sort extends Filter
         $relation = EloquentRelation::noConstraints(static function () use ($query, $value): EloquentRelation {
             $relation = call_user_func([$query->getModel(), $value['by']]);
 
-            return $relation->whereColumn(
-                $relation->getQualifiedForeignKeyName(), '=', $relation->getQualifiedOwnerKeyName()
-            );
+            $key = $relation instanceof BelongsTo
+                ? $relation->getQualifiedOwnerKeyName()
+                : $relation->getQualifiedParentKeyName();
+
+            return $relation->whereColumn($relation->getQualifiedForeignKeyName(), '=', $key);
         });
 
         return $query->orderBy(
