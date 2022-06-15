@@ -33,8 +33,8 @@ class {{ class }} extends Action
 
     /**
      * Define the fields for the action.
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return array
      */
     public function fields(RootRequest $request): array
