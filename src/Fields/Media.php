@@ -76,7 +76,7 @@ class Media extends MorphToMany
         $medium = (Medium::proxy())::makeFrom($path);
 
         if (! is_null($this->storingResolver)) {
-            call_user_func_array($this->storingResolver, [$request, $medium]);
+            call_user_func_array($this->storingResolver, [$request, $medium, $path]);
         }
 
         $request->user()->uploads()->save($medium);
