@@ -22,7 +22,8 @@ class RecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company(),
+            'event' => $this->faker->company(),
+            'description' => null,
         ];
     }
 }

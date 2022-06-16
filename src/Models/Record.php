@@ -24,9 +24,20 @@ class Record extends Model implements Contract
      * @var array<string>
      */
     protected $fillable = [
-        'name',
-        'status',
+        'description',
+        'event',
+        'properties',
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'properties' => 'json',
+    ];
+
 
     /**
      * The "type" of the primary key ID.
