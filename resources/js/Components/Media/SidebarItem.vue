@@ -28,10 +28,14 @@
                 :key="`${item.id}-${field.name}`"
                 :id="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
                 :name="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
+                :disabled="processing"
             ></FormHandler>
-            <div class="form-group">
-                <button type="button" class="btn btn--delete btn--sm btn--tertiary" @click="deselect">
+            <div class="form-group" style="display: flex; justify-content: space-between;">
+                <button type="button" class="btn btn--delete btn--sm btn--tertiary" :disabled="processing" @click="deselect">
                     {{ __('Remove') }}
+                </button>
+                <button type="button" class="btn btn--delete btn--sm btn--icon" :disabled="processing" @click="destroy">
+                    <Icon name="delete" class="btn__icon"></Icon>
                 </button>
             </div>
         </div>
@@ -59,6 +63,7 @@
             return {
                 tries: 0,
                 loading: false,
+                processing: false,
                 url: this.item.urls.thumb || this.item.urls.original,
             };
         },
@@ -87,6 +92,29 @@
         methods: {
             deselect() {
                 this.$emit('deselect', this.item);
+            },
+            destroy() {
+                const confirm = window.confirm(this.__('Are you sure?'));
+
+                if (confirm) {
+                    this.processing = true;
+
+                    this.$http.delete(this.$parent.$parent.url, {
+                        data: {
+                            models: [this.item.id],
+                        },
+                    }).then((response) => {
+                        this.deselect();
+
+                        const index = this.$parent.$parent.response.data.findIndex((item) => item.id === this.item.id);
+
+                        this.$parent.$parent.response.data.splice(index, 1);
+                    }).catch((error) => {
+                        //
+                    }).finally(() => {
+                        this.processing = false;
+                    });
+                }
             },
             reload() {
                 if (this.tries >= 5) {

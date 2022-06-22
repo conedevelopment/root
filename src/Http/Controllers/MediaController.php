@@ -36,6 +36,8 @@ class MediaController extends Controller
     {
         $field = $request->resolved();
 
+        $model = $request->resource()->getModelInstance();
+
         $file = $request->file('file');
 
         $path = Storage::disk('local')->path("root-chunks/{$file->getClientOriginalName()}");
@@ -51,7 +53,7 @@ class MediaController extends Controller
         MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
                 ->dispatch($medium, $path, false);
 
-        return new JsonResponse($medium, JsonResponse::HTTP_CREATED);
+        return new JsonResponse($field->mapOption($request, $model, $medium), JsonResponse::HTTP_CREATED);
     }
 
     /**

@@ -34,7 +34,7 @@
                 >
                 <span v-else class="selected-media-item__document" :title="medium.file_name">
                     <Icon name="description"></Icon>
-                    <span style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">
+                    <span style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; text-align: center;">
                         {{ medium.file_name }}
                     </span>
                 </span>
