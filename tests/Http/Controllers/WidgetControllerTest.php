@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests\Http\Controllers;
 
 use Cone\Root\Http\Requests\WidgetRequest;
-use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\Widgets\PostsCount;
 

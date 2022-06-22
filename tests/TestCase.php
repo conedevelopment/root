@@ -34,17 +34,21 @@ abstract class TestCase extends BaseTestCase
 
         $this->withoutMix();
 
-        $this->request = RootRequest::createFrom($this->app['request']);
-
         Storage::fake('local');
         Storage::fake('public');
 
-        Storage::disk('local')->makeDirectory('chunks');
+        Storage::disk('local')->makeDirectory('root-chunks');
 
         $this->admin = User::factory()->create();
 
         Gate::policy(Post::class, ModelPolicy::class);
         Gate::policy(Author::class, ModelPolicy::class);
+
+        $this->request = RootRequest::createFrom($this->app['request']);
+
+        $this->request->setUserResolver(function () {
+            return $this->admin;
+        });
     }
 
     protected function setUpResource()

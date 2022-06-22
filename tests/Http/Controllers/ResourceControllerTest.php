@@ -16,10 +16,6 @@ class ResourceControllerTest extends TestCase
     {
         $request = IndexRequest::createFrom($this->request);
 
-        $request->setUserResolver(function () {
-            return $this->admin;
-        });
-
         $request->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->getByName('root.posts.index');
         });
@@ -40,10 +36,6 @@ class ResourceControllerTest extends TestCase
     public function a_resource_controller_has_create()
     {
         $request = CreateRequest::createFrom($this->request);
-
-        $request->setUserResolver(function () {
-            return $this->admin;
-        });
 
         $request->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->getByName('root.posts.create');
@@ -77,10 +69,6 @@ class ResourceControllerTest extends TestCase
     {
         $request = ShowRequest::createFrom($this->request);
 
-        $request->setUserResolver(function () {
-            return $this->admin;
-        });
-
         $model = Post::query()->get()->first();
 
         $request->setRouteResolver(function () {
@@ -103,10 +91,6 @@ class ResourceControllerTest extends TestCase
     public function a_resource_controller_has_edit()
     {
         $request = UpdateRequest::createFrom($this->request);
-
-        $request->setUserResolver(function () {
-            return $this->admin;
-        });
 
         $model = Post::query()->get()->first();
 
