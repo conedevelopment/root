@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests;
 
+use Cone\Root\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use Mockery;
 
 class Post extends Model
 {
+    use HasMedia;
+
     public $foreignKey = 'foreign.value';
 
     protected $fillable = ['id', 'title'];
