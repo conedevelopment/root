@@ -1,11 +1,11 @@
 <template>
     <nav class="app-header__breadcrumbs" :aria-label="__('Breadcrumbs')">
         <ol class="breadcrumbs">
-            <li class="breadcrumb-item">
-                <a href="#">Dashboard</a>
-            </li>
-            <li class="breadcrumb-item">
-                <span aria-current="page">Posts</span>
+            <li v-for="item in items" :key="item.url" class="breadcrumb-item">
+                <Link v-if="! item.active" :href="item.url">
+                    {{ item.label }}
+                </Link>
+                <span v-else aria-current="page">{{ item.label }}</span>
             </li>
         </ol>
     </nav>

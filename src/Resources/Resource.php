@@ -18,8 +18,10 @@ use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Root;
+use Cone\Root\Support\Breadcrumbs;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesBreadcrumbs;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
@@ -95,6 +97,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function getKey(): string
     {
         return Str::of($this->getModel())->classBasename()->plural()->kebab()->toString();
+    }
+
+    /**
+     * Get the URI of the resource.
+     *
+     * @return string
+     */
+    public function getUri(): string
+    {
+        return trim(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -215,6 +227,15 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         });
+
+        if (in_array(ResolvesBreadcrumbs::class, class_uses_recursive($field))) {
+            $field->withBreadcrumbs(function (RootRequest $request, Model $model): Breadcrumbs {
+                return $this->toBreadcrumbs()->merge([
+                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey(),
+                    sprintf('%s/%s/edit', $this->getUri(), $model->getKey()) => __('Edit'),
+                ]);
+            });
+        }
     }
 
     /**
@@ -262,6 +283,8 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             return $this->authorized(...$parameters);
         })->withQuery(function (): Builder {
             return $this->query();
+        })->withBreadcrumbs(function () {
+            return $this->toBreadcrumbs();
         });
     }
 
@@ -394,6 +417,19 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the breadcrumbs representation of the resource.
+     *
+     * @return \Cone\Root\Support\Breadcrumbs
+     */
+    public function toBreadcrumbs(): Breadcrumbs
+    {
+        return new Breadcrumbs([
+            sprintf('/%s', Root::getPath()) => __('Dashboard'),
+            sprintf('/%s', $this->getUri()) => $this->getName(),
+        ]);
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -444,6 +480,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                             ->available($request)
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
+            'breadcrumbs' => $this->toBreadcrumbs()->toArray(),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
@@ -464,6 +501,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $model = $this->getModelInstance();
 
         return [
+            'breadcrumbs' => $this->toBreadcrumbs()
+                                ->merge([sprintf('%s/create', $this->getUri()) => __('Create')])
+                                ->toArray(),
             'model' => (new ModelResource($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -483,6 +523,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         return [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
+            'breadcrumbs' => $this->toBreadcrumbs()
+                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey()])
+                                ->toArray(),
             'model' => (new ModelResource($model))->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -502,6 +545,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function toEdit(UpdateRequest $request, Model $model): array
     {
         return [
+            'breadcrumbs' => $this->toBreadcrumbs()
+                                ->merge([
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey(),
+                                    sprintf('%s/%s/edit', $this->getUri(), $model->getKey()) => __('Edit'),
+                                ])
+                                ->toArray(),
             'model' => (new ModelResource($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -531,7 +580,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $router->as("{$this->getKey()}.")->group(function (Router $router): void {
+                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
                     $this->routes($router);
                 });
             }

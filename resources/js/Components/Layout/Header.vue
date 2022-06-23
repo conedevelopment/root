@@ -2,7 +2,7 @@
     <header class="app-header">
         <div class="app-header__heading">
             <h1 class="app-header__title">{{ title }}</h1>
-            <!-- <Breadcrumbs></Breadcrumbs> -->
+            <Breadcrumbs :items="breadcrumbs"></Breadcrumbs>
         </div>
         <div class="app-header__actions"></div>
     </header>
@@ -20,6 +20,10 @@
             title: {
                 type: String,
                 required: true,
+            },
+            breadcrumbs: {
+                type: Array,
+                default: () => [],
             },
         },
     }

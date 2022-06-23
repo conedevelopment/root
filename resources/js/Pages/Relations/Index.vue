@@ -1,10 +1,6 @@
 <template>
     <div>
         <div class="app-operation">
-            <Link :href="`${parent.url}/edit`" class="btn btn--primary btn--icon">
-                <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ resource.model_name }}
-            </Link>
             <div class="app-operation__edit">
                 <Link
                     class="btn btn--icon btn--sm btn--tertiary"

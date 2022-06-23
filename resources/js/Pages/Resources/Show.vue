@@ -8,10 +8,6 @@
             ></Widget>
         </div>
         <div class="app-operation">
-            <Link :href="resource.urls.index" class="btn btn--primary btn--icon">
-                <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ resource.name }}
-            </Link>
             <Actions
                 v-if="actions.length > 0"
                 :selection="[model.id]"

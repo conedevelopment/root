@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\URL;
 trait AsSubResource
 {
     use ResolvesActions;
+    use ResolvesBreadcrumbs;
     use ResolvesFields;
     use ResolvesFilters;
 
@@ -119,6 +120,9 @@ trait AsSubResource
     public function toIndex(IndexRequest $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
+                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants')])
+                                ->toArray(),
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
         ]);
@@ -136,6 +140,12 @@ trait AsSubResource
         $related = $this->getRelation($model)->getRelated()->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
+            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
+                                ->merge([
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s/create', $this->getUri(), $model->getKey()) => __('Create'),
+                                ])
+                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
@@ -156,6 +166,12 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
+            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
+                                ->merge([
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
+                                ])
+                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
@@ -176,6 +192,13 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
+            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
+                                ->merge([
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
+                                    sprintf('%s/%s/%s/edit', $this->getUri(), $model->getKey(), $related->getKey()) => __('Edit'),
+                                ])
+                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),

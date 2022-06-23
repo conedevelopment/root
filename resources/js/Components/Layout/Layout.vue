@@ -4,7 +4,7 @@
         <main class="app-body">
             <Nav></Nav>
             <div class="app-body__inner">
-                <Header :title="title"></Header>
+                <Header :title="title" :breadcrumbs="breadcrumbs"></Header>
                 <div v-if="alerts.length > 0" class="app-alert">
                     <Alert v-for="(alert, index) in alerts" :key="`${alert.timestamp}-${index}`" v-bind="alert"></Alert>
                 </div>
@@ -50,6 +50,9 @@
             },
             title() {
                 return this.$page.props.title || this.__('Dashboard');
+            },
+            breadcrumbs() {
+                return this.$page.props.breadcrumbs || [];
             },
         },
     }

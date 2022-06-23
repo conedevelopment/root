@@ -1,10 +1,6 @@
 <template>
     <div>
         <div class="app-operation">
-            <Link :href="field.url" class="btn btn--primary btn--icon">
-                <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ field.name }}
-            </Link>
             <div class="app-operation__edit">
                 <button
                     v-if="model.abilities.delete"

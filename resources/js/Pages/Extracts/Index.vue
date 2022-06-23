@@ -1,11 +1,5 @@
 <template>
     <div>
-        <div class="app-operation">
-            <Link :href="resource.urls.index" class="btn btn--primary btn--icon">
-                <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                {{ resource.name }}
-            </Link>
-        </div>
         <div v-if="widgets.length > 0" class="app-widget">
             <Widget
                 v-for="widget in widgets"
@@ -18,13 +12,11 @@
 </template>
 
 <script>
-    import { Link } from '@inertiajs/inertia-vue3';
     import Table from './../../Components/Table/Table';
     import Widget from './../../Components/Widgets/Handler';
 
     export default {
         components: {
-            Link,
             Table,
             Widget,
         },

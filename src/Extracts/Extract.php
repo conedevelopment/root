@@ -17,6 +17,7 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesBreadcrumbs;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
@@ -33,6 +34,7 @@ abstract class Extract implements Arrayable
     use Authorizable;
     use Makeable;
     use ResolvesActions;
+    use ResolvesBreadcrumbs;
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
@@ -258,6 +260,9 @@ abstract class Extract implements Arrayable
     {
         return [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request)
+                                ->merge([$this->getUri() => $this->getName()])
+                                ->toArray(),
             'extract' => $this->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
