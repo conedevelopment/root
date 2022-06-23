@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Tests\Widgets;
 
-use Cone\Root\Widgets\Widget;
+use Cone\Root\Widgets\Welcome;
 
-class PostsCount extends Widget
+class PostsCount extends Welcome
 {
-    protected string $template = 'root::widgets.welcome';
+    //
 }
