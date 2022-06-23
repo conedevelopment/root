@@ -2,23 +2,12 @@
     <div>
         <div class="app-operation">
             <div class="app-operation__edit">
-                <button
-                    v-if="model.abilities.delete"
-                    type="button"
-                    class="btn btn--icon btn--sm btn--delete"
-                    :aria-label="__('Delete')"
-                    @click="destroy"
-                >
-                    <Icon class="btn__icon" name="delete"></Icon>
-                </button>
-                <Link
-                    v-if="model.abilities.update"
-                    class="btn btn--icon btn--sm btn--tertiary"
-                    :href="`${model.url}/edit`"
-                    :aria-label="__('Edit')"
-                >
-                    <Icon class="btn__icon" name="edit"></Icon>
+                <Link v-if="model.abilities.update" class="btn btn--sm btn--tertiary" :href="`${model.url}/edit`">
+                    {{ __('Edit') }}
                 </Link>
+                <button v-if="model.abilities.delete" type="button" class="btn btn--sm btn--delete" @click="destroy">
+                    {{ __('Delete') }}
+                </button>
             </div>
         </div>
         <div class="app-card card">

@@ -2,12 +2,8 @@
     <div>
         <div class="app-operation">
             <div class="app-operation__edit">
-                <Link
-                    class="btn btn--icon btn--sm btn--tertiary"
-                    :href="`${field.url}/create`"
-                    :aria-label="__('Add :model', { model: field.related_name })"
-                >
-                    <Icon class="btn__icon" name="add-circle"></Icon>
+                <Link class="btn btn--sm btn--tertiary" :href="`${field.url}/create`">
+                    {{ __('Add :model', { model: field.related_name }) }}
                 </Link>
             </div>
         </div>
@@ -35,10 +31,6 @@
                 default: () => [],
             },
             resource: {
-                type: Object,
-                required: true,
-            },
-            parent: {
                 type: Object,
                 required: true,
             },
