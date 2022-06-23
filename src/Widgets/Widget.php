@@ -106,6 +106,16 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
+     * Determine if the widget is async.
+     *
+     * @return bool
+     */
+    public function isAsync(): bool
+    {
+        return $this->async;
+    }
+
+    /**
      * Get the data.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
@@ -136,16 +146,30 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
+     * Resolve the data.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function resolveData(RootRequest $request): array
+    {
+        return array_merge(
+            $this->data($request),
+            is_null($this->dataResolver) ? [] : call_user_func_array($this->dataResolver, [$request])
+        );
+    }
+
+    /**
      * Get the evaluated contents of the object.
      *
      * @return string
      */
     public function render(): string
     {
-        return View::make($this->getTemplate(), array_merge(
-            App::call([$this, 'data']),
-            is_null($this->dataResolver) ? [] : App::call($this->dataResolver)
-        ))->render();
+        return View::make(
+            $this->getTemplate(),
+            App::call([$this, 'resolveData'])
+        )->render();
     }
 
     /**
