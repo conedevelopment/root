@@ -121,7 +121,7 @@ trait AsSubResource
     {
         return array_merge($this->toSubResource($request, $model), [
             'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
-                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants')])
+                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label])
                                 ->toArray(),
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
@@ -142,7 +142,7 @@ trait AsSubResource
         return array_merge($this->toSubResource($request, $model), [
             'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
                                 ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
                                     sprintf('%s/%s/create', $this->getUri(), $model->getKey()) => __('Create'),
                                 ])
                                 ->toArray(),
@@ -168,7 +168,7 @@ trait AsSubResource
         return array_merge($this->toSubResource($request, $model), [
             'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
                                 ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
                                     sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
                                 ])
                                 ->toArray(),
@@ -194,7 +194,7 @@ trait AsSubResource
         return array_merge($this->toSubResource($request, $model), [
             'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
                                 ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => __('Variants'),
+                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
                                     sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
                                     sprintf('%s/%s/%s/edit', $this->getUri(), $model->getKey(), $related->getKey()) => __('Edit'),
                                 ])
