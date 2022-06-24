@@ -6019,11 +6019,6 @@ normalize-url@^6.0.1:
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
 
-normalize.css@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/normalize.css/-/normalize.css-8.0.1.tgz#9b98a208738b9cc2634caacbc42d131c97487bf3"
-  integrity sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg==
-
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"
@@ -7569,12 +7564,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-sprucecss@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-0.6.0.tgz#be516d6cf3ef6a1fad6aa615900c05b91cec450c"
-  integrity sha512-SFLrSzqBUimt/R5rBjVKUXXy3xmXGKi8QqBubvHLZNh7y5tH8nCfOZS3r63gQ3xECLzj+f71ZhdkH8KGWhZY/Q==
-  dependencies:
-    normalize.css "^8.0.1"
+sprucecss@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-0.8.1.tgz#22ecb6eb704ef0737113be73466d3337313f59ee"
+  integrity sha512-Wm0SL6QgrYcCfre9WGRkcNMpq9K+cE7aS1AnPZFBxsMjFQ02EloS/tXxiq5LsYuiVqA0O1cpbeI9TyvDU6i3Lw==
 
 stable@^0.1.8:
   version "0.1.8"

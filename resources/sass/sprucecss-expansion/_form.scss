@@ -3,6 +3,19 @@
 
 .form-group-stack {
     @include spruce.layout-stack(spruce.spacer(s));
+
+    form > & > fieldset {
+        background-color: spruce.color(fieldset-background, form);
+        border: 1px solid spruce.color(border, sidebar);
+        border-radius: spruce.$border-radius-lg;
+        padding: spruce.spacer-clamp(s, m);
+
+        legend {
+            display: flex;
+            float: left;
+            width: 100%;
+        }
+    }
 }
 
 .form {
