@@ -11,6 +11,12 @@
     border-radius: spruce.$border-radius-sm;
     padding-block: 0.75rem;
 
+    &.is-invalid {
+        .media-accrodion__caption {
+            color: spruce.color(danger, alert);
+        }
+    }
+
     &__title {
         color: spruce.color(label, form);
         font-family: spruce.$font-family-base;

@@ -31,10 +31,10 @@
             ></FormHandler>
             <div class="form-group" style="display: flex; justify-content: space-between;">
                 <button type="button" class="btn btn--delete btn--sm btn--tertiary" :disabled="processing" @click="deselect">
-                    {{ __('Remove') }}
+                    {{ __('Remove from Selection') }}
                 </button>
-                <button type="button" class="btn btn--delete btn--sm btn--icon" :disabled="processing" @click="destroy">
-                    <Icon name="delete" class="btn__icon"></Icon>
+                <button type="button" class="btn btn--delete btn--sm" :disabled="processing" @click="destroy">
+                    {{ __('Delete') }}
                 </button>
             </div>
         </div>
