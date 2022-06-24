@@ -1,5 +1,5 @@
 <template>
-    <Accordion :title="item.file_name">
+    <Accordion ref="accordion" :title="item.file_name" :class="{ 'is-invalid': invalid }">
         <template #header>
             <div class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }" v-if="item.is_image">
                 <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
@@ -11,9 +11,8 @@
                 {{ item.file_name }}
             </span>
         </template>
-
         <ul class="media-sidebar__list mt-3 mb-3">
-            <li><strong>{{ __('Created at') }}</strong>: {{ item.created_at }}</li>
+            <li><strong>{{ __('Created At') }}</strong>: {{ item.created_at }}</li>
             <li><strong>{{ __('Size') }}</strong>: {{ size }}</li>
             <li v-if="dimensions">
                 <strong>{{ __('Dimensions') }}</strong>: <span v-html="dimensions"></span>
@@ -69,6 +68,11 @@
         },
 
         computed: {
+            invalid() {
+                return Object.keys(this.$parent.$parent.$parent.$parent.form.errors).some((key) => {
+                    return key.startsWith(`${this.$parent.$parent.$parent.name}.${this.item.id}.`);
+                });
+            },
             size() {
                 if (this.item.size === 0) {
                     return '1 KB';

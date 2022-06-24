@@ -5,7 +5,7 @@
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
         <div>
-            <button type="button" class="btn btn--sm btn--tertiary" @click="$refs.media.open">
+            <button type="button" class="btn btn--sm btn--tertiary" :class="{ 'btn--delete': invalid }" @click="$refs.media.open">
                 {{ __('Select :label', { label }) }}
             </button>
             <Media
@@ -18,12 +18,11 @@
                 @update:modelValue="update"
             ></Media>
         </div>
+        <span class="field-feedback field-feedback--invalid" v-if="invalid">
+            {{ __('The given pivot data is invalid!') }}
+        </span>
         <div class="selected-media-item-list">
-            <div
-                v-for="medium in items"
-                class="selected-media-item"
-                :key="medium.id"
-            >
+            <div v-for="medium in items" class="selected-media-item" :key="medium.id">
                 <button type="button" class="selected-media-item__remove" @click="remove(medium)">
                     <Icon name="close"></Icon>
                 </button>
@@ -40,7 +39,6 @@
                 </span>
             </div>
         </div>
-        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
     </div>
 </template>
 
@@ -103,6 +101,14 @@
             return {
                 items: JSON.parse(JSON.stringify(this.selection)),
             };
+        },
+
+        computed: {
+            invalid() {
+                return Object.keys(this.$parent.form.errors).some((key) => {
+                    return key.startsWith(`${this.name}.`);
+                });
+            },
         },
 
         methods: {
