@@ -3,6 +3,9 @@
 namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Fields\Text;
+use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
 class ActionTest extends TestCase
@@ -61,7 +64,20 @@ class ActionTest extends TestCase
     {
         $this->expectException(QueryResolutionException::class);
 
-        $this->action->resolveQuery($this->request);
+        try {
+            $this->action->resolveQuery($this->request);
+        } finally {
+            //
+        }
+
+        $this->action->withQuery(function () {
+            return Post::query();
+        });
+
+        $this->assertSame(
+            Post::query()->toSql(),
+            $this->action->resolveQuery($this->request)->toSql()
+        );
     }
 
     /** @test */
@@ -82,24 +98,13 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_resolves_fields()
     {
-        $this->assertTrue(true);
-    }
+        $this->action->withFields([
+            Text::make(__('Name')),
+        ]);
 
-    /** @test */
-    public function an_action_has_array_representation()
-    {
-        $this->assertTrue(true);
-    }
-
-    /** @test */
-    public function an_action_has_form_representation()
-    {
-        $this->assertTrue(true);
-    }
-
-    /** @test */
-    public function an_action_has_response_representation()
-    {
-        $this->assertTrue(true);
+        $this->assertSame(
+            Fields::make(array_merge($this->action->fields($this->request), [Text::make(__('Name'))]))->toArray(),
+            $this->action->resolveFields($this->request)->toArray()
+        );
     }
 }
