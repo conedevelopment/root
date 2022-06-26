@@ -38,6 +38,27 @@ class ExtractTest extends TestCase
     }
 
     /** @test */
+    public function an_extract_resolvers_query()
+    {
+        $this->expectException(QueryResolutionException::class);
+
+        try {
+            $this->extract->resolveQuery($this->request);
+        } finally {
+            //
+        }
+
+        $this->extract->withQuery(function () {
+            return Post::query();
+        });
+
+        $this->assertSame(
+            Post::query()->toSql(),
+            $this->extract->resolveQuery($this->request)->toSql()
+        );
+    }
+
+    /** @test */
     public function an_extract_registers_routes()
     {
         $this->app['router']->prefix('posts/extracts')->group(function ($router) {
@@ -105,23 +126,12 @@ class ExtractTest extends TestCase
     }
 
     /** @test */
-    public function an_extract_resolvers_query()
+    public function an_extract_has_array_representation()
     {
-        $this->expectException(QueryResolutionException::class);
-
-        try {
-            $this->extract->resolveQuery($this->request);
-        } finally {
-            //
-        }
-
-        $this->extract->withQuery(function () {
-            return Post::query();
-        });
-
-        $this->assertSame(
-            Post::query()->toSql(),
-            $this->extract->resolveQuery($this->request)->toSql()
-        );
+        $this->assertSame([
+            'key' => $this->extract->getKey(),
+            'name' => $this->extract->getName(),
+            'url' => $this->app['url']->to($this->extract->getUri()),
+        ], $this->extract->toArray());
     }
 }

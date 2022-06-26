@@ -60,7 +60,7 @@ class ActionTest extends TestCase
     }
 
     /** @test */
-    public function an_action_can_throw_query_resolution_exception()
+    public function an_action_resolves_query()
     {
         $this->expectException(QueryResolutionException::class);
 
