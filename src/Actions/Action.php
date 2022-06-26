@@ -273,7 +273,7 @@ abstract class Action implements Arrayable, Responsable
     public function toResponse($request): Response
     {
         return Redirect::back()->with(
-            "alerts.action-{$this->getKey()}",
+            sprintf('alerts.action-%s', $this->getKey()),
             Alert::info(__(':action was successful!' , ['action' => $this->getName()]))
         );
     }

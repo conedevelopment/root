@@ -107,4 +107,41 @@ class ActionTest extends TestCase
             $this->action->resolveFields($this->request)->toArray()
         );
     }
+
+    /** @test */
+    public function an_action_has_array_representation()
+    {
+        $this->assertSame([
+            'confirmable' => $this->action->isConfirmable(),
+            'destructive' => $this->action->isDestructive(),
+            'key' => $this->action->getKey(),
+            'name' => $this->action->getName(),
+            'url' => $this->app['url']->to($this->action->getUri()),
+        ], $this->action->toArray());
+    }
+
+    /** @test */
+    public function an_action_has_form_representation()
+    {
+        $model = new Post();
+
+        $fields = $this->action->resolveFields($this->request)
+                            ->available($this->request, $model)
+                            ->mapToForm($this->request, $model)
+                            ->toArray();
+
+        $this->assertSame(array_merge($this->action->toArray(), [
+            'data' => array_column($fields, 'value', 'name'),
+            'fields' => $fields,
+        ]), $this->action->toForm($this->request, $model));
+    }
+
+    /** @test */
+    public function an_action_has_response_representation()
+    {
+        $response = $this->createTestResponse($this->action->toResponse($this->request));
+
+        $response->assertRedirect()
+                ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));
+    }
 }
