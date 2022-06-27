@@ -12,6 +12,13 @@ use Illuminate\Validation\Rule;
 class UserResource extends Resource
 {
     /**
+     * The icon for the resource.
+     *
+     * @var string
+     */
+    protected string $icon = 'person';
+
+    /**
      * {@inheritdoc}
      */
     public function fields(RootRequest $request): array
