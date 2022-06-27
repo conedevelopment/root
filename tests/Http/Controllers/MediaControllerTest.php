@@ -59,6 +59,13 @@ class MediaControllerTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post('/root/posts/fields/media', [
+                'is_last' => false,
+                'file' => UploadedFile::fake()->image('test.png.chunk'),
+            ])
+            ->assertNoContent();
+
+        $this->actingAs($this->admin)
+            ->post('/root/posts/fields/media', [
                 'file' => UploadedFile::fake()->image('test.png.chunk'),
             ])
             ->assertCreated()

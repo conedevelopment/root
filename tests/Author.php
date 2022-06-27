@@ -25,11 +25,10 @@ class Author extends Model
 
     public function posts()
     {
-        $builder = Mockery::mock(Builder::class)->makePartial();
+        $builder = (new Post())->newQuery();
 
         $builder->shouldReceive('where')->with('posts.author_id', '=', null);
         $builder->shouldReceive('whereNotNull');
-        $builder->shouldReceive('getModel')->andReturn(new Post());
 
         return new HasMany($builder, $this, 'posts.author_id', 'id');
     }
