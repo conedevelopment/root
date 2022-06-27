@@ -4,6 +4,8 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\RecordFactory;
 use Cone\Root\Interfaces\Models\Record as Contract;
+use Cone\Root\Interfaces\Resourceable;
+use Cone\Root\Resources\RecordResource;
 use Cone\Root\Traits\HasUuid;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Record extends Model implements Contract
+class Record extends Model implements Contract, Resourceable
 {
     use HasFactory;
     use HasUuid;
@@ -98,5 +100,15 @@ class Record extends Model implements Contract
     public function target(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\RecordResource
+     */
+    public static function toResource(): RecordResource
+    {
+        return new RecordResource(static::class);
     }
 }
