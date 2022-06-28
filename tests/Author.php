@@ -5,6 +5,7 @@ namespace Cone\Root\Tests;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 
 class Author extends Model
@@ -20,6 +21,7 @@ class Author extends Model
         $builder->setModel($this);
 
         $builder->shouldReceive('get')->andReturn($this->results());
+        $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator($this->results(), 2, 15, 1));
 
         return $builder;
     }
@@ -29,6 +31,11 @@ class Author extends Model
         $builder = (new Post())->newQuery();
 
         return new HasMany($builder, $this, 'posts.author_id', 'id');
+    }
+
+    public function scopeFilter($query)
+    {
+        return $query;
     }
 
     protected function results()

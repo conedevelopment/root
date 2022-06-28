@@ -17,7 +17,7 @@ class BelongsToManyControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->field = new BelongsToMany('tags');
+        $this->field = new BelongsToMany('Tags');
 
         $this->field->withFields([
             Text::make('Name'),
