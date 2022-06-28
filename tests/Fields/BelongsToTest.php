@@ -107,4 +107,16 @@ class BelongsToTest extends TestCase
         $this->assertSame('select * from "authors" where "authors"."name" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());
     }
+
+    /** @test */
+    public function a_belongs_to_field_hydrates_a_model()
+    {
+        $model = new Post();
+
+        $value = Author::query()->get()->first();
+
+        $this->field->resolveHydrate($this->request, $model, $value);
+
+        $this->assertSame($value, $model->getRelation('author'));
+    }
 }
