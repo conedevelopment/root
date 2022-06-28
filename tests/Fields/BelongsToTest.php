@@ -19,9 +19,32 @@ class BelongsToTest extends TestCase
     }
 
     /** @test */
-    public function a_belongs_to_field_has_defaults()
+    public function a_belongs_to_field_has_component()
     {
         $this->assertSame('Select', $this->field->getComponent());
+    }
+
+    /** @test */
+    public function a_belongs_to_field_can_be_async()
+    {
+        $this->assertFalse($this->field->isAsync());
+    }
+
+    /** @test */
+    public function a_belongs_to_field_registers_routes()
+    {
+        $this->field->async();
+
+        $this->app['router']->prefix('posts/fields')->group(function ($router) {
+            $this->field->registerRoutes($this->request, $router);
+        });
+
+        $this->assertSame('posts/fields/author', $this->field->getUri());
+
+        $this->assertArrayHasKey(
+            $this->field->getUri(),
+            $this->app['router']->getRoutes()->get('GET')
+        );
     }
 
     /** @test */

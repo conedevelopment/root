@@ -146,6 +146,16 @@ abstract class Relation extends Field
     }
 
     /**
+     * Determine if the field is nullable.
+     *
+     * @return bool
+     */
+    public function isNullable(): bool
+    {
+        return $this->nullable;
+    }
+
+    /**
      * Set the searachable attribute.
      *
      * @param  bool|\Closure  $value
@@ -241,6 +251,16 @@ abstract class Relation extends Field
         $this->component = $value ? 'AsyncSelect' : 'Select';
 
         return $this;
+    }
+
+    /**
+     * Determine if the field is asnyc.
+     *
+     * @return bool
+     */
+    public function isAsync(): bool
+    {
+        return $this->async;
     }
 
     /**
@@ -390,9 +410,9 @@ abstract class Relation extends Field
     public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'nullable' => $this->nullable,
-            'options' => $this->async ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->async ? URL::to($this->getUri()) : null,
+            'nullable' => $this->isNullable(),
+            'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
+            'url' => $this->isAsync() ? URL::to($this->getUri()) : null,
         ]);
     }
 }
