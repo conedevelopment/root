@@ -24,10 +24,10 @@ class Post extends Model
 
         $builder->setQuery(parent::newQuery()->getQuery());
 
-        $builder->shouldReceive('getModel')->andReturn(new static());
+        $builder->setModel($this);
+
         $builder->shouldReceive('get')->andReturn($this->results());
         $builder->shouldReceive('findMany')->andReturn($this->results());
-        $builder->shouldReceive('latest')->andReturn($builder);
         $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator($this->results(), 2, 15, 1));
 
         return $builder;

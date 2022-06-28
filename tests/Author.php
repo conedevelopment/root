@@ -17,7 +17,8 @@ class Author extends Model
 
         $builder->setQuery(parent::newQuery()->getQuery());
 
-        $builder->shouldReceive('getModel')->andReturn($this);
+        $builder->setModel($this);
+
         $builder->shouldReceive('get')->andReturn($this->results());
 
         return $builder;

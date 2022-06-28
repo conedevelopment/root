@@ -10,7 +10,7 @@ use Mockery;
 
 class Comment extends Model
 {
-    protected $fillable = ['id', 'contebt'];
+    protected $fillable = ['id', 'content'];
 
     public function newQuery()
     {
@@ -18,9 +18,9 @@ class Comment extends Model
 
         $builder->setQuery(parent::newQuery()->getQuery());
 
-        $builder->shouldReceive('getModel')->andReturn($this);
+        $builder->setModel($this);
+
         $builder->shouldReceive('get')->andReturn($this->results());
-        $builder->shouldReceive('latest')->andReturn($builder);
         $builder->shouldReceive('paginate')->andReturn(new LengthAwarePaginator($this->results(), 2, 15, 1));
 
         return $builder;
@@ -42,5 +42,15 @@ class Comment extends Model
             new static(['id' => 1, 'content' => 'Comment One']),
             new static(['id' => 2, 'content' => 'Comment Two']),
         ]);
+    }
+
+    public function save(array $options = [])
+    {
+        $this->setAttribute($this->getKeyName(), 2);
+    }
+
+    public function delete()
+    {
+        //
     }
 }

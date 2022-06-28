@@ -3,7 +3,11 @@
 namespace Cone\Root\Tests\Http\Controllers;
 
 use Cone\Root\Fields\HasMany;
+use Cone\Root\Fields\Text;
+use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
+use Cone\Root\Http\Requests\ShowRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
@@ -16,6 +20,10 @@ class HasOneOrManyControllerTest extends TestCase
         parent::setUp();
 
         $this->field = new HasMany('Comments');
+
+        $this->field->withFields([
+            Text::make('Content'),
+        ]);
 
         $this->field->asSubResource();
 
@@ -45,5 +53,107 @@ class HasOneOrManyControllerTest extends TestCase
                     return empty(array_diff_key($this->field->toIndex($request, new Post()), $props));
                 },
             ]);
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_create()
+    {
+        $request = CreateRequest::createFrom($this->request);
+
+        $request->setRouteResolver(function () {
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/create'];
+        });
+
+        $this->actingAs($this->admin)
+            ->get('/root/posts/fields/comments/1/create')
+            ->assertOk()
+            ->assertViewIs('root::app')
+            ->assertViewHas([
+                'page.component' => 'Relations/Form',
+                'page.props' => function ($props) use ($request) {
+                    return empty(array_diff_key($this->field->toCreate($request, new Post()), $props));
+                },
+            ]);
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_store()
+    {
+        $this->actingAs($this->admin)
+            ->post('/root/posts/fields/comments/1', [
+                'content' => 'New Comment',
+            ])
+            ->assertRedirect('/root/posts/fields/comments/1/2')
+            ->assertSessionHas('alerts.relation-created');
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_show()
+    {
+        $request = ShowRequest::createFrom($this->request);
+
+        $model = Post::query()->get()->first();
+
+        $related = $model->comments()->first();
+
+        $request->setRouteResolver(function () {
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/{rootRelated}'];
+        });
+
+        $this->actingAs($this->admin)
+            ->get('/root/posts/fields/comments/1/1')
+            ->assertOk()
+            ->assertViewIs('root::app')
+            ->assertViewHas([
+                'page.component' => 'Relations/Show',
+                'page.props' => function ($props) use ($request, $model, $related) {
+                    return empty(array_diff_key($this->field->toShow($request, $model, $related), $props));
+                },
+            ]);
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_edit()
+    {
+        $request = UpdateRequest::createFrom($this->request);
+
+        $model = Post::query()->get()->first();
+
+        $related = $model->comments()->first();
+
+        $request->setRouteResolver(function () {
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/{rootRelated}/edit'];
+        });
+
+        $this->actingAs($this->admin)
+            ->get('/root/posts/fields/comments/1/1/edit')
+            ->assertOk()
+            ->assertViewIs('root::app')
+            ->assertViewHas([
+                'page.component' => 'Relations/Form',
+                'page.props' => function ($props) use ($request, $model, $related) {
+                    return empty(array_diff_key($this->field->toEdit($request, $model, $related), $props));
+                },
+            ]);
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_update()
+    {
+        $this->actingAs($this->admin)
+            ->patch('/root/posts/fields/comments/1/2', [
+                'content' => 'New Comment',
+            ])
+            ->assertRedirect('/root/posts/fields/comments/1/2/edit')
+            ->assertSessionHas('alerts.relation-updated');
+    }
+
+    /** @test */
+    public function a_has_one_or_many_controller_has_delete()
+    {
+        $this->actingAs($this->admin)
+            ->delete('/root/posts/fields/comments/1/2')
+            ->assertRedirect('/root/posts/fields/comments/1')
+            ->assertSessionHas('alerts.relation-deleted');
     }
 }
