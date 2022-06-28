@@ -35,7 +35,8 @@ class RecordResource extends Resource
         return array_merge(parent::fields($request), [
             Text::make(__('Event'), 'event'),
             BelongsTo::make(__('User'), 'user')->display('name'),
-            MorphTo::make(__('Target'), 'target'),
+            Text::make(__('Target Type'), 'target_type'),
+            Text::make(__('Target ID'), 'target_id'),
             Date::make(__('Created At'), 'created_at')->withTime(),
         ]);
     }
