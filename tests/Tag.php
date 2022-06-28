@@ -4,13 +4,13 @@ namespace Cone\Root\Tests;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 
-class Comment extends Model
+class Tag extends Model
 {
-    protected $fillable = ['id', 'content'];
+    protected $fillable = ['id', 'name'];
 
     public function newQuery()
     {
@@ -26,18 +26,21 @@ class Comment extends Model
         return $builder;
     }
 
-    public function post()
+    public function posts()
     {
         $builder = (new Post())->newQuery();
 
-        return new BelongsTo($builder, $this, 'foreignKey', 'id', 'post');
+        $builder->shouldReceive('getModels')->andReturn($builder->get()->all());
+
+        return (new BelongsToMany($builder, $this, 'post_tag', 'post_id', 'tag_id', 'id', 'id', 'posts'))
+                    ->using(Pivot::class);
     }
 
     protected function results()
     {
         return collect([
-            new static(['id' => 1, 'content' => 'Comment One']),
-            new static(['id' => 2, 'content' => 'Comment Two']),
+            new static(['id' => 1, 'name' => 'Tag One']),
+            new static(['id' => 2, 'name' => 'Tag Two']),
         ]);
     }
 

@@ -6,6 +6,7 @@ use Cone\Root\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
@@ -37,8 +38,6 @@ class Post extends Model
     {
         $builder = (new Author())->newQuery();
 
-        $builder->shouldReceive('where')->with('authors.id', '=', 'foreign.value');
-
         return new BelongsTo($builder, $this, 'foreignKey', 'id', 'author');
     }
 
@@ -46,10 +45,17 @@ class Post extends Model
     {
         $builder = (new Comment())->newQuery();
 
-        $builder->shouldReceive('where')->with('comments.post_id', '=', null);
-        $builder->shouldReceive('whereNotNull');
-
         return new HasMany($builder, $this, 'comments.post_id', 'id');
+    }
+
+    public function tags()
+    {
+        $builder = (new Tag())->newQuery();
+
+        $builder->shouldReceive('getModels')->andReturn($builder->get()->all());
+
+        return (new BelongsToMany($builder, $this, 'post_tag', 'tag_id', 'post_id', 'id', 'id', 'tags'))
+                    ->using(Pivot::class);
     }
 
     protected function results()
@@ -62,7 +68,7 @@ class Post extends Model
 
     public function save(array $options = [])
     {
-        $this->setAttribute($this->getKeyName(), 2);
+        $this->setAttribute($this->getKeyName(), 1);
     }
 
     public function delete()

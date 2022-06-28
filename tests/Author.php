@@ -28,9 +28,6 @@ class Author extends Model
     {
         $builder = (new Post())->newQuery();
 
-        $builder->shouldReceive('where')->with('posts.author_id', '=', null);
-        $builder->shouldReceive('whereNotNull');
-
         return new HasMany($builder, $this, 'posts.author_id', 'id');
     }
 

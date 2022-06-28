@@ -83,7 +83,7 @@ class HasOneOrManyControllerTest extends TestCase
             ->post('/root/posts/fields/comments/1', [
                 'content' => 'New Comment',
             ])
-            ->assertRedirect('/root/posts/fields/comments/1/2')
+            ->assertRedirect('/root/posts/fields/comments/1/1')
             ->assertSessionHas('alerts.relation-created');
     }
 
@@ -141,10 +141,10 @@ class HasOneOrManyControllerTest extends TestCase
     public function a_has_one_or_many_controller_has_update()
     {
         $this->actingAs($this->admin)
-            ->patch('/root/posts/fields/comments/1/2', [
+            ->patch('/root/posts/fields/comments/1/1', [
                 'content' => 'New Comment',
             ])
-            ->assertRedirect('/root/posts/fields/comments/1/2/edit')
+            ->assertRedirect('/root/posts/fields/comments/1/1/edit')
             ->assertSessionHas('alerts.relation-updated');
     }
 
@@ -152,7 +152,7 @@ class HasOneOrManyControllerTest extends TestCase
     public function a_has_one_or_many_controller_has_delete()
     {
         $this->actingAs($this->admin)
-            ->delete('/root/posts/fields/comments/1/2')
+            ->delete('/root/posts/fields/comments/1/1')
             ->assertRedirect('/root/posts/fields/comments/1')
             ->assertSessionHas('alerts.relation-deleted');
     }
