@@ -60,16 +60,16 @@ class ActionTest extends TestCase
     }
 
     /** @test */
-    public function an_action_resolves_query()
+    public function an_action_throws_exception_if_cant_resolve_query()
     {
         $this->expectException(QueryResolutionException::class);
 
-        try {
-            $this->action->resolveQuery($this->request);
-        } finally {
-            //
-        }
+        $this->action->resolveQuery($this->request);
+    }
 
+    /** @test */
+    public function an_action_resolves_query()
+    {
         $this->action->withQuery(function () {
             return Post::query();
         });

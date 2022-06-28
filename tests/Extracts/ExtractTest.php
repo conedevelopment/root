@@ -38,16 +38,16 @@ class ExtractTest extends TestCase
     }
 
     /** @test */
-    public function an_extract_resolvers_query()
+    public function an_extract_throws_exception_if_cant_resolve_query()
     {
         $this->expectException(QueryResolutionException::class);
 
-        try {
-            $this->extract->resolveQuery($this->request);
-        } finally {
-            //
-        }
+        $this->extract->resolveQuery($this->request);
+    }
 
+    /** @test */
+    public function an_extract_resolvers_query()
+    {
         $this->extract->withQuery(function () {
             return Post::query();
         });
