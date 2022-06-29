@@ -65,6 +65,16 @@ class Editor extends Field
     }
 
     /**
+     * Get the editor configuration.
+     *
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
      * Configure the media field.
      *
      * @param  \Closure|null  $callback
@@ -85,6 +95,16 @@ class Editor extends Field
         }
 
         return $this;
+    }
+
+    /**
+     * Get the media field.
+     *
+     * @return \Cone\Root\Fields\Media|null
+     */
+    public function getMedia(): ?Media
+    {
+        return $this->media;
     }
 
     /**
