@@ -19,7 +19,7 @@ class HasManyTest extends TestCase
     }
 
     /** @test */
-    public function a_has_many_field_has_defaults()
+    public function a_has_many_field_has_select_component()
     {
         $this->assertSame('Select', $this->field->getComponent());
     }

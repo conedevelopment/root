@@ -17,7 +17,7 @@ class EditorTest extends TestCase
     }
 
     /** @test */
-    public function an_editor_field_has_defaults()
+    public function an_editor_field_has_editor_component()
     {
         $this->assertSame('Editor', $this->field->getComponent());
     }

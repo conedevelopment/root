@@ -18,7 +18,7 @@ class SelectTest extends TestCase
     }
 
     /** @test */
-    public function a_select_field_has_defaults()
+    public function a_select_field_has_select_component()
     {
         $this->assertSame('Select', $this->field->getComponent());
     }

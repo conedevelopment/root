@@ -19,7 +19,7 @@ class BelongsToTest extends TestCase
     }
 
     /** @test */
-    public function a_belongs_to_field_has_component()
+    public function a_belongs_to_field_has_select_component()
     {
         $this->assertSame('Select', $this->field->getComponent());
     }

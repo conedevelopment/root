@@ -19,7 +19,7 @@ class DateTest extends TestCase
     }
 
     /** @test */
-    public function a_date_field_has_component()
+    public function a_date_field_has_datetime_component()
     {
         $this->assertSame('DateTime', $this->field->getComponent());
     }

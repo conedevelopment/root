@@ -17,10 +17,9 @@ class NumberTest extends TestCase
     }
 
     /** @test */
-    public function a_number_field_has_defaults()
+    public function a_number_field_has_number_type()
     {
         $this->assertSame('number', $this->field->type);
-        $this->assertSame('Input', $this->field->getComponent());
     }
 
     /** @test */

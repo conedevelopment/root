@@ -17,10 +17,9 @@ class TextTest extends TestCase
     }
 
     /** @test */
-    public function a_text_field_has_defaults()
+    public function a_text_field_has_text_type()
     {
         $this->assertSame('text', $this->field->type);
-        $this->assertSame('Input', $this->field->getComponent());
     }
 
     /** @test */
