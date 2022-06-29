@@ -68,7 +68,21 @@ class JsonTest extends TestCase
             'formatted_value' => $data,
             'value' => $data,
             'fields' => [$field->toInput($this->request, TemporaryJson::make()->forceFill($data))],
-            'with_legend' => true,
         ], $this->field->toInput($this->request, $model));
+    }
+
+    /** @test */
+    public function a_json_field_has_custom_validation()
+    {
+        $model = new Post();
+
+        $field = Number::make('Quantity')->rules(['required']);
+
+        $this->field->withFields([$field]);
+
+        $this->assertSame(
+            ['inventory' => [], 'inventory.quantity' => ['required']],
+            $this->field->toValidate($this->request, $model)
+        );
     }
 }

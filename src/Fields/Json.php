@@ -25,26 +25,6 @@ class Json extends Field
     protected string $component = 'Json';
 
     /**
-     * Indicates of the fieldset legend is visible.
-     *
-     * @var bool
-     */
-    protected bool $withLegend = true;
-
-    /**
-     * Set the with legend attribute.
-     *
-     * @param  bool  $value
-     * @return $this
-     */
-    public function withLegend(bool $value = true): static
-    {
-        $this->withLegend = $value;
-
-        return $this;
-    }
-
-    /**
      * Handle the resolving event on the field instance.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
@@ -96,7 +76,6 @@ class Json extends Field
             'fields' => $fields,
             'formatted_value' => array_column($fields, 'formatted_value', 'name'),
             'value' => array_column($fields, 'value', 'name'),
-            'with_legend' => $this->withLegend,
         ]);
     }
 

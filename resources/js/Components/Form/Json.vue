@@ -1,6 +1,6 @@
 <template>
     <fieldset>
-        <legend v-if="with_legend">{{ label }}</legend>
+        <legend>{{ label }}</legend>
         <div class="form-group-stack">
             <FormHandler
                 v-for="field in fields"
@@ -33,10 +33,6 @@
             name: {
                 type: String,
                 required: true,
-            },
-            with_legend: {
-                type: Boolean,
-                default: true,
             },
         },
 
