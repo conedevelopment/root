@@ -4,7 +4,7 @@
 .form-group-stack {
     @include spruce.layout-stack(spruce.spacer(s));
 
-    form > & > fieldset {
+    fieldset.is-json:not(.form-group-stack) {
         background-color: spruce.color(fieldset-background, form);
         border: 1px solid spruce.color(border, sidebar);
         border-radius: spruce.$border-radius-lg;
@@ -14,6 +14,12 @@
             display: flex;
             float: left;
             width: 100%;
+        }
+    }
+
+    fieldset.is-json.form-group-stack {
+        > legend {
+            display: none;
         }
     }
 }

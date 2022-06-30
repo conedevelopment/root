@@ -1,5 +1,5 @@
 <template>
-    <fieldset>
+    <fieldset class="is-json" :class="class" :style="style">
         <legend>{{ label }}</legend>
         <div class="form-group-stack">
             <FormHandler
@@ -18,6 +18,14 @@
 <script>
     export default {
         props: {
+            class: {
+                type: [String, Array, Object],
+                default: null,
+            },
+            style: {
+                type: [String, Array, Object],
+                default: null,
+            },
             modelValue: {
                 type: [Object, Array],
                 default: () => [],
