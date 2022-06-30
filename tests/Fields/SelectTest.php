@@ -26,15 +26,15 @@ class SelectTest extends TestCase
     /** @test */
     public function a_select_field_has_options()
     {
-        $author = new Author();
+        $model = new Author();
 
-        $this->assertEmpty($this->field->resolveOptions($this->request, $author));
+        $this->assertEmpty($this->field->resolveOptions($this->request, $model));
 
         $this->field->options(['key' => 'value']);
 
         $this->assertSame(
             [['value' => 'key', 'formatted_value' => 'value']],
-            $this->field->resolveOptions($this->request, $author)
+            $this->field->resolveOptions($this->request, $model)
         );
     }
 }
