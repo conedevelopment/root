@@ -68,6 +68,8 @@ class Post extends Model
 
     public function save(array $options = [])
     {
+        $this->fireModelEvent('saving');
+
         $this->setAttribute($this->getKeyName(), 1);
     }
 

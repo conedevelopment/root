@@ -535,11 +535,30 @@ abstract class Field implements Arrayable
      */
     public function resolveAttributes(RootRequest $request, Model $model): array
     {
-        return array_map(static function (mixed $attribute) use ($request, $model): mixed {
-            return $attribute instanceof Closure
-                ? call_user_func_array($attribute, [$request, $model])
-                : $attribute;
-        }, $this->attributes);
+        return array_reduce(
+            array_keys($this->attributes),
+            function (array $attributes, string $key) use ($request, $model): mixed {
+                return array_merge($attributes, [$key => $this->resolveAttribute($request, $model, $key)]);
+            },
+            []
+        );
+    }
+
+    /**
+     * Resolve the given attribute.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $key
+     * @return mixed
+     */
+    public function resolveAttribute(RootRequest $request, Model $model, string $key): mixed
+    {
+        $value = $this->getAttribute($key);
+
+        return $value instanceof Closure
+                ? call_user_func_array($value, [$request, $model])
+                : $value;
     }
 
     /**
