@@ -16,7 +16,7 @@ return new class() extends Migration
         Schema::create('root_records', static function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->nullableMorphs('target');
+            $table->nullableUuidMorphs('target');
             $table->string('event');
             $table->text('description')->nullable();
             $table->json('properties')->nullable();
