@@ -24,7 +24,6 @@
                     v-for="filter in filters"
                     v-bind="filter"
                     v-model="query[filter.key]"
-                    v-debounce="300"
                     :form="query"
                     :key="filter.key"
                     :name="filter.key"

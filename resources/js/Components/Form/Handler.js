@@ -71,7 +71,7 @@ export default {
             name: this.name,
             modelValue: this.modelValue,
             error: this.form.errors[this.name],
-            disabled: this.form.processing || ! [undefined, 'false', false].includes(this.$attrs.disabled),
+            readonly: this.form.processing || ! [undefined, 'false', false].includes(this.$attrs.readonly),
             required: ! [undefined, 'false', false].includes(this.$attrs.required),
             'onUpdate:modelValue': debounce((value) => {
                 this.$emit('update:modelValue', value);

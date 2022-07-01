@@ -92,7 +92,7 @@ class Search extends Filter
     public function toInput(RootRequest $request): array
     {
         return array_merge(parent::toInput($request), [
-            'debounce' => 300,
+            'debounce' => 1000,
         ]);
     }
 }
