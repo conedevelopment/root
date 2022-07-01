@@ -1,9 +1,12 @@
 <template>
     <div class="modal-footer">
         <div>
-            <span v-show="$parent.selection.length" class="modal-help-text">
-                {{ __(':files files selected', { files: $parent.selection.length }) }}
-            </span>
+            <input
+                multiple
+                type="file"
+                :disabled="$parent.processing"
+                @change="$parent.handleFiles($event.target.files)"
+            >
         </div>
         <div class="modal-footer-actions">
             <button type="button" class="btn btn--primary" :disabled="$parent.processing" @click="$parent.updateSelection">
