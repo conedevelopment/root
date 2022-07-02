@@ -10,7 +10,7 @@ use Cone\Root\Tests\TestCase;
 
 class FieldTest extends TestCase
 {
-    protected $fiel;
+    protected $field;
 
     public function setUp(): void
     {
