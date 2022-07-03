@@ -50,15 +50,26 @@ class MediumTest extends TestCase
     }
 
     /** @test */
-    public function a_medium_has_query_scopes()
+    public function a_medium_has_search_query_scope()
     {
         $query = Medium::query()->search('test');
+
         $this->assertSame(
             'select * from "root_media" where "root_media"."name" like ?',
             $query->toSql()
         );
+
         $this->assertSame(['%test%'], $query->getBindings());
 
+        $this->assertSame(
+            'select * from "root_media"',
+            Medium::query()->search()->toSql()
+        );
+    }
+
+    /** @test */
+    public function a_medium_has_type_query_scope()
+    {
         $query = Medium::query()->type('file');
         $this->assertSame(
             'select * from "root_media" where "root_media"."mime_type" not like ?',
@@ -72,5 +83,10 @@ class MediumTest extends TestCase
             $query->toSql()
         );
         $this->assertSame(['image%'], $query->getBindings());
+
+        $this->assertSame(
+            'select * from "root_media"',
+            Medium::query()->type('test')->toSql()
+        );
     }
 }
