@@ -234,7 +234,7 @@
 
     &__remove {
         align-items: center;
-        background-color: rgba(spruce.color(danger, alert), 0.8);
+        background-color: rgba(spruce.color(danger, alert, $only-color: true), 0.8);
         border: 0;
         border-radius: spruce.$border-radius-sm;
         display: flex;
