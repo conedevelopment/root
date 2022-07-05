@@ -89,4 +89,13 @@ class MediumTest extends TestCase
             Medium::query()->type('test')->toSql()
         );
     }
+
+    /** @test */
+    public function a_medium_has_sort_query_scope()
+    {
+        $this->assertSame(
+            'select * from "root_media" order by "root_media"."id" desc',
+            Medium::query()->sort()->toSql()
+        );
+    }
 }
