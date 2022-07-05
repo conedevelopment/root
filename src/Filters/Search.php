@@ -45,31 +45,31 @@ class Search extends Filter
      */
     public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
-        if (empty($value)) {
+        $attributes = $this->mapColumns();
+
+        if (empty($value) || empty($attributes)) {
             return $query;
         }
 
-        $attributes = $this->mapColumns();
+        return $query->where(static function (Builder $query) use ($attributes, $value): void {
+            foreach ($attributes as $attribute => $columns) {
+                $boolean = array_key_first($attributes) === $attribute ? 'and' : 'or';
 
-        foreach ($attributes as $attribute => $columns) {
-            $boolean = array_key_first($attributes) === $attribute ? 'and' : 'or';
+                if (is_array($columns)) {
+                    $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
+                        foreach ($columns as $column) {
+                            $boolean = $columns[0] === $column ? 'and' : 'or';
 
-            if (is_array($columns)) {
-                $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
-                    foreach ($columns as $column) {
-                        $boolean = $columns[0] === $column ? 'and' : 'or';
+                            $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
+                        }
 
-                        $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
-                    }
-
-                    return $query;
-                });
-            } else {
-                $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $boolean);
+                        return $query;
+                    });
+                } else {
+                    $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $boolean);
+                }
             }
-        }
-
-        return $query;
+        });
     }
 
     /**
