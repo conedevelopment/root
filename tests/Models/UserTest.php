@@ -4,7 +4,7 @@ namespace Cone\Root\Tests\Models;
 
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\Record;
-use Cone\Root\Models\User;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
 
 class UserTest extends TestCase
@@ -27,5 +27,11 @@ class UserTest extends TestCase
         );
 
         $this->assertTrue($this->admin->records->pluck('id')->contains($record->id));
+    }
+
+    /** @test */
+    public function a_user_has_resource_representation()
+    {
+        $this->assertInstanceOf(Resource::class, $this->admin->toResource());
     }
 }
