@@ -53,15 +53,17 @@ class Search extends Filter
 
         return $query->where(static function (Builder $query) use ($attributes, $value): void {
             foreach ($attributes as $attribute => $columns) {
+                $hasBoolean = array_key_first($attributes) === $attribute ? 'and' : 'or';
+
                 if (! is_array($columns)) {
                     $columns = [$columns];
                 }
 
-                $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
+                $query->has($attribute, '>=', 1, $hasBoolean, static function (Builder $query) use ($columns, $value): Builder {
                     foreach ($columns as $column) {
-                        $boolean = $columns[0] === $column ? 'and' : 'or';
+                        $whereBoolean = $columns[0] === $column ? 'and' : 'or';
 
-                        $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
+                        $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $whereBoolean);
                     }
 
                     return $query;
