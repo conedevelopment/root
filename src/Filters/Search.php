@@ -55,19 +55,20 @@ class Search extends Filter
             foreach ($attributes as $attribute => $columns) {
                 $boolean = array_key_first($attributes) === $attribute ? 'and' : 'or';
 
-                if (is_array($columns)) {
-                    $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
-                        foreach ($columns as $column) {
-                            $boolean = $columns[0] === $column ? 'and' : 'or';
-
-                            $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
-                        }
-
-                        return $query;
-                    });
-                } else {
+                if (! is_array($columns)) {
                     $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $boolean);
+                    continue;
                 }
+
+                $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
+                    foreach ($columns as $column) {
+                        $boolean = $columns[0] === $column ? 'and' : 'or';
+
+                        $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
+                    }
+
+                    return $query;
+                });
             }
         });
     }
