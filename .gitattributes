@@ -10,5 +10,6 @@
 /js-tests export-ignore
 /phpstan.neon.dist export-ignore
 /phpunit.xml.dist export-ignore
+/tests export-ignore
 /yarn.lock export-ignore
 /webpack.mix.js export-ignore
