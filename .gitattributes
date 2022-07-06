@@ -1,2 +1,14 @@
+/.babelrc export-ignore
+/.editorconfig export-ignore
+/.eslintrc.js export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.vscode export-ignore
 /composer.lock export-ignore
+/jest.config.js export-ignore
+/js-tests export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml.dist export-ignore
 /yarn.lock export-ignore
+/webpack.mix.js export-ignore
