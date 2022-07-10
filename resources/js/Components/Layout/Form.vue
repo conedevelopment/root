@@ -39,6 +39,20 @@
             },
         },
 
+        mounted() {
+            window.addEventListener('beforeunload', (event) => {
+                if (this.form.isDirty) {
+                    event.preventDefault();
+                }
+            });
+
+            this.$inertia.on('before', (event) => {
+                if (this.form.isDirty && event.detail.visit.method === 'get') {
+                    return window.confirm(this.__('You may have unsaved form data. Are you sure you want to navigate away?'));
+                }
+            });
+        },
+
         data() {
             return {
                 form: this.$inertia.form(Object.assign({}, this.model.data)),
