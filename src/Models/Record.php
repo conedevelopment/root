@@ -40,7 +40,6 @@ class Record extends Model implements Contract, Resourceable
         'properties' => 'json',
     ];
 
-
     /**
      * The "type" of the primary key ID.
      *
