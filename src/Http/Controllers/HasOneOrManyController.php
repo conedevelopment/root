@@ -64,7 +64,9 @@ class HasOneOrManyController extends Controller
 
         $relation = $field->getRelation($model);
 
-        $related = $relation->getRelated();
+        $related = tap($relation->getRelated(), static function (Model $related) use ($model): void {
+            $related->setRelation('parent', $model);
+        });
 
         $fields = $field->resolveFields($request)->available($request, $model, $related);
 
@@ -132,7 +134,9 @@ class HasOneOrManyController extends Controller
     {
         $field = $request->resolved();
 
-        $related = $field->getRelation($model)->findOrFail($id);
+        $related = tap($field->getRelation($model)->findOrFail($id), static function (Model $related) use ($model): void {
+            $related->setRelation('parent', $model);
+        });
 
         $fields = $field->resolveFields($request)->available($request, $model, $related);
 
