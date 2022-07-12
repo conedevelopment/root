@@ -14,7 +14,7 @@ trait HasMeta
      */
     public function metas(): MorphMany
     {
-        return $this->morphMany(Meta::class, 'metable');
+        return $this->morphMany(Meta::getProxiedClass(), 'metable');
     }
 
     /**
