@@ -24,6 +24,26 @@ class SelectTest extends TestCase
     }
 
     /** @test */
+    public function a_select_field_can_be_nullable()
+    {
+        $this->assertFalse($this->field->isNullable());
+
+        $this->field->nullable();
+
+        $this->assertTrue($this->field->isNullable());
+    }
+
+    /** @test */
+    public function a_select_field_can_be_multiple()
+    {
+        $this->assertNull($this->field->multiple);
+
+        $this->field->multiple();
+
+        $this->assertTrue($this->field->multiple);
+    }
+
+    /** @test */
     public function a_select_field_has_options()
     {
         $model = new Author();

@@ -5,6 +5,7 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Select extends Field
 {
@@ -40,6 +41,27 @@ class Select extends Field
         $this->nullable = $value;
 
         return $this;
+    }
+
+    /**
+     * Determine if the field is nullable.
+     *
+     * @return bool
+     */
+    public function isNullable(): bool
+    {
+        return $this->nullable;
+    }
+
+    /**
+     * Set the multiple attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function multiple(bool $value = true): static
+    {
+        return $this->setAttribute('multiple', $value);
     }
 
     /**
@@ -99,7 +121,11 @@ class Select extends Field
                     $this->resolveOptions($request, $model), 'formatted_value', 'value'
                 );
 
-                return $options[$value] ?? $value;
+                $value = array_map(static function (mixed $value) use ($options): mixed {
+                    return $options[$value] ?? $value;
+                }, Arr::wrap($value));
+
+                return implode(', ', $value);
             };
         }
 
