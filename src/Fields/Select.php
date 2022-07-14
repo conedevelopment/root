@@ -138,7 +138,7 @@ class Select extends Field
     public function toInput(RootRequest $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'nullable' => $this->nullable,
+            'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
         ]);
     }
