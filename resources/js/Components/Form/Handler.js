@@ -4,6 +4,7 @@ import AsyncSelect from './AsyncSelect';
 import Checkbox from './Checkbox';
 import DateTime from './DateTime';
 import Editor from './Editor';
+import Fieldset from './Fieldset';
 import Hidden from './Hidden';
 import Input from './Input';
 import Json from './Json';
@@ -23,6 +24,7 @@ export default {
         Checkbox,
         DateTime,
         Editor,
+        Fieldset,
         Hidden,
         Input,
         Json,

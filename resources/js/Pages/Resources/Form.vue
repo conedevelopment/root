@@ -12,6 +12,8 @@
 <script>
     import Form from './../../Components/Layout/Form';
 
+    let key = new Date().getTime();
+
     export default {
         props: {
             model: {
@@ -25,8 +27,12 @@
         },
 
         layout: function (h, page) {
+            if (Object.keys(page.props.errors).length === 0) {
+                key = new Date().getTime();
+            }
+
             return h(this.resolveDefaultLayout(), () => h(Form, {
-                key: new Date().getTime(),
+                key: key,
                 model: page.props.model,
                 model_name: page.props.model.exists ? page.props.resource.model_name : page.props.resource.name,
             }, () => page));
