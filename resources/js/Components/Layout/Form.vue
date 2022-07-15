@@ -46,16 +46,22 @@
                 }
             });
 
-            this.$inertia.on('before', (event) => {
+            this.notifier = this.$inertia.on('before', (event) => {
                 if (this.form.isDirty && event.detail.visit.method === 'get') {
                     return window.confirm(this.__('You may have unsaved form data. Are you sure you want to navigate away?'));
                 }
             });
         },
 
+        beforeUnmount() {
+            this.notifier.call();
+            this.notifier = null;
+        },
+
         data() {
             return {
                 form: this.$inertia.form(Object.assign({}, this.model.data)),
+                notifier: null,
             };
         },
 
