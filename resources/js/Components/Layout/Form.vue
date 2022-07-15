@@ -40,11 +40,7 @@
         },
 
         mounted() {
-            window.addEventListener('beforeunload', (event) => {
-                if (this.form.isDirty) {
-                    event.preventDefault();
-                }
-            });
+            window.addEventListener('beforeunload', this.onBeforeunload);
 
             this.notifier = this.$inertia.on('before', (event) => {
                 if (this.form.isDirty && event.detail.visit.method === 'get') {
@@ -56,6 +52,7 @@
         beforeUnmount() {
             this.notifier.call();
             this.notifier = null;
+            window.removeEventListener('beforeunload', this.onBeforeunload);
         },
 
         data() {
@@ -72,6 +69,11 @@
         },
 
         methods: {
+            onBeforeunload(event) {
+                if (this.form.isDirty) {
+                    event.preventDefault();
+                }
+            },
             submit() {
                 this.form.submit(this.method, this.model.url, {
                     onStart: () => {
