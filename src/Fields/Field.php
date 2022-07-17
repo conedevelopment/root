@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Composer\DependencyResolver\Request;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
@@ -602,6 +603,18 @@ abstract class Field implements Arrayable
             'formatted_value' => $this->resolveFormat($request, $model),
             'value' => $this->resolveValue($request, $model),
         ]);
+    }
+
+    /**
+     * Get the form data representation of the field.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return array
+     */
+    public function toFormData(RootRequest $request, Model $model): array
+    {
+        return [$this->getKey() => $this->resolveValue($request, $model)];
     }
 
     /**

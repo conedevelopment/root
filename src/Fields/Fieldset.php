@@ -25,9 +25,22 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(RootRequest $request, Model $model): mixed
+    public function persist(RootRequest $request, Model $model): void
     {
-        return null;
+        $this->resolveFields($request)
+            ->available($request, $model)
+            ->each
+            ->persist($request, $model);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toFormData(RootRequest $request, Model $model): array
+    {
+        return $this->resolveFields($request)
+                    ->available($request, $model)
+                    ->mapToFormData($request, $model);
     }
 
     /**
