@@ -73,20 +73,6 @@ class Fields extends Collection
     }
 
     /**
-     * Map the fields to form data.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
-     */
-    public function mapToFormData(RootRequest $request, Model $model): array
-    {
-        return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
-            return array_merge($rules, $field->toFormData($request, $model));
-        }, []);
-    }
-
-    /**
      * Map the fields to validate.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request

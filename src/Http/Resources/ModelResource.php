@@ -70,9 +70,11 @@ class ModelResource extends JsonResource
      */
     public function toForm(ResourceRequest $request, Fields $fields): array
     {
+        $fields = $fields->mapToForm($request, $this->resource)->toArray();
+
         return array_merge($this->toArray($request), [
-            'data' => $fields->mapToFormData($request, $this->resource),
-            'fields' => $fields->mapToForm($request, $this->resource)->toArray(),
+            'data' => array_column($fields, 'value', 'name'),
+            'fields' => $fields,
         ]);
     }
 
