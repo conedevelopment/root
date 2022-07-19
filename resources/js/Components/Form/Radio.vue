@@ -11,7 +11,12 @@
                 v-model="_value"
                 :value="option.value"
             >
-            <span class="form-check__label" v-html="option.formatted_value"></span>
+            <span
+                class="field-feedback"
+                :class="{ 'field-feedback--invalid': error !== null }"
+                v-if="error !== null || help"
+                v-html="error || help"
+            ></span>
         </label>
     </div>
 </template>
@@ -51,6 +56,10 @@
             options: {
                 type: Array,
                 default: () => [],
+            },
+            help: {
+                type: String,
+                default: null,
             },
         },
 

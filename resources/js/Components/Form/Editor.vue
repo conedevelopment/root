@@ -12,7 +12,12 @@
             :title="__('Media')"
             :select-resolver="selectResolver"
         ></Media>
-        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': error !== null }"
+            v-if="error !== null || help"
+            v-html="error || help"
+        ></span>
     </div>
 </template>
 
@@ -69,6 +74,10 @@
             config: {
                 type: Object,
                 requried: true,
+            },
+            help: {
+                type: String,
+                default: '',
             },
         },
 

@@ -21,7 +21,12 @@
                 {{ option.formatted_value }}
             </option>
         </select>
-        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': error !== null }"
+            v-if="error !== null || help"
+            v-html="error || help"
+        ></span>
     </div>
 </template>
 
@@ -53,6 +58,10 @@
                 required: true,
             },
             error: {
+                type: String,
+                default: null,
+            },
+            help: {
                 type: String,
                 default: null,
             },

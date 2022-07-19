@@ -291,10 +291,13 @@ class FieldTest extends TestCase
     {
         $model = new Post(['title' => 'Test Post']);
 
+        $this->field->help('Note');
+
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
                 'component' => $this->field->getComponent(),
                 'formatted_value' => $model->title,
+                'help' => 'Note',
                 'value' => $model->title,
             ]),
             $this->field->toInput($this->request, $model)

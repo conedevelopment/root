@@ -21,7 +21,12 @@
                 :class="{ 'form-control--invalid': error !== null }"
             >
         </div>
-        <span class="field-feedback field-feedback--invalid" v-if="error">{{ error }}</span>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': error !== null }"
+            v-if="error !== null || help"
+            v-html="error || help"
+        ></span>
     </div>
 </template>
 
@@ -57,6 +62,10 @@
                 default: null,
             },
             formatted_value: {
+                type: String,
+                default: null,
+            },
+            help: {
                 type: String,
                 default: null,
             },

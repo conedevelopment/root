@@ -81,6 +81,13 @@ abstract class Field implements Arrayable
     protected string $component = 'Input';
 
     /**
+     * The help text for the field.
+     *
+     * @var string|null
+     */
+    protected ?string $help = null;
+
+    /**
      * Create a new field instance.
      *
      * @param  string  $label
@@ -359,6 +366,19 @@ abstract class Field implements Arrayable
     }
 
     /**
+     * Set the help attribute.
+     *
+     * @param  string|null  $value
+     * @return $this
+     */
+    public function help(?string $value = null): static
+    {
+        $this->help = $value;
+
+        return $this;
+    }
+
+    /**
      * Set the value resolver.
      *
      * @param  \Closure  $callback
@@ -600,6 +620,7 @@ abstract class Field implements Arrayable
         return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
             'formatted_value' => $this->resolveFormat($request, $model),
+            'help' => $this->help,
             'value' => $this->resolveValue($request, $model),
         ]);
     }

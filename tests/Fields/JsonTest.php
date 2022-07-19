@@ -66,6 +66,7 @@ class JsonTest extends TestCase
             'id' => 'inventory',
             'component' => 'Json',
             'formatted_value' => $data,
+            'help' => null,
             'value' => $data,
             'fields' => [$field->toInput($this->request, TemporaryJson::make()->forceFill($data))],
         ], $this->field->toInput($this->request, $model));

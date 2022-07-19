@@ -18,9 +18,12 @@
                 @update:modelValue="update"
             ></Media>
         </div>
-        <span class="field-feedback field-feedback--invalid" v-if="invalid">
-            {{ __('The given pivot data is invalid!') }}
-        </span>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': invalid }"
+            v-if="invalid || help"
+            v-html="invalid ? __('The given pivot data is invalid!') : help"
+        ></span>
         <div class="selected-media-item-list">
             <div v-for="medium in items" class="selected-media-item" :key="medium.id">
                 <button type="button" class="selected-media-item__remove" @click="remove(medium)">
@@ -86,6 +89,10 @@
             multiple: {
                 type: Boolean,
                 default: false,
+            },
+            help: {
+                type: String,
+                default: null,
             },
         },
 

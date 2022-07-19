@@ -24,6 +24,12 @@
             >
             <span class="form-check__label">{{ label }}</span>
         </label>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': error !== null }"
+            v-if="error !== null || help"
+            v-html="error || help"
+        ></span>
     </div>
 </template>
 
@@ -66,6 +72,10 @@
             options: {
                 type: Array,
                 default: () => [],
+            },
+            help: {
+                type: String,
+                default: null,
             },
         },
 
