@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\URL;
 
 trait AsSubResource
 {
+    use MapsAbilities;
     use ResolvesActions;
     use ResolvesBreadcrumbs;
     use ResolvesFields;
@@ -88,6 +89,16 @@ trait AsSubResource
     }
 
     /**
+     * Get the mappable abilities.
+     *
+     * @return array
+     */
+    public function getAbilities(): array
+    {
+        return ['viewAny', 'create'];
+    }
+
+    /**
      * Get the sub resource representation of the field.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
@@ -99,7 +110,10 @@ trait AsSubResource
         return [
             'resource' => $request->resource()->toArray(),
             'field' => [
-                // 'abilities' => [],
+                'abilities' => $this->mapAbilities(
+                    $request,
+                    $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->resource,
+                ),
                 'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
                 'name' => $this->label,
                 'related_name' => $this->getRelatedName(),

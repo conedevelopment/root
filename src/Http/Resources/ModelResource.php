@@ -4,32 +4,23 @@ namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\MapsAbilities;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 class ModelResource extends JsonResource
 {
+    use MapsAbilities;
+
     /**
-     * Map the abilities for the model.
+     * Get the mappable abilities.
      *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return array
      */
-    protected function mapAbilities(ResourceRequest $request): array
+    public function getAbilities(): array
     {
-        $policy = Gate::getPolicyFor($this->resource);
-
-        return array_reduce(
-            ['view', 'update', 'delete', 'restore', 'forceDelete'],
-            function (array $stack, string $ability) use ($request, $policy): array {
-                return array_merge($stack, [
-                    $ability => is_null($policy) || $request->user()->can($ability, $this->resource),
-                ]);
-            },
-            []
-        );
+        return ['view', 'update', 'delete', 'restore', 'forceDelete'];
     }
 
     /**
@@ -87,7 +78,7 @@ class ModelResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'abilities' => $this->mapAbilities($request),
+            'abilities' => $this->mapAbilities($request, $this->resource),
             'exists' => $this->resource->exists,
             'id' => $this->resource->getKey(),
             'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->resource)) && $this->resource->trashed(),

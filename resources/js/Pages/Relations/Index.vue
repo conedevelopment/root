@@ -2,7 +2,7 @@
     <div>
         <div class="app-operation">
             <div class="app-operation__edit">
-                <Link class="btn btn--sm btn--tertiary" :href="`${field.url}/create`">
+                <Link v-if="field.abilities.create" class="btn btn--sm btn--tertiary" :href="`${field.url}/create`">
                     {{ __('Add :model', { model: field.related_name }) }}
                 </Link>
             </div>

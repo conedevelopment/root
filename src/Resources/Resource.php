@@ -20,6 +20,7 @@ use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Root;
 use Cone\Root\Support\Breadcrumbs;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesBreadcrumbs;
 use Cone\Root\Traits\ResolvesExtracts;
@@ -33,7 +34,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use JsonSerializable;
@@ -41,6 +41,7 @@ use JsonSerializable;
 class Resource implements Arrayable, Jsonable, JsonSerializable
 {
     use Authorizable;
+    use MapsAbilities;
     use ResolvesActions;
     use ResolvesExtracts;
     use ResolvesFields;
@@ -137,16 +138,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function getModelInstance(): Model
     {
         return new ($this->getModel());
-    }
-
-    /**
-     * Get the policy.
-     *
-     * @return mixed
-     */
-    public function getPolicy(): mixed
-    {
-        return Gate::getPolicyFor($this->getModel());
     }
 
     /**
@@ -320,27 +311,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Map the abilities.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
-     */
-    public function mapAbilities(RootRequest $request): array
-    {
-        $policy = Gate::getPolicyFor($this->getModel());
-
-        return array_reduce(
-            ['viewAny', 'create'],
-            function (array $stack, $ability) use ($request, $policy): array {
-                return array_merge($stack, [
-                    $ability => is_null($policy) || $request->user()->can($ability, $this->getModel()),
-                ]);
-            },
-            []
-        );
-    }
-
-    /**
      * Map the items.
      *
      * @param \Cone\Root\Http\Requests\ResourceRequest  $request
@@ -436,13 +406,15 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): array
     {
+        $request = App::make(RootRequest::class);
+
         return [
-            'abilities' => App::call([$this, 'mapAbilities']),
+            'abilities' => $this->mapAbilities($request, $this->getModelInstance()),
             'key' => $this->getKey(),
             'icon' => $this->getIcon(),
             'model_name' => $this->getModelName(),
             'name' => $this->getName(),
-            'urls' => App::call([$this, 'mapUrls']),
+            'urls' => $this->mapUrls($request),
         ];
     }
 

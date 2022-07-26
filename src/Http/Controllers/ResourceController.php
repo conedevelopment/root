@@ -39,7 +39,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('viewAny', $resource->getModel());
         }
 
@@ -59,7 +59,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
         }
 
@@ -79,7 +79,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
         }
 
@@ -110,7 +110,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($model)) {
             $this->authorize('view', $model);
         }
 
@@ -131,7 +131,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($model)) {
             $this->authorize('update', $model);
         }
 
@@ -152,7 +152,7 @@ class ResourceController extends Controller
     {
         $resource = $request->resource();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($model)) {
             $this->authorize('update', $model);
         }
 
@@ -183,7 +183,7 @@ class ResourceController extends Controller
 
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
-        if ($resource->getPolicy()) {
+        if ($resource->getPolicy($model)) {
             $this->authorize($trashed ? 'forceDelete' : 'delete', $model);
         }
 
