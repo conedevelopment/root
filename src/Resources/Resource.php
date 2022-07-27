@@ -351,6 +351,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the mappable abilities.
+     *
+     * @return array
+     */
+    public function getAbilities(): array
+    {
+        return ['viewAny', 'create'];
+    }
+
+    /**
      * Handle the created event.
      *
      * @param  \Cone\Root\Http\Requests\CreateRequest  $request
