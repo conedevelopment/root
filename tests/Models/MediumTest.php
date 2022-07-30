@@ -21,7 +21,7 @@ class MediumTest extends TestCase
     {
         $this->medium->user()->associate($this->admin)->save();
 
-        $this->assertSame($this->admin->id, $this->medium->user_id);
+        $this->assertTrue($this->medium->user->is($this->admin));
     }
 
     /** @test */

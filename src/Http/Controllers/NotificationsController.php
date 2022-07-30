@@ -32,9 +32,9 @@ class NotificationsController extends Controller
      */
     public function show(RootRequest $request, string $id): JsonResponse
     {
-        //
+        $notification = $request->user()->notifications()->find($id);
 
-        return new JsonResponse();
+        return new JsonResponse($notification);
     }
 
     /**
@@ -46,9 +46,13 @@ class NotificationsController extends Controller
      */
     public function update(RootRequest $request, string $id): JsonResponse
     {
-        //
+        $notification = $request->user()->notifications()->find($id);
 
-        return new JsonResponse();
+        if ($notification->unread()) {
+            $notification->markAsRead();
+        }
+
+        return new JsonResponse($notification);
     }
 
     /**
@@ -60,8 +64,10 @@ class NotificationsController extends Controller
      */
     public function destroy(RootRequest $request, string $id): JsonResponse
     {
-        //
+        $notification = $request->user()->notifications()->find($id);
 
-        return new JsonResponse();
+        $notification->delete();
+
+        return new JsonResponse($notification);
     }
 }
