@@ -29,7 +29,7 @@ class NotificationFactory extends Factory
     }
 
     /**
-     * Define the model's unverified state.
+     * Define the model's unread state.
      *
      * @return \Database\Factories\NotificationFactory
      */
