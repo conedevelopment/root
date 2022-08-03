@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "APP_URL='https://example.com' vite build",
         "test": "jest",
         "lint": "eslint resources/js/",
         "lint-sass": "stylelint resources/sass/"
