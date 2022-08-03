@@ -15,7 +15,7 @@
       "resources/js/Pages/Resources/Show.vue"
     ],
     "css": [
-      "assets/app.1415068d.css"
+      "assets/app.e7134fa7.css"
     ]
   },
   "resources/js/Pages/Dashboard.vue": {
@@ -119,7 +119,7 @@
     ]
   },
   "resources/js/app.css": {
-    "file": "assets/app.1415068d.css",
+    "file": "assets/app.e7134fa7.css",
     "src": "resources/js/app.css"
   }
 }
