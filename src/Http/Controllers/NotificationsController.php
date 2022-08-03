@@ -48,9 +48,7 @@ class NotificationsController extends Controller
     {
         $notification = $request->user()->notifications()->findOrFail($id);
 
-        if ($notification->unread()) {
-            $notification->markAsRead();
-        }
+        $notification->markAsRead();
 
         return new JsonResponse($notification);
     }
