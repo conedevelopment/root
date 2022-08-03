@@ -67,4 +67,4 @@ jobs:
         run: "npm install --production"
 
       - name: "Build front-end"
-        run: "npm run production"
+        run: "npm run build"
