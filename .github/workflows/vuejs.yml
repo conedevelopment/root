@@ -67,4 +67,4 @@ jobs:
         run: "yarn install --non-interactive --pure-lockfile --production"
 
       - name: "Build front-end"
-        run: "yarn run production"
+        run: "yarn run build"

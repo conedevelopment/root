@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&amp;family=IBM+Plex+Sans:wght@400;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    <link href="{{ URL::asset(mix('app.css', 'vendor/root')) }}" rel="stylesheet">
     @foreach(Cone\Root\Support\Facades\Asset::styles() as $key => $style)
         <link id="style-{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">
     @endforeach
@@ -31,11 +30,9 @@
     <script>
         window.Root = @json($root);
     </script>
-    <script src="{{ URL::asset(mix('manifest.js', 'vendor/root')) }}"></script>
-    <script src="{{ URL::asset(mix('vendor.js', 'vendor/root')) }}"></script>
+    @vite('resources/js/app.js', '/vendor/root/build')
     @foreach(Cone\Root\Support\Facades\Asset::scripts() as $key => $script)
         <script id="script-{{ $key }}" src="{{ $script->getUrl() }}"></script>
     @endforeach
-    <script src="{{ URL::asset(mix('app.js', 'vendor/root')) }}"></script>
 </body>
 </html>

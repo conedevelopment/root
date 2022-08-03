@@ -1,19 +1,19 @@
 import { debounce } from './../../Support/Helpers';
 import { h, resolveComponent } from 'vue';
-import AsyncSelect from './AsyncSelect';
-import Checkbox from './Checkbox';
-import DateTime from './DateTime';
-import Editor from './Editor';
-import Hidden from './Hidden';
-import Input from './Input';
-import Json from './Json';
-import Media from './Media';
-import Radio from './Radio';
-import Range from './Range';
-import Select from './Select';
-import SubResource from './SubResource';
-import Tag from './Tag';
-import Textarea from './Textarea';
+import AsyncSelect from './AsyncSelect.vue';
+import Checkbox from './Checkbox.vue';
+import DateTime from './DateTime.vue';
+import Editor from './Editor.vue';
+import Hidden from './Hidden.vue';
+import Input from './Input.vue';
+import Json from './Json.vue';
+import Media from './Media.vue';
+import Radio from './Radio.vue';
+import Range from './Range.vue';
+import Select from './Select.vue';
+import SubResource from './SubResource.vue';
+import Tag from './Tag.vue';
+import Textarea from './Textarea.vue';
 
 export default {
     name: 'FormHandler',

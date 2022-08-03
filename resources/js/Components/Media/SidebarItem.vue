@@ -42,13 +42,7 @@
 </template>
 
 <script>
-    import Accordion from './../Accordion';
-
     export default {
-        components: {
-            Accordion,
-        },
-
         props: {
             item: {
                 type: Object,

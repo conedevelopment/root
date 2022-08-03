@@ -1,5 +1,5 @@
 @use '~sprucecss/scss/spruce';
-@import '~quill/dist/quill.snow.css';
+@use '~quill/dist/quill.snow.css';
 
 .ql-toolbar.ql-snow {
     border-block-start: 1px solid spruce.color(border, form);

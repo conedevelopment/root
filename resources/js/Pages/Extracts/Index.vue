@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    import Table from './../../Components/Table/Table';
+    import Table from './../../Components/Table/Table.vue';
     import Widget from './../../Components/Widgets/Handler';
 
     export default {
