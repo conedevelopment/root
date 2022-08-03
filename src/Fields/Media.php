@@ -22,6 +22,13 @@ class Media extends MorphToMany
     protected bool $async = true;
 
     /**
+     * Indicates if multiple items can be selected.
+     *
+     * @var bool
+     */
+    protected bool $multiple = true;
+
+    /**
      * The Vue component.
      *
      * @var string
@@ -40,6 +47,19 @@ class Media extends MorphToMany
      */
     public function async(bool $value = true): static
     {
+        return $this;
+    }
+
+    /**
+     * Set the multiple attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function multiple(bool $value = true): static
+    {
+        $this->multiple = $value;
+
         return $this;
     }
 
@@ -249,6 +269,7 @@ class Media extends MorphToMany
                                             ->toArray(),
                 ];
             }),
+            'multiple' => $this->multiple,
             'url' => URL::to($this->getUri()),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
