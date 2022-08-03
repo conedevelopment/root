@@ -34,7 +34,7 @@
 </template>
 
 <script>
-    import Action from './Action';
+    import Action from './Action.vue';
 
     export default {
         components: {

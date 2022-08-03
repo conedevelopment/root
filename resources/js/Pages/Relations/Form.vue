@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    import Form from './../../Components/Layout/Form';
+    import Form from './../../Components/Layout/Form.vue';
 
     export default {
         props: {

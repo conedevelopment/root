@@ -1,12 +1,12 @@
-import Accordion from './../Components/Accordion';
+import Accordion from './../Components/Accordion.vue';
 import Axios from 'axios';
 import Cookie from './../Support/Cookie';
 import Debounce from './../Directives/Debounce';
 import DispatchesEvents from './../Mixins/DispatchesEvents';
-import Dropdown from './../Components/Dropdown';
+import Dropdown from './../Components/Dropdown.vue';
 import FormHandler from './../Components/Form/Handler';
-import Icon from './../Components/Icon';
-import Modal from './../Components/Modal';
+import Icon from './../Components/Icon.vue';
+import Modal from './../Components/Modal.vue';
 import Translator from './../Support/Translator';
 import WidgetHandler from './../Components/Widgets/Handler';
 
