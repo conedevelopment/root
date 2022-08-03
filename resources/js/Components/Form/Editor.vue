@@ -4,13 +4,12 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <div ref="input" class="editor" spellcheck="false"></div>
+        <div ref="editor"></div>
         <Media
             v-if="with_media"
             ref="media"
             :url="media_url"
             :title="__('Media')"
-            :select-resolver="selectResolver"
         ></Media>
         <span
             class="field-feedback"
@@ -22,8 +21,9 @@
 </template>
 
 <script>
-    import Quill from 'quill';
+    import { Editor } from '@tiptap/vue-3'
     import Media from './../Media/Media.vue';
+    import StarterKit from '@tiptap/starter-kit'
 
     export default {
         components: {
@@ -86,55 +86,30 @@
         emits: ['update:modelValue'],
 
         mounted() {
-            const config = JSON.parse(JSON.stringify(
-                Object.assign({}, this.config, { placeholder: this.placeholder })
-            ));
-
-            if (this.with_media) {
-                config.modules.toolbar.handlers.image = () => {
-                    this.$refs.media.open();
-                };
-            }
-
-            const editor = new Quill(this.$refs.input, config);
-
-            editor.root.innerHTML = this.modelValue;
-            editor.enable(! this.$attrs.disabled);
-            editor.on('text-change', () => {
-                this.$emit('update:modelValue', editor.root.innerHTML === '<p><br></p>' ? '' : editor.root.innerHTML);
+            this.editor = new Editor({
+                element: this.$refs.editor,
+                content: this.modelValue,
+                extensions: [
+                    StarterKit,
+                ],
+                onUpdate: (value) => {
+                    this.$emit('update:modelValue', value);
+                },
             });
+        },
 
-            this.selectResolver = (values, selection) => {
-                this.insertMedia(editor, selection);
-
-                return values;
-            };
+        beforUnmount() {
+            //
         },
 
         data() {
             return {
-                selectResolver: (values) => values,
+                editor: null,
             };
         },
 
         methods: {
-            insertMedia(editor, values) {
-                const range = editor.getSelection(true);
-
-                values.forEach((value) => {
-                    if (value.is_image) {
-                        editor.editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
-                        editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
-                    } else {
-                        editor.editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
-                        editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
-                    }
-                });
-
-                editor.emitter.emit('text-change');
-
-                this.$refs.media.clearSelection();
-            },
+            //
         },
     }
 </script>
