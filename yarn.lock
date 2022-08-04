@@ -1390,6 +1390,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@vitejs/plugin-basic-ssl@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-basic-ssl/-/plugin-basic-ssl-0.1.1.tgz#f76514820b4b901c43885eb489088c04ad9eb5d0"
+  integrity sha512-UhfGAZ8HgIMEPktKF8k58Y1LSwuYs1i1O4HY8E+yiOoYM+rkaPFBZo1SOkRsZN8DZTw90Q+ZznPej1o/mtTisg==
+
 "@vitejs/plugin-vue@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-3.0.1.tgz#b6af8f782485374bbb5fe09edf067a845bf4caae"
