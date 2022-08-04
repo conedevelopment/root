@@ -98,8 +98,8 @@
             });
         },
 
-        beforUnmount() {
-            //
+        beforeUnmount() {
+            this.editor.destroy();
         },
 
         data() {
