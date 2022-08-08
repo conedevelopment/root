@@ -107,9 +107,5 @@
                 editor: null,
             };
         },
-
-        methods: {
-            //
-        },
     }
 </script>
