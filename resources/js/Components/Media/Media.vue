@@ -65,13 +65,13 @@
 </template>
 
 <script>
-    import Item from './Item.vue';
+    import { throttle } from './../../Support/Helpers';
+    import Closable from './../../Mixins/Closable';
     import Filters from './Filters.vue';
+    import Item from './Item.vue';
     import Sidebar from './Sidebar.vue';
     import Toolbar from './Toolbar.vue';
     import Uploader from './Uploader.vue';
-    import Closable from './../../Mixins/Closable';
-    import { throttle } from './../../Support/Helpers';
 
     export default {
         components: {

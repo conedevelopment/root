@@ -55,6 +55,7 @@
 </template>
 
 <script>
+    import { throttle } from './../../Support/Helpers';
     import Closable from './../../Mixins/Closable';
     import Notification from './Notification';
 
@@ -98,6 +99,12 @@
                     this.$refs.modal.addEventListener('transitionend', this.transitionEndCallback);
                 }
             });
+
+            this.$refs.container.addEventListener('scroll', throttle((event) => {
+                if (this.shouldPaginate()) {
+                    this.paginate();
+                }
+            }, 300));
         },
 
         data() {
@@ -156,7 +163,28 @@
                         event.preventDefault();
                     }
                 });
-            }
+            },
+            paginate() {
+                this.processing = true;
+
+                this.$http.get(this.response.next_page_url).then((response) => {
+                    this.response.data.push(...response.data.data);
+                    this.response.next_page_url = response.data.next_page_url;
+                    this.response.prev_page_url = response.data.prev_page_url;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            shouldPaginate() {
+                const el = this.$refs.container;
+
+                return ! this.processing
+                    && this.response.next_page_url !== null
+                    && this.response.data.length > 0
+                    && (el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
+            },
         },
     }
 </script>

@@ -57,11 +57,7 @@ class Notification extends DatabaseNotification implements Contract
      */
     public function getFormattedTypeAttribute(): ?string
     {
-        if (is_null($this->type)) {
-            return null;
-        }
-
-        return __(Str::headline(class_basename($this->type)));
+        return is_null($this->type) ? null : __(Str::headline(class_basename($this->type)));
     }
 
     /**
@@ -71,7 +67,7 @@ class Notification extends DatabaseNotification implements Contract
      */
     public function getContentAttribute(): ?string
     {
-        return $this->message['content'] ?? null;
+        return $this->data['content'] ?? null;
     }
 
     /**
@@ -81,10 +77,6 @@ class Notification extends DatabaseNotification implements Contract
      */
     public function getFormattedCreatedAtAttribute(): ?string
     {
-        if (is_null($this->created_at)) {
-            return null;
-        }
-
-        return $this->created_at->diffForHumans();
+        return is_null($this->created_at) ? null : $this->created_at->diffForHumans();
     }
 }
