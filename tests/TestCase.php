@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->app['router']->getRoutes()->refreshNameLookups();
 
-        $this->withoutMix();
+        $this->withoutVite();
 
         Storage::fake('local');
         Storage::fake('public');

@@ -42,7 +42,7 @@
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
-    import Actions from './../../Components/Actions/Actions';
+    import Actions from './../../Components/Actions/Actions.vue';
     import Widget from './../../Components/Widgets/Handler';
 
     export default {

@@ -13,7 +13,7 @@
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
-    import Table from './../../Components/Table/Table';
+    import Table from './../../Components/Table/Table.vue';
 
     export default {
         components: {

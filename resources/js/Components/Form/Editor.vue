@@ -23,7 +23,7 @@
 
 <script>
     import Quill from 'quill';
-    import Media from './../Media/Media';
+    import Media from './../Media/Media.vue';
 
     export default {
         components: {

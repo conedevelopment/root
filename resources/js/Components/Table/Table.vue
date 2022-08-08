@@ -45,12 +45,12 @@
 </template>
 
 <script>
-    import Actions from './../Actions/Actions';
-    import Extracts from './Extracts';
-    import Filters from './Filters';
-    import Head from './Head';
-    import Pagination from './Pagination';
-    import Row from './Row';
+    import Actions from './../Actions/Actions.vue';
+    import Extracts from './Extracts.vue';
+    import Filters from './Filters.vue';
+    import Head from './Head.vue';
+    import Pagination from './Pagination.vue';
+    import Row from './Row.vue';
 
     export default {
         components: {

@@ -18,10 +18,10 @@
 </template>
 
 <script>
-    import Alert from './../Alert';
-    import Header from './Header';
-    import Nav from './Nav';
-    import Sidebar from './Sidebar';
+    import Alert from './../Alert.vue';
+    import Header from './Header.vue';
+    import Nav from './Nav.vue';
+    import Sidebar from './Sidebar.vue';
 
     export default {
         components: {

@@ -1,5 +1,5 @@
 import { h, resolveComponent } from 'vue';
-import Widget from './Widget';
+import Widget from './Widget.vue';
 
 export default {
     name: 'WidgetHandler',

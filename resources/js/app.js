@@ -1,25 +1,28 @@
-import * as Vue from 'vue';
-import Quill from 'quill';
+import './../sass/app.scss';
+
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import * as Vue from 'vue';
+import Layout from './Components/Layout/Layout.vue';
+import Quill from 'quill';
 import Root from './Plugins/Root';
-import Layout from './Components/Layout/Layout';
 
 window.Vue = Vue;
 window.Quill = Quill;
 
 createInertiaApp({
     resolve: (name) => {
-        let page;
+        return resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue'))
+            .catch(() => {
+                return new Promise((resolve, reject) => {
+                    resolve(Vue.resolveComponent(name));
+                });
+            })
+            .then((page) => {
+                page.default.resolveDefaultLayout = () => Layout;
 
-        try {
-            page = require(`./Pages/${name}`).default;
-        } catch (error) {
-            page = Vue.resolveComponent(name);
-        }
-
-        page.resolveDefaultLayout = () => Layout;
-
-        return page;
+                return page;
+            });
     },
     setup({ el, App, props, plugin }) {
         const app = Vue.createApp({ render: () => Vue.h(App, props) });
