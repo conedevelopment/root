@@ -63,6 +63,20 @@ abstract class Field implements Arrayable
     protected ?Closure $hydrateResolver = null;
 
     /**
+     * The array of fields that triggers the sync.
+     *
+     * @var array
+     */
+    protected array $syncs = [];
+
+    /**
+     * The sync resolver callback.
+     *
+     * @var \Closure|null
+     */
+    protected ?Closure $syncResolver = null;
+
+    /**
      * The validation rules.
      *
      * @var array
@@ -508,6 +522,30 @@ abstract class Field implements Arrayable
         } else {
             call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
         }
+    }
+
+    /**
+     * Set the sync resolver attribute.
+     *
+     * @param  array  $fields
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function sync(array $fields, Closure $callback): static
+    {
+        //
+
+        return $this;
+    }
+
+    /**
+     * Resolve the sync on the field.
+     *
+     * @return void
+     */
+    public function resolveSync(RootRequest $request, Model $model): void
+    {
+        //
     }
 
     /**
