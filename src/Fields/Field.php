@@ -533,7 +533,8 @@ abstract class Field implements Arrayable
      */
     public function sync(array $fields, Closure $callback): static
     {
-        //
+        $this->syncs = $fields;
+        $this->syncResolver = $callback;
 
         return $this;
     }
@@ -541,11 +542,23 @@ abstract class Field implements Arrayable
     /**
      * Resolve the sync on the field.
      *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return void
      */
     public function resolveSync(RootRequest $request, Model $model): void
     {
         //
+    }
+
+    /**
+     * Determine if the field is syncable.
+     *
+     * @return bool
+     */
+    public function isSyncable(): bool
+    {
+        return ! is_null($this->syncResolver);
     }
 
     /**
