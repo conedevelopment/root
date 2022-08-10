@@ -18,7 +18,7 @@ class NotificationsController extends Controller
         $notifications = $request->user()
                                 ->notifications()
                                 ->filter($request)
-                                ->paginate();
+                                ->cursorPaginate();
 
         return new JsonResponse($notifications);
     }
