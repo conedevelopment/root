@@ -12,14 +12,14 @@
             ></Icon>
             <span v-if="activeFilters > 0" class="btn__counter">{{ activeFilters }}</span>
         </button>
-        <div class="app-filter" v-show="isOpen">
-            <h2 class="app-filter__title">
+        <div class="app-drawer" v-show="isOpen">
+            <h2 class="app-drawer__title">
                 {{ __('Filters') }}
                 <button type="button" class="btn btn--secondary btn--sm btn--icon" @click="close">
                     <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
                 </button>
             </h2>
-            <div class="app-filter__inner">
+            <div class="app-drawer__inner">
                 <FormHandler
                     v-for="filter in filters"
                     v-bind="filter"

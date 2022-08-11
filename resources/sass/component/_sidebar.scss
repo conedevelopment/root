@@ -35,7 +35,7 @@
             $border-radius: 3px
         );
         @include spruce.layout-stack;
-        height: calc(100vh - 6rem - 1rem - 6rem);
+        height: calc(100vh - 6rem - 1rem);
         margin-inline-end: spruce.spacer(s);
         min-height: 10rem;
         padding-inline-start: spruce.spacer(m);
@@ -50,13 +50,6 @@
         letter-spacing: 0.2px;
         margin-block-end: spruce.spacer(s);
         text-transform: uppercase;
-    }
-
-    &__footer {
-        align-items: center;
-        display: flex;
-        height: 6rem;
-        margin-inline: spruce.spacer(m);
     }
 }
 

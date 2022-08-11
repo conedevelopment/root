@@ -1,25 +1,23 @@
 @use '~sprucecss/scss/spruce';
 
-.mobile-header {
-    background-color: spruce.color(background);
-    border-block-end: 1px solid spruce.color(border, sidebar);
-    padding-block: spruce.spacer(s);
-
-    @include spruce.breakpoint(md) {
-        display: none;
-    }
-
+.app-topbar {
     &__inner {
         align-items: center;
+        border-block-end: 1px solid spruce.color(border, sidebar);
         display: flex;
         gap: spruce.spacer(m);
         justify-content: space-between;
-        padding-inline: var(--root-gutter-lg);
+        margin-inline: var(--root-gutter-lg);
+        padding-block: spruce.spacer(s);
     }
 
     &__logo {
         height: var(--root-mobile-logo-height);
         width: auto;
+
+        @include spruce.breakpoint(md) {
+            display: none;
+        }
     }
 
     &__actions {
