@@ -556,9 +556,10 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is syncable.
      *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return bool
      */
-    public function isSyncable(): bool
+    public function isSyncable(RootRequest $request): bool
     {
         return ! is_null($this->syncResolver);
     }
