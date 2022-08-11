@@ -194,4 +194,9 @@ class ResourceController extends Controller
         return Redirect::route(sprintf('root.%s.index', $resource->getKey()))
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
+
+    public function sync(ResourceRequest $request, Model $model = null)
+    {
+        dd(100);
+    }
 }

@@ -27,6 +27,18 @@ class Fields extends Collection
     }
 
     /**
+     * Sync the fields.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return $this
+     */
+    public function sync(RootRequest $request, Model $model): static
+    {
+        return $this->each->resolveSync($request, $model);
+    }
+
+    /**
      * Filter the searchable fields.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request

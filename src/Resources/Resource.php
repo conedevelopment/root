@@ -534,9 +534,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                                 ])
                                 ->toArray(),
             'model' => (new ModelResource($model))->toForm(
-                $request, $this->resolveFields($request)->available($request, $model)
+                $request, $this->resolveFields($request)->sync($request, $model)->available($request, $model)
             ),
-            'resource' => $this->toArray(),
+            'resource' => array_merge_recursive($this->toArray(), [
+                'urls' => $this->hasSyncableFields($request)
+                    ? ['sync' => URL::route(sprintf('root.%s.sync', $this->getKey()))]
+                    : [],
+            ]),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];
     }
@@ -562,8 +566,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
+                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router) use ($request): void {
                     $this->routes($router);
+
+                    if ($this->hasSyncableFields($request)) {
+                        $router->post('/sync/{rootResource?}', [ResourceController::class, 'sync'])->name('sync');
+                    }
                 });
             }
 

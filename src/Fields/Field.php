@@ -548,7 +548,7 @@ abstract class Field implements Arrayable
      */
     public function resolveSync(RootRequest $request, Model $model): void
     {
-        if ($this->isSyncable()) {
+        if ($this->isSyncable($request)) {
             call_user_func_array($this->syncResolver, [$this, $request, $model]);
         }
     }
@@ -675,6 +675,7 @@ abstract class Field implements Arrayable
             'component' => $this->getComponent(),
             'formatted_value' => $this->resolveFormat($request, $model),
             'help' => $this->help,
+            'is_syncable' => $this->isSyncable($request),
             'value' => $this->resolveValue($request, $model),
         ]);
     }

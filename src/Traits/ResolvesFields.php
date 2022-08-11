@@ -87,4 +87,17 @@ trait ResolvesFields
     {
         //
     }
+
+    /**
+     * Determine if the object has syncable fields.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return bool
+     */
+    public function hasSyncableFields(RootRequest $request): bool
+    {
+        return $this->resolveFields($request)->some(static function (Field $field) use ($request): bool {
+            return $field->isSyncable($request);
+        });
+    }
 }
