@@ -197,6 +197,6 @@ class ResourceController extends Controller
 
     public function sync(ResourceRequest $request, Model $model = null)
     {
-        dd(100);
+        //
     }
 }

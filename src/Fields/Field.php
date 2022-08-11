@@ -676,6 +676,7 @@ abstract class Field implements Arrayable
             'formatted_value' => $this->resolveFormat($request, $model),
             'help' => $this->help,
             'is_syncable' => $this->isSyncable($request),
+            'syncs' => $this->syncs,
             'value' => $this->resolveValue($request, $model),
         ]);
     }
