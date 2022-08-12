@@ -1,63 +1,67 @@
 <template>
     <button
-        ref="button"
         type="button"
-        class="js-notification-open notification-btn"
-        aria-controls="notifications"
-        :aria-label="__('View notifications (:count unread notifications)', { count: unreadNotificationsCount })"
-        :class="{ 'has-unread-notifications': unreadNotificationsCount > 0 }"
-        :data-unread-notifications="unreadNotificationsCount"
+        class="btn btn--secondary btn--icon btn--has-counter"
+        aria-label="Like at oitm"
         @click="toggle"
     >
-        <Icon name="notification"></Icon>
+        <Icon class="btn__icon btn__icon--start" name="notification"></Icon>
+        <span class="btn__counter">3</span>
     </button>
-    <div
-        ref="modal"
-        class="js-notification-panel modal"
-        style="margin: 0;"
-        tabindex="-1"
-        id="notifications"
-        aria-labelledby="notifications-title"
-        aria-hidden="true"
-        :role="isOpen ? 'dialog' : 'none'"
-    >
-        <div ref="focusables" class="modal__inner" data-simplebar>
-            <div class="modal__title-wrapper">
-                <h3 class="modal__title" id="notifications-title">{{ __('Notifications') }}</h3>
-                <button
-                    type="button"
-                    class="js-notification-close btn btn--primary btn--icon modal__close"
-                    :aria-label="__('Close notifications')"
-                    @click="close"
-                >
-                    <Icon name="close"></Icon>
-                </button>
-            </div>
-            <div class="js-messages modal__body">
-                <div v-if="notifications.data.length === 0" class="alert alert--info" role="alert">
-                    {{ __('No notifications are available.') }}
+    <div class="app-drawer" v-show="isOpen">
+        <h2 class="app-drawer__title">
+            {{ __('Notifications') }}
+            <button type="button" class="btn btn--secondary btn--sm btn--icon" @click="close">
+                <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
+            </button>
+        </h2>
+        <div class="app-drawer__inner">
+            <div class="accordion-wrapper">
+                <div class="accordion accordion--read">
+                    <h2 class="accordion__title">
+                        <button type="button" aria-expanded="false">
+                            <span class="accordion__caption">
+                                Értesítés cím
+                                <span class="accordion__meta">2022. 08. 12.</span>
+                            </span>
+                            <svg class="accordion__icon" aria-hidden="true" focusable="false" height="24px" viewBox="0 0 24 24" width="24px">
+                                <path d="M12,2c-5.52,0 -10,4.48 -10,10c0,5.52 4.48,10 10,10c5.52,0 10,-4.48 10,-10c0,-5.52 -4.48,-10 -10,-10Zm0,18c-4.41,0 -8,-3.59 -8,-8c0,-4.41 3.59,-8 8,-8c4.41,0 8,3.59 8,8c0,4.41 -3.59,8 -8,8Z" fill="currentColor"></path>
+                                <path d="M7,12c0,0.55 0.45,1 1,1l8,0c0.55,0 1,-0.45 1,-1c0,-0.55 -0.45,-1 -1,-1l-8,0c-0.55,0 -1,0.45 -1,1Z" fill="currentColor"></path>
+                                <path class="vert" d="M12,7c-0.55,0 -1,0.45 -1,1l0,8c0,0.55 0.45,1 1,1c0.55,0 1,-0.45 1,-1l0,-8c0,-0.55 -0.45,-1 -1,-1Z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </h2>
+                    <div class="accordion__content hidden">
+                        <p>Curabitur accumsan efficitur turpis et tempus. Nam tincidunt ligula quis venenatis laoreet. Sed faucibus ultricies arcu quis viverra. Fusce sed dictum tellus. Ut est augue, suscipit a quam in, fringilla efficitur lorem. Maecenas ut tellus a purus blandit pretium.</p>
+                    </div>
                 </div>
-                <Notification
-                    v-for="notification in notifications.data"
-                    :key="notification.id"
-                    :notification="notification"
-                ></Notification>
+                <div class="accordion">
+                    <h2 class="accordion__title">
+                        <button type="button" aria-expanded="true">
+                            <span class="accordion__caption">
+                                Értesítés cím
+                                <span class="accordion__meta">2022. 08. 12.</span>
+                            </span>
+                            <svg class="accordion__icon" aria-hidden="true" focusable="false" height="24px" viewBox="0 0 24 24" width="24px">
+                                <path d="M12,2c-5.52,0 -10,4.48 -10,10c0,5.52 4.48,10 10,10c5.52,0 10,-4.48 10,-10c0,-5.52 -4.48,-10 -10,-10Zm0,18c-4.41,0 -8,-3.59 -8,-8c0,-4.41 3.59,-8 8,-8c4.41,0 8,3.59 8,8c0,4.41 -3.59,8 -8,8Z" fill="currentColor"></path>
+                                <path d="M7,12c0,0.55 0.45,1 1,1l8,0c0.55,0 1,-0.45 1,-1c0,-0.55 -0.45,-1 -1,-1l-8,0c-0.55,0 -1,0.45 -1,1Z" fill="currentColor"></path>
+                                <path class="vert" d="M12,7c-0.55,0 -1,0.45 -1,1l0,8c0,0.55 0.45,1 1,1c0.55,0 1,-0.45 1,-1l0,-8c0,-0.55 -0.45,-1 -1,-1Z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </h2>
+                    <div class="accordion__content">
+                        <p>Curabitur accumsan efficitur turpis et tempus. Nam tincidunt ligula quis venenatis laoreet. Sed faucibus ultricies arcu quis viverra. Fusce sed dictum tellus. Ut est augue, suscipit a quam in, fringilla efficitur lorem. Maecenas ut tellus a purus blandit pretium.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div
-        ref="backdrop"
-        class="js-notification-backdrop modal-backdrop"
-        style="margin: 0;"
-        aria-hidden="true"
-        @click="close"
-    ></div>
 </template>
 
 <script>
     import { throttle } from './../../Support/Helpers';
     import Closable from './../../Mixins/Closable';
-    import Notification from './Notification';
+    import Notification from './Notification.vue';
 
     export default {
         components: {
@@ -123,10 +127,6 @@
 
         methods: {
             fetch() {
-                if (window.Oitm.user.id === null) {
-                    return;
-                }
-
                 this.$http.get('/api/notifications').then((response) => {
                     this.notifications = response.data;
                     this.$nextTick(() => {
