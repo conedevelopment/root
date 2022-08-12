@@ -24,6 +24,12 @@
         align-items: center;
         display: flex;
         gap: spruce.spacer(s);
+
+        [data-action=open-navigation] {
+            @include spruce.breakpoint(md) {
+                display: none;
+            }
+        }
     }
 
     .user-menu__caption {
