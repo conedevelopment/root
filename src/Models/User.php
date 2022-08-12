@@ -11,6 +11,7 @@ use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,15 +25,6 @@ class User extends Authenticatable implements Contract, Resourceable
     use InteractsWithProxy;
     use Notifiable;
     use SoftDeletes;
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [
-        'avatar',
-    ];
 
     /**
      * The attributes that should have default values.
@@ -128,6 +120,16 @@ class User extends Authenticatable implements Contract, Resourceable
     }
 
     /**
+     * Get the notifications for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::getProxiedClass(), 'notifiable')->latest();
+    }
+
+    /**
      * Get the avatar attribute.
      *
      * @return string
@@ -144,7 +146,9 @@ class User extends Authenticatable implements Contract, Resourceable
      */
     public function toRoot(): array
     {
-        return $this->toArray();
+        return array_merge($this->toArray(), [
+            'avatar' => $this->avatar,
+        ]);
     }
 
     /**

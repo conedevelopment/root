@@ -233,7 +233,7 @@ class Media extends MorphToMany
         return $this->resolveQuery($request, $model)
                     ->filter($request)
                     ->latest()
-                    ->cursorPaginate($request->input('per_page'))
+                    ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->through(function (Model $related) use ($request, $model): array {
                         return $this->mapOption($request, $model, $related);

@@ -55,9 +55,6 @@
                 </li>
             </ul>
         </nav>
-        <div class="app-sidebar__footer">
-            <UserMenu></UserMenu>
-        </div>
     </aside>
 </template>
 

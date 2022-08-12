@@ -7,7 +7,7 @@
             <span v-else class="media-accordion__icon">
                 <Icon name="description"></Icon>
             </span>
-            <span class="media-accrodion__caption">
+            <span class="accordion__caption">
                 {{ item.file_name }}
             </span>
         </template>

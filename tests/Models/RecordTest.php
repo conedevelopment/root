@@ -25,7 +25,7 @@ class RecordTest extends TestCase
     {
         $this->record->user()->associate($this->admin);
 
-        $this->assertSame($this->admin->id, $this->record->user_id);
+        $this->assertTrue($this->record->user->is($this->admin));
     }
 
     /** @test */
