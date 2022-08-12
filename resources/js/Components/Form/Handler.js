@@ -59,11 +59,23 @@ export default {
             type: Number,
             default: 0,
         },
+        is_syncable: {
+            type: Boolean,
+            default: false,
+        },
+        syncs: {
+            type: Array,
+            default: () => [],
+        },
     },
 
     inheritAttrs: false,
 
     emits: ['update:modelValue'],
+
+    mounted() {
+        //
+    },
 
     render() {
         return h(this.componentResolver(this.component), {
