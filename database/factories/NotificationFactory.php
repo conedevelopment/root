@@ -24,7 +24,10 @@ class NotificationFactory extends Factory
     {
         return [
             'type' => 'App\\Notifications\\TestNotification',
-            'data' => [],
+            'data' => [
+                'content' => $this->faker->text(),
+                'title' => $this->faker->words(5, true),
+            ],
         ];
     }
 

@@ -28,6 +28,7 @@ class Notification extends DatabaseNotification implements Contract
         'content',
         'formatted_created_at',
         'formatted_type',
+        'title',
     ];
 
     /**
@@ -58,6 +59,16 @@ class Notification extends DatabaseNotification implements Contract
     public function getFormattedTypeAttribute(): ?string
     {
         return is_null($this->type) ? null : __(Str::headline(class_basename($this->type)));
+    }
+
+    /**
+     * Get the title attribute.
+     *
+     * @return string|null
+     */
+    public function getTitleAttribute(): ?string
+    {
+        return $this->data['title'] ?? $this->formattedType;
     }
 
     /**
