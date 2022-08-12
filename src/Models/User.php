@@ -146,7 +146,9 @@ class User extends Authenticatable implements Contract, Resourceable
      */
     public function toRoot(): array
     {
-        return $this->toArray();
+        return array_merge($this->toArray(), [
+            'avatar' => $this->avatar,
+        ]);
     }
 
     /**
