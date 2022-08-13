@@ -63,4 +63,17 @@ abstract class TestCase extends BaseTestCase
 
         ResourceRegistry::register('posts', $this->resource);
     }
+
+    protected function beforeRefreshingDatabase()
+    {
+        $path = $this->app->databasePath('migrations');
+
+        foreach ($this->app['files']->files($path) as $file) {
+            if (str_contains($file->getFileName(), 'create_notifications_table')) {
+                return;
+            }
+        }
+
+        $this->artisan('notifications:table');
+    }
 }
