@@ -1,6 +1,6 @@
 {
   "resources/js/app.js": {
-    "file": "assets/app.f181b8f7.js",
+    "file": "assets/app.fa6c6c43.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "dynamicImports": [
@@ -13,13 +13,10 @@
       "resources/js/Pages/Resources/Form.vue",
       "resources/js/Pages/Resources/Index.vue",
       "resources/js/Pages/Resources/Show.vue"
-    ],
-    "css": [
-      "assets/app.5d9a0558.css"
     ]
   },
   "resources/js/Pages/Dashboard.vue": {
-    "file": "assets/Dashboard.92716ff4.js",
+    "file": "assets/Dashboard.62d23070.js",
     "src": "resources/js/Pages/Dashboard.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -27,7 +24,7 @@
     ]
   },
   "resources/js/Pages/Error.vue": {
-    "file": "assets/Error.57b1db14.js",
+    "file": "assets/Error.fadf721f.js",
     "src": "resources/js/Pages/Error.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -35,55 +32,55 @@
     ]
   },
   "resources/js/Pages/Extracts/Index.vue": {
-    "file": "assets/Index.285c5348.js",
+    "file": "assets/Index.f789e89b.js",
     "src": "resources/js/Pages/Extracts/Index.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_Table.6a014685.js",
+      "_Table.65514b14.js",
       "resources/js/app.js",
-      "_Actions.02b97a6a.js"
+      "_Actions.11134f97.js"
     ]
   },
-  "_Table.6a014685.js": {
-    "file": "assets/Table.6a014685.js",
+  "_Table.65514b14.js": {
+    "file": "assets/Table.65514b14.js",
     "imports": [
-      "_Actions.02b97a6a.js",
+      "_Actions.11134f97.js",
       "resources/js/app.js"
     ]
   },
-  "_Actions.02b97a6a.js": {
-    "file": "assets/Actions.02b97a6a.js",
+  "_Actions.11134f97.js": {
+    "file": "assets/Actions.11134f97.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
   "resources/js/Pages/Relations/Form.vue": {
-    "file": "assets/Form.90be63bf.js",
+    "file": "assets/Form.50517212.js",
     "src": "resources/js/Pages/Relations/Form.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_Form.ccbb9eb0.js",
+      "_Form.613d7faf.js",
       "resources/js/app.js"
     ]
   },
-  "_Form.ccbb9eb0.js": {
-    "file": "assets/Form.ccbb9eb0.js",
+  "_Form.613d7faf.js": {
+    "file": "assets/Form.613d7faf.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
   "resources/js/Pages/Relations/Index.vue": {
-    "file": "assets/Index.7904a360.js",
+    "file": "assets/Index.1735a2c5.js",
     "src": "resources/js/Pages/Relations/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_Table.6a014685.js",
-      "_Actions.02b97a6a.js"
+      "_Table.65514b14.js",
+      "_Actions.11134f97.js"
     ]
   },
   "resources/js/Pages/Relations/Show.vue": {
-    "file": "assets/Show.6f833286.js",
+    "file": "assets/Show.3bdc90f3.js",
     "src": "resources/js/Pages/Relations/Show.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -91,35 +88,36 @@
     ]
   },
   "resources/js/Pages/Resources/Form.vue": {
-    "file": "assets/Form.4a9bf18c.js",
+    "file": "assets/Form.fd558b22.js",
     "src": "resources/js/Pages/Resources/Form.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_Form.ccbb9eb0.js",
+      "_Form.613d7faf.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/Pages/Resources/Index.vue": {
-    "file": "assets/Index.7bcdb843.js",
+    "file": "assets/Index.716ca1a5.js",
     "src": "resources/js/Pages/Resources/Index.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_Table.6a014685.js",
+      "_Table.65514b14.js",
       "resources/js/app.js",
-      "_Actions.02b97a6a.js"
+      "_Actions.11134f97.js"
     ]
   },
   "resources/js/Pages/Resources/Show.vue": {
-    "file": "assets/Show.0d691262.js",
+    "file": "assets/Show.55e23a01.js",
     "src": "resources/js/Pages/Resources/Show.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_Actions.02b97a6a.js"
+      "_Actions.11134f97.js"
     ]
   },
-  "resources/js/app.css": {
+  "resources/sass/app.scss": {
     "file": "assets/app.5d9a0558.css",
-    "src": "resources/js/app.css"
+    "src": "resources/sass/app.scss",
+    "isEntry": true
   }
 }

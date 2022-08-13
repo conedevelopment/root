@@ -1,5 +1,3 @@
-import './../sass/app.scss';
-
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import * as Vue from 'vue';
