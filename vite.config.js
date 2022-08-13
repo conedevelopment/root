@@ -10,7 +10,7 @@ export default defineConfig({
     },
     plugins: [
         basicSsl(),
-        laravel(['resources/js/app.js']),
+        laravel(['resources/js/app.js', 'resources/sass/app.scss']),
         vue({
             template: {
                 transformAssetUrls: {
