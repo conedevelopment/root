@@ -67,6 +67,8 @@ class JsonTest extends TestCase
             'component' => 'Json',
             'formatted_value' => $data,
             'help' => null,
+            'is_syncable' => false,
+            'syncs' => [],
             'value' => $data,
             'fields' => [$field->toInput($this->request, TemporaryJson::make()->forceFill($data))],
         ], $this->field->toInput($this->request, $model));

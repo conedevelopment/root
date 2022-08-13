@@ -298,6 +298,8 @@ class FieldTest extends TestCase
                 'component' => $this->field->getComponent(),
                 'formatted_value' => $model->title,
                 'help' => 'Note',
+                'is_syncable' => false,
+                'syncs' => [],
                 'value' => $model->title,
             ]),
             $this->field->toInput($this->request, $model)
