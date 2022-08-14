@@ -5,6 +5,10 @@ namespace Cone\Root\Support;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 class Breadcrumbs implements Arrayable
 {
     /**
