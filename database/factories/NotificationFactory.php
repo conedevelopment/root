@@ -34,7 +34,7 @@ class NotificationFactory extends Factory
     /**
      * Define the model's unread state.
      *
-     * @return \Database\Factories\NotificationFactory
+     * @return \Cone\Root\Database\Factories\NotificationFactory
      */
     public function read(): self
     {
