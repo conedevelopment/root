@@ -477,7 +477,7 @@ abstract class Field implements Arrayable
      */
     public function getValueForHydrate(RootRequest $request, Model $model): mixed
     {
-        return $request->input([$this->getKey()]);
+        return $request->input($this->getKey());
     }
 
     /**
