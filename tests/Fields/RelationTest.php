@@ -92,10 +92,10 @@ class RelationTest extends TestCase
             $this->field->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/fields/author', $this->field->getUri());
+        $this->assertSame('/posts/fields/author', $this->field->getUri());
 
         $this->assertArrayHasKey(
-            $this->field->getUri(),
+            trim($this->field->getUri(), '/'),
             $this->app['router']->getRoutes()->get('GET')
         );
     }

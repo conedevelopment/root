@@ -46,7 +46,7 @@ class JsonTest extends TestCase
             $this->field->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/fields/inventory', $this->field->getUri());
+        $this->assertSame('/posts/fields/inventory', $this->field->getUri());
     }
 
     /** @test */

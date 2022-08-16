@@ -51,10 +51,10 @@ class EditorTest extends TestCase
             $this->field->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/fields/content', $this->field->getUri());
+        $this->assertSame('/posts/fields/content', $this->field->getUri());
 
         $this->assertArrayHasKey(
-            $this->field->getMedia()->getUri(),
+            trim($this->field->getMedia()->getUri(), '/'),
             $this->app['router']->getRoutes()->get('GET')
         );
     }

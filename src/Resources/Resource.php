@@ -107,7 +107,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getUri(): string
     {
-        return trim(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
+        return Str::start(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -404,8 +404,8 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function toBreadcrumbs(): Breadcrumbs
     {
         return new Breadcrumbs([
-            sprintf('/%s', Root::getPath()) => __('Dashboard'),
-            sprintf('/%s', $this->getUri()) => $this->getName(),
+            Root::getPath() => __('Dashboard'),
+            $this->getUri() => $this->getName(),
         ]);
     }
 

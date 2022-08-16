@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 abstract class Root
 {
@@ -81,7 +82,7 @@ abstract class Root
      */
     public static function getPath(): string
     {
-        return (string) Config::get('root.path', 'root');
+        return Str::start(Config::get('root.path', 'root'), '/');
     }
 
     /**

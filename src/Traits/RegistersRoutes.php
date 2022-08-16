@@ -7,6 +7,7 @@ use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 
 trait RegistersRoutes
 {
@@ -54,7 +55,7 @@ trait RegistersRoutes
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
-        $this->setUri(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
+        $this->setUri(sprintf('/%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
 
         if (! App::routesAreCached()) {
             $router->prefix($this->getKey())
@@ -65,7 +66,7 @@ trait RegistersRoutes
         }
 
         $router->matched(function (RouteMatched $event): void {
-            if (str_starts_with($event->route->uri(), $this->getUri())) {
+            if (str_starts_with(Str::start($event->route->uri(), '/'), $this->getUri())) {
                 $event->route->setParameter('resolved', $this);
             }
         });
