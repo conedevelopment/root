@@ -229,7 +229,7 @@ class BelongsToMany extends Relation
             'async' => $this->async,
             'multiple' => true,
             'related_name' => $this->getRelatedName(),
-            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+            'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
         ]);
     }
 

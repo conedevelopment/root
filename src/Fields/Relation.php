@@ -412,7 +412,7 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? URL::to($this->getUri()) : null,
+            'url' => $this->isAsync() ? $this->getUri() : null,
         ]);
     }
 }

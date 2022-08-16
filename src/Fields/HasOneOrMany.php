@@ -142,7 +142,7 @@ abstract class HasOneOrMany extends Relation
     {
         return array_merge(parent::toInput($request, $model), [
             'related_name' => $this->getRelatedName(),
-            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+            'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
         ]);
     }
 }

@@ -198,7 +198,7 @@ abstract class Widget implements Arrayable, Renderable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->async ? null : $this->render(),
-            'url' => $this->async ? URL::to($this->getUri()) : null,
+            'url' => $this->async ? $this->getUri() : null,
         ];
     }
 }

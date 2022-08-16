@@ -4,7 +4,6 @@ namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\URL;
 
 class RelatedResource extends ModelResource
 {
@@ -23,7 +22,7 @@ class RelatedResource extends ModelResource
         );
 
         return $this->resource->exists
-            ? URL::to(sprintf('%s/%s', $path, $this->resource->getKey()))
-            : URL::to($path);
+            ? sprintf('%s/%s', $path, $this->resource->getKey())
+            : $path;
     }
 }

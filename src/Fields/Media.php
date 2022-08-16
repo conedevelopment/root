@@ -10,7 +10,6 @@ use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 
 class Media extends MorphToMany
 {
@@ -270,7 +269,7 @@ class Media extends MorphToMany
                 ];
             }),
             'multiple' => $this->multiple,
-            'url' => URL::to($this->getUri()),
+            'url' => $this->getUri(),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
             }),

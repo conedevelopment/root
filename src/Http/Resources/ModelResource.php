@@ -34,8 +34,8 @@ class ModelResource extends JsonResource
         $key = $request->resource()->getKey();
 
         return $this->resource->exists
-            ? URL::route(sprintf('root.%s.show', $key), $this->resource)
-            : URL::route(sprintf('root.%s.index', $key));
+            ? URL::route(sprintf('root.%s.show', $key), $this->resource, false)
+            : URL::route(sprintf('root.%s.index', $key), [], false);
     }
 
     /**

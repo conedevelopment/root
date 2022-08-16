@@ -8,7 +8,6 @@ use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
 
 class Editor extends Field
 {
@@ -136,7 +135,7 @@ class Editor extends Field
     {
         return array_merge(parent::toInput($request, $model), [
             'config' => $this->config,
-            'media_url' => is_null($this->media) ? null : URL::to($this->media->getUri()),
+            'media_url' => is_null($this->media) ? null : $this->media->getUri(),
             'with_media' => ! is_null($this->media),
         ]);
     }

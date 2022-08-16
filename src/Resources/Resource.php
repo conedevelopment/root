@@ -304,7 +304,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $actions = array_fill_keys(['create', 'index'], null);
 
         foreach ($actions as $action => $value) {
-            $actions[$action] = URL::route(sprintf('root.%s.%s', $this->getKey(), $action));
+            $actions[$action] = URL::route(sprintf('root.%s.%s', $this->getKey(), $action), [], false);
         }
 
         return $actions;

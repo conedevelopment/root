@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -240,7 +239,7 @@ abstract class Action implements Arrayable, Responsable
             'destructive' => $this->isDestructive(),
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => URL::to($this->getUri()),
+            'url' => $this->getUri(),
         ];
     }
 

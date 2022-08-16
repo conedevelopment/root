@@ -3,7 +3,6 @@
 namespace Cone\Root\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Facades\URL;
 
 class Breadcrumbs implements Arrayable
 {
@@ -55,7 +54,7 @@ class Breadcrumbs implements Arrayable
     {
         return array_values(array_map(function (string $label, string $path): array {
             return [
-                'url' => URL::to($path),
+                'url' => $path,
                 'label' => $label,
                 'active' => array_key_last($this->items) === $path,
             ];
