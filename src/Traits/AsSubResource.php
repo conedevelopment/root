@@ -61,6 +61,7 @@ trait AsSubResource
 
         $items = $relation->paginate($request->input('per_page'))
                         ->withQueryString()
+                        ->setPath($this->getUri())
                         ->through(function (Model $related) use ($request, $model): array {
                             return $this->mapItem($request, $model, $related)->toDisplay(
                                 $request, $this->resolveFields($request)->available($request, $model, $related)

@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
 
 class NotificationsController extends Controller
 {
@@ -20,6 +21,7 @@ class NotificationsController extends Controller
                                 ->filter($request)
                                 ->latest()
                                 ->paginate($request->input('per_page'))
+                                ->setPath(URL::route('root.api.notifications.index', [], false))
                                 ->withQueryString();
 
         return new JsonResponse(array_merge($notifications->toArray(), [

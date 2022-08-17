@@ -326,6 +326,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
+                    ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
                         return $this->mapItem($request, $model)->toDisplay(
                             $request, $this->resolveFields($request)->available($request, $model)

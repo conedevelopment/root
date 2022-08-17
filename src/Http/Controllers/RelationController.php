@@ -29,6 +29,7 @@ class RelationController extends Controller
                             }
                         })
                         ->paginate()
+                        ->setPath($field->getUri())
                         ->through(static function (Model $related) use ($request, $model, $field): array {
                             return $field->mapOption($request, $model, $related);
                         });

@@ -22,7 +22,7 @@ class NotificationsControllerTest extends TestCase
         $this->actingAs($this->admin)
             ->get('/root/api/notifications')
             ->assertOk()
-            ->assertJson($this->admin->notifications()->paginate()->toArray());
+            ->assertJson($this->admin->notifications()->paginate()->setPath('/root/api/notifications')->toArray());
     }
 
     /** @test */

@@ -194,6 +194,7 @@ abstract class Extract implements Arrayable
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
+                    ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
                         return (new ModelResource($model))->toDisplay(
                             $request, $this->resolveFields($request)->available($request, $model)

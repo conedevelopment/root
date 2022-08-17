@@ -38,6 +38,7 @@ class RelationControllerTest extends TestCase
         $results = $this->field
                         ->resolveQuery($this->request, $model)
                         ->paginate()
+                        ->setPath('/root/posts/fields/author')
                         ->through(function ($related) use ($model): array {
                             return $this->field->mapOption($this->request, $model, $related);
                         });
