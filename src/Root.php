@@ -15,7 +15,7 @@ abstract class Root
      *
      * @var string
      */
-    public const VERSION = '0.8.3';
+    public const VERSION = '0.8.4';
 
     /**
      * The registered callbacks.
@@ -33,7 +33,7 @@ abstract class Root
     public static function shouldRun(Request $request): bool
     {
         return $request->getHost() === static::getDomain()
-            || (! empty(static::getPath()) && str_starts_with($request->getRequestUri(), '/'.static::getPath()));
+            || (! empty(static::getPath()) && str_starts_with($request->getRequestUri(), static::getPath()));
     }
 
     /**

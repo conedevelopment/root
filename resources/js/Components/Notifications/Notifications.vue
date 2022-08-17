@@ -66,11 +66,17 @@
             };
         },
 
+        computed: {
+            url() {
+                return (window.Root.config.url + '/api/notifications').replaceAll('//', '/');
+            },
+        },
+
         methods: {
             fetch() {
                 this.processing = true;
 
-                this.$http.get('/api/notifications').then((response) => {
+                this.$http.get(this.url).then((response) => {
                     this.response = response.data;
                 }).catch((error) => {
                     //

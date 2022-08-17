@@ -39,7 +39,7 @@
             read() {
                 this.processing = true;
 
-                this.$http.patch(`/api/notifications/${this.notification.id}`).then((response) => {
+                this.$http.patch(`${this.$parent.url}/${this.notification.id}`).then((response) => {
                     Object.assign(this.notification, response.data);
                     this.$parent.response.total_unread--;
                 }).catch((error) => {
