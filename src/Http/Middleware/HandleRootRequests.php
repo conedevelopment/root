@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Inertia\Middleware;
 
 class HandleRootRequests extends Middleware
@@ -30,7 +31,7 @@ class HandleRootRequests extends Middleware
             'csrf_token' => static function () use ($request): string {
                 return $request->session()->token();
             },
-            'url' => $request->url(),
+            'url' => Str::start($request->path(), '/'),
         ]);
     }
 }

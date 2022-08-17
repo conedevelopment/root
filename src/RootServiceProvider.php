@@ -176,7 +176,7 @@ class RootServiceProvider extends ServiceProvider
                 'user' => $request->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
-                    'url' => $app['url']->route('root.dashboard'),
+                    'url' => Root::getPath(),
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);
