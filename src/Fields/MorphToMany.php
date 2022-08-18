@@ -16,7 +16,9 @@ class MorphToMany extends BelongsToMany
      */
     public function getRelation(Model $model): EloquentRelation
     {
-        return parent::getRelation($model);
+        $relation = parent::getRelation($model);
+
+        return $relation->withPivot($relation->newPivot()->getKeyName());
     }
 
     /**
