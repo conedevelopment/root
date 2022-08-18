@@ -126,7 +126,7 @@ class RootServiceProvider extends ServiceProvider
 
             $request = ResourceRequest::createFrom($this->app['request']);
 
-            return $request->resource()->getModelInstance()->resolveRouteBinding($id);
+            return $request->resource()->resolveRouteBinding($id);
         });
 
         $this->app['router']->middlewareGroup(
