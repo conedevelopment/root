@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\URL;
 
 class BelongsToMany extends Relation
 {

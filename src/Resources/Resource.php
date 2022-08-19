@@ -189,12 +189,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Resolve the resource model for a bound value.
      *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function resolveRouteBinding(string $id): Model
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        return $this->getModelInstance()->resolveRouteBindingQuery($this->query(), $id)->firstOrFail();
+        return $this->query()->findOrFail($id);
     }
 
     /**

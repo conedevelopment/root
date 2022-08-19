@@ -12,7 +12,6 @@ use Cone\Root\Http\Resources\RelatedResource;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\URL;
 
 trait AsSubResource
 {
@@ -42,6 +41,19 @@ trait AsSubResource
         $this->component = 'SubResource';
 
         return $this;
+    }
+
+    /**
+     * Resolve the resource model for a bound value.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  string  $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
+    {
+        return $this->resolveQuery($request, $request->route('rootResource'))
+                    ->findOrFail($id);
     }
 
     /**
