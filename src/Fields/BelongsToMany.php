@@ -113,7 +113,7 @@ class BelongsToMany extends Relation
     {
         $relation = $this->getRelation($request->route('rootResource'));
 
-        $model = $relation->wherePivot($relation->newPivot()->getKeyName(), $id)->firstOrFail();;
+        $model = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
 
         return tap($model, static function (Model $related) use ($relation, $id): void {
             $pivot = $related->getRelation($relation->getPivotAccessor());
