@@ -52,8 +52,7 @@ trait AsSubResource
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        return $this->resolveQuery($request, $request->route('rootResource'))
-                    ->findOrFail($id);
+        return $this->getRelation($request->route('rootResource'))->findOrFail($id);
     }
 
     /**

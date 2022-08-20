@@ -103,19 +103,19 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the related model by its pivot ID.
+     * Resolve the related model for a bound value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getRelatedByPivot(Model $model, string $id): Model
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        $relation = $this->getRelation($model);
+        $relation = $this->getRelation($request->route('rootResource'));
 
-        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+        $model = $relation->wherePivot($relation->newPivot()->getKeyName(), $id)->firstOrFail();;
 
-        return tap($related, static function (Model $related) use ($relation, $id): void {
+        return tap($model, static function (Model $related) use ($relation, $id): void {
             $pivot = $related->getRelation($relation->getPivotAccessor());
 
             $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);

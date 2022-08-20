@@ -53,14 +53,12 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, Model $model, string $id): Response
+    public function show(ShowRequest $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         return Inertia::render(
             'Relations/Show',
@@ -73,14 +71,13 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, Model $model, string $id): Response
+    public function edit(UpdateRequest $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         return Inertia::render(
             'Relations/Form',
@@ -93,16 +90,14 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, string $id): RedirectResponse
+    public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
         $relation = $field->getRelation($model);
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         $pivot = $related->getRelation($relation->getPivotAccessor());
 
@@ -123,16 +118,14 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, string $id): RedirectResponse
+    public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
         $relation = $field->getRelation($model);
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         $pivot = $related->getRelation($relation->getPivotAccessor());
 
