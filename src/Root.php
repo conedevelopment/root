@@ -32,11 +32,13 @@ abstract class Root
      */
     public static function shouldRun(Request $request): bool
     {
-        if (empty(static::getDomain())) {
-            return str_starts_with($request->getRequestUri(), static::getPath());
-        }
+        $domain = empty(static::getDomain())
+            ? parse_url(Config::get('app.url'), PHP_URL_HOST)
+            : static::getDomain();
 
-        return $request->getHost() === static::getDomain();
+        $segments = explode('/', $request->getRequestUri());
+
+        return $request->getHost() === $domain && $segments[1] === trim(static::getPath(), '/');
     }
 
     /**
