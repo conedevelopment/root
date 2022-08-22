@@ -121,6 +121,7 @@
         methods: {
             remove(item) {
                 this.$refs.media.deselect(item);
+                this.$refs.media.update();
                 this.items = this.$refs.media.selection;
             },
             selectResolver(value, selection) {
