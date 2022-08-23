@@ -30,7 +30,11 @@
     <script>
         window.Root = @json($root);
     </script>
-    @vite(['resources/js/app.js', 'resources/sass/app.scss'], '/vendor/root/build')
+    {{
+        Vite::withEntryPoints('resources/js/app.js')
+            ->useBuildDirectory('vendor/root/build')
+            ->useHotFile(public_path('vendor/root/hot'))
+    }}
     @foreach(Cone\Root\Support\Facades\Asset::scripts() as $key => $script)
         <script id="script-{{ $key }}" src="{{ $script->getUrl() }}"></script>
     @endforeach

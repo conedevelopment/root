@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {{-- Styles --}}
-    @vite('resources/sass/app.scss', '/vendor/root/build')
+    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/js/app.css', 'vendor/root/build') }}">
 
     {{-- Title --}}
     <title>@yield('title') - {{ Config::get('app.name') }}</title>
