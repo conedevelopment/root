@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db2c2a99ce8d7aab85aca70e2fa3f317",
+    "content-hash": "f44cfcef30cb2fab4a964c9208ac7c06",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -801,16 +801,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v9.26.0",
+            "version": "9.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "53e20ba7c4df1d1628102811f5b7119e138247f8"
+                "reference": "1ccfb91afee7a351b09ba1f1b97739096a3ad1cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/53e20ba7c4df1d1628102811f5b7119e138247f8",
-                "reference": "53e20ba7c4df1d1628102811f5b7119e138247f8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/1ccfb91afee7a351b09ba1f1b97739096a3ad1cf",
+                "reference": "1ccfb91afee7a351b09ba1f1b97739096a3ad1cf",
                 "shasum": ""
             },
             "require": {
@@ -935,6 +935,7 @@
                 "symfony/postmark-mailer": "Required to enable support for the Postmark mail transport (^6.0).",
                 "symfony/psr-http-message-bridge": "Required to use PSR-7 bridging features (^2.0)."
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -977,7 +978,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-08-23T13:31:34+00:00"
+            "time": "2022-08-23T19:00:07+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -5404,16 +5405,16 @@
         },
         {
             "name": "laravel/laravel",
-            "version": "v9.3.4",
+            "version": "v9.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/laravel.git",
-                "reference": "858a3ca66286d18144f8548692e8f4ad59338a77"
+                "reference": "d18332bdeffbb1f4bf0da620d01b3ff26b349623"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/858a3ca66286d18144f8548692e8f4ad59338a77",
-                "reference": "858a3ca66286d18144f8548692e8f4ad59338a77",
+                "url": "https://api.github.com/repos/laravel/laravel/zipball/d18332bdeffbb1f4bf0da620d01b3ff26b349623",
+                "reference": "d18332bdeffbb1f4bf0da620d01b3ff26b349623",
                 "shasum": ""
             },
             "require": {
@@ -5455,9 +5456,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/laravel/tree/v9.3.4"
+                "source": "https://github.com/laravel/laravel/tree/v9.3.5"
             },
-            "time": "2022-08-15T15:21:08+00:00"
+            "time": "2022-08-22T13:26:36+00:00"
         },
         {
             "name": "laravel/sanctum",
