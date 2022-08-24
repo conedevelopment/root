@@ -49,7 +49,7 @@ jobs:
           sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
           php artisan key:generate
           php artisan root:install --seed
-          php artisan root:publish --packages --mix
+          php artisan root:publish --packages
 
       - name: "Check stubs"
         run: |
