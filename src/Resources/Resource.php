@@ -313,13 +313,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function mapUrls(RootRequest $request): array
     {
-        $actions = array_fill_keys(['create', 'index'], null);
-
-        foreach ($actions as $action => $value) {
-            $actions[$action] = URL::route(sprintf('root.%s.%s', $this->getKey(), $action), [], false);
-        }
-
-        return $actions;
+        return [
+            'index' => $this->getUri(),
+            'create' => sprintf('%s/create', $this->getUri()),
+        ];
     }
 
     /**
@@ -575,9 +572,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
-                    $this->routes($router);
-                });
+                $this->routes($router);
             }
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
@@ -595,13 +590,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index'])->name('index');
-        $router->get('/create', [ResourceController::class, 'create'])->name('create');
-        $router->post('/', [ResourceController::class, 'store'])->name('store');
-        $router->get('/{rootResource}', [ResourceController::class, 'show'])->name('show');
-        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit'])->name('edit');
-        $router->patch('/{rootResource}', [ResourceController::class, 'update'])->name('update');
-        $router->delete('/{rootResource}', [ResourceController::class, 'destroy'])->name('destroy');
+        $router->get('/', [ResourceController::class, 'index']);
+        $router->get('/create', [ResourceController::class, 'create']);
+        $router->post('/', [ResourceController::class, 'store']);
+        $router->get('/{rootResource}', [ResourceController::class, 'show']);
+        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit']);
+        $router->patch('/{rootResource}', [ResourceController::class, 'update']);
+        $router->delete('/{rootResource}', [ResourceController::class, 'destroy']);
     }
 
     /**

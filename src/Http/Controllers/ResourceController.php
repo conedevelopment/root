@@ -95,7 +95,7 @@ class ResourceController extends Controller
 
         $resource->created($request, $model);
 
-        return Redirect::route(sprintf('root.%s.show', $resource->getKey()), $model->getKey())
+        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
@@ -166,7 +166,7 @@ class ResourceController extends Controller
 
         $resource->updated($request, $model);
 
-        return Redirect::route(sprintf('root.%s.edit', $resource->getKey()), $model->getKey())
+        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
@@ -191,7 +191,7 @@ class ResourceController extends Controller
 
         $resource->deleted($request, $model);
 
-        return Redirect::route(sprintf('root.%s.index', $resource->getKey()))
+        return Redirect::to($resource->getUri())
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
 }
