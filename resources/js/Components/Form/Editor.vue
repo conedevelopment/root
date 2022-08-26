@@ -126,7 +126,7 @@
                         editor.editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
                         editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
                     } else {
-                        editor.editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
+                        editor.editor.insertText(range.index, value.name, { link: value.urls.original }, Quill.sources.USER);
                         editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
                     }
                 });
