@@ -70,7 +70,7 @@ class Date extends Field
      */
     public function max(string|DateTimeInterface $value): static
     {
-        return $this->setAttribute('min', (string) $value);
+        return $this->setAttribute('max', (string) $value);
     }
 
     /**
