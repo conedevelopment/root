@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date as BaseDate;
 
@@ -48,6 +49,28 @@ class Date extends Field
         parent::__construct($label, $name);
 
         $this->type('date');
+    }
+
+    /**
+     * Set the "min" attribute.
+     *
+     * @param  \DateTimeInterface|string  $value
+     * @return $this
+     */
+    public function min(string|DateTimeInterface $value): static
+    {
+        return $this->setAttribute('min', (string) $value);
+    }
+
+    /**
+     * Set the "max" attribute.
+     *
+     * @param  \DateTimeInterface|string  $value
+     * @return $this
+     */
+    public function max(string|DateTimeInterface $value): static
+    {
+        return $this->setAttribute('min', (string) $value);
     }
 
     /**
