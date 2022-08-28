@@ -347,11 +347,11 @@ abstract class Relation extends Field
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            call_user_func_array($scope, [$request, $query, $model]);
+            $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query, $model]);
+            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;
