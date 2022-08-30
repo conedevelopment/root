@@ -577,8 +577,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
             $this->resolveActions($request)->registerRoutes($request, $router);
-            $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
+
+            $router->prefix('{rootResource}')->group(function ($router) use ($request) {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
         });
     }
 

@@ -126,7 +126,7 @@ trait AsSubResource
                     $request,
                     $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->resource,
                 ),
-                'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
+                'url' => $this->formatUri($model),
                 'name' => $this->label,
                 'related_name' => $this->getRelatedName(),
             ],
