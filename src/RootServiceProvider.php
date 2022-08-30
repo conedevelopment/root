@@ -126,11 +126,9 @@ class RootServiceProvider extends ServiceProvider
 
             $request = ResourceRequest::createFrom($this->app['request']);
 
-            if ($id === 'create') {
-                return $request->resource()->getModelInstance();
-            }
-
-            return $request->resource()->resolveRouteBinding($request, $id);
+            return $id === 'create'
+                ? $request->resource()->getModelInstance()
+                : $request->resource()->resolveRouteBinding($request, $id);
         });
 
         $this->app['router']->bind('rootRelated', function (string $id): Model {
