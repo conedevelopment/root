@@ -49,9 +49,6 @@
                                     :item="item"
                                 ></Item>
                             </div>
-                            <div v-show="selection.length" class="media-item-list__sidebar">
-                                <Sidebar :items="selection"></Sidebar>
-                            </div>
                         </div>
                         <div v-else class="alert alert--info" role="alert">
                             {{ __('No results found.') }}
