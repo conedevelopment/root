@@ -12,11 +12,11 @@
                     <h2 class="modal-title">{{ title }}</h2>
                     <button
                         type="button"
-                        class="modal-close btn btn--secondary btn--sm btn--icon"
+                        class="modal-close btn btn--secondary btn--icon"
                         :aria-label="__('Close modal')"
                         @click="close"
                     >
-                        <Icon name="close" class="btn__icon"></Icon>
+                        <Icon name="close" class="btn__icon btn__icon--sm"></Icon>
                     </button>
                 </div>
                 <div

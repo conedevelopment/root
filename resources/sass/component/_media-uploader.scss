@@ -122,6 +122,13 @@
         }
     }
 
+    &__actions {
+        display: flex;
+        inset: spruce.spacer(xs) spruce.spacer(xs) auto auto;
+        gap: spruce.spacer(xs);
+        position: absolute;
+    }
+
     &__caption {
         align-items: center;
         cursor: default;
