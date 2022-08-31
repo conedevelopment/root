@@ -110,6 +110,18 @@
         }
     }
 
+    &.is-small {
+        .icon {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+
+        .media-item__caption {
+            font-size: 0.7rem;
+            padding: 0.5rem;
+        }
+    }
+
     &__caption {
         align-items: center;
         cursor: default;
@@ -384,16 +396,27 @@
 
 .media-selected-images {
     @include spruce.scrollbar;
+    align-items: center;
     display: flex;
     gap: spruce.spacer(s);
     overflow-x: auto;
     min-height: min-content;
     scroll-snap-type: x mandatory;
+    padding-block-end: spruce.spacer(s);
     width: 100%;
 
-    h3 {
-        position: sticky;
+    &__title {
+        background-color: spruce.color(background);
+        font-size: spruce.font-size(h5);
         left: 0;
+        margin-block: 0;
+        padding-inline-end: 0.5rem;
+        position: sticky;
+        white-space: nowrap;
+        z-index: 1;
+        align-self: stretch;
+        display: flex;
+        align-items: center;
     }
 
     .media-item {
