@@ -99,6 +99,7 @@
             </div>
         </div>
         <input
+            class="form-file"
             multiple
             type="file"
             :disabled="$parent.processing"
