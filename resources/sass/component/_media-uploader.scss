@@ -454,3 +454,30 @@
         width: 5rem;
     }
 }
+
+.media-preview {
+    display: grid;
+    gap: spruce.spacer(m);
+    grid-template-columns: minmax(0, 1fr);
+
+    @include spruce.breakpoint(md) {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+
+    &__image {
+        border-radius: spruce.$border-radius-lg;
+    }
+
+    &__title {
+        font-size: spruce.font-size(h4);
+        margin-block: 0;
+    }
+
+    &__sidebar {
+        @include spruce.layout-stack(m);
+
+        &-section {
+            @include spruce.layout-stack(xs);
+        }
+    }
+}
