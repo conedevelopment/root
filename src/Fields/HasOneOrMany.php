@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\URL;
 
 abstract class HasOneOrMany extends Relation
 {
@@ -123,13 +122,13 @@ abstract class HasOneOrMany extends Relation
     public function routes(Router $router): void
     {
         if ($this->asSubResource) {
-            $router->get('{rootResource}', [HasOneOrManyController::class, 'index']);
-            $router->post('{rootResource}', [HasOneOrManyController::class, 'store']);
-            $router->get('{rootResource}/create', [HasOneOrManyController::class, 'create']);
-            $router->get('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'show']);
-            $router->get('{rootResource}/{rootRelated}/edit', [HasOneOrManyController::class, 'edit']);
-            $router->patch('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'update']);
-            $router->delete('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'destroy']);
+            $router->get('/', [HasOneOrManyController::class, 'index']);
+            $router->post('/', [HasOneOrManyController::class, 'store']);
+            $router->get('/create', [HasOneOrManyController::class, 'create']);
+            $router->get('/{rootRelated}', [HasOneOrManyController::class, 'show']);
+            $router->get('/{rootRelated}/edit', [HasOneOrManyController::class, 'edit']);
+            $router->patch('/{rootRelated}', [HasOneOrManyController::class, 'update']);
+            $router->delete('/{rootRelated}', [HasOneOrManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }
@@ -142,7 +141,7 @@ abstract class HasOneOrMany extends Relation
     {
         return array_merge(parent::toInput($request, $model), [
             'related_name' => $this->getRelatedName(),
-            'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
+            'url' => $this->formatUri($model),
         ]);
     }
 }

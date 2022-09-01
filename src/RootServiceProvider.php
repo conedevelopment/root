@@ -117,8 +117,8 @@ class RootServiceProvider extends ServiceProvider
     protected function registerRoutes(): void
     {
         $this->app['router']->patterns([
-            'rootResource' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-            'rootRelated' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+            'rootResource' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create',
+            'rootRelated' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create',
         ]);
 
         $this->app['router']->bind('rootResource', function (string $id): Model {
@@ -126,7 +126,9 @@ class RootServiceProvider extends ServiceProvider
 
             $request = ResourceRequest::createFrom($this->app['request']);
 
-            return $request->resource()->resolveRouteBinding($request, $id);
+            return $id === 'create'
+                ? $request->resource()->getModelInstance()
+                : $request->resource()->resolveRouteBinding($request, $id);
         });
 
         $this->app['router']->bind('rootRelated', function (string $id): Model {

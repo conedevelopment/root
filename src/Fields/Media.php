@@ -270,7 +270,7 @@ class Media extends MorphToMany
                 ];
             }),
             'multiple' => $this->multiple,
-            'url' => $this->getUri(),
+            'url' => $this->formatUri($model),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
             }),
