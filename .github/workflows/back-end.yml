@@ -31,7 +31,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif
           tools: composer:v2
-          coverage: pcov
+          coverage: xdebug3
 
       - name: Check Composer configuration
         run: composer validate --strict
