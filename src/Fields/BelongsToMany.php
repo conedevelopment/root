@@ -189,6 +189,19 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Get the model for the breadcrumbs.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Databse\Eloquent\Model
+     */
+    public function getModelForBreadcrumbs(ResourceRequest $request): Model
+    {
+        $relation = $this->getRelation($request->route('rootResource'));
+
+        return $request->route('rootRelated')->getRelation($relation->getPivotAccessor());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function registerRoutes(RootRequest $request, Router $router): void

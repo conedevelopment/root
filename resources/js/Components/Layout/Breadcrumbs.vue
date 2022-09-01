@@ -1,11 +1,11 @@
 <template>
     <nav class="app-header__breadcrumbs" :aria-label="__('Breadcrumbs')">
         <ol class="breadcrumbs">
-            <li v-for="item in items" :key="item.url" class="breadcrumb-item">
-                <Link v-if="! item.active" :href="item.url">
-                    {{ item.label }}
+            <li v-for="(label, path) in items" :key="path" class="breadcrumb-item">
+                <Link v-if="! isActive(path)" :href="path">
+                    {{ label }}
                 </Link>
-                <span v-else aria-current="page">{{ item.label }}</span>
+                <span v-else aria-current="page">{{ label }}</span>
             </li>
         </ol>
     </nav>
@@ -23,6 +23,14 @@
             items: {
                 type: Array,
                 default: () => [],
+            },
+        },
+
+        methods: {
+            isActive(path) {
+                const paths = Object.keys(this.items);
+
+                return paths.indexOf(path) === paths.length - 1;
             },
         },
     }
