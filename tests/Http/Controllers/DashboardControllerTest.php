@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Http\Conrollers;
+namespace Cone\Root\Tests\Http\Controllers;
 
 use Cone\Root\Tests\TestCase;
 
