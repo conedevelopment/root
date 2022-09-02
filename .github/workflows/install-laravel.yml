@@ -33,6 +33,7 @@ jobs:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
           tools: "composer:v2"
+          coverage: "none"
 
       - name: "Checkout code"
         uses: "actions/checkout@v2"

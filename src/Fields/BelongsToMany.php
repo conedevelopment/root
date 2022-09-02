@@ -189,6 +189,19 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Get the model for the breadcrumbs.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Databse\Eloquent\Model
+     */
+    public function getModelForBreadcrumbs(ResourceRequest $request): Model
+    {
+        $relation = $this->getRelation($request->route('rootResource'));
+
+        return $request->route('rootRelated')->getRelation($relation->getPivotAccessor());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function registerRoutes(RootRequest $request, Router $router): void
@@ -209,13 +222,13 @@ class BelongsToMany extends Relation
     public function routes(Router $router): void
     {
         if ($this->asSubResource) {
-            $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
-            $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
-            $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
-            $router->get('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'show']);
-            $router->get('{rootResource}/{rootRelated}/edit', [BelongsToManyController::class, 'edit']);
-            $router->patch('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'update']);
-            $router->delete('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'destroy']);
+            $router->get('/', [BelongsToManyController::class, 'index']);
+            $router->post('/', [BelongsToManyController::class, 'store']);
+            $router->get('/create', [BelongsToManyController::class, 'create']);
+            $router->get('/{rootRelated}', [BelongsToManyController::class, 'show']);
+            $router->get('/{rootRelated}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('/{rootRelated}', [BelongsToManyController::class, 'update']);
+            $router->delete('/{rootRelated}', [BelongsToManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }
@@ -230,7 +243,7 @@ class BelongsToMany extends Relation
             'async' => $this->async,
             'multiple' => true,
             'related_name' => $this->getRelatedName(),
-            'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
+            'url' => $this->formatUri($model),
         ]);
     }
 

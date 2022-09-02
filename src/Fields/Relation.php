@@ -263,6 +263,20 @@ abstract class Relation extends Field
     }
 
     /**
+     * Format the URI.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $parameters
+     * @return string
+     */
+    public function formatUri(Model $model, array $parameters = []): string
+    {
+        $uri = str_replace('{rootResource}', $model->getKey() ?: 'create', $this->getUri());
+
+        return rtrim(sprintf('%s/%s', $uri, implode('/', $parameters)), '/');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveValue(RootRequest $request, Model $model): mixed
@@ -347,11 +361,11 @@ abstract class Relation extends Field
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            call_user_func_array($scope, [$request, $query, $model]);
+            $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query, $model]);
+            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;
@@ -411,7 +425,7 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? $this->getUri() : null,
+            'url' => $this->isAsync() ? $this->formatUri($model) : null,
         ]);
     }
 }

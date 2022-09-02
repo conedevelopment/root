@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Unit;
+namespace Cone\Root\Tests\Conversion;
 
 use Cone\Root\Conversion\Image;
 use Cone\Root\Models\Medium;

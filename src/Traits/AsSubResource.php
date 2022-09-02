@@ -5,6 +5,7 @@ namespace Cone\Root\Traits;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Http\Resources\ModelResource;
@@ -86,6 +87,17 @@ trait AsSubResource
     }
 
     /**
+     * Get the model for the breadcrumbs.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Databse\Eloquent\Model
+     */
+    public function getModelForBreadcrumbs(ResourceRequest $request): Model
+    {
+        return $request->route('rootRelated');
+    }
+
+    /**
      * Map the related model.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
@@ -111,6 +123,39 @@ trait AsSubResource
     }
 
     /**
+     * Resolve the breadcrumbs for the given request.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function resolveBreadcrumbs(RootRequest $request): array
+    {
+        $breadcrumbs = $request->resource()->resolveBreadcrumbs(UpdateRequest::createFrom($request));
+
+        $model = $request->route('rootResource');
+
+        $breadcrumbs[$this->formatUri($model)] = $this->label;
+
+        if ($request instanceof CreateRequest) {
+            $breadcrumbs[$this->formatUri($model, ['create'])] = __('Create');
+        }
+
+        if ($request instanceof ShowRequest || $request instanceof UpdateRequest) {
+            $related = $this->getModelForBreadcrumbs($request);
+
+            $breadcrumbs[$this->formatUri($model, [$related->getKey()])] = $related->getKey();
+        }
+
+        if ($request instanceof UpdateRequest) {
+            $related = $this->getModelForBreadcrumbs($request);
+
+            $breadcrumbs[$this->formatUri($model, [$related->getKey(), 'edit'])] = __('Edit');
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
      * Get the sub resource representation of the field.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
@@ -121,12 +166,13 @@ trait AsSubResource
     {
         return [
             'resource' => $request->resource()->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'field' => [
                 'abilities' => $this->mapAbilities(
                     $request,
                     $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->resource,
                 ),
-                'url' => sprintf('%s/%s', $this->getUri(), $model->getKey()),
+                'url' => $this->formatUri($model),
                 'name' => $this->label,
                 'related_name' => $this->getRelatedName(),
             ],
@@ -143,9 +189,6 @@ trait AsSubResource
     public function toIndex(IndexRequest $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
-                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label])
-                                ->toArray(),
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
         ]);
@@ -163,12 +206,6 @@ trait AsSubResource
         $related = $this->getRelation($model)->getRelated()->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
-                                ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
-                                    sprintf('%s/%s/create', $this->getUri(), $model->getKey()) => __('Create'),
-                                ])
-                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
@@ -189,12 +226,6 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
-                                ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
-                                    sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
-                                ])
-                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),
@@ -215,13 +246,6 @@ trait AsSubResource
         $related->setRelation('parent', $model);
 
         return array_merge($this->toSubResource($request, $model), [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request, $model)
-                                ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $this->label,
-                                    sprintf('%s/%s/%s', $this->getUri(), $model->getKey(), $related->getKey()) => $related->getKey(),
-                                    sprintf('%s/%s/%s/edit', $this->getUri(), $model->getKey(), $related->getKey()) => __('Edit'),
-                                ])
-                                ->toArray(),
             'model' => $this->mapItem($request, $model, $related)->toForm(
                 $request, $this->resolveFields($request)->available($request, $model, $related)
             ),

@@ -14,13 +14,14 @@ class RelationController extends Controller
      * Handle the incoming request.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(ResourceRequest $request): JsonResponse
+    public function __invoke(ResourceRequest $request, Model $model = null): JsonResponse
     {
         $field = $request->resolved();
 
-        $model = $request->resource()->getModelInstance();
+        $model ??= $request->resource()->getModelInstance();
 
         $models = $field->resolveQuery($request, $model)
                         ->tap(static function (Builder $query) use ($request): void {

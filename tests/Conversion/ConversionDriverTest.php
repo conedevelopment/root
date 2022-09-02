@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Feature;
+namespace Cone\Root\Tests\Conversion;
 
 use Cone\Root\Conversion\GdDriver;
 use Cone\Root\Interfaces\Conversion\Manager;

@@ -31,13 +31,16 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif
           tools: composer:v2
-          coverage: pcov
+          coverage: xdebug3
 
       - name: Check Composer configuration
         run: composer validate --strict
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+
+      - name: Check for PSR-4 mapping errors
+        run: composer dump-autoload --optimize --strict-psr
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose

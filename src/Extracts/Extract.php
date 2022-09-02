@@ -237,6 +237,20 @@ abstract class Extract implements Arrayable
     }
 
     /**
+     * Resolve the breadcrumbs for the given request.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function resolveBreadcrumbs(RootRequest $request): array
+    {
+        return array_merge(
+            $request->resource()->resolveBreadcrumbs($request),
+            [$this->getUri() => $this->getName()]
+        );
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -260,9 +274,7 @@ abstract class Extract implements Arrayable
     {
         return [
             'actions' => $this->resolveActions($request)->available($request)->toArray(),
-            'breadcrumbs' => $this->resolveBreadcrumbs($request)
-                                ->merge([$this->getUri() => $this->getName()])
-                                ->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'extract' => $this->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
