@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
+      - name: Check for PSR-4 mapping errors
+        run: composer dump-autoload --optimize --strict-psr
+
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
 
