@@ -59,11 +59,11 @@ trait AsSubResource
     /**
      * Map the related models.
      *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return array
      */
-    public function mapItems(ResourceRequest $request, Model $model): array
+    public function mapItems(IndexRequest $request, Model $model): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
