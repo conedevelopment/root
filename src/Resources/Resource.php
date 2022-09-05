@@ -62,6 +62,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     protected array $with = [];
 
     /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected array $withCount = [];
+
+    /**
      * The icon for the resource.
      *
      * @var string
@@ -176,13 +183,37 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Set the relation counts to eagerload.
+     *
+     * @param  array  $relations
+     * @return $this
+     */
+    public function withCount(array $relations): static
+    {
+        $this->withCount = $relations;
+
+        return $this;
+    }
+
+    /**
      * Make a new eloquent query instance.
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(): Builder
     {
-        return $this->getModelInstance()->newQuery()->with($this->with);
+        return $this->getModelInstance()->newQuery()->with($this->with)->withCount($this->withCount);
+    }
+
+    /**
+     * Resolve the query for the given request.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function resolveQuery(ResourceRequest $request): Builder
+    {
+        return $this->query();
     }
 
     /**
@@ -194,7 +225,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        return $this->query()->findOrFail($id);
+        return $this->resolveQuery($request)->findOrFail($id);
     }
 
     /**
@@ -310,14 +341,14 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the items.
      *
-     * @param \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param \Cone\Root\Http\Requests\IndexRequest  $request
      * @return array
      */
-    public function mapItems(ResourceRequest $request): array
+    public function mapItems(IndexRequest $request): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->query();
+        $query = $this->resolveQuery($request);
 
         $items = $filters->apply($request, $query)
                     ->latest()
