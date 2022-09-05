@@ -225,7 +225,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        return $this->query()->findOrFail($id);
+        return $this->resolveQuery($request)->findOrFail($id);
     }
 
     /**
