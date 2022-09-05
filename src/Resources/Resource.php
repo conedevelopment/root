@@ -206,12 +206,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Resolve the query for the given index request.
+     * Resolve the query for the given request.
      *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function resolveIndexQuery(IndexRequest $request): Builder
+    public function resolveQuery(ResourceRequest $request): Builder
     {
         return $this->query();
     }
@@ -348,7 +348,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->resolveIndexQuery($request);
+        $query = $this->resolveQuery($request);
 
         $items = $filters->apply($request, $query)
                     ->latest()
