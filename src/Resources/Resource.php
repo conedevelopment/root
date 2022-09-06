@@ -113,7 +113,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->toString();
+        return Str::of($this->getKey())->singular()->prepend('__')->toString();
     }
 
     /**

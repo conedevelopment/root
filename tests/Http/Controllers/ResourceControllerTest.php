@@ -72,7 +72,7 @@ class ResourceControllerTest extends TestCase
         $model = Post::query()->get()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{__post}'];
         });
 
         $this->actingAs($this->admin)
@@ -95,7 +95,7 @@ class ResourceControllerTest extends TestCase
         $model = Post::query()->get()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{__post}/edit'];
         });
 
         $this->actingAs($this->admin)
