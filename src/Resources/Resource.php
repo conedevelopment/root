@@ -107,6 +107,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the route key name.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getKey())->singular()->toString();
+    }
+
+    /**
      * Get the URI of the resource.
      *
      * @return string
@@ -438,7 +448,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             $this->getUri() => $this->getName(),
         ];
 
-        $model = $request->route('rootResource');
+        $model = $request->route($this->getRouteKeyName());
 
         if ($request instanceof CreateRequest) {
             $breadcrumbs[sprintf('%s/create', $this->getUri())] = __('Create');
@@ -587,6 +597,17 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function registered(RootRequest $request): void
     {
         $this->registerRoutes($request);
+
+        App::make('router')->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+            return $id === 'create'
+                ? $this->getModelInstance()
+                : $this->resolveRouteBinding(ResourceRequest::createFrom($request), $id);
+        });
+
+        App::make('router')->pattern(
+            $this->getRouteKeyName(),
+            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
+        );
     }
 
     /**
@@ -606,7 +627,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
 
-            $router->prefix('{rootResource}')->group(function ($router) use ($request) {
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function ($router) use ($request) {
                 $this->resolveFields($request)->registerRoutes($request, $router);
             });
         });
@@ -623,10 +644,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $router->get('/', [ResourceController::class, 'index']);
         $router->get('/create', [ResourceController::class, 'create']);
         $router->post('/', [ResourceController::class, 'store']);
-        $router->get('/{rootResource}', [ResourceController::class, 'show']);
-        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit']);
-        $router->patch('/{rootResource}', [ResourceController::class, 'update']);
-        $router->delete('/{rootResource}', [ResourceController::class, 'destroy']);
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
+        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
+        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
     }
 
     /**

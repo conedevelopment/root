@@ -28,7 +28,7 @@ class HasOneOrManyControllerTest extends TestCase
         $this->field->asSubResource();
 
         $this->resource->routeGroup(function ($router) {
-            $router->prefix('{rootResource}/fields')->group(function ($router) {
+            $router->prefix('{post}/fields')->group(function ($router) {
                 $this->field->registerRoutes($this->request, $router);
             });
         });
@@ -40,7 +40,7 @@ class HasOneOrManyControllerTest extends TestCase
         $request = IndexRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{rootResource}/fields/comments'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}/fields/comments'];
         });
 
         $this->actingAs($this->admin)
@@ -61,7 +61,7 @@ class HasOneOrManyControllerTest extends TestCase
         $request = CreateRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{rootResource}/fields/comments/create'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}/fields/comments/create'];
         });
 
         $this->actingAs($this->admin)
@@ -97,7 +97,7 @@ class HasOneOrManyControllerTest extends TestCase
         $related = $model->comments()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{rootResource}/fields/comments/{rootRelated}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}/fields/comments/{comment}'];
         });
 
         $this->actingAs($this->admin)
@@ -122,7 +122,7 @@ class HasOneOrManyControllerTest extends TestCase
         $related = $model->comments()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{rootResource}/fields/comments/{rootRelated}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{post}/fields/comments/{comment}/edit'];
         });
 
         $this->actingAs($this->admin)
