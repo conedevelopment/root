@@ -620,7 +620,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $router->group(['as' => $this->getKey().'.'], function (Router $router): void {
+                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
                     $this->routes($router);
                 });
             }
