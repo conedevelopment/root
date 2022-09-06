@@ -620,7 +620,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $this->routes($router);
+                $router->group(['as' => $this->getKey().'.'], function (Router $router): void {
+                    $this->routes($router);
+                });
             }
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
@@ -641,13 +643,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index']);
-        $router->get('/create', [ResourceController::class, 'create']);
-        $router->post('/', [ResourceController::class, 'store']);
-        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
-        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
-        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
-        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
+        $router->get('/', [ResourceController::class, 'index'])->name('index');
+        $router->get('/create', [ResourceController::class, 'create'])->name('create');
+        $router->post('/', [ResourceController::class, 'store'])->name('store');
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show'])->name('show');
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit'])->name('edit');
+        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update'])->name('update');
+        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy'])->name('destroy');
     }
 
     /**
