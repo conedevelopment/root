@@ -107,6 +107,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the route key name.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getKey())->singular()->prepend('__')->toString();
+    }
+
+    /**
      * Get the URI of the resource.
      *
      * @return string
@@ -438,7 +448,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             $this->getUri() => $this->getName(),
         ];
 
-        $model = $request->route('rootResource');
+        $model = $request->route($this->getRouteKeyName());
 
         if ($request instanceof CreateRequest) {
             $breadcrumbs[sprintf('%s/create', $this->getUri())] = __('Create');
@@ -587,6 +597,17 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function registered(RootRequest $request): void
     {
         $this->registerRoutes($request);
+
+        App::make('router')->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+            return $id === 'create'
+                ? $this->getModelInstance()
+                : $this->resolveRouteBinding(ResourceRequest::createFrom($request), $id);
+        });
+
+        App::make('router')->pattern(
+            $this->getRouteKeyName(),
+            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
+        );
     }
 
     /**
@@ -599,14 +620,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->routeGroup(function (Router $router) use ($request): void {
             if (! App::routesAreCached()) {
-                $this->routes($router);
+                $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
+                    $this->routes($router);
+                });
             }
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
 
-            $router->prefix('{rootResource}')->group(function ($router) use ($request) {
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function ($router) use ($request) {
                 $this->resolveFields($request)->registerRoutes($request, $router);
             });
         });
@@ -620,13 +643,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index']);
-        $router->get('/create', [ResourceController::class, 'create']);
-        $router->post('/', [ResourceController::class, 'store']);
-        $router->get('/{rootResource}', [ResourceController::class, 'show']);
-        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit']);
-        $router->patch('/{rootResource}', [ResourceController::class, 'update']);
-        $router->delete('/{rootResource}', [ResourceController::class, 'destroy']);
+        $router->get('/', [ResourceController::class, 'index'])->name('index');
+        $router->get('/create', [ResourceController::class, 'create'])->name('create');
+        $router->post('/', [ResourceController::class, 'store'])->name('store');
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show'])->name('show');
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit'])->name('edit');
+        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update'])->name('update');
+        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy'])->name('destroy');
     }
 
     /**

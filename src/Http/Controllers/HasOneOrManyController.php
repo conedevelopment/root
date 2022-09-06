@@ -76,7 +76,7 @@ class HasOneOrManyController extends Controller
 
         $relation->save($related);
 
-        $path = $request->resolved()->formatUri($model, [$related->getKey()]);
+        $path = sprintf('%s/%s', $request->resolved()->resolveUri($request), $related->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
@@ -138,7 +138,7 @@ class HasOneOrManyController extends Controller
 
         $related->save();
 
-        $path = $request->resolved()->formatUri($model, [$related->getKey(), 'edit']);
+        $path = sprintf('%s/%s/edit', $request->resolved()->resolveUri($request), $related->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
@@ -158,7 +158,7 @@ class HasOneOrManyController extends Controller
 
         $trashed ? $related->forceDelete() : $related->delete();
 
-        $path = $request->resolved()->formatUri($model);
+        $path = $request->resolved()->resolveUri($request);
 
         return Redirect::to($path)
                     ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));

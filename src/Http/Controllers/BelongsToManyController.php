@@ -42,7 +42,7 @@ class BelongsToManyController extends HasOneOrManyController
 
         $pivot->save();
 
-        $path = $request->resolved()->formatUri($model, [$pivot->getKey()]);
+        $path = sprintf('%s/%s', $request->resolved()->resolveUri($request), $pivot->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
@@ -107,7 +107,7 @@ class BelongsToManyController extends HasOneOrManyController
 
         $fields->each->persist($request, $pivot);
 
-        $path = $request->resolved()->formatUri($model, [$pivot->getKey(), 'edit']);
+        $path = sprintf('%s/%s/edit', $request->resolved()->resolveUri($request), $pivot->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
@@ -131,7 +131,7 @@ class BelongsToManyController extends HasOneOrManyController
 
         $pivot->delete();
 
-        $path = $request->resolved()->formatUri($model);
+        $path = $request->resolved()->resolveUri($request);
 
         return Redirect::to($path)
                     ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));

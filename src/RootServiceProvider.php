@@ -2,11 +2,9 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -116,31 +114,6 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        $this->app['router']->patterns([
-            'rootResource' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create',
-            'rootRelated' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create',
-        ]);
-
-        $this->app['router']->bind('rootResource', function (string $id): Model {
-            static $request;
-
-            $request = ResourceRequest::createFrom($this->app['request']);
-
-            return $id === 'create'
-                ? $request->resource()->getModelInstance()
-                : $request->resource()->resolveRouteBinding($request, $id);
-        });
-
-        $this->app['router']->bind('rootRelated', function (string $id): Model {
-            static $request;
-
-            $request = ResourceRequest::createFrom($this->app['request']);
-
-            return $id === 'create'
-                ? $request->resolved()->getRelation($request->route('rootResource'))->getRelated()
-                : $request->resolved()->resolveRouteBinding($request, $id);
-        });
-
         $this->app['router']->middlewareGroup(
             'root', $this->app['config']->get('root.middleware', [])
         );

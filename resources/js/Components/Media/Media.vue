@@ -20,6 +20,7 @@
                     </button>
                 </div>
                 <div
+                    ref="container"
                     class="modal-body modal-body--media"
                     :class="{ 'has-active-dropzone': dragging }"
                     :data-dropzone-text="__('Drop your files here')"
@@ -29,9 +30,7 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <div ref="container">
 
-                    </div>
                 </div>
                 <Toolbar v-model:selection="selection"></Toolbar>
             </div>

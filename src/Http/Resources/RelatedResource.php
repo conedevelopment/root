@@ -15,10 +15,10 @@ class RelatedResource extends ModelResource
      */
     protected function mapUrl(ResourceRequest $request): string
     {
-        $parent = $this->resource instanceof Pivot
-            ? $this->resource->pivotParent
-            : $this->resource->parent;
-
-        return $request->resolved()->formatUri($parent, [$this->resource->getKey()]);
+        return sprintf(
+            '%s/%s',
+            $request->resolved()->resolveUri($request),
+            $this->resource->getKey()
+        );
     }
 }

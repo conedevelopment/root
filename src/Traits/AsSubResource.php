@@ -45,18 +45,6 @@ trait AsSubResource
     }
 
     /**
-     * Resolve the resource model for a bound value.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
-    {
-        return $this->getRelation($request->route('rootResource'))->findOrFail($id);
-    }
-
-    /**
      * Map the related models.
      *
      * @param  \Cone\Root\Http\Requests\IndexRequest  $request
@@ -73,7 +61,7 @@ trait AsSubResource
 
         $items = $relation->paginate($request->input('per_page'))
                         ->withQueryString()
-                        ->setPath(sprintf('%s/%s', $this->getUri(), $model->getKey()))
+                        ->setPath($this->resolveUri($request))
                         ->through(function (Model $related) use ($request, $model): array {
                             return $this->mapItem($request, $model, $related)->toDisplay(
                                 $request, $this->resolveFields($request)->available($request, $model, $related)
@@ -94,7 +82,7 @@ trait AsSubResource
      */
     public function getModelForBreadcrumbs(ResourceRequest $request): Model
     {
-        return $request->route('rootRelated');
+        return $request->route($this->getRouteKeyName());
     }
 
     /**
@@ -132,24 +120,22 @@ trait AsSubResource
     {
         $breadcrumbs = $request->resource()->resolveBreadcrumbs(UpdateRequest::createFrom($request));
 
-        $model = $request->route('rootResource');
-
-        $breadcrumbs[$this->formatUri($model)] = $this->label;
+        $breadcrumbs[$this->resolveUri($request)] = $this->label;
 
         if ($request instanceof CreateRequest) {
-            $breadcrumbs[$this->formatUri($model, ['create'])] = __('Create');
+            $breadcrumbs[$this->resolveUri($request).'/create'] = __('Create');
         }
 
         if ($request instanceof ShowRequest || $request instanceof UpdateRequest) {
             $related = $this->getModelForBreadcrumbs($request);
 
-            $breadcrumbs[$this->formatUri($model, [$related->getKey()])] = $related->getKey();
+            $breadcrumbs[$this->resolveUri($request)."/{$related->getKey()}"] = $related->getKey();
         }
 
         if ($request instanceof UpdateRequest) {
             $related = $this->getModelForBreadcrumbs($request);
 
-            $breadcrumbs[$this->formatUri($model, [$related->getKey(), 'edit'])] = __('Edit');
+            $breadcrumbs[$this->resolveUri($request)."/{$related->getKey()}/edit"] = __('Edit');
         }
 
         return $breadcrumbs;
@@ -172,7 +158,7 @@ trait AsSubResource
                     $request,
                     $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->resource,
                 ),
-                'url' => $this->formatUri($model),
+                'url' => $this->resolveUri($request),
                 'name' => $this->label,
                 'related_name' => $this->getRelatedName(),
             ],
