@@ -20,6 +20,7 @@
                     </button>
                 </div>
                 <div
+                    ref="container"
                     class="modal-body modal-body--media"
                     :class="{ 'has-active-dropzone': dragging }"
                     :data-dropzone-text="__('Drop your files here')"
@@ -29,33 +30,31 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <div ref="container">
-                        <Filters></Filters>
-                        <div
-                            v-if="queue.length || response.data.length"
-                            class="media-item-list-wrapper "
-                            :class="{ 'is-sidebar-open': selection.length > 0 }"
-                        >
-                            <div class="media-item-list__body">
-                                <Uploader
-                                    v-for="(file, index) in queue"
-                                    :key="`uploader-${index}`"
-                                    :file="file"
-                                    :url="url"
-                                ></Uploader>
-                                <Item
-                                    v-for="(item, index) in response.data"
-                                    :key="`${item.file_name}-${index}`"
-                                    :item="item"
-                                ></Item>
-                            </div>
-                            <div v-show="selection.length" class="media-item-list__sidebar">
-                                <Sidebar :items="selection"></Sidebar>
-                            </div>
+                    <Filters></Filters>
+                    <div
+                        v-if="queue.length || response.data.length"
+                        class="media-item-list-wrapper "
+                        :class="{ 'is-sidebar-open': selection.length > 0 }"
+                    >
+                        <div class="media-item-list__body">
+                            <Uploader
+                                v-for="(file, index) in queue"
+                                :key="`uploader-${index}`"
+                                :file="file"
+                                :url="url"
+                            ></Uploader>
+                            <Item
+                                v-for="(item, index) in response.data"
+                                :key="`${item.file_name}-${index}`"
+                                :item="item"
+                            ></Item>
                         </div>
-                        <div v-else class="alert alert--info" role="alert">
-                            {{ __('No results found.') }}
+                        <div v-show="selection.length" class="media-item-list__sidebar">
+                            <Sidebar :items="selection"></Sidebar>
                         </div>
+                    </div>
+                    <div v-else class="alert alert--info" role="alert">
+                        {{ __('No results found.') }}
                     </div>
                 </div>
                 <Toolbar></Toolbar>
