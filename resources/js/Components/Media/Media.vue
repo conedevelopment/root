@@ -33,7 +33,7 @@
 
                     </div>
                 </div>
-                <Toolbar></Toolbar>
+                <Toolbar v-model:selection="selection"></Toolbar>
             </div>
         </div>
     </div>
@@ -98,7 +98,8 @@
 
         data() {
             return {
-                //
+                queue: [],
+                selection: [],
             };
         },
 
