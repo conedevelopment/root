@@ -12,11 +12,11 @@ export default defineConfig({
         },
     },
     server: {
-        // https: true,
+        https: true,
         host: 'localhost',
     },
     plugins: [
-        // basicSsl(),
+        basicSsl(),
         laravel(['resources/js/app.js']),
         vue({
             template: {
