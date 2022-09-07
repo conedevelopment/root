@@ -33,7 +33,7 @@
 
         computed: {
             name() {
-                return window.location.pathname + '-extracts';
+                return window.location.pathname.replaceAll('/', '') + '-extracts';
             },
             options() {
                 return this.extracts.map((extract) => ({
@@ -45,8 +45,8 @@
 
         methods: {
             submit() {
-                const extract = this.extracts.find((extract) => {
-                    return extract.key = this._extract;
+                const extract = this.extracts.find((item) => {
+                    return item.key === this._extract;
                 });
 
                 this.form.get(extract.url);
