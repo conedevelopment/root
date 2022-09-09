@@ -37,6 +37,8 @@ class MediaController extends Controller
      */
     public function store(ResourceRequest $request, Model $model = null): JsonResponse
     {
+        $request->validate(['file' => ['required', 'file']]);
+
         $field = $request->resolved();
 
         $model ??= $request->resource()->getModelInstance();
