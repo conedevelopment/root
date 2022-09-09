@@ -61,7 +61,7 @@ class Notification extends DatabaseNotification implements Contract
      */
     public static function rootQuery(RootRequest $request): Builder
     {
-        return $request->user()->notifications();
+        return $request->user()->notifications()->getQuery();
     }
 
     /**

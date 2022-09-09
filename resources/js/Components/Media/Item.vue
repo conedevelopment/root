@@ -1,10 +1,10 @@
 <template>
     <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
         <div v-if="selected" class="media-item__actions">
-            <button type="button" class="btn btn--primary btn--icon">
+            <button type="button" class="btn btn--primary btn--icon" @click.stop="edit">
                 <Icon name="edit" class="btn__icon--sm"></Icon>
             </button>
-            <button type="button" class="btn btn--delete btn--icon" @click.self="deselect">
+            <button type="button" class="btn btn--delete btn--icon" @click.stop="deselect">
                 <Icon name="close" class="btn__icon--sm"></Icon>
             </button>
         </div>
@@ -29,7 +29,7 @@
             },
         },
 
-        emits: ['select', 'deselect'],
+        emits: ['select', 'deselect', 'edit'],
 
         data() {
             return {
@@ -60,6 +60,9 @@
             },
             toggle() {
                 this.selected ? this.deselect() : this.select();
+            },
+            edit() {
+                this.$emit('edit', this.item);
             },
             reload() {
                 if (this.tries >= 5) {

@@ -38,6 +38,9 @@
             deselect(item) {
                 this.$emit('deselect', item);
             },
+            edit(item) {
+                this.$emit('edit', item);
+            },
             clear() {
                 this.$emit('clear');
             },

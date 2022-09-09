@@ -30,7 +30,8 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <div class="media-item-list-wrapper">
+                    <Edit v-if="editing !== null" :item="editing"></Edit>
+                    <div v-show="editing === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
                             <Item
                                 v-for="item in response.data"
@@ -39,6 +40,7 @@
                                 :selected="selected(item)"
                                 @select="select"
                                 @deselect="deselect"
+                                @edit="($event) => editing = $event"
                             ></Item>
                         </div>
                     </div>
@@ -47,6 +49,7 @@
                     :selection="selection"
                     @deselect="deselect"
                     @clear="clear"
+                    @edit="edit"
                 ></Selection>
             </div>
         </div>
@@ -56,6 +59,7 @@
 <script>
     import { throttle } from './../../Support/Helpers';
     import Closable from './../../Mixins/Closable';
+    import Edit from './Edit.vue';
     import Filters from './Filters.vue';
     import Item from './Item.vue';
     import Selection from './Selection.vue';
@@ -63,8 +67,9 @@
 
     export default {
         components: {
-            Item,
+            Edit,
             Filters,
+            Item,
             Selection,
             Uploader,
         },
@@ -151,6 +156,7 @@
             selected(item) {
                 return this.selection.some((selected) => selected.id === item.id);
             },
+
             clear() {
                 this.selection = [];
             },
