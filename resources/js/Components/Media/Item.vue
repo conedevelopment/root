@@ -1,10 +1,10 @@
 <template>
     <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
         <div class="media-item__actions">
-            <button class="btn btn--primary btn--icon">
+            <button type="button" class="btn btn--primary btn--icon">
                 <Icon name="edit" class="btn__icon--sm"></Icon>
             </button>
-            <button class="btn btn--delete btn--icon">
+            <button type="button" class="btn btn--delete btn--icon">
                 <Icon name="delete" class="btn__icon--sm"></Icon>
             </button>
         </div>

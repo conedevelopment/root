@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 
@@ -16,8 +17,7 @@ class NotificationsController extends Controller
      */
     public function index(RootRequest $request): JsonResponse
     {
-        $notifications = $request->user()
-                                ->notifications()
+        $notifications = (Notification::proxy())::rootQuery($request)
                                 ->filter($request)
                                 ->latest()
                                 ->paginate($request->input('per_page'))
@@ -38,7 +38,7 @@ class NotificationsController extends Controller
      */
     public function show(RootRequest $request, string $id): JsonResponse
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
+        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 
         return new JsonResponse($notification);
     }
@@ -52,7 +52,7 @@ class NotificationsController extends Controller
      */
     public function update(RootRequest $request, string $id): JsonResponse
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
+        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 
         $notification->markAsRead();
 
@@ -68,7 +68,7 @@ class NotificationsController extends Controller
      */
     public function destroy(RootRequest $request, string $id): JsonResponse
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
+        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 
         $notification->delete();
 
