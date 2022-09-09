@@ -3,6 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
@@ -148,6 +150,23 @@ class Media extends MorphToMany
     public function fields(RootRequest $request): array
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filters(RootRequest $request): array
+    {
+        $fields = $this->resolveFields($request)->available($request);
+
+        $searchables = $fields->searchable($request);
+
+        $sortables = $fields->sortable($request);
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? Search::make($searchables) : null,
+            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
+        ]));
     }
 
     /**

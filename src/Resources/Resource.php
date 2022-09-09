@@ -7,8 +7,6 @@ use Cone\Root\Actions\Action;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
-use Cone\Root\Filters\Search;
-use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\IndexRequest;
@@ -246,16 +244,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function filters(RootRequest $request): array
     {
-        $fields = $this->resolveFields($request)->available($request);
-
-        $searchables = $fields->searchable($request);
-
-        $sortables = $fields->sortable($request);
-
-        return array_values(array_filter([
-            $searchables->isNotEmpty() ? Search::make($searchables) : null,
-            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
-        ]));
+        return [];
     }
 
     /**

@@ -1,11 +1,11 @@
 <template>
     <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
-        <div class="media-item__actions">
+        <div v-if="selected" class="media-item__actions">
             <button type="button" class="btn btn--primary btn--icon">
                 <Icon name="edit" class="btn__icon--sm"></Icon>
             </button>
-            <button type="button" class="btn btn--delete btn--icon">
-                <Icon name="delete" class="btn__icon--sm"></Icon>
+            <button type="button" class="btn btn--delete btn--icon" @click.self="deselect">
+                <Icon name="close" class="btn__icon--sm"></Icon>
             </button>
         </div>
         <img v-if="item.is_image" :src="url" :alt="item.name" @error="reload" @load="loading = false">
@@ -23,13 +23,19 @@
                 type: Object,
                 required: true,
             },
+            selected: {
+                type: Boolean,
+                default: false,
+            },
         },
+
+        emits: ['select', 'deselect'],
 
         data() {
             return {
                 tries: 0,
                 loading: false,
-                url: this.item.urls.thumb || this.item.urls.original,
+                url: this.item.urls.original,
             };
         },
 
@@ -43,16 +49,17 @@
                     'is-loading': this.loading,
                 };
             },
-            selected() {
-                return this.$parent.selection.some((item) => item.id === this.item.id);
-            },
         },
 
         methods: {
+            select() {
+                this.$emit('select', this.item);
+            },
+            deselect() {
+                this.$emit('deselect', this.item);
+            },
             toggle() {
-                if (! this.$parent.processing) {
-                    this.selected ? this.$parent.deselect(this.item) : this.$parent.select(this.item);
-                }
+                this.selected ? this.deselect() : this.select();
             },
             reload() {
                 if (this.tries >= 5) {

@@ -30,9 +30,24 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-
+                    <div class="media-item-list-wrapper">
+                        <div class="media-item-list__body">
+                            <Item
+                                v-for="item in response.data"
+                                :key="item.id"
+                                :item="item"
+                                :selected="selected(item)"
+                                @select="select"
+                                @deselect="deselect"
+                            ></Item>
+                        </div>
+                    </div>
                 </div>
-                <Toolbar v-model:selection="selection"></Toolbar>
+                <Selection
+                    :selection="selection"
+                    @deselect="deselect"
+                    @clear="clear"
+                ></Selection>
             </div>
         </div>
     </div>
@@ -43,14 +58,14 @@
     import Closable from './../../Mixins/Closable';
     import Filters from './Filters.vue';
     import Item from './Item.vue';
-    import Toolbar from './Toolbar.vue';
+    import Selection from './Selection.vue';
     import Uploader from './Uploader.vue';
 
     export default {
         components: {
             Item,
             Filters,
-            Toolbar,
+            Selection,
             Uploader,
         },
 
@@ -92,18 +107,53 @@
         },
 
         mounted() {
-            //
+            this.$dispatcher.once('open', this.fetch);
         },
 
         data() {
             return {
+                dragging: false,
+                processing: false,
                 queue: [],
                 selection: [],
+                response: { data: [], next_page_url: null, prev_page_url: null },
+                form: this.$inertia.form({}),
+                editing: null,
             };
         },
 
         methods: {
-            //
+            fetch() {
+                this.processing = true;
+
+                this.$http.get(this.url, {
+                    params: {},
+                }).then((response) => {
+                    this.response = response.data;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            select(item) {
+                if (this.multiple) {
+                    this.selection.push(item);
+                } else {
+                    this.selection = [item];
+                }
+            },
+            deselect(item) {
+                const index = this.selection.findIndex((selected) => selected.id === item.id);
+
+                this.selection.splice(index, 1);
+            },
+            selected(item) {
+                return this.selection.some((selected) => selected.id === item.id);
+            },
+            clear() {
+                this.selection = [];
+            },
         },
     }
 </script>
