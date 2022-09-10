@@ -587,10 +587,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $this->registerRoutes($request);
 
-        App::make('router')->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+        App::make('router')->bind($this->getRouteKeyName(), function (string $id): Model {
             return $id === 'create'
                 ? $this->getModelInstance()
-                : $this->resolveRouteBinding(ResourceRequest::createFrom($request), $id);
+                : $this->resolveRouteBinding(App::make(ResourceRequest::class), $id);
         });
 
         App::make('router')->pattern(
