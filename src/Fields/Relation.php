@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -440,8 +441,8 @@ abstract class Relation extends Field
      */
     public function registerRouterConstrains(RootRequest $request, Router $router): void
     {
-        $router->bind($this->getRouteKeyName(), function (string $id, Route $route) use ($request): Model {
-            $request = ResourceRequest::createFrom($request);
+        $router->bind($this->getRouteKeyName(), function (string $id, Route $route): Model {
+            $request = App::make(ResourceRequest::class);
 
             $request->setRouteResolver(static function () use ($route): Route {
                 return $route;
