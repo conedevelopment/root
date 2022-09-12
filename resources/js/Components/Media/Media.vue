@@ -9,7 +9,16 @@
         >
             <div class="modal-inner">
                 <div class="modal-header">
-                    <h2 class="modal-title">{{ title }}</h2>
+                    <button
+                        v-if="preview"
+                        type="button"
+                        class="modal-close btn btn--secondary btn--icon"
+                        :aria-label="__('Back')"
+                        @click="preview = null"
+                    >
+                        <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
+                    </button>
+                    <h2 class="modal-title">{{ preview ? preview.name : title }}</h2>
                     <button
                         type="button"
                         class="modal-close btn btn--secondary btn--icon"
@@ -30,8 +39,8 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Edit v-if="editing !== null" :item="editing"></Edit>
-                    <div v-show="editing === null" class="media-item-list-wrapper">
+                    <Preview v-if="preview !== null" :item="preview"></Preview>
+                    <div v-show="preview === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
                             <Item
                                 v-for="item in response.data"
@@ -40,7 +49,7 @@
                                 :selected="selected(item)"
                                 @select="select"
                                 @deselect="deselect"
-                                @edit="($event) => editing = $event"
+                                @preview="($event) => preview = $event"
                             ></Item>
                         </div>
                     </div>
@@ -49,7 +58,7 @@
                     :selection="selection"
                     @deselect="deselect"
                     @clear="clear"
-                    @edit="edit"
+                    @preview="($event) => preview = $event"
                 ></Selection>
             </div>
         </div>
@@ -59,17 +68,17 @@
 <script>
     import { throttle } from './../../Support/Helpers';
     import Closable from './../../Mixins/Closable';
-    import Edit from './Edit.vue';
     import Filters from './Filters.vue';
     import Item from './Item.vue';
+    import Preview from './Preview.vue';
     import Selection from './Selection.vue';
     import Uploader from './Uploader.vue';
 
     export default {
         components: {
-            Edit,
             Filters,
             Item,
+            Preview,
             Selection,
             Uploader,
         },
@@ -123,7 +132,7 @@
                 selection: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 form: this.$inertia.form({}),
-                editing: null,
+                preview: null,
             };
         },
 

@@ -203,6 +203,38 @@ class Medium extends Model implements Contract
     }
 
     /**
+     * Get the formatted size attribute.
+     *
+     * @return string
+     */
+    public function getFormattedSizeAttribute(): string
+    {
+        if ($this->size === 0) {
+            return '0 KB';
+        }
+
+        $units = ['KB', 'MB', 'GB', 'TB', 'PB'];
+
+        $index = floor(log($this->size, 1024));
+
+        return sprintf('%.1f %s', round($this->size / pow(1024, $index), 1), $units[$index]);
+    }
+
+    /**
+     * Get the dimensions attribute.
+     *
+     * @return string|null
+     */
+    public function getDimensionsAttribute(): ?string
+    {
+        if (is_null($this->width) || is_null($this->height)) {
+            return null;
+        }
+
+        return sprintf('%dx%d px', $this->width, $this->height);
+    }
+
+    /**
      * Determine if the medium should is convertable.
      *
      * @return bool

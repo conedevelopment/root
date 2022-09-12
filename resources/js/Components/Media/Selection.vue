@@ -9,6 +9,7 @@
                 :item="item"
                 @select="select"
                 @deselect="deselect"
+                @preview="preview"
             ></Item>
         </div>
     </div>
@@ -29,7 +30,7 @@
             },
         },
 
-        emits: ['select', 'deselect', 'clear'],
+        emits: ['select', 'deselect', 'clear', 'preview'],
 
         methods: {
             select(item) {
@@ -38,8 +39,8 @@
             deselect(item) {
                 this.$emit('deselect', item);
             },
-            edit(item) {
-                this.$emit('edit', item);
+            preview(item) {
+                this.$emit('preview', item);
             },
             clear() {
                 this.$emit('clear');

@@ -228,13 +228,13 @@ class Media extends MorphToMany
 
         return array_merge(
             parent::mapOption($request, $model, $related),
-            $related->toArray(),
+            $related->append(['dimensions', 'formatted_size'])->toArray(),
             [
-                'created_at' => $related->created_at->format('Y-m-d H:i'),
                 'fields' => $this->resolveFields($request)
                                 ->available($request, $model, $related)
                                 ->mapToForm($request, $relation->newPivot())
                                 ->toArray(),
+                'formatted_created_at' => $related->created_at->format('Y-m-d H:i'),
             ],
         );
     }
