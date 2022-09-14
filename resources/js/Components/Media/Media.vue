@@ -14,7 +14,7 @@
                         type="button"
                         class="modal-close btn btn--secondary btn--icon"
                         :aria-label="__('Back')"
-                        @click="preview = null"
+                        @click="current = null"
                     >
                         <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
                     </button>
@@ -39,7 +39,11 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Preview v-if="preview !== null" :item="preview"></Preview>
+                    <Preview
+                        v-if="preview !== null"
+                        :modelValue="preview"
+                        @update:modelValue="() => update(modelValue)"
+                    ></Preview>
                     <div v-show="preview === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
                             <Item
@@ -49,16 +53,16 @@
                                 :selected="selected(item)"
                                 @select="select"
                                 @deselect="deselect"
-                                @preview="($event) => preview = $event"
+                                @preview="($event) => current = $event.id"
                             ></Item>
                         </div>
                     </div>
                 </div>
                 <Selection
-                    :selection="selection"
+                    :selection="modelValue"
                     @deselect="deselect"
                     @clear="clear"
-                    @preview="($event) => preview = $event"
+                    @preview="($event) => current = $event.id"
                 ></Selection>
             </div>
         </div>
@@ -87,7 +91,7 @@
 
         props: {
             modelValue: {
-                type: [Array, Object],
+                type: Array,
                 default: () => [],
             },
             multiple: {
@@ -103,10 +107,6 @@
                 default: function () {
                     return this.__('Media');
                 },
-            },
-            selectResolver: {
-                type: Function,
-                default: (value, options) => value,
             },
         },
 
@@ -129,11 +129,20 @@
                 dragging: false,
                 processing: false,
                 queue: [],
-                selection: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 form: this.$inertia.form({}),
-                preview: null,
+                current: null,
             };
+        },
+
+        computed: {
+            preview() {
+                if (this.current === null) {
+                    return null;
+                }
+
+                return this.modelValue.find((item) => item.id === this.current);
+            },
         },
 
         methods: {
@@ -152,22 +161,35 @@
             },
             select(item) {
                 if (this.multiple) {
-                    this.selection.push(item);
+                    const value = Array.from(this.modelValue);
+
+                    value.push(item);
+
+                    this.update(value);
                 } else {
-                    this.selection = [item];
+                    this.update([item]);
                 }
             },
             deselect(item) {
-                const index = this.selection.findIndex((selected) => selected.id === item.id);
+                if (item.id === this.current) {
+                    this.current = null;
+                }
 
-                this.selection.splice(index, 1);
+                const value = Array.from(this.modelValue);
+                const index = value.findIndex((selected) => selected.id === item.id);
+
+                value.splice(index, 1);
+
+                this.update(value);
             },
             selected(item) {
-                return this.selection.some((selected) => selected.id === item.id);
+                return this.modelValue.some((selected) => selected.id === item.id);
             },
-
             clear() {
-                this.selection = [];
+                this.update([]);
+            },
+            update(value) {
+                this.$emit('update:modelValue', value);
             },
         },
     }

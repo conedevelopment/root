@@ -1,5 +1,5 @@
 <template>
-    <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
+    <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="select">
         <div v-if="selected" class="media-item__actions">
             <button type="button" class="btn btn--primary btn--icon" @click.stop="preview">
                 <Icon name="view" class="btn__icon--sm"></Icon>
@@ -8,7 +8,7 @@
                 <Icon name="close" class="btn__icon--sm"></Icon>
             </button>
         </div>
-        <img v-if="item.is_image" :src="url" :alt="item.name" @error="reload" @load="loading = false">
+        <img v-if="item.is_image" :src="url" :alt="item.file_name" @error="reload" @load="loading = false">
         <span v-else class="media-item__caption">
             <Icon name="description"></Icon>
             <span>{{ item.file_name }}</span>
@@ -35,6 +35,7 @@
             return {
                 tries: 0,
                 loading: false,
+                previewing: false,
                 url: this.item.urls.original,
             };
         },
@@ -53,13 +54,12 @@
 
         methods: {
             select() {
-                this.$emit('select', this.item);
+                if (! this.selected) {
+                    this.$emit('select', this.item);
+                }
             },
             deselect() {
                 this.$emit('deselect', this.item);
-            },
-            toggle() {
-                this.selected ? this.deselect() : this.select();
             },
             preview() {
                 this.$emit('preview', this.item);
