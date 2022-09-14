@@ -46,6 +46,12 @@
                     ></Preview>
                     <div v-show="preview === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
+                            <Queue
+                                v-if="queue.length > 0"
+                                v-model:queue="queue"
+                                :url="url"
+                                @processed="handleProcessed"
+                            ></Queue>
                             <Item
                                 v-for="item in response.data"
                                 :key="item.id"
@@ -75,16 +81,16 @@
     import Filters from './Filters.vue';
     import Item from './Item.vue';
     import Preview from './Preview.vue';
+    import Queue from './Queue.vue';
     import Selection from './Selection.vue';
-    import Uploader from './Uploader.vue';
 
     export default {
         components: {
             Filters,
             Item,
             Preview,
+            Queue,
             Selection,
-            Uploader,
         },
 
         mixins: [Closable],
@@ -122,16 +128,27 @@
 
         mounted() {
             this.$dispatcher.once('open', this.fetch);
+
+            window.addEventListener('keyup', (event) => {
+                if (this.isOpen && event.code === 'Escape') {
+                    this.close();
+                }
+            });
+            this.$refs.container.addEventListener('scroll', throttle((event) => {
+                if (this.shouldPaginate()) {
+                    this.paginate();
+                }
+            }, 300));
         },
 
         data() {
             return {
+                current: null,
                 dragging: false,
+                form: this.$inertia.form({}),
                 processing: false,
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
-                form: this.$inertia.form({}),
-                current: null,
             };
         },
 
@@ -158,6 +175,34 @@
                 }).finally(() => {
                     this.processing = false;
                 });
+            },
+            paginate() {
+                this.processing = true;
+
+                this.$http.get(this.response.next_page_url).then((response) => {
+                    this.response.data.push(...response.data.data);
+                    this.response.next_page_url = response.data.next_page_url;
+                    this.response.prev_page_url = response.data.prev_page_url;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            handleFiles(files) {
+                this.dragging = false;
+
+                for (let i = 0; i < files.length; i++) {
+                    this.queue.unshift(files.item(i));
+                }
+            },
+            shouldPaginate() {
+                const el = this.$refs.container;
+
+                return ! this.processing
+                    && this.response.next_page_url !== null
+                    && this.response.data.length > 0
+                    && (el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
             },
             select(item) {
                 if (this.multiple) {
@@ -190,6 +235,10 @@
             },
             update(value) {
                 this.$emit('update:modelValue', value);
+            },
+            handleProcessed(item) {
+                this.response.total++;
+                this.response.data.unshift(item);
             },
         },
     }

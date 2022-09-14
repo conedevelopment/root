@@ -23,7 +23,7 @@
             },
         },
 
-        emits: ['success'],
+        emits: ['processed', 'failed', 'cancelled'],
 
         beforeMount() {
             this.generateHash();
@@ -63,7 +63,9 @@
                     this.chunks.shift();
 
                     if (this.chunks.length === 0) {
-                        this.$emit('success', response.data);
+                        this.$emit('processed', response.data);
+                    } else {
+                        this.upload();
                     }
                 }).catch((error) => {
                     this.error = this.__('Something went wrong!');
