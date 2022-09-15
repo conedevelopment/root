@@ -53,6 +53,7 @@ class Medium extends Model implements Contract
      */
     protected $casts = [
         'properties' => 'json',
+        'size' => 'float',
     ];
 
     /**
