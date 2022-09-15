@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - media
   pull_request: null
 
 jobs:

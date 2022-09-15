@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Controllers\BelongsToManyController;

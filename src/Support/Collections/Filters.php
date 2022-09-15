@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Filters\Filter;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Cone\Root\Support\Facades;
 
 use Cone\Root\Interfaces\Support\Collections\Assets;
