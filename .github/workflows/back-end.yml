@@ -17,9 +17,10 @@ jobs:
         laravel: ["9.0"]
         dependency-version: ["highest"]
         include:
-          - php: "8.0"
+          - os: "ubuntu-20.04"
+            php: "8.0"
+            laravel: "9.0"
             dependency-version: "locked"
-
 
     name: "Unit - ${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.dependency-version }}"
 
