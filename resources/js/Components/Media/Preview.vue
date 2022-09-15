@@ -2,7 +2,9 @@
     <div class="media-preview">
         <div>
             <img v-if="modelValue.is_image" class="media-preview__image" :src="modelValue.urls.original">
-            <object v-else :src="modelValue.urls.original"></object>
+            <object v-else :data="modelValue.urls.original" :type="modelValue.mime_type" style="width: 100%; height: 100%;">
+                <iframe :src="modelValue.urls.original"></iframe>
+            </object>
         </div>
         <div class="media-preview__sidebar">
             <div class="media-preview__sidebar-section">
