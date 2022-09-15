@@ -209,7 +209,7 @@
                 this.dragging = false;
 
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.unshift(files.item(i));
+                    this.queue.push(files.item(i));
                 }
             },
             shouldPaginate() {
