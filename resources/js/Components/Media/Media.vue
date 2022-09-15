@@ -52,6 +52,14 @@
                     ></Filters>
                     <div v-show="preview === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
+                            <div class="uploader-item">
+                                <input
+                                    multiple
+                                    type="file"
+                                    class="form-file form-file--sm"
+                                    @change="handleFiles($event.target.files)"
+                                >
+                            </div>
                             <Queue
                                 v-if="queue.length > 0"
                                 v-model:queue="queue"
