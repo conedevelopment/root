@@ -14,8 +14,12 @@ jobs:
       matrix:
         os: ["ubuntu-20.04"]
         php: ["8.0", "8.1"]
-        stability: ["prefer-stable"]
         laravel: ["9.0"]
+        dependency-version: ["highest"]
+        include:
+          - php: "8.0"
+            dependency-version: "locked"
+
 
     name: "Unit - ${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
 
@@ -37,7 +41,12 @@ jobs:
         run: composer validate --strict
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+        if: ${{ matrix.dependency-version == 'highest' }}
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Install locked dependencies
+        if: ${{ matrix.dependency-version == 'locked' }}
+        run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Check for PSR-4 mapping errors
         run: composer dump-autoload --optimize --strict-psr
