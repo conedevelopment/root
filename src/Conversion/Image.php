@@ -145,10 +145,10 @@ class Image
         [$originalWidth, $originalHeight] = getimagesize($this->medium->getAbsolutePath());
 
         $width = $width ?: $this->attributes['width'];
-        $width = $width ? min($width, $originalWidth) : $originalWidth;
+        $width = $width ? intval(min($width, $originalWidth)) : $originalWidth;
 
         $height = $height ?: $this->attributes['height'];
-        $height = $height ? min($height, $originalHeight) : ($crop ? $width : $originalHeight);
+        $height = $height ? intval(min($height, $originalHeight)) : ($crop ? $width : $originalHeight);
 
         if (! $crop && $width <= $height) {
             $height = ($width / $originalWidth) * $originalHeight;
