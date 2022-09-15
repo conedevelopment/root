@@ -17,6 +17,7 @@
                 ref="media"
                 :url="url"
                 :title="label"
+                :filters="filters"
                 :modelValue="items"
                 :multiple="multiple"
                 @update:modelValue="update"
@@ -73,6 +74,10 @@
             help: {
                 type: String,
                 default: null,
+            },
+            filters: {
+                type: Array,
+                default: () => [],
             },
         },
 

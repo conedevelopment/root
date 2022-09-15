@@ -44,6 +44,12 @@
                         :modelValue="preview"
                         @update:modelValue="() => update(modelValue)"
                     ></Preview>
+                    <Filters
+                        v-show="preview === null"
+                        :query="query"
+                        :filters="filters"
+                        @update:query="fetch"
+                    ></Filters>
                     <div v-show="preview === null" class="media-item-list-wrapper">
                         <div class="media-item-list__body">
                             <Queue
@@ -114,6 +120,10 @@
                     return this.__('Media');
                 },
             },
+            filters: {
+                type: Array,
+                default: () => [],
+            },
         },
 
         inheritAttrs: false,
@@ -145,7 +155,9 @@
             return {
                 current: null,
                 dragging: false,
-                form: this.$inertia.form({}),
+                query: this.$inertia.form(
+                    this.filters.reduce((value, filter) => ({...value, [filter.key]: filter.default}), {})
+                ),
                 processing: false,
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
@@ -165,19 +177,22 @@
         methods: {
             fetch() {
                 this.processing = true;
+                this.query.processing = true;
 
                 this.$http.get(this.url, {
-                    params: {},
+                    params: this.query.data(),
                 }).then((response) => {
                     this.response = response.data;
                 }).catch((error) => {
                     //
                 }).finally(() => {
                     this.processing = false;
+                    this.query.processing = false;
                 });
             },
             paginate() {
                 this.processing = true;
+                this.query.processing = true;
 
                 this.$http.get(this.response.next_page_url).then((response) => {
                     this.response.data.push(...response.data.data);
@@ -187,6 +202,7 @@
                     //
                 }).finally(() => {
                     this.processing = false;
+                    this.query.processing = false;
                 });
             },
             handleFiles(files) {
