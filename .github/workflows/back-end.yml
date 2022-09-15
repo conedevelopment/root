@@ -21,7 +21,7 @@ jobs:
             dependency-version: "locked"
 
 
-    name: "Unit - ${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
+    name: "Unit - ${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.dependency-version }}"
 
     runs-on: "${{ matrix.os }}"
 
@@ -55,7 +55,7 @@ jobs:
         run: vendor/bin/phpunit --verbose
 
       - name: Send coverage to Coveralls
-        if: "matrix.os == 'ubuntu-20.04' && matrix.php == '8.0'"
+        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.php == '8.0' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
