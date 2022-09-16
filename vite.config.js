@@ -16,7 +16,7 @@ export default defineConfig({
         host: 'localhost',
     },
     plugins: [
-        // basicSsl(),
+        basicSsl(),
         laravel(['resources/js/app.js']),
         vue({
             template: {

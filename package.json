@@ -20,7 +20,7 @@
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.32.4",
         "sass-loader": "^8.0.0",
-        "sprucecss": "^1.0.2",
+        "sprucecss": "^1.0.3",
         "vite": "^3.0.0",
         "vue": "^3.2.39",
         "vue-loader": "^16.1.0"

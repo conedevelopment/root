@@ -9,16 +9,7 @@
         >
             <div class="modal-inner">
                 <div class="modal-header">
-                    <button
-                        v-if="preview"
-                        type="button"
-                        class="modal-close btn btn--secondary btn--icon"
-                        :aria-label="__('Back')"
-                        @click="current = null"
-                    >
-                        <Icon name="arrow-back" class="btn__icon btn__icon--sm"></Icon>
-                    </button>
-                    <h2 class="modal-title">{{ preview ? preview.name : title }}</h2>
+                    <h2 class="modal-title">{{ title }}</h2>
                     <button
                         type="button"
                         class="modal-close btn btn--secondary btn--icon"
@@ -39,27 +30,17 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Preview
-                        v-if="preview !== null"
-                        :modelValue="preview"
-                        @update:modelValue="() => update(modelValue)"
-                    ></Preview>
                     <Filters
-                        v-show="preview === null"
                         :query="query"
                         :filters="filters"
                         @update:query="fetch"
                     ></Filters>
-                    <div v-show="preview === null" class="media-item-list-wrapper">
+                    <div
+                        v-if="queue.length > 0 || response.data.length > 0"
+                        class="media-item-list-wrapper"
+                        :class="{ 'is-sidebar-open': modelValue.length > 0 }"
+                    >
                         <div class="media-item-list__body">
-                            <div class="uploader-item">
-                                <input
-                                    multiple
-                                    type="file"
-                                    class="form-file form-file--sm"
-                                    @change="handleFiles($event.target.files)"
-                                >
-                            </div>
                             <Queue
                                 v-if="queue.length > 0"
                                 v-model:queue="queue"
@@ -73,17 +54,18 @@
                                 :selected="selected(item)"
                                 @select="select"
                                 @deselect="deselect"
-                                @preview="($event) => current = $event.id"
                             ></Item>
+                        </div>
+                        <div v-show="modelValue.length > 0" class="media-item-list__sidebar">
+                            <Selection
+                                v-model:selection="modelValue"
+                                @deselect="deselect"
+                                @clear="clear"
+                            ></Selection>
                         </div>
                     </div>
                 </div>
-                <Selection
-                    :selection="modelValue"
-                    @deselect="deselect"
-                    @clear="clear"
-                    @preview="($event) => current = $event.id"
-                ></Selection>
+                <Toolbar @upload="handleFiles"></Toolbar>
             </div>
         </div>
     </div>
@@ -94,16 +76,16 @@
     import Closable from './../../Mixins/Closable';
     import Filters from './Filters.vue';
     import Item from './Item.vue';
-    import Preview from './Preview.vue';
     import Queue from './Queue.vue';
+    import Toolbar from './Toolbar.vue';
     import Selection from './Selection.vue';
 
     export default {
         components: {
             Filters,
             Item,
-            Preview,
             Queue,
+            Toolbar,
             Selection,
         },
 
@@ -161,7 +143,6 @@
 
         data() {
             return {
-                current: null,
                 dragging: false,
                 query: this.$inertia.form(
                     this.filters.reduce((value, filter) => ({...value, [filter.key]: filter.default}), {})
@@ -170,16 +151,6 @@
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
             };
-        },
-
-        computed: {
-            preview() {
-                if (this.current === null) {
-                    return null;
-                }
-
-                return this.modelValue.find((item) => item.id === this.current);
-            },
         },
 
         methods: {
@@ -240,10 +211,6 @@
                 }
             },
             deselect(item) {
-                if (item.id === this.current) {
-                    this.current = null;
-                }
-
                 const value = Array.from(this.modelValue);
                 const index = value.findIndex((selected) => selected.id === item.id);
 

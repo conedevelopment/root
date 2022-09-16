@@ -1,6 +1,6 @@
 <template>
     <div class="form-group form-group--vertical-check" :class="class" :style="style">
-        <label class="form-label" :for="id">
+        <label v-if="options.length > 0" class="form-label" :for="id">
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
@@ -22,7 +22,10 @@
                 :id="id"
                 :name="name"
             >
-            <span class="form-check__label">{{ label }}</span>
+            <span class="form-check__label">
+                {{ label }}
+                <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
+            </span>
         </label>
         <span
             class="field-feedback"

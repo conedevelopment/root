@@ -1,22 +1,28 @@
 <template>
-    <div class="modal-footer modal-footer--column">
-        <div class="media-selected-images">
-            <Item
-                v-for="item in selection"
-                class="is-small"
-                selected
-                :key="item.id"
-                :item="item"
-                @select="select"
-                @deselect="deselect"
-                @preview="preview"
-            ></Item>
+    <div class="media-sidebar">
+        <div class="media-sidebar__section">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;" class="media-sidebar__title">
+                    {{ __(':count files selected', { count: selection.length }) }}
+                </h3>
+                <button type="button" class="btn btn--sm btn--delete" @click="clear">
+                    {{ __('Clear') }}
+                </button>
+            </div>
+            <div class="accordion-wrapper">
+                <Item
+                    v-for="item in selection"
+                    :key="item.id"
+                    :item="item"
+                    @deselect="deselect(item)"
+                ></Item>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import Item from './Item.vue';
+    import Item from './Selected.vue';
 
     export default {
         components: {
@@ -30,7 +36,7 @@
             },
         },
 
-        emits: ['select', 'deselect', 'clear', 'preview'],
+        emits: ['select', 'deselect', 'clear'],
 
         methods: {
             select(item) {
@@ -38,9 +44,6 @@
             },
             deselect(item) {
                 this.$emit('deselect', item);
-            },
-            preview(item) {
-                this.$emit('preview', item);
             },
             clear() {
                 this.$emit('clear');

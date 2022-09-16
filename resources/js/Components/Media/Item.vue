@@ -1,9 +1,6 @@
 <template>
     <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="select">
         <div v-if="selected" class="media-item__actions">
-            <button type="button" class="btn btn--primary btn--icon" @click.stop="preview">
-                <Icon name="view" class="btn__icon--sm"></Icon>
-            </button>
             <button type="button" class="btn btn--delete btn--icon" @click.stop="deselect">
                 <Icon name="close" class="btn__icon--sm"></Icon>
             </button>
@@ -29,7 +26,7 @@
             },
         },
 
-        emits: ['select', 'deselect', 'preview'],
+        emits: ['select', 'deselect'],
 
         data() {
             return {
@@ -60,9 +57,6 @@
             },
             deselect() {
                 this.$emit('deselect', this.item);
-            },
-            preview() {
-                this.$emit('preview', this.item);
             },
             reload() {
                 if (this.tries >= 5) {
