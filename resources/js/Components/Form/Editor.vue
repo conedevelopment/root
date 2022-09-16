@@ -10,7 +10,9 @@
             ref="media"
             :url="media_url"
             :title="__('Media')"
-            :select-resolver="selectResolver"
+            :modelValue="selection"
+            multiple
+            @update:modelValue="selectResolver"
         ></Media>
         <span
             class="field-feedback"
@@ -104,16 +106,15 @@
                 this.$emit('update:modelValue', editor.root.innerHTML === '<p><br></p>' ? '' : editor.root.innerHTML);
             });
 
-            this.selectResolver = (values, selection) => {
-                this.insertMedia(editor, selection);
-
-                return values;
+            this.selectResolver = (value) => {
+                this.insertMedia(editor, value);
             };
         },
 
         data() {
             return {
-                selectResolver: (values) => values,
+                selection: [],
+                selectResolver: () => {},
             };
         },
 
@@ -133,7 +134,8 @@
 
                 editor.emitter.emit('text-change');
 
-                this.$refs.media.clearSelection();
+                this.$refs.media.clear();
+                this.$refs.media.close();
             },
         },
     }

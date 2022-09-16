@@ -59,14 +59,19 @@ class MediaControllerTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post('/root/posts/fields/media', [
-                'is_last' => false,
                 'file' => UploadedFile::fake()->image('test.png.chunk'),
+            ], [
+                'X-Chunk-Index' => 1,
+                'X-Chunk-Total' => 2,
             ])
             ->assertNoContent();
 
         $this->actingAs($this->admin)
             ->post('/root/posts/fields/media', [
                 'file' => UploadedFile::fake()->image('test.png.chunk'),
+            ], [
+                'X-Chunk-Index' => 1,
+                'X-Chunk-Total' => 1,
             ])
             ->assertCreated()
             ->assertJson(['name' => 'test']);

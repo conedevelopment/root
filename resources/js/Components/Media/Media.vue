@@ -12,11 +12,11 @@
                     <h2 class="modal-title">{{ title }}</h2>
                     <button
                         type="button"
-                        class="modal-close btn btn--secondary btn--sm btn--icon"
+                        class="modal-close btn btn--secondary btn--icon"
                         :aria-label="__('Close modal')"
                         @click="close"
                     >
-                        <Icon name="close" class="btn__icon"></Icon>
+                        <Icon name="close" class="btn__icon btn__icon--sm"></Icon>
                     </button>
                 </div>
                 <div
@@ -30,34 +30,40 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Filters></Filters>
+                    <Filters
+                        :query="query"
+                        :filters="filters"
+                        @update:query="fetch"
+                    ></Filters>
                     <div
-                        v-if="queue.length || response.data.length"
-                        class="media-item-list-wrapper "
-                        :class="{ 'is-sidebar-open': selection.length > 0 }"
+                        class="media-item-list-wrapper"
+                        :class="{ 'is-sidebar-open': value.length > 0 }"
                     >
                         <div class="media-item-list__body">
-                            <Uploader
-                                v-for="(file, index) in queue"
-                                :key="`uploader-${index}`"
-                                :file="file"
+                            <Queue
+                                ref="queue"
                                 :url="url"
-                            ></Uploader>
+                                @processed="handleProcessed"
+                            ></Queue>
                             <Item
-                                v-for="(item, index) in response.data"
-                                :key="`${item.file_name}-${index}`"
+                                v-for="item in response.data"
+                                :key="item.id"
                                 :item="item"
+                                :selected="selected(item)"
+                                @select="select"
+                                @deselect="deselect"
                             ></Item>
                         </div>
-                        <div v-show="selection.length" class="media-item-list__sidebar">
-                            <Sidebar :items="selection"></Sidebar>
+                        <div v-show="value.length > 0" class="media-item-list__sidebar">
+                            <Selection
+                                v-model:selection="value"
+                                @deselect="deselect"
+                                @clear="clear"
+                            ></Selection>
                         </div>
                     </div>
-                    <div v-else class="alert alert--info" role="alert">
-                        {{ __('No results found.') }}
-                    </div>
                 </div>
-                <Toolbar></Toolbar>
+                <Toolbar @upload="handleFiles" @update="update"></Toolbar>
             </div>
         </div>
     </div>
@@ -68,24 +74,24 @@
     import Closable from './../../Mixins/Closable';
     import Filters from './Filters.vue';
     import Item from './Item.vue';
-    import Sidebar from './Sidebar.vue';
+    import Queue from './Queue.vue';
     import Toolbar from './Toolbar.vue';
-    import Uploader from './Uploader.vue';
+    import Selection from './Selection.vue';
 
     export default {
         components: {
-            Item,
             Filters,
-            Sidebar,
+            Item,
+            Queue,
             Toolbar,
-            Uploader,
+            Selection,
         },
 
         mixins: [Closable],
 
         props: {
             modelValue: {
-                type: [Array, Object],
+                type: Array,
                 default: () => [],
             },
             multiple: {
@@ -102,23 +108,23 @@
                     return this.__('Media');
                 },
             },
-            selectResolver: {
-                type: Function,
-                default: (value, options) => value,
+            filters: {
+                type: Array,
+                default: () => [],
             },
         },
 
         inheritAttrs: false,
 
-        emits: ['update:modelValue'],
+        emits: ['update:modelValue', 'change'],
 
         watch: {
             isOpen(newValue, oldValue) {
                 document.body.classList.toggle('has-modal-open', newValue);
             },
-            query: {
+            value: {
                 handler(newValue, oldValue) {
-                    this.fetch();
+                    this.$emit('change', newValue);
                 },
                 deep: true,
             },
@@ -132,7 +138,6 @@
                     this.close();
                 }
             });
-
             this.$refs.container.addEventListener('scroll', throttle((event) => {
                 if (this.shouldPaginate()) {
                     this.paginate();
@@ -143,32 +148,34 @@
         data() {
             return {
                 dragging: false,
+                query: this.$inertia.form(
+                    this.filters.reduce((value, filter) => ({...value, [filter.key]: filter.default}), {})
+                ),
                 processing: false,
-                query: {
-                    type: null,
-                    search: null,
-                },
-                queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
-                selection: [],
-                value: Object.assign({}, JSON.parse(JSON.stringify(this.modelValue))),
+                value: Array.from(this.modelValue),
             };
         },
 
         methods: {
             fetch() {
                 this.processing = true;
+                this.query.processing = true;
 
-                this.$http.get(this.url, { params: this.query }).then((response) => {
+                this.$http.get(this.url, {
+                    params: this.query.data(),
+                }).then((response) => {
                     this.response = response.data;
                 }).catch((error) => {
                     //
                 }).finally(() => {
                     this.processing = false;
+                    this.query.processing = false;
                 });
             },
             paginate() {
                 this.processing = true;
+                this.query.processing = true;
 
                 this.$http.get(this.response.next_page_url).then((response) => {
                     this.response.data.push(...response.data.data);
@@ -178,13 +185,14 @@
                     //
                 }).finally(() => {
                     this.processing = false;
+                    this.query.processing = false;
                 });
             },
             handleFiles(files) {
                 this.dragging = false;
 
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.unshift(files.item(i));
+                    this.$refs.queue.push(files.item(i));
                 }
             },
             shouldPaginate() {
@@ -197,39 +205,28 @@
             },
             select(item) {
                 if (this.multiple) {
-                    this.selection.push(item);
+                    this.value.push(item);
                 } else {
-                    this.value = {};
-                    this.selection = [item];
+                    this.value = [item];
                 }
-
-                this.value = Object.assign(this.value, {
-                    [item.id]: item.fields.reduce((pivotValues, field) => {
-                        return Object.assign(pivotValues, { [field.name]: field.value });
-                    }, {}),
-                });
             },
             deselect(item) {
-                const index = this.selection.findIndex((selected) => selected.id === item.id);
-
-                this.selection.splice(index, 1);
-
-                delete this.value[item.id];
-            },
-            updateSelection() {
-                this.update();
-                this.close();
-            },
-            update() {
-                this.$emit(
-                    'update:modelValue',
-                    this.selectResolver(this.value, this.selection)
+                this.value.splice(
+                    this.value.findIndex((selected) => selected.id === item.id), 1
                 );
             },
-            clearSelection() {
-                this.value = {};
-                this.selection = [];
+            selected(item) {
+                return this.value.some((selected) => selected.id === item.id);
+            },
+            clear() {
+                this.value = [];
+            },
+            update() {
                 this.$emit('update:modelValue', this.value);
+            },
+            handleProcessed(item) {
+                this.response.total++;
+                this.response.data.unshift(item);
             },
         },
     }

@@ -37,6 +37,8 @@ class MediaController extends Controller
      */
     public function store(ResourceRequest $request, Model $model = null): JsonResponse
     {
+        $request->validate(['file' => ['required', 'file']]);
+
         $field = $request->resolved();
 
         $model ??= $request->resource()->getModelInstance();
@@ -47,7 +49,7 @@ class MediaController extends Controller
 
         File::append($path, $file->get());
 
-        if ($request->has('is_last') && ! $request->boolean('is_last')) {
+        if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
             return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 

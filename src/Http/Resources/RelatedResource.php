@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class RelatedResource extends ModelResource
 {

@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "dev": "APP_URL='https://example.com' vite",
+        "dev": "cross-env APP_URL=\"https://root-app.test\" vite",
         "build": "vite build",
         "test": "jest",
         "lint": "eslint resources/js/",
@@ -20,14 +20,15 @@
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.32.4",
         "sass-loader": "^8.0.0",
-        "sprucecss": "^0.8.1",
+        "sprucecss": "^1.0.3",
         "vite": "^3.0.0",
-        "vue": "^3.2.26",
+        "vue": "^3.2.39",
         "vue-loader": "^16.1.0"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.18.10",
         "@vue/test-utils": "^2.0.0-rc.1",
+        "cross-env": "^7.0.3",
         "eslint": "^7.20.0",
         "eslint-plugin-vue": "^7.6.0",
         "jest": "^26.6.3",

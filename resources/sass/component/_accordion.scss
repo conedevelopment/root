@@ -15,12 +15,6 @@
         opacity: 0.5;
     }
 
-    &.is-invalid {
-        .media-accrodion__caption {
-            color: spruce.color(danger, alert);
-        }
-    }
-
     &__title {
         color: spruce.color(label, form);
         font-family: spruce.$font-family-base;

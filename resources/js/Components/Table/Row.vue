@@ -15,17 +15,17 @@
             <div class="table__actions">
                 <button
                     type="button"
-                    class="btn btn--icon btn--delete btn--sm"
+                    class="btn btn--delete btn--sm btn--icon"
                     v-if="item.abilities.delete"
                     :aria-label="__('Delete')"
                     @click="destroy"
                 >
                     <Icon class="btn__icon" name="delete"></Icon>
                 </button>
-                <Link v-if="item.abilities.view" :href="item.url" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('View')">
+                <Link v-if="item.abilities.view" :href="item.url" class="btn btn--tertiary btn--sm btn--icon" :aria-label="__('View')">
                     <Icon class="btn__icon" name="view"></Icon>
                 </Link>
-                <Link v-if="item.abilities.update" :href="`${item.url}/edit`" class="btn btn--icon btn--tertiary btn--sm" :aria-label="__('Edit')">
+                <Link v-if="item.abilities.update" :href="`${item.url}/edit`" class="btn btn--tertiary btn--sm btn--icon" :aria-label="__('Edit')">
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>
