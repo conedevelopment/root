@@ -118,11 +118,17 @@
 
         inheritAttrs: false,
 
-        emits: ['update:modelValue'],
+        emits: ['update:modelValue', 'change'],
 
         watch: {
             isOpen(newValue, oldValue) {
                 document.body.classList.toggle('has-modal-open', newValue);
+            },
+            value: {
+                handler(newValue, oldValue) {
+                    this.$emit('change', newValue);
+                },
+                deep: true,
             },
         },
 

@@ -7,7 +7,10 @@
             <span v-else class="media-accordion__icon">
                 <Icon name="description"></Icon>
             </span>
-            <span class="accordion__caption" :style="{ color: invalid ? 'var(--root-btn-color-delete-foreground)' : null }">
+            <span
+                class="accordion__caption"
+                :style="{ color: invalid ? 'var(--root-btn-color-delete-foreground)' : null }"
+            >
                 {{ item.file_name }}
             </span>
         </template>

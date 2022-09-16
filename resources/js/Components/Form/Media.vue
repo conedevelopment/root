@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" :class="class" :style="style">
         <label class="form-label" :for="$attrs.id">
-            <span>{{ label }}</span>
+            <span>{{ label }} <small v-if="isDirty"><em>{{ __('Unsaved selection') }}</em></small></span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
         <div>
@@ -25,6 +25,7 @@
                 :filters="filters"
                 :modelValue="items"
                 :multiple="multiple"
+                @change="isDirty = true"
                 @update:modelValue="update"
             ></Media>
         </div>
@@ -98,6 +99,7 @@
 
         data() {
             return {
+                isDirty: false,
                 items: JSON.parse(JSON.stringify(this.selection)),
             };
         },
@@ -130,6 +132,7 @@
                 this.$emit('update:modelValue', value);
 
                 this.$refs.media.close();
+                this.isDirty = false;
             },
         },
     }

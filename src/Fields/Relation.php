@@ -141,7 +141,7 @@ abstract class Relation extends Field
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('__')->toString();
+        return Str::of($this->getKey())->singular()->prepend('relation_')->toString();
     }
 
     /**

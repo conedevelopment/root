@@ -68,6 +68,7 @@
                         this.upload();
                     }
                 }).catch((error) => {
+                    console.log(error);
                     this.error = this.__('Something went wrong!');
                 });
             },

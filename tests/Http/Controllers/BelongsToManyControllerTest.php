@@ -26,7 +26,7 @@ class BelongsToManyControllerTest extends TestCase
         $this->field->asSubResource();
 
         $this->resource->routeGroup(function ($router) {
-            $router->prefix('{__post}/fields')->group(function ($router) {
+            $router->prefix('{resource_post}/fields')->group(function ($router) {
                 $this->field->registerRoutes($this->request, $router);
             });
         });
@@ -53,7 +53,7 @@ class BelongsToManyControllerTest extends TestCase
         $related = $model->tags()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{__post}/fields/tags/{__tag}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/tags/{relation_tag}'];
         });
 
         $this->actingAs($this->admin)
@@ -78,7 +78,7 @@ class BelongsToManyControllerTest extends TestCase
         $related = $model->tags()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/{__post}/fields/tags/{__tag}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/tags/{relation_tag}/edit'];
         });
 
         $this->actingAs($this->admin)
