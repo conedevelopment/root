@@ -2,7 +2,7 @@
     <Accordion ref="accordion" :title="item.file_name">
         <template #header>
             <div v-if="item.is_image" class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }">
-                <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
+                <img :src="url" class="media-accordion__image" alt="" @error.once="reload" @load="loading = false">
             </div>
             <span v-else class="media-accordion__icon">
                 <Icon name="description"></Icon>
@@ -59,7 +59,6 @@
 
         data() {
             return {
-                tries: 0,
                 loading: false,
                 url: this.item.urls.original,
             };
@@ -78,11 +77,6 @@
                 this.$emit('deselect', this.item);
             },
             reload() {
-                if (this.tries >= 5) {
-                    this.loading = false;
-                    return;
-                }
-
                 this.loading = true;
 
                 const interval = setInterval(() => {
@@ -90,10 +84,9 @@
                     url.searchParams.set('key', (new Date()).getTime());
 
                     this.url = url.toString();
-                    this.tries++;
 
                     clearInterval(interval);
-                }, 5000);
+                }, 10000);
             },
         },
     }

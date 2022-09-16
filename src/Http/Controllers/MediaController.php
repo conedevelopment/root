@@ -49,7 +49,7 @@ class MediaController extends Controller
 
         File::append($path, $file->get());
 
-        if ($request->has('is_last') && ! $request->boolean('is_last')) {
+        if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
             return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 

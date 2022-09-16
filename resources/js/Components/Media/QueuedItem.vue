@@ -13,8 +13,12 @@
 <script>
     export default {
         props: {
+            hash: {
+                type: String,
+                required: true,
+            },
             file: {
-                type: File,
+                type: Object,
                 required: true,
             },
             url: {
@@ -23,17 +27,10 @@
             },
         },
 
-        emits: ['processed', 'failed', 'cancelled'],
-
-        beforeMount() {
-            this.generateHash();
-            this.createChunks();
-        },
+        emits: ['retry'],
 
         data() {
             return {
-                chunks: [],
-                hash: null,
                 error: null,
                 uploaded: 0,
             };
@@ -46,30 +43,36 @@
         },
 
         methods: {
-            upload() {
+            handle() {
+                const chunks = this.createChunks();
+
+                return chunks.reduce((promise, chunk, index) => {
+                    return promise.then(() => {
+                        return this.upload(chunk, index + 1, chunks.length)
+                    });
+                }, Promise.resolve(null));
+            },
+            upload(chunk, index, total) {
                 const formData = new FormData();
 
-                formData.set('is_last', this.chunks.length === 1);
-                formData.set('file', this.chunks[0], `${this.hash}__${this.file.name}.chunk`);
+                formData.set('file', chunk, `${this.hash}__${this.file.name}.chunk`);
 
-                this.$http.post(this.url, formData, {
+                return this.$http.post(this.url, formData, {
                     headers: {
+                        'X-Chunk-Hash': this.hash,
+                        'X-Chunk-Index': index,
+                        'X-Chunk-Total': total,
                         'Content-Type': 'multipart/form-data',
                     },
                     onUploadProgress: (event) => {
                         this.uploaded += event.loaded;
                     },
                 }).then((response) => {
-                    this.chunks.shift();
-
-                    if (this.chunks.length === 0) {
-                        this.$emit('processed', response.data);
-                    } else {
-                        this.upload();
-                    }
+                    return response.data;
                 }).catch((error) => {
-                    console.log(error);
-                    this.error = this.__('Something went wrong!');
+                    this.error = error.response.data.message || this.__('Something went wrong!');
+
+                    throw new Error();
                 });
             },
             cancel() {
@@ -78,15 +81,12 @@
             retry() {
                 this.error = null;
                 this.uploaded = 0;
-                this.generateHash();
-                this.createChunks();
-            },
-            generateHash() {
-                this.hash = Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 5);
+                this.$emit('retry');
             },
             createChunks() {
                 let chunks = [];
-                const size = 1024 * 2048;
+
+                const size = 1024 * 1024;
                 const count = Math.ceil(this.file.size / size);
 
                 for (let i = 0; i < count; i++) {
@@ -95,7 +95,7 @@
                     ));
                 }
 
-                this.chunks = chunks;
+                return chunks;
             },
         },
     }

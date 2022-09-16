@@ -1,11 +1,12 @@
 <template>
     <QueuedItem
-        v-for="(file, index) in queue"
-        ref="queue"
-        :key="`queued-${file.name}-${index}`"
-        :file="file"
+        v-for="item in queue"
+        :ref="item.hash"
+        :key="item.hash"
+        :hash="item.hash"
+        :file="item.file"
         :url="url"
-        @processed="($event) => processed($event, file)"
+        @retry="() => retry(item)"
     ></QueuedItem>
 </template>
 
@@ -18,40 +19,65 @@
         },
 
         props: {
-            queue: {
-                type: Array,
-                default: () => [],
-            },
             url: {
                 type: String,
                 required: true,
             },
         },
 
-        mounted() {
-            this.process();
+        emits: ['processed'],
+
+        data() {
+            return {
+                queue: [],
+                processing: null,
+            };
         },
 
-        emits: ['update:queue', 'processed'],
-
         methods: {
-            process() {
-                if (this.$refs.queue.length > 0) {
-                    this.$refs.queue[0].upload();
-                }
+            makeHash() {
+                return Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 5);
             },
-            processed(item, file) {
-                this.$emit('processed', item);
-
-                const queue = Array.from(this.queue);
-
-                queue.splice(queue.indexOf(file), 1);
-
-                this.$emit('update:queue', queue);
+            push(file) {
+                this.queue.push({
+                    file,
+                    failed: false,
+                    hash: this.makeHash(),
+                });
 
                 this.$nextTick(() => {
-                    this.process();
+                    this.work();
                 });
+            },
+            work() {
+                if (this.processing !== null) {
+                    return;
+                }
+
+                const index = this.queue.findIndex((item) => ! item.failed);
+
+                if (index > -1) {
+                    this.processing = index;
+
+                    this.$refs[this.queue[index].hash][0]
+                        .handle()
+                        .then((item) => {
+                            this.$emit('processed', item);
+                            this.queue.splice(index, 1);
+                        })
+                        .catch((error) => {
+                            this.queue[index].failed = true;
+                        })
+                        .finally(() => {
+                            this.processing = null;
+                            this.work();
+                        });
+                }
+            },
+            retry(item) {
+                item.failed = false;
+
+                this.work();
             },
         },
     }

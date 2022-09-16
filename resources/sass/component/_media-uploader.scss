@@ -64,10 +64,11 @@
     }
 
     &__error {
+        align-items: center;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        align-items: center;
+        text-align: center;
         width: 100%;
     }
 }
@@ -76,6 +77,7 @@
     $this: &;
 
     aspect-ratio: 1;
+    border-radius: spruce.$border-radius-lg;
     position: relative;
     overflow: hidden;
     width: 100%;
@@ -123,7 +125,7 @@
     }
 
     &.is-loading {
-        background-image: url('/images/image-loading-placeholder.svg');
+        background-image: url('/vendor/root/image-loading-placeholder.svg');
         background-position: center;
         background-size: cover;
 

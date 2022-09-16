@@ -36,14 +36,12 @@
                         @update:query="fetch"
                     ></Filters>
                     <div
-                        v-if="queue.length > 0 || response.data.length > 0"
                         class="media-item-list-wrapper"
                         :class="{ 'is-sidebar-open': value.length > 0 }"
                     >
                         <div class="media-item-list__body">
                             <Queue
-                                v-if="queue.length > 0"
-                                v-model:queue="queue"
+                                ref="queue"
                                 :url="url"
                                 @processed="handleProcessed"
                             ></Queue>
@@ -154,7 +152,6 @@
                     this.filters.reduce((value, filter) => ({...value, [filter.key]: filter.default}), {})
                 ),
                 processing: false,
-                queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
                 value: Array.from(this.modelValue),
             };
@@ -195,7 +192,7 @@
                 this.dragging = false;
 
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.push(files.item(i));
+                    this.$refs.queue.push(files.item(i));
                 }
             },
             shouldPaginate() {

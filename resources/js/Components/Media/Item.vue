@@ -5,7 +5,7 @@
                 <Icon name="close" class="btn__icon--sm"></Icon>
             </button>
         </div>
-        <img v-if="item.is_image" :src="url" :alt="item.file_name" @error="reload" @load="loading = false">
+        <img v-if="item.is_image" :src="url" :alt="item.file_name" @error.once="reload" @load="loading = false">
         <span v-else class="media-item__caption">
             <Icon name="description"></Icon>
             <span>{{ item.file_name }}</span>
@@ -30,7 +30,6 @@
 
         data() {
             return {
-                tries: 0,
                 loading: false,
                 previewing: false,
                 url: this.item.urls.original,
@@ -59,10 +58,6 @@
                 this.$emit('deselect', this.item);
             },
             reload() {
-                if (this.tries >= 5) {
-                    return;
-                }
-
                 this.loading = true;
 
                 const interval = setInterval(() => {
@@ -70,10 +65,9 @@
                     url.searchParams.set('key', (new Date()).getTime());
 
                     this.url = url.toString();
-                    this.tries++;
 
                     clearInterval(interval);
-                }, 5000);
+                }, 10000);
             },
         },
     }
