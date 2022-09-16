@@ -38,7 +38,7 @@
                     <div
                         v-if="queue.length > 0 || response.data.length > 0"
                         class="media-item-list-wrapper"
-                        :class="{ 'is-sidebar-open': modelValue.length > 0 }"
+                        :class="{ 'is-sidebar-open': value.length > 0 }"
                     >
                         <div class="media-item-list__body">
                             <Queue
@@ -56,16 +56,16 @@
                                 @deselect="deselect"
                             ></Item>
                         </div>
-                        <div v-show="modelValue.length > 0" class="media-item-list__sidebar">
+                        <div v-show="value.length > 0" class="media-item-list__sidebar">
                             <Selection
-                                v-model:selection="modelValue"
+                                v-model:selection="value"
                                 @deselect="deselect"
                                 @clear="clear"
                             ></Selection>
                         </div>
                     </div>
                 </div>
-                <Toolbar @upload="handleFiles"></Toolbar>
+                <Toolbar @upload="handleFiles" @update="update"></Toolbar>
             </div>
         </div>
     </div>
@@ -150,6 +150,7 @@
                 processing: false,
                 queue: [],
                 response: { data: [], next_page_url: null, prev_page_url: null },
+                value: Array.from(this.modelValue),
             };
         },
 
@@ -201,31 +202,24 @@
             },
             select(item) {
                 if (this.multiple) {
-                    const value = Array.from(this.modelValue);
-
-                    value.push(item);
-
-                    this.update(value);
+                    this.value.push(item);
                 } else {
-                    this.update([item]);
+                    this.value = [item];
                 }
             },
             deselect(item) {
-                const value = Array.from(this.modelValue);
-                const index = value.findIndex((selected) => selected.id === item.id);
-
-                value.splice(index, 1);
-
-                this.update(value);
+                this.value.splice(
+                    this.value.findIndex((selected) => selected.id === item.id), 1
+                );
             },
             selected(item) {
-                return this.modelValue.some((selected) => selected.id === item.id);
+                return this.value.some((selected) => selected.id === item.id);
             },
             clear() {
-                this.update([]);
+                this.value = [];
             },
-            update(value) {
-                this.$emit('update:modelValue', value);
+            update() {
+                this.$emit('update:modelValue', this.value);
             },
             handleProcessed(item) {
                 this.response.total++;

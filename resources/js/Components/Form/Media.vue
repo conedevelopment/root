@@ -11,7 +11,12 @@
                 :class="{ 'btn--delete': invalid }"
                 @click="$refs.media.open"
             >
-                {{ __('Select :label', { label }) }}
+                <span v-if="items.length === 0">
+                    {{ __('Select :label', { label }) }}
+                </span>
+                <span v-else>
+                    {{ __(':count :label selected', { count: items.length, label }) }}
+                </span>
             </button>
             <Media
                 ref="media"
@@ -23,6 +28,12 @@
                 @update:modelValue="update"
             ></Media>
         </div>
+        <span
+            class="field-feedback"
+            :class="{ 'field-feedback--invalid': invalid }"
+            v-if="invalid || help"
+            v-html="(error || errors[0]) || help"
+        ></span>
     </div>
 </template>
 
@@ -92,10 +103,15 @@
         },
 
         computed: {
-            invalid() {
-                return Object.keys(this.$parent.form.errors).some((key) => {
-                    return key.startsWith(`${this.name}.`);
+            errors() {
+                return Object.entries(this.$parent.form.errors).filter((pair) => {
+                    return pair[0].startsWith(`${this.name}.`)
+                }).map((pair) => {
+                    return pair[1];
                 });
+            },
+            invalid() {
+                return this.error !== null || this.errors.length > 0;
             },
         },
 
@@ -112,6 +128,8 @@
                 }), {});
 
                 this.$emit('update:modelValue', value);
+
+                this.$refs.media.close();
             },
         },
     }

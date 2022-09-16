@@ -10,7 +10,7 @@
             >
         </div>
         <div class="modal-footer-actions">
-            <button type="button" class="btn btn--primary">
+            <button type="button" class="btn btn--primary" @click="update">
                 {{ __('Save Selection') }}
             </button>
         </div>
@@ -19,11 +19,11 @@
 
 <script>
     export default {
-        emits: ['save', 'upload'],
+        emits: ['update', 'upload'],
 
         methods: {
-            save() {
-                this.$emit('save');
+            update() {
+                this.$emit('update');
             },
             upload(event) {
                 this.$emit('upload', event.target.files);

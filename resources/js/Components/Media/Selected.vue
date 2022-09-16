@@ -1,5 +1,5 @@
 <template>
-    <Accordion ref="accordion" :title="item.file_name" :class="{ 'is-invalid': invalid }">
+    <Accordion ref="accordion" :title="item.file_name">
         <template #header>
             <div v-if="item.is_image" class="media-accordion__image-wrapper" :class="{ 'is-loading': loading }">
                 <img :src="url" class="media-accordion__image" alt="" @error="reload" @load="loading = false">
@@ -7,7 +7,7 @@
             <span v-else class="media-accordion__icon">
                 <Icon name="description"></Icon>
             </span>
-            <span class="accordion__caption">
+            <span class="accordion__caption" :style="{ color: invalid ? 'var(--root-btn-color-delete-foreground)' : null }">
                 {{ item.file_name }}
             </span>
         </template>
@@ -48,12 +48,10 @@
 
         emits: ['deselect'],
 
-        watch: {
-            invalid(newValue, oldValue) {
-                if (newValue) {
-                    this.$refs.accordion.open();
-                }
-            },
+        mounted() {
+            if (this.invalid) {
+                this.$refs.accordion.open();
+            }
         },
 
         data() {
