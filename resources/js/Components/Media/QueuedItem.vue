@@ -1,5 +1,5 @@
 <template>
-    <div class="uploader-item">
+    <div class="uploader-item" :class="{ 'is-pending': ! processing }">
         <div v-if="! error" class="uploader-item__progress" :style="{ width: `${progress}%` }"></div>
         <span v-else class="uploader-item__error">
             <span>{{ error }}</span>
@@ -33,6 +33,7 @@
             return {
                 error: null,
                 uploaded: 0,
+                processing: false,
             };
         },
 
@@ -44,6 +45,8 @@
 
         methods: {
             handle() {
+                this.processing = true;
+
                 const chunks = this.createChunks();
 
                 return chunks.reduce((promise, chunk, index) => {
@@ -70,6 +73,8 @@
                 }).then((response) => {
                     return response.data;
                 }).catch((error) => {
+                    this.processing = true;
+
                     this.error = error.response.data.message || this.__('Something went wrong!');
 
                     throw new Error();

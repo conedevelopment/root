@@ -31,7 +31,6 @@
         data() {
             return {
                 loading: false,
-                previewing: false,
                 url: this.item.urls.original,
             };
         },
