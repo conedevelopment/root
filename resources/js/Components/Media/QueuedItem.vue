@@ -1,6 +1,11 @@
 <template>
     <div class="uploader-item" :class="{ 'is-pending': ! processing }">
-        <div v-if="! error" class="uploader-item__progress" :style="{ width: `${progress}%` }"></div>
+        <progress
+            v-if="error === null"
+            max="100"
+            style="max-width: 100%;"
+            :value="processing ? progress : null"
+        ></progress>
         <span v-else class="uploader-item__error">
             <span>{{ error }}</span>
             <button type="button" class="btn btn--secondary btn--sm" @click="retry">
