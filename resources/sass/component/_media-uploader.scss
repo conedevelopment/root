@@ -57,12 +57,6 @@
         padding-bottom: 100%;
     }
 
-    &__progress {
-        background-color: spruce.color(primary);
-        border-radius: spruce.$border-radius-sm;
-        height: 1rem;
-    }
-
     &__error {
         align-items: center;
         display: flex;
