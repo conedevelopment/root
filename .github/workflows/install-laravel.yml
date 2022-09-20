@@ -65,7 +65,11 @@ jobs:
           vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
 
       - name: "Install front-end dependencies"
-        run: "npm install --production"
+        run: |
+          cd laravel/
+          npm install --production
 
       - name: "Build front-end"
-        run: "npm run build"
+        run: |
+          cd laravel/
+          npm run build
