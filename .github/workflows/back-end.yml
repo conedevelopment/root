@@ -18,7 +18,7 @@ jobs:
         dependency-version: ["highest"]
         include:
           - os: "ubuntu-20.04"
-            php: "8.0"
+            php: "8.1"
             laravel: "9.0"
             dependency-version: "locked"
 
