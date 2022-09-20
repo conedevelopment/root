@@ -67,7 +67,9 @@ jobs:
       - name: "Install front-end dependencies"
         run: |
           cd laravel/
-          npm install --production
+          # laravel-vite-plugin is a devDependency
+          #npm install --production
+          npm install
 
       - name: "Build front-end"
         run: |
