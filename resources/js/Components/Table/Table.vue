@@ -132,7 +132,7 @@
             fetch() {
                 this.query.transform((data) => ({
                     ...data,
-                    page: 1
+                    page: 1,
                 })).get(this.items.path, {
                     replace: true,
                     preserveState: true,
