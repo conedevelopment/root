@@ -60,8 +60,7 @@
         },
 
         methods: {
-            emit(value) {
-                console.log(value);
+            emit() {
                 this.$emit('update:query');
             },
         },
