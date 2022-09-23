@@ -70,16 +70,16 @@ class Install extends Command
             $appConfig
         ));
 
-        file_put_contents(app_path('Providers/RootServiceProvider.php'), str_replace(
+        file_put_contents($this->laravel->path('Providers/RootServiceProvider.php'), str_replace(
             ["namespace App\\Providers;", "use App\\Models\\User;"],
             ["namespace {$namespace}\\Providers;", "use {$namespace}\\Models\\User;"],
-            file_get_contents(app_path('Providers/RootServiceProvider.php'))
+            file_get_contents($this->laravel->path('Providers/RootServiceProvider.php'))
         ));
 
-        file_put_contents(app_path('Root/Resources/UserResource.php'), str_replace(
+        file_put_contents($this->laravel->path('Root/Resources/UserResource.php'), str_replace(
             "namespace App\\Root\\Resources;",
             "namespace {$namespace}\\Root\\Resources;",
-            file_get_contents(app_path('Root/Resources/UserResource.php'))
+            file_get_contents($this->laravel->path('Root/Resources/UserResource.php'))
         ));
     }
 }
