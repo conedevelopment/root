@@ -145,7 +145,7 @@ abstract class HasOneOrMany extends Relation
     {
         $input = parent::toInput($request, $model);
 
-        return array_merge(parent::toInput($request, $model), [
+        return array_merge($input, [
             'related_name' => $this->getRelatedName(),
             'options' => $this->asSubResource ? [] : $input['options'],
             'url' => $this->resolveUri($request),
