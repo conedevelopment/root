@@ -11,6 +11,7 @@
                 v-model="_value"
                 :value="option.value"
             >
+            <span class="form-check__label" v-html="option.formatted_value"></span>
             <span
                 class="field-feedback"
                 :class="{ 'field-feedback--invalid': error !== null }"

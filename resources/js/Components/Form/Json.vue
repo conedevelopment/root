@@ -1,7 +1,7 @@
 <template>
-    <fieldset class="is-json" :class="class" :style="style">
+    <fieldset :class="class" :style="style">
         <legend>{{ label }}</legend>
-        <div class="form-group-stack">
+        <div>
             <FormHandler
                 v-for="field in fields"
                 v-bind="field"
