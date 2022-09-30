@@ -47,6 +47,14 @@ class Meta extends MorphMany
     /**
      * {@inheritdoc}
      */
+    public function resolveOptions(RootRequest $request, Model $model): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getValue(RootRequest $request, Model $model): mixed
     {
         $value = parent::getValue($request, $model);
