@@ -3,7 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Models\TemporaryJson;
+use Cone\Root\Models\FieldsetModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -14,7 +14,7 @@ class Meta extends MorphMany
      *
      * @var string
      */
-    protected string $component = 'Json';
+    protected string $component = 'Fieldset';
 
     /**
      * Create a new relation field instance.
@@ -119,7 +119,7 @@ class Meta extends MorphMany
 
         $data['value'] = (array) $data['value'];
 
-        $json = TemporaryJson::make()
+        $json = FieldsetModel::make()
                     ->setRelation('parent', $model)
                     ->forceFill($data['value']);
 

@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Tests\Models;
 
-use Cone\Root\Models\TemporaryJson;
+use Cone\Root\Models\FieldsetModel;
 use Cone\Root\Tests\TestCase;
 
-class TemporaryJsonTest extends TestCase
+class FieldsetModelTest extends TestCase
 {
     protected $model;
 
@@ -13,11 +13,11 @@ class TemporaryJsonTest extends TestCase
     {
         parent::setUp();
 
-        $this->model = new TemporaryJson();
+        $this->model = new FieldsetModel();
     }
 
     /** @test */
-    public function a_temporary_json_cannot_be_saved()
+    public function a_fieldset_model_cannot_be_saved()
     {
         $this->assertFalse($this->model->save());
     }

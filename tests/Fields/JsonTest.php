@@ -4,7 +4,7 @@ namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Json;
 use Cone\Root\Fields\Number;
-use Cone\Root\Models\TemporaryJson;
+use Cone\Root\Models\FieldsetModel;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
@@ -21,9 +21,9 @@ class JsonTest extends TestCase
     }
 
     /** @test */
-    public function a_json_field_has_json_component()
+    public function a_json_field_has_fieldset_component()
     {
-        $this->assertSame('Json', $this->field->getComponent());
+        $this->assertSame('Fieldset', $this->field->getComponent());
     }
 
     /** @test */
@@ -64,11 +64,11 @@ class JsonTest extends TestCase
             'label' => 'Inventory',
             'name' => 'inventory',
             'id' => 'inventory',
-            'component' => 'Json',
+            'component' => 'Fieldset',
             'formatted_value' => $data,
             'help' => null,
             'value' => $data,
-            'fields' => [$field->toInput($this->request, TemporaryJson::make()->forceFill($data))],
+            'fields' => [$field->toInput($this->request, FieldsetModel::make()->forceFill($data))],
         ], $this->field->toInput($this->request, $model));
     }
 
