@@ -258,7 +258,9 @@ abstract class Action implements Arrayable, Responsable
                         ->toArray();
 
         return array_merge($this->toArray(), [
-            'data' => array_column($fields, 'value', 'name'),
+            'data' => array_reduce($fields, static function (array $data, array $field): array {
+                return array_replace_recursive($data, [$field['name'] => $field['value']]);
+            }, []),
             'fields' => $fields,
         ]);
     }

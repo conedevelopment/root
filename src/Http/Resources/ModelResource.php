@@ -61,7 +61,9 @@ class ModelResource extends JsonResource
         $fields = $fields->mapToForm($request, $this->resource)->toArray();
 
         return array_merge($this->toArray($request), [
-            'data' => array_column($fields, 'value', 'name'),
+            'data' => array_reduce($fields, static function (array $data, array $field): array {
+                return array_replace_recursive($data, [$field['name'] => $field['value']]);
+            }, []),
             'fields' => $fields,
         ]);
     }

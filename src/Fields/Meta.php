@@ -91,7 +91,7 @@ class Meta extends MorphMany
             $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
-                $query = $this->resolveQuery($request, $model);
+                $query = $relation->getQuery();
 
                 $models = $query->whereIn($query->qualifyColumn('key'), $keys = array_keys($value))->get();
 
