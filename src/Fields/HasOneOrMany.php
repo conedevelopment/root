@@ -4,12 +4,10 @@ namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Controllers\HasOneOrManyController;
 use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\AsSubResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 
@@ -67,7 +65,11 @@ abstract class HasOneOrMany extends Relation
 
             $this->resolveHydrate($request, $model, $value);
 
-            foreach (Arr::wrap($model->getRelation($this->name)) as $related) {
+            $models = $model->getRelation($this->name);
+
+            $models = is_iterable($models) ? $models : Arr::wrap($models);
+
+            foreach ($models as $related) {
                 $relation->save($related);
             }
         });
