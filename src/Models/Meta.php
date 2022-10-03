@@ -61,4 +61,30 @@ class Meta extends Model implements Contract
     {
         return $this->morphTo();
     }
+
+    /**
+     * Get the casts array.
+     *
+     * @return array
+     */
+    public function getCasts(): array
+    {
+        $casts = parent::getCasts();
+
+        if (! isset($this->attributes['key'])
+            || ! isset($this->attributes['metable_type'])
+            || ! class_exists($this->attributes['metable_type'])) {
+            return $casts;
+        }
+
+        $model = new ($this->attributes['metable_type'])();
+
+        if (! method_exists($model, 'getMetaCasts')) {
+            return $casts;
+        }
+
+        return array_merge($casts, array_filter([
+            'value' => $model->getMetaCasts()[$this->attributes['key']] ?? null,
+        ]));
+    }
 }

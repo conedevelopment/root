@@ -16,4 +16,14 @@ trait HasMeta
     {
         return $this->morphMany(Meta::getProxiedClass(), 'metable');
     }
+
+    /**
+     * Get the casts for the meta values.
+     *
+     * @return array
+     */
+    public function getMetaCasts(): array
+    {
+        return [];
+    }
 }
