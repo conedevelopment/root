@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "dev": "cross-env APP_URL=\"https://root-app.test\" vite",
+        "dev": "cross-env APP_URL=\"http://root-app.test\" vite",
         "build": "vite build",
         "test": "jest",
         "lint": "eslint resources/js/",
