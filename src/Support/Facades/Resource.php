@@ -28,9 +28,11 @@ class Resource extends Facade
 
         $request = RootRequest::createFrom(static::getFacadeApplication()['request']);
 
-        static::getFacadeRoot()->put($key, $item);
+        if (! static::getFacadeRoot()->has($key)) {
+            static::getFacadeRoot()->put($key, $item);
 
-        $item->registered($request);
+            $item->registered($request);
+        }
     }
 
     /**
