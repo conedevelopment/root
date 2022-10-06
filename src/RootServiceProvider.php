@@ -45,7 +45,7 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(static function (Application $app): void {
-            if ($app->runningInConsole() || Root::shouldRun($app['request'])) {
+            if ((! $app->environment('testing') && $app->runningInConsole()) || Root::shouldRun($app['request'])) {
                 Root::run($app['request']);
             }
         });
