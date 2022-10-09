@@ -72,7 +72,6 @@ class BelongsToManyController extends HasOneOrManyController
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @param  string  $id
      * @return \Inertia\Response
      */
     public function edit(UpdateRequest $request, Model $model, Model $related): Response
