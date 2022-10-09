@@ -137,7 +137,7 @@ abstract class Relation extends Field
     /**
      * Create a new method.
      *
-     * @return void
+     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -423,7 +423,7 @@ abstract class Relation extends Field
     /**
      * Resolve the resource model for a bound value.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Model
      */
