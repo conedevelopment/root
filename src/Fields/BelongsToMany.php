@@ -192,7 +192,7 @@ class BelongsToMany extends Relation
      * Get the model for the breadcrumbs.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return \Illuminate\Databse\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModelForBreadcrumbs(ResourceRequest $request): Model
     {
