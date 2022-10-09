@@ -314,7 +314,7 @@ class Media extends MorphToMany
                                             ->toArray(),
                 ];
             }),
-            'filters' => $this->resolveFilters($request)->available($request, $model)->mapToForm($request)->toArray(),
+            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'multiple' => $this->multiple,
             'url' => $this->resolveUri($request),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
