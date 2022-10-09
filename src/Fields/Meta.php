@@ -20,7 +20,7 @@ class Meta extends MorphMany
      * Create a new relation field instance.
      *
      * @param  string  $label
-     * @param  string|null  $name
+     * @param  string  $name
      * @return void
      */
     public function __construct(string $label, string $name = 'metas')
