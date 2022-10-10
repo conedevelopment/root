@@ -56,7 +56,7 @@ class Notification extends DatabaseNotification implements Contract
     /**
      * Create a new Eloquent query for the given Root request.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function rootQuery(RootRequest $request): Builder
