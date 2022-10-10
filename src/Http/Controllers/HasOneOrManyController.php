@@ -87,7 +87,6 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
      * @return \Inertia\Response
      */
     public function show(ShowRequest $request, Model $model, Model $related): Response
@@ -103,7 +102,6 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
      * @return \Inertia\Response
      */
     public function edit(UpdateRequest $request, Model $model, Model $related): Response
