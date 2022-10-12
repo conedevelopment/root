@@ -277,7 +277,6 @@ abstract class Extract implements Arrayable
                             ->available($request)
                             ->mapToForm($request, $this->resolveQuery($request)->getModel())
                             ->toArray(),
-            'actions' => $this->resolveActions($request)->available($request)->toArray(),
             'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'extract' => $this->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
