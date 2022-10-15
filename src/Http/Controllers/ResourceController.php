@@ -194,4 +194,27 @@ class ResourceController extends Controller
         return Redirect::to($resource->getUri())
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
+
+    /**
+     * Restore the specified resource in storage.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function restore(ResourceRequest $request, Model $model): RedirectResponse
+    {
+        $resource = $request->resource();
+
+        if ($resource->getPolicy($model)) {
+            $this->authorize('restore', $model);
+        }
+
+        $model->restore();
+
+        $resource->restored($request, $model);
+
+        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
+                    ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
+    }
 }

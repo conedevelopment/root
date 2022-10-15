@@ -31,6 +31,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -235,7 +236,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        return $this->resolveQuery($request)->findOrFail($id);
+        return $this->resolveQuery($request)
+                    ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
+                        return $query->withTrashed();
+                    })
+                    ->findOrFail($id);
     }
 
     /**
@@ -433,6 +438,28 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function deleted(ResourceRequest $request, Model $model): void
     {
         //
+    }
+
+    /**
+     * Handle the restored event.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
+     */
+    public function restored(ResourceRequest $request, Model $model): void
+    {
+        //
+    }
+
+    /**
+     * Determine if the model soft deletable.
+     *
+     * @return bool
+     */
+    public function isSoftDeletable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive($this->getModel()));
     }
 
     /**
@@ -650,6 +677,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit'])->name('edit');
         $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update'])->name('update');
         $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy'])->name('destroy');
+
+        if ($this->isSoftDeletable()) {
+            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore'])->name('restore');
+        }
     }
 
     /**

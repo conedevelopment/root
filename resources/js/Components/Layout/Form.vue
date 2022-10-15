@@ -10,13 +10,21 @@
                                 {{ __('Save') }}
                             </button>
                             <button
+                                v-if="model.trashed"
+                                type="button"
+                                class="btn btn--primary"
+                                :disabled="form.processing"
+                            >
+                                {{ __('Restore') }}
+                            </button>
+                            <button
                                 v-if="model.exists"
                                 type="button"
                                 class="btn btn--delete"
                                 :disabled="form.processing"
                                 @click="destroy"
                             >
-                                {{ __('Delete') }}
+                                {{ model.trashed ? __('Delete permanently') : __('Delete') }}
                             </button>
                         </div>
                     </div>
@@ -86,7 +94,12 @@
             },
             destroy() {
                 this.$inertia.delete(this.model.url, {
-                    onBefore: () => window.confirm(this.__('Are you sure?')),
+                    onBefore: () => window.confirm(this.__('Are you sure, you want to delete the resource?')),
+                });
+            },
+            restore() {
+                this.$inertia.post(`${this.model.url}/restore`, {
+                    onBefore: () => window.confirm(this.__('Are you sure, you want to restore the resource?')),
                 });
             },
         },

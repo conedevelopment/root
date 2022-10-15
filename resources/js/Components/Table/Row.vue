@@ -16,16 +16,35 @@
                 <button
                     type="button"
                     class="btn btn--delete btn--sm btn--icon"
-                    v-if="item.abilities.delete"
-                    :aria-label="__('Delete')"
+                    v-if="item.abilities.delete || item.abilities.forceDelete"
+                    :aria-label="item.trashed ? __('Delete permanently') : __('Delete')"
                     @click="destroy"
                 >
-                    <Icon class="btn__icon" name="delete"></Icon>
+                    <Icon class="btn__icon" :name="item.trashed ? 'delete-forever' : 'delete'"></Icon>
                 </button>
-                <Link v-if="item.abilities.view" :href="item.url" class="btn btn--tertiary btn--sm btn--icon" :aria-label="__('View')">
+                <button
+                    type="button"
+                    class="btn btn--tertiary btn--sm btn--icon"
+                    v-if="item.trashed && item.abilities.restore"
+                    :aria-label="__('Restore')"
+                    @click="restore"
+                >
+                    <Icon class="btn__icon" name="restore-from-trash"></Icon>
+                </button>
+                <Link
+                    v-if="item.abilities.view"
+                    class="btn btn--tertiary btn--sm btn--icon"
+                    :href="item.url"
+                    :aria-label="__('View')"
+                >
                     <Icon class="btn__icon" name="view"></Icon>
                 </Link>
-                <Link v-if="item.abilities.update" :href="`${item.url}/edit`" class="btn btn--tertiary btn--sm btn--icon" :aria-label="__('Edit')">
+                <Link
+                    v-if="item.abilities.update"
+                    class="btn btn--tertiary btn--sm btn--icon"
+                    :href="`${item.url}/edit`"
+                    :aria-label="__('Edit')"
+                >
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
             </div>
@@ -62,8 +81,13 @@
         methods: {
             destroy() {
                 this.$inertia.delete(this.item.url, {
-                    onBefore: () => confirm(this.__('Are you sure?')),
+                    onBefore: () => window.confirm(this.__('Are you sure?')),
                     onStart: (visit) => this.$parent.deselect(this.item),
+                });
+            },
+            restore() {
+                this.$inertia.post(`${this.item.url}/restore`, {
+                    onBefore: () => window.confirm(this.__('Are you sure?')),
                 });
             },
         },
