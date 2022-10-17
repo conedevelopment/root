@@ -25,7 +25,10 @@ $color-primary: hsl(214 98% 49%);
             delete-foreground: hsl(0 71% 51%),
             delete-foreground-hover: hsl(0 0% 100%),
             delete-background: color.scale(hsl(0 71% 51%), $lightness: 90%),
-            delete-background-hover: hsl(0 71% 51%)
+            delete-background-hover: hsl(0 71% 51%),
+            yellow-foreground: hsl(0 0% 0%),
+            yellow-background: hsl(45 100% 49%),
+            yellow-background-hover: hsl(45 100% 56%)
         ),
         form: (
             border: hsl(223 16% 80%),

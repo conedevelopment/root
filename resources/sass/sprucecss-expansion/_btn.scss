@@ -28,3 +28,5 @@
 
 .btn--tertiary { @include spruce.btn-variant(tertiary); }
 .btn--delete { @include spruce.btn-variant(delete); }
+.btn--yellow { @include spruce.btn-variant(yellow); }
+
