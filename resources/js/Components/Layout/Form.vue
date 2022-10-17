@@ -10,15 +10,16 @@
                                 {{ __('Save') }}
                             </button>
                             <button
-                                v-if="model.trashed"
+                                v-if="model.trashed && model.abilities.restore"
                                 type="button"
-                                class="btn btn--primary"
+                                class="btn btn--warning"
                                 :disabled="form.processing"
+                                @click="restore"
                             >
                                 {{ __('Restore') }}
                             </button>
                             <button
-                                v-if="model.exists"
+                                v-if="model.exists && (model.abilities.delete || model.abilities.forceDelete)"
                                 type="button"
                                 class="btn btn--delete"
                                 :disabled="form.processing"

@@ -24,7 +24,7 @@
                 </button>
                 <button
                     type="button"
-                    class="btn btn--tertiary btn--sm btn--icon"
+                    class="btn btn--warning btn--sm btn--icon"
                     v-if="item.trashed && item.abilities.restore"
                     :aria-label="__('Restore')"
                     @click="restore"
