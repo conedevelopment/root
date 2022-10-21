@@ -1,20 +1,14 @@
 {
   "resources/js/app.js": {
+<<<<<<< HEAD
     "file": "assets/app.a7c00f52.js",
+=======
+    "file": "assets/app.4f39565b.js",
+>>>>>>> master
     "src": "resources/js/app.js",
     "isEntry": true,
-    "dynamicImports": [
-      "resources/js/Pages/Dashboard.vue",
-      "resources/js/Pages/Error.vue",
-      "resources/js/Pages/Extracts/Index.vue",
-      "resources/js/Pages/Relations/Form.vue",
-      "resources/js/Pages/Relations/Index.vue",
-      "resources/js/Pages/Relations/Show.vue",
-      "resources/js/Pages/Resources/Form.vue",
-      "resources/js/Pages/Resources/Index.vue",
-      "resources/js/Pages/Resources/Show.vue"
-    ],
     "css": [
+<<<<<<< HEAD
       "assets/app.4426e3b4.css"
     ]
   },
@@ -120,6 +114,13 @@
   },
   "resources/js/app.css": {
     "file": "assets/app.4426e3b4.css",
+=======
+      "assets/app.cb1b0448.css"
+    ]
+  },
+  "resources/js/app.css": {
+    "file": "assets/app.cb1b0448.css",
+>>>>>>> master
     "src": "resources/js/app.css"
   }
 }

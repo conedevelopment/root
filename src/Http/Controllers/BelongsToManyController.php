@@ -42,7 +42,7 @@ class BelongsToManyController extends HasOneOrManyController
 
         $pivot->save();
 
-        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $pivot->getKey());
+        $path = sprintf('%s/%s', $request->resolved()->resolveUri($request), $pivot->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
@@ -53,14 +53,12 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, Model $model, string $id): Response
+    public function show(ShowRequest $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         return Inertia::render(
             'Relations/Show',
@@ -73,14 +71,12 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, Model $model, string $id): Response
+    public function edit(UpdateRequest $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         return Inertia::render(
             'Relations/Form',
@@ -93,16 +89,14 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, string $id): RedirectResponse
+    public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
         $relation = $field->getRelation($model);
-
-        $related = $field->getRelatedByPivot($model, $id);
 
         $pivot = $related->getRelation($relation->getPivotAccessor());
 
@@ -112,7 +106,7 @@ class BelongsToManyController extends HasOneOrManyController
 
         $fields->each->persist($request, $pivot);
 
-        $path = sprintf('%s/%s/%s/edit', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
+        $path = sprintf('%s/%s/edit', $request->resolved()->resolveUri($request), $pivot->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
@@ -123,22 +117,20 @@ class BelongsToManyController extends HasOneOrManyController
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, string $id): RedirectResponse
+    public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
         $relation = $field->getRelation($model);
 
-        $related = $field->getRelatedByPivot($model, $id);
-
         $pivot = $related->getRelation($relation->getPivotAccessor());
 
         $pivot->delete();
 
-        $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey());
+        $path = $request->resolved()->resolveUri($request);
 
         return Redirect::to($path)
                     ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));

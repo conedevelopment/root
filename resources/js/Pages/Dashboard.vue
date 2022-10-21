@@ -1,10 +1,12 @@
 <template>
     <div class="app-widget">
-        <Widget
-            v-for="widget in widgets"
-            :key="widget.key"
-            v-bind="widget"
-        ></Widget>
+        <div class="app-widget-row">
+            <Widget
+                v-for="widget in widgets"
+                :key="widget.key"
+                v-bind="widget"
+            ></Widget>
+        </div>
     </div>
 </template>
 

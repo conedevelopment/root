@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 abstract class Root
 {
@@ -14,7 +15,7 @@ abstract class Root
      *
      * @var string
      */
-    public const VERSION = '0.7.0';
+    public const VERSION = '0.10.1';
 
     /**
      * The registered callbacks.
@@ -31,8 +32,14 @@ abstract class Root
      */
     public static function shouldRun(Request $request): bool
     {
-        return $request->getHost() === static::getDomain()
-            || (! empty(static::getPath()) && str_starts_with($request->getRequestUri(), '/'.static::getPath()));
+        $host = empty(static::getDomain())
+            ? parse_url(Config::get('app.url'), PHP_URL_HOST)
+            : static::getDomain();
+
+        $segments = explode('/', $request->getRequestUri());
+
+        return $request->getHost() === $host
+            && (static::getPath() === '/' || $segments[1] === trim(static::getPath(), '/'));
     }
 
     /**
@@ -81,7 +88,7 @@ abstract class Root
      */
     public static function getPath(): string
     {
-        return (string) Config::get('root.path', 'root');
+        return Str::start(Config::get('root.path', 'root'), '/');
     }
 
     /**

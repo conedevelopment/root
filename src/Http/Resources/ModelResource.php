@@ -7,7 +7,6 @@ use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\MapsAbilities;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\URL;
 
 class ModelResource extends JsonResource
 {
@@ -31,11 +30,9 @@ class ModelResource extends JsonResource
      */
     protected function mapUrl(ResourceRequest $request): string
     {
-        $key = $request->resource()->getKey();
-
         return $this->resource->exists
-            ? URL::route(sprintf('root.%s.show', $key), $this->resource)
-            : URL::route(sprintf('root.%s.index', $key));
+            ? sprintf('%s/%s', $request->resource()->getUri(), $this->resource->getKey())
+            : $request->resource()->getUri();
     }
 
     /**
@@ -64,7 +61,9 @@ class ModelResource extends JsonResource
         $fields = $fields->mapToForm($request, $this->resource)->toArray();
 
         return array_merge($this->toArray($request), [
-            'data' => array_column($fields, 'value', 'name'),
+            'data' => array_reduce($fields, static function (array $data, array $field): array {
+                return array_replace_recursive($data, [$field['name'] => $field['value']]);
+            }, []),
             'fields' => $fields,
         ]);
     }

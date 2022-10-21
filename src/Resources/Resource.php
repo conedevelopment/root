@@ -18,7 +18,6 @@ use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Http\Resources\ModelResource;
 use Cone\Root\Root;
-use Cone\Root\Support\Breadcrumbs;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\ResolvesActions;
@@ -32,9 +31,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use JsonSerializable;
 
@@ -43,6 +42,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     use Authorizable;
     use MapsAbilities;
     use ResolvesActions;
+    use ResolvesBreadcrumbs;
     use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
@@ -61,6 +61,13 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * @var array
      */
     protected array $with = [];
+
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected array $withCount = [];
 
     /**
      * The icon for the resource.
@@ -101,13 +108,23 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Get the route key name.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getKey())->singular()->prepend('resource_')->toString();
+    }
+
+    /**
      * Get the URI of the resource.
      *
      * @return string
      */
     public function getUri(): string
     {
-        return trim(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
+        return Str::start(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -177,13 +194,53 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Set the relation counts to eagerload.
+     *
+     * @param  array  $relations
+     * @return $this
+     */
+    public function withCount(array $relations): static
+    {
+        $this->withCount = $relations;
+
+        return $this;
+    }
+
+    /**
      * Make a new eloquent query instance.
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(): Builder
     {
-        return $this->getModelInstance()->newQuery()->with($this->with);
+        return $this->getModelInstance()->newQuery()->with($this->with)->withCount($this->withCount);
+    }
+
+    /**
+     * Resolve the query for the given request.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function resolveQuery(ResourceRequest $request): Builder
+    {
+        return $this->query();
+    }
+
+    /**
+     * Resolve the resource model for a bound value.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  string  $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
+    {
+        return $this->resolveQuery($request)
+                    ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
+                        return $query->withTrashed();
+                    })
+                    ->findOrFail($id);
     }
 
     /**
@@ -218,15 +275,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         });
-
-        if (in_array(ResolvesBreadcrumbs::class, class_uses_recursive($field))) {
-            $field->withBreadcrumbs(function (RootRequest $request, Model $model): Breadcrumbs {
-                return $this->toBreadcrumbs()->merge([
-                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey(),
-                    sprintf('%s/%s/edit', $this->getUri(), $model->getKey()) => __('Edit'),
-                ]);
-            });
-        }
     }
 
     /**
@@ -274,8 +322,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
             return $this->authorized(...$parameters);
         })->withQuery(function (): Builder {
             return $this->query();
-        })->withBreadcrumbs(function () {
-            return $this->toBreadcrumbs();
         });
     }
 
@@ -301,31 +347,29 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function mapUrls(RootRequest $request): array
     {
-        $actions = array_fill_keys(['create', 'index'], null);
-
-        foreach ($actions as $action => $value) {
-            $actions[$action] = URL::route(sprintf('root.%s.%s', $this->getKey(), $action));
-        }
-
-        return $actions;
+        return [
+            'index' => $this->getUri(),
+            'create' => sprintf('%s/create', $this->getUri()),
+        ];
     }
 
     /**
      * Map the items.
      *
-     * @param \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param \Cone\Root\Http\Requests\IndexRequest  $request
      * @return array
      */
-    public function mapItems(ResourceRequest $request): array
+    public function mapItems(IndexRequest $request): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
-        $query = $this->query();
+        $query = $this->resolveQuery($request);
 
         $items = $filters->apply($request, $query)
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
+                    ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
                         return $this->mapItem($request, $model)->toDisplay(
                             $request, $this->resolveFields($request)->available($request, $model)
@@ -397,16 +441,55 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Get the breadcrumbs representation of the resource.
+     * Handle the restored event.
      *
-     * @return \Cone\Root\Support\Breadcrumbs
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return void
      */
-    public function toBreadcrumbs(): Breadcrumbs
+    public function restored(ResourceRequest $request, Model $model): void
     {
-        return new Breadcrumbs([
-            sprintf('/%s', Root::getPath()) => __('Dashboard'),
-            sprintf('/%s', $this->getUri()) => $this->getName(),
-        ]);
+        //
+    }
+
+    /**
+     * Determine if the model soft deletable.
+     *
+     * @return bool
+     */
+    public function isSoftDeletable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Resolve the breadcrumbs for the given request.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function resolveBreadcrumbs(RootRequest $request): array
+    {
+        $breadcrumbs = [
+            Root::getPath() => __('Dashboard'),
+            $this->getUri() => $this->getName(),
+        ];
+
+        $model = $request->route($this->getRouteKeyName());
+
+        if ($request instanceof CreateRequest) {
+            $breadcrumbs[sprintf('%s/create', $this->getUri())] = __('Create');
+        }
+
+        if ($request instanceof ShowRequest || $request instanceof UpdateRequest) {
+            $breadcrumbs[sprintf('%s/%s', $this->getUri(), $model->getKey())] = $model->getKey();
+        }
+
+        if ($request instanceof UpdateRequest) {
+            $breadcrumbs[sprintf('%s/%s/edit', $this->getUri(), $model->getKey())] = __('Edit');
+        }
+
+        return $breadcrumbs;
     }
 
     /**
@@ -462,7 +545,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
                             ->available($request)
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
-            'breadcrumbs' => $this->toBreadcrumbs()->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
@@ -483,9 +566,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $model = $this->getModelInstance();
 
         return [
-            'breadcrumbs' => $this->toBreadcrumbs()
-                                ->merge([sprintf('%s/create', $this->getUri()) => __('Create')])
-                                ->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'model' => (new ModelResource($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -505,9 +586,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         return [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
-            'breadcrumbs' => $this->toBreadcrumbs()
-                                ->merge([sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey()])
-                                ->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'model' => (new ModelResource($model))->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -527,12 +606,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function toEdit(UpdateRequest $request, Model $model): array
     {
         return [
-            'breadcrumbs' => $this->toBreadcrumbs()
-                                ->merge([
-                                    sprintf('%s/%s', $this->getUri(), $model->getKey()) => $model->getKey(),
-                                    sprintf('%s/%s/edit', $this->getUri(), $model->getKey()) => __('Edit'),
-                                ])
-                                ->toArray(),
+            'breadcrumbs' => $this->resolveBreadcrumbs($request),
             'model' => (new ModelResource($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -550,6 +624,17 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function registered(RootRequest $request): void
     {
         $this->registerRoutes($request);
+
+        App::make('router')->bind($this->getRouteKeyName(), function (string $id): Model {
+            return $id === 'create'
+                ? $this->getModelInstance()
+                : $this->resolveRouteBinding(App::make(ResourceRequest::class), $id);
+        });
+
+        App::make('router')->pattern(
+            $this->getRouteKeyName(),
+            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
+        );
     }
 
     /**
@@ -569,8 +654,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
             $this->resolveExtracts($request)->registerRoutes($request, $router);
             $this->resolveActions($request)->registerRoutes($request, $router);
-            $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
+
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function ($router) use ($request) {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
         });
     }
 
@@ -585,10 +673,14 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         $router->get('/', [ResourceController::class, 'index'])->name('index');
         $router->get('/create', [ResourceController::class, 'create'])->name('create');
         $router->post('/', [ResourceController::class, 'store'])->name('store');
-        $router->get('/{rootResource}', [ResourceController::class, 'show'])->name('show');
-        $router->get('/{rootResource}/edit', [ResourceController::class, 'edit'])->name('edit');
-        $router->patch('/{rootResource}', [ResourceController::class, 'update'])->name('update');
-        $router->delete('/{rootResource}', [ResourceController::class, 'destroy'])->name('destroy');
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show'])->name('show');
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit'])->name('edit');
+        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update'])->name('update');
+        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy'])->name('destroy');
+
+        if ($this->isSoftDeletable()) {
+            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore'])->name('restore');
+        }
     }
 
     /**

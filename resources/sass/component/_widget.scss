@@ -1,0 +1,17 @@
+@use '~sprucecss/scss/spruce';
+
+.app-widget {
+    display: flex;
+    flex-direction: column;
+    gap: spruce.spacer(m);
+}
+
+.app-widget-row {
+    &--two-column {
+        @include spruce.layout-grid(m, 20rem);
+    }
+
+    &--three-column {
+        @include spruce.layout-grid(m, 12.5rem);
+    }
+}

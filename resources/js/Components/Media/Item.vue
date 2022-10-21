@@ -1,6 +1,11 @@
 <template>
-    <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="toggle">
-        <img v-if="item.is_image" :src="url" :alt="item.name" @error="reload" @load="loading = false">
+    <div class="media-item" style="cursor: pointer;" :class="classNames" @click.prevent="select">
+        <div v-if="selected" class="media-item__actions">
+            <button type="button" class="btn btn--delete btn--icon" @click.stop="deselect">
+                <Icon name="close" class="btn__icon--sm"></Icon>
+            </button>
+        </div>
+        <img v-if="item.is_image" :src="url" :alt="item.file_name" @error.once="reload" @load="loading = false">
         <span v-else class="media-item__caption">
             <Icon name="description"></Icon>
             <span>{{ item.file_name }}</span>
@@ -15,13 +20,18 @@
                 type: Object,
                 required: true,
             },
+            selected: {
+                type: Boolean,
+                default: false,
+            },
         },
+
+        emits: ['select', 'deselect'],
 
         data() {
             return {
-                tries: 0,
                 loading: false,
-                url: this.item.urls.thumb || this.item.urls.original,
+                url: this.item.urls.original,
             };
         },
 
@@ -35,22 +45,18 @@
                     'is-loading': this.loading,
                 };
             },
-            selected() {
-                return this.$parent.selection.some((item) => item.id === this.item.id);
-            },
         },
 
         methods: {
-            toggle() {
-                if (! this.$parent.processing) {
-                    this.selected ? this.$parent.deselect(this.item) : this.$parent.select(this.item);
+            select() {
+                if (! this.selected) {
+                    this.$emit('select', this.item);
                 }
             },
+            deselect() {
+                this.$emit('deselect', this.item);
+            },
             reload() {
-                if (this.tries >= 5) {
-                    return;
-                }
-
                 this.loading = true;
 
                 const interval = setInterval(() => {
@@ -58,10 +64,9 @@
                     url.searchParams.set('key', (new Date()).getTime());
 
                     this.url = url.toString();
-                    this.tries++;
 
                     clearInterval(interval);
-                }, 5000);
+                }, 10000);
             },
         },
     }

@@ -25,7 +25,10 @@ $color-primary: hsl(214 98% 49%);
             delete-foreground: hsl(0 71% 51%),
             delete-foreground-hover: hsl(0 0% 100%),
             delete-background: color.scale(hsl(0 71% 51%), $lightness: 90%),
-            delete-background-hover: hsl(0 71% 51%)
+            delete-background-hover: hsl(0 71% 51%),
+            yellow-foreground: hsl(0 0% 0%),
+            yellow-background: hsl(45 100% 49%),
+            yellow-background-hover: hsl(45 100% 56%)
         ),
         form: (
             border: hsl(223 16% 80%),
@@ -57,6 +60,8 @@ $color-primary: hsl(214 98% 49%);
     $font-family-heading: #{'Poppins', sans-serif},
     $font-size-sm: 0.8375rem,
     $font-size-base: 0.9375rem,
+    $border-radius-sm: 0.25rem,
+    $border-radius-lg: 0.5rem,
     $btn-border-radius: 0.5rem,
     $btn-font-size-sm: 0.8675rem,
     $btn-font-weight: 600,

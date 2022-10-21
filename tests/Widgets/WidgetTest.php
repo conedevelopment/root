@@ -75,10 +75,10 @@ class WidgetTest extends TestCase
             $this->widget->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/widgets/posts-count', $this->widget->getUri());
+        $this->assertSame('/posts/widgets/posts-count', $this->widget->getUri());
 
         $this->assertArrayHasKey(
-            $this->widget->getUri(),
+            trim($this->widget->getUri(), '/'),
             $this->app['router']->getRoutes()->get('GET')
         );
     }

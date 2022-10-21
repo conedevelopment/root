@@ -1,17 +1,19 @@
 <template>
-    <div class="mobile-header">
-        <div class="mobile-header__inner">
+    <div class="app-topbar">
+        <div class="app-topbar__inner">
             <Link :href="$app.config.url">
-                <img class="mobile-header__logo" :src="$app.config.branding.logo" :alt="$app.config.name">
+                <img class="app-topbar__logo" :src="$app.config.branding.logo" :alt="$app.config.name">
             </Link>
-            <div class="mobile-header__actions">
+            <div class="app-topbar__actions">
                 <button
                     type="button"
                     class="btn btn--secondary btn--icon"
+                    data-action="open-navigation"
                     @click="toggleSidebar"
                 >
                     <Icon class="btn__icon btn__icon--start" :name="isOpen ? 'menu-open' : 'menu'"></Icon>
                 </button>
+                <Notifications></Notifications>
                 <UserMenu direction="bottom"></UserMenu>
             </div>
         </div>
@@ -20,11 +22,13 @@
 
 <script>
     import { Link } from '@inertiajs/inertia-vue3';
+    import Notifications from './../Notifications/Notifications.vue';
     import UserMenu from './UserMenu.vue';
 
     export default {
         components: {
             Link,
+            Notifications,
             UserMenu,
         },
 

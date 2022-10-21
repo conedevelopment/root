@@ -65,10 +65,10 @@ class ExtractTest extends TestCase
             $this->extract->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/extracts/long-posts', $this->extract->getUri());
+        $this->assertSame('/posts/extracts/long-posts', $this->extract->getUri());
 
         $this->assertArrayHasKey(
-            $this->extract->getUri(),
+            trim($this->extract->getUri(), '/'),
             $this->app['router']->getRoutes()->get('GET')
         );
     }
@@ -131,7 +131,7 @@ class ExtractTest extends TestCase
         $this->assertSame([
             'key' => $this->extract->getKey(),
             'name' => $this->extract->getName(),
-            'url' => $this->app['url']->to($this->extract->getUri()),
+            'url' => $this->extract->getUri(),
         ], $this->extract->toArray());
     }
 }

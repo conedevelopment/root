@@ -28,7 +28,7 @@ class HasOneOrManyControllerTest extends TestCase
         $this->field->asSubResource();
 
         $this->resource->routeGroup(function ($router) {
-            $router->prefix('fields')->group(function ($router) {
+            $router->prefix('{resource_post}/fields')->group(function ($router) {
                 $this->field->registerRoutes($this->request, $router);
             });
         });
@@ -40,11 +40,11 @@ class HasOneOrManyControllerTest extends TestCase
         $request = IndexRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/comments'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/comments/1')
+            ->get('/root/posts/1/fields/comments')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -61,11 +61,11 @@ class HasOneOrManyControllerTest extends TestCase
         $request = CreateRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/create'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/comments/create'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/comments/1/create')
+            ->get('/root/posts/1/fields/comments/create')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -80,10 +80,10 @@ class HasOneOrManyControllerTest extends TestCase
     public function a_has_one_or_many_controller_has_store()
     {
         $this->actingAs($this->admin)
-            ->post('/root/posts/fields/comments/1', [
+            ->post('/root/posts/1/fields/comments', [
                 'content' => 'New Comment',
             ])
-            ->assertRedirect('/root/posts/fields/comments/1/1')
+            ->assertRedirect('/root/posts/1/fields/comments/1')
             ->assertSessionHas('alerts.relation-created');
     }
 
@@ -97,11 +97,11 @@ class HasOneOrManyControllerTest extends TestCase
         $related = $model->comments()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/{rootRelated}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/comments/{relation_comment}'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/comments/1/1')
+            ->get('/root/posts/1/fields/comments/1')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -122,11 +122,11 @@ class HasOneOrManyControllerTest extends TestCase
         $related = $model->comments()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/comments/{rootResource}/{rootRelated}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/comments/{relation_comment}/edit'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/comments/1/1/edit')
+            ->get('/root/posts/1/fields/comments/1/edit')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -141,10 +141,10 @@ class HasOneOrManyControllerTest extends TestCase
     public function a_has_one_or_many_controller_has_update()
     {
         $this->actingAs($this->admin)
-            ->patch('/root/posts/fields/comments/1/1', [
+            ->patch('/root/posts/1/fields/comments/1', [
                 'content' => 'New Comment',
             ])
-            ->assertRedirect('/root/posts/fields/comments/1/1/edit')
+            ->assertRedirect('/root/posts/1/fields/comments/1/edit')
             ->assertSessionHas('alerts.relation-updated');
     }
 
@@ -152,8 +152,8 @@ class HasOneOrManyControllerTest extends TestCase
     public function a_has_one_or_many_controller_has_delete()
     {
         $this->actingAs($this->admin)
-            ->delete('/root/posts/fields/comments/1/1')
-            ->assertRedirect('/root/posts/fields/comments/1')
+            ->delete('/root/posts/1/fields/comments/1')
+            ->assertRedirect('/root/posts/1/fields/comments')
             ->assertSessionHas('alerts.relation-deleted');
     }
 }

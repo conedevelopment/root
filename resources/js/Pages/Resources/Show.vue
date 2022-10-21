@@ -18,8 +18,21 @@
                 <Link v-if="model.abilities.update" class="btn btn--sm btn--tertiary" :href="`${model.url}/edit`">
                     {{ __('Edit') }}
                 </Link>
-                <button v-if="model.abilities.delete" type="button" class="btn btn--sm btn--delete" @click="destroy">
-                    {{ __('Delete') }}
+                <button
+                    v-if="model.trashed && model.abilities.restore"
+                    type="button"
+                    class="btn btn--sm btn--warning"
+                    @click="restore"
+                >
+                    {{ __('Restore') }}
+                </button>
+                <button
+                    v-if="model.abilities.delete || model.abilities.forceDelete"
+                    type="button"
+                    class="btn btn--sm btn--delete"
+                    @click="destroy"
+                >
+                    {{ model.trashed ? __('Delete permanently') : __('Delete') }}
                 </button>
             </div>
         </div>
@@ -78,7 +91,12 @@
         methods: {
             destroy() {
                 this.$inertia.delete(this.model.url, {
-                    onBefore: () => confirm(this.__('Are you sure?')),
+                    onBefore: () => window.confirm(this.__('Are you sure?')),
+                });
+            },
+            restore() {
+                this.$inertia.post(`${this.model.url}/restore`, {
+                    onBefore: () => window.confirm(this.__('Are you sure?')),
                 });
             },
         },

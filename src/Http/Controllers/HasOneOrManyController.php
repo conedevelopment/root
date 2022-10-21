@@ -76,7 +76,7 @@ class HasOneOrManyController extends Controller
 
         $relation->save($related);
 
-        $path = sprintf('%s/%s/%s', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
+        $path = sprintf('%s/%s', $request->resolved()->resolveUri($request), $related->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
@@ -87,18 +87,13 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\ShowRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, Model $model, string $id): Response
+    public function show(ShowRequest $request, Model $model, Model $related): Response
     {
-        $field = $request->resolved();
-
-        $related = $field->getRelation($model)->findOrFail($id);
-
         return Inertia::render(
             'Relations/Show',
-            $field->toShow($request, $model, $related)
+            $request->resolved()->toShow($request, $model, $related)
         );
     }
 
@@ -107,14 +102,11 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, Model $model, string $id): Response
+    public function edit(UpdateRequest $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
-
-        $related = $field->getRelation($model)->findOrFail($id);
 
         return Inertia::render(
             'Relations/Form',
@@ -127,16 +119,14 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, string $id): RedirectResponse
+    public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
-        $related = tap($field->getRelation($model)->findOrFail($id), static function (Model $related) use ($model): void {
-            $related->setRelation('parent', $model);
-        });
+        $related->setRelation('parent', $model);
 
         $fields = $field->resolveFields($request)->available($request, $model, $related);
 
@@ -146,7 +136,7 @@ class HasOneOrManyController extends Controller
 
         $related->save();
 
-        $path = sprintf('%s/%s/%s/edit', $request->resolved()->getUri(), $model->getKey(), $related->getKey());
+        $path = sprintf('%s/%s/edit', $request->resolved()->resolveUri($request), $related->getKey());
 
         return Redirect::to($path)
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
@@ -157,20 +147,16 @@ class HasOneOrManyController extends Controller
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $id
+     * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, string $id): RedirectResponse
+    public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
     {
-        $field = $request->resolved();
-
-        $related = $field->getRelation($model)->findOrFail($id);
-
         $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();
 
         $trashed ? $related->forceDelete() : $related->delete();
 
-        $path = sprintf('%s/%s', $request->resolved()->getUri(), $model->getKey());
+        $path = $request->resolved()->resolveUri($request);
 
         return Redirect::to($path)
                     ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));

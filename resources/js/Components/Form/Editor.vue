@@ -10,6 +10,9 @@
             ref="media"
             :url="media_url"
             :title="__('Media')"
+            :modelValue="selection"
+            multiple
+            @update:modelValue="selectResolver"
         ></Media>
         <span
             class="field-feedback"
@@ -96,16 +99,38 @@
                     this.$emit('update:modelValue', value);
                 },
             });
-        },
 
-        beforeUnmount() {
-            this.editor.destroy();
+            this.selectResolver = (values, selection) => {
+                this.insertMedia(editor, selection);
+
+                return values;
+            };
         },
 
         data() {
             return {
-                editor: null,
+                selectResolver: (values) => values,
             };
+        },
+
+        methods: {
+            insertMedia(editor, values) {
+                const range = editor.getSelection(true);
+
+                values.forEach((value) => {
+                    if (value.is_image) {
+                        editor.editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
+                        editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
+                    } else {
+                        editor.editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
+                        editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
+                    }
+                });
+
+                editor.emitter.emit('text-change');
+
+                this.$refs.media.clearSelection();
+            },
         },
     }
 </script>

@@ -1,19 +1,17 @@
 <template>
-    <div class="modal-footer">
-        <div>
+    <div class="modal-footer modal-footer--column">
+        <div class="modal-footer-actions">
             <input
                 multiple
                 type="file"
+                class="form-file"
                 :disabled="$parent.processing"
-                @change="$parent.handleFiles($event.target.files)"
+                @change="upload"
             >
         </div>
         <div class="modal-footer-actions">
-            <button type="button" class="btn btn--primary" :disabled="$parent.processing" @click="$parent.updateSelection">
-                {{ __('Select') }}
-            </button>
-            <button type="button" class="btn btn--tertiary" :disabled="$parent.processing" @click="$parent.close">
-                {{ __('Close') }}
+            <button type="button" class="btn btn--primary" @click="update">
+                {{ __('Save Selection') }}
             </button>
         </div>
     </div>
@@ -21,6 +19,15 @@
 
 <script>
     export default {
-        //
+        emits: ['update', 'upload'],
+
+        methods: {
+            update() {
+                this.$emit('update');
+            },
+            upload(event) {
+                this.$emit('upload', event.target.files);
+            },
+        },
     }
 </script>

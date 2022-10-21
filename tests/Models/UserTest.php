@@ -3,6 +3,7 @@
 namespace Cone\Root\Tests\Models;
 
 use Cone\Root\Models\Medium;
+use Cone\Root\Models\Notification;
 use Cone\Root\Models\Record;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
@@ -27,6 +28,16 @@ class UserTest extends TestCase
         );
 
         $this->assertTrue($this->admin->records->pluck('id')->contains($record->id));
+    }
+
+    /** @test */
+    public function a_user_has_notifications()
+    {
+        $record = $this->admin->notifications()->save(
+            Notification::factory()->make()
+        );
+
+        $this->assertTrue($this->admin->notifications->pluck('id')->contains($record->id));
     }
 
     /** @test */

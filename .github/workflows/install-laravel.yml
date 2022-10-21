@@ -33,6 +33,7 @@ jobs:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
           tools: "composer:v2"
+          coverage: "none"
 
       - name: "Checkout code"
         uses: "actions/checkout@v2"
@@ -41,7 +42,7 @@ jobs:
         run: |
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
-          sed -i -e 's#"type": "project",#&\n"repositories": [ { "type": "path", "url": "../" } ],#' composer.json
+          composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
           composer require --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress conedevelopment/root
           # APP_ENV is local
           cp .env.example .env
@@ -49,7 +50,7 @@ jobs:
           sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
           php artisan key:generate
           php artisan root:install --seed
-          php artisan root:publish --packages --mix
+          php artisan root:publish --packages
 
       - name: "Check stubs"
         run: |
@@ -64,7 +65,13 @@ jobs:
           vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
 
       - name: "Install front-end dependencies"
-        run: "npm install --production"
+        run: |
+          cd laravel/
+          # laravel-vite-plugin is a devDependency
+          #npm install --production
+          npm install
 
       - name: "Build front-end"
-        run: "npm run build"
+        run: |
+          cd laravel/
+          npm run build

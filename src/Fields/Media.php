@@ -3,17 +3,26 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Fields\Field;
+use Cone\Root\Filters\Search;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
+use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 
 class Media extends MorphToMany
 {
+    /**
+     * The searchable columns.
+     *
+     * @var array
+     */
+    protected array $searchableColumns = ['file_name'];
+
     /**
      * Indicates if the component is async.
      *
@@ -69,6 +78,16 @@ class Media extends MorphToMany
     public function asSubResource(bool $value = true): static
     {
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
+    {
+        $this->searchableColumns = $columns;
+
+        return parent::searchable(false);
     }
 
     /**
@@ -154,6 +173,20 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function filters(RootRequest $request): array
+    {
+        $fields = new Fields(array_map(static function (string $column): Field {
+            return new Text($column, $column);
+        }, $this->getSearchableColumns()));
+
+        return array_values(array_filter([
+            $fields->isNotEmpty() ? Search::make($fields) : null,
+        ]));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function resolveOptions(RootRequest $request, Model $model): array
     {
         return [];
@@ -208,15 +241,19 @@ class Media extends MorphToMany
     {
         $relation = $this->getRelation($model);
 
+        $pivot = $related->relationLoaded($relation->getPivotAccessor())
+            ? $related->getRelation($relation->getPivotAccessor())
+            : $relation->newPivot();
+
         return array_merge(
             parent::mapOption($request, $model, $related),
-            $related->toArray(),
+            $related->append(['dimensions', 'formatted_size'])->toArray(),
             [
-                'created_at' => $related->created_at->format('Y-m-d H:i'),
                 'fields' => $this->resolveFields($request)
                                 ->available($request, $model, $related)
-                                ->mapToForm($request, $relation->newPivot())
+                                ->mapToForm($request, $pivot)
                                 ->toArray(),
+                'formatted_created_at' => $related->created_at->format('Y-m-d H:i'),
             ],
         );
     }
@@ -230,15 +267,23 @@ class Media extends MorphToMany
      */
     public function mapItems(ResourceRequest $request, Model $model): array
     {
-        return $this->resolveQuery($request, $model)
-                    ->filter($request)
-                    ->latest()
-                    ->cursorPaginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->through(function (Model $related) use ($request, $model): array {
-                        return $this->mapOption($request, $model, $related);
-                    })
-                    ->toArray();
+        $filters = $this->resolveFilters($request)->available($request);
+
+        $query = $this->resolveQuery($request, $model);
+
+        $items = $filters->apply($request, $query)
+                        ->latest()
+                        ->paginate($request->input('per_page'))
+                        ->withQueryString()
+                        ->setPath($this->resolveUri($request))
+                        ->through(function (Model $related) use ($request, $model): array {
+                            return $this->mapOption($request, $model, $related);
+                        })
+                        ->toArray();
+
+        return array_merge($items, [
+            'query' => $filters->mapToQuery($request, $this->resolveQuery($request, $model)),
+        ]);
     }
 
     /**
@@ -269,8 +314,9 @@ class Media extends MorphToMany
                                             ->toArray(),
                 ];
             }),
+            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'multiple' => $this->multiple,
-            'url' => URL::to($this->getUri()),
+            'url' => $this->resolveUri($request),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
             }),

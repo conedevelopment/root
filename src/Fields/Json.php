@@ -3,7 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Models\TemporaryJson;
+use Cone\Root\Models\FieldsetModel;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +22,7 @@ class Json extends Field
      *
      * @var string
      */
-    protected string $component = 'Json';
+    protected string $component = 'Fieldset';
 
     /**
      * Handle the resolving event on the field instance.
@@ -63,7 +63,7 @@ class Json extends Field
 
         $data['value'] = (array) $data['value'];
 
-        $json = TemporaryJson::make()
+        $json = FieldsetModel::make()
                     ->setRelation('parent', $model)
                     ->forceFill($data['value']);
 
@@ -96,7 +96,7 @@ class Json extends Field
             parent::toValidate($request, $model),
             Collection::make($rules)
                     ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.%s', $this->name, $key) => $rules];
+                        return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
                     })
                     ->toArray(),
         );

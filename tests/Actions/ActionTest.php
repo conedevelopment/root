@@ -87,10 +87,10 @@ class ActionTest extends TestCase
             $this->action->registerRoutes($this->request, $router);
         });
 
-        $this->assertSame('posts/actions/publish-posts', $this->action->getUri());
+        $this->assertSame('/posts/actions/publish-posts', $this->action->getUri());
 
         $this->assertArrayHasKey(
-            $this->action->getUri(),
+            trim($this->action->getUri(), '/'),
             $this->app['router']->getRoutes()->get('POST')
         );
     }
@@ -116,7 +116,7 @@ class ActionTest extends TestCase
             'destructive' => $this->action->isDestructive(),
             'key' => $this->action->getKey(),
             'name' => $this->action->getName(),
-            'url' => $this->app['url']->to($this->action->getUri()),
+            'url' => $this->action->getUri(),
         ], $this->action->toArray());
     }
 

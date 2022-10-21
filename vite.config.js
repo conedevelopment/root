@@ -4,12 +4,19 @@ import vue from '@vitejs/plugin-vue';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: () => 'app',
+            },
+        },
+    },
     server: {
-        https: true,
+        // https: true,
         host: 'localhost',
     },
     plugins: [
-        basicSsl(),
+        // basicSsl(),
         laravel(['resources/js/app.js']),
         vue({
             template: {

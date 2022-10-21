@@ -2,11 +2,9 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -19,6 +17,7 @@ class RootServiceProvider extends ServiceProvider
     public array $bindings = [
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
+        Interfaces\Models\Notification::class => Models\Notification::class,
         Interfaces\Models\Record::class => Models\Record::class,
         Interfaces\Models\User::class => Models\User::class,
     ];
@@ -115,19 +114,6 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        $this->app['router']->patterns([
-            'rootResource' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-            'rootRelated' => '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-        ]);
-
-        $this->app['router']->bind('rootResource', function (string $id): Model {
-            static $request;
-
-            $request = ResourceRequest::createFrom($this->app['request']);
-
-            return $request->resource()->getModelInstance()->resolveRouteBinding($id);
-        });
-
         $this->app['router']->middlewareGroup(
             'root', $this->app['config']->get('root.middleware', [])
         );
@@ -175,7 +161,7 @@ class RootServiceProvider extends ServiceProvider
                 'user' => $request->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
-                    'url' => $app['url']->route('root.dashboard'),
+                    'url' => Root::getPath(),
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);

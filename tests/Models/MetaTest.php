@@ -17,11 +17,6 @@ class MetaTest extends TestCase
 
         $this->model = new class(Medium::factory()->make()->toArray()) extends Medium {
             use HasMeta;
-
-            protected $casts = [
-                'metas.price' => 'float',
-                'properties' => 'json',
-            ];
         };
 
         $this->model->save();
@@ -45,21 +40,5 @@ class MetaTest extends TestCase
         );
 
         $this->assertTrue($this->model->metas->first()->is($meta));
-    }
-
-    /** @test */
-    public function a_metable_model_proxies_meta_attributes()
-    {
-        $this->assertNull($this->model->getAttribute('metas.price'));
-
-        $this->model->setAttribute('metas.price', 10.3);
-
-        $this->assertSame(10.3, $this->model->getAttribute('metas.price'));
-
-        $this->model->save();
-
-        $this->assertTrue(
-            $this->model->metas->contains(fn ($meta) => $meta->key === 'price')
-        );
     }
 }

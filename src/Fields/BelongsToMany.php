@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\URL;
 
 class BelongsToMany extends Relation
 {
@@ -28,7 +27,9 @@ class BelongsToMany extends Relation
      */
     public function getRelation(Model $model): EloquentRelation
     {
-        return parent::getRelation($model);
+        $relation = parent::getRelation($model);
+
+        return $relation->withPivot($relation->newPivot()->getKeyName());
     }
 
     /**
@@ -102,19 +103,19 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the related model by its pivot ID.
+     * Resolve the related model for a bound value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  string  $id
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getRelatedByPivot(Model $model, string $id): Model
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
-        $relation = $this->getRelation($model);
+        $relation = $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()));
 
-        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+        $model = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
 
-        return tap($related, static function (Model $related) use ($relation, $id): void {
+        return tap($model, static function (Model $related) use ($relation, $id): void {
             $pivot = $related->getRelation($relation->getPivotAccessor());
 
             $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
@@ -188,6 +189,19 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Get the model for the breadcrumbs.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModelForBreadcrumbs(ResourceRequest $request): Model
+    {
+        $relation = $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()));
+
+        return $request->route($this->getRouteKeyName())->getRelation($relation->getPivotAccessor());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function registerRoutes(RootRequest $request, Router $router): void
@@ -199,6 +213,8 @@ class BelongsToMany extends Relation
                 $this->resolveFields($request)->registerRoutes($request, $router);
                 $this->resolveActions($request)->registerRoutes($request, $router);
             });
+
+            $this->registerRouterConstrains($request, $router);
         }
     }
 
@@ -208,13 +224,13 @@ class BelongsToMany extends Relation
     public function routes(Router $router): void
     {
         if ($this->asSubResource) {
-            $router->get('{rootResource}', [BelongsToManyController::class, 'index']);
-            $router->post('{rootResource}', [BelongsToManyController::class, 'store']);
-            $router->get('{rootResource}/create', [BelongsToManyController::class, 'create']);
-            $router->get('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'show']);
-            $router->get('{rootResource}/{rootRelated}/edit', [BelongsToManyController::class, 'edit']);
-            $router->patch('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'update']);
-            $router->delete('{rootResource}/{rootRelated}', [BelongsToManyController::class, 'destroy']);
+            $router->get('/', [BelongsToManyController::class, 'index']);
+            $router->post('/', [BelongsToManyController::class, 'store']);
+            $router->get('/create', [BelongsToManyController::class, 'create']);
+            $router->get("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'show']);
+            $router->get("/{{$this->getRouteKeyname()}}/edit", [BelongsToManyController::class, 'edit']);
+            $router->patch("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'update']);
+            $router->delete("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }
@@ -229,7 +245,7 @@ class BelongsToMany extends Relation
             'async' => $this->async,
             'multiple' => true,
             'related_name' => $this->getRelatedName(),
-            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+            'url' => $this->resolveUri($request),
         ]);
     }
 

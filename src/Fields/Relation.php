@@ -4,14 +4,16 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -130,6 +132,16 @@ abstract class Relation extends Field
     public function getRelatedName(): string
     {
         return __(Str::of($this->name)->singular()->headline()->toString());
+    }
+
+    /**
+     * Create a new method.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getKey())->singular()->prepend('relation_')->toString();
     }
 
     /**
@@ -264,6 +276,23 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the URI.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @return string
+     */
+    public function resolveUri(ResourceRequest $request): string
+    {
+        $uri = $this->getUri();
+
+        foreach ($request->route()->originalParameters() as $key => $value) {
+            $uri = str_replace("{{$key}}", $value, $uri);
+        }
+
+        return preg_replace('/\{.*?\}/', 'create', $uri);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveValue(RootRequest $request, Model $model): mixed
@@ -348,11 +377,11 @@ abstract class Relation extends Field
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            call_user_func_array($scope, [$request, $query, $model]);
+            $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query, $model]);
+            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;
@@ -392,6 +421,45 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the resource model for a bound value.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  string  $id
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
+    {
+        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
+    }
+
+    /**
+     * Register the router constrains.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function registerRouterConstrains(RootRequest $request, Router $router): void
+    {
+        $router->bind($this->getRouteKeyName(), function (string $id, Route $route): Model {
+            $request = App::make(ResourceRequest::class);
+
+            $request->setRouteResolver(static function () use ($route): Route {
+                return $route;
+            });
+
+            return $id === 'create'
+                ? $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->getRelated()
+                : $this->resolveRouteBinding($request, $id);
+        });
+
+        $router->pattern(
+            $this->getRouteKeyName(),
+            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
+        );
+    }
+
+    /**
      * The routes that should be registerd.
      *
      * @param  \Illuminate\Routing\Router  $router
@@ -412,7 +480,7 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? URL::to($this->getUri()) : null,
+            'url' => $this->isAsync() ? $this->resolveUri($request) : null,
         ]);
     }
 }

@@ -14,7 +14,11 @@
         }
 
         @include spruce.breakpoint(lg) {
-            --columns: 5;
+            --columns: 6;
+        }
+
+        @include spruce.breakpoint(xl) {
+            --columns: 7;
         }
 
         align-items: flex-start;
@@ -53,26 +57,32 @@
         padding-bottom: 100%;
     }
 
-    &__progress {
-        background-color: spruce.color(primary);
-        border-radius: spruce.$border-radius-sm;
-        height: 1rem;
-    }
-
     &__error {
+        align-items: center;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        align-items: center;
+        text-align: center;
         width: 100%;
     }
 }
 
 .media-item {
+    $this: &;
+
     aspect-ratio: 1;
+    border-radius: spruce.$border-radius-lg;
     position: relative;
     overflow: hidden;
     width: 100%;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+        #{$this}__actions {
+            opacity: 1;
+        }
+    }
 
     &.is-document {
         align-items: center;
@@ -99,7 +109,7 @@
         &::before {
             border-radius: spruce.$border-radius-lg;
             bottom: 0;
-            box-shadow: 0 0 0 5px spruce.color(primary) inset;
+            box-shadow: 0 0 0 4px spruce.color(primary) inset;
             content: '';
             left: 0;
             position: absolute;
@@ -109,12 +119,43 @@
     }
 
     &.is-loading {
-        background-image: url('/images/image-loading-placeholder.svg');
+        background-image: url('/vendor/root/image-loading-placeholder.svg');
         background-position: center;
         background-size: cover;
 
         img {
             display: none !important;
+        }
+    }
+
+    &.is-small {
+        #{$this}__actions {
+            inset: auto 0.55rem 0.55rem auto;
+        }
+
+        .media-item__caption {
+            font-size: 0.7rem;
+            padding: 0.5rem;
+
+            .icon {
+                height: 1.25rem;
+                width: 1.25rem;
+            }
+        }
+    }
+
+    &__actions {
+        display: flex;
+        inset: 0.75rem 0.75rem auto auto;
+        gap: spruce.spacer(xs);
+        position: absolute;
+        opacity: 0;
+        transition-duration: spruce.transition(duration);
+        transition-property: all;
+        transition-timing-function: spruce.transition(timing-function);
+
+        .btn--icon {
+            padding: spruce.spacer(xs);
         }
     }
 
@@ -352,7 +393,7 @@
         width: 1.5rem;
 
         &.is-loading {
-            background-image: url('/images/image-loading-placeholder.svg');
+            background-image: url('/vendor/root/image-loading-placeholder.svg');
             background-position: center;
             background-size: cover;
 

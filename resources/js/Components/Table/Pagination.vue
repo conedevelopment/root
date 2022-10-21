@@ -5,7 +5,7 @@
                 class="form-control form-control--sm"
                 id="per-page"
                 v-model.number="query.per_page"
-                @update:modelValue="emit"
+                @change="emit"
             >
                 <option v-if="! counts.includes(query.per_page)" disabled :value="query.per_page">
                     {{ __('Custom (:count)', { count: query.per_page }) }}

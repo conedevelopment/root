@@ -19,6 +19,10 @@ class RootRequest extends Request
      */
     public function validate(array $rules, ...$parameters): void
     {
+        if (! $this->header('X-Inertia')) {
+            parent::validate($rules, ...$parameters);
+        }
+
         try {
             App::make(Factory::class)->validate($this->all(), $rules, ...$parameters);
         } catch (ValidationException $exception) {

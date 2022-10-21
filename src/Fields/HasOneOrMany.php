@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\URL;
 
 abstract class HasOneOrMany extends Relation
 {
@@ -66,7 +65,11 @@ abstract class HasOneOrMany extends Relation
 
             $this->resolveHydrate($request, $model, $value);
 
-            foreach (Arr::wrap($model->getRelation($this->name)) as $related) {
+            $models = $model->getRelation($this->name);
+
+            $models = is_iterable($models) ? $models : Arr::wrap($models);
+
+            foreach ($models as $related) {
                 $relation->save($related);
             }
         });
@@ -110,10 +113,12 @@ abstract class HasOneOrMany extends Relation
         parent::registerRoutes($request, $router);
 
         if ($this->asSubResource) {
-            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+            $router->prefix($this->getKey()."/{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($request, $router);
                 $this->resolveActions($request)->registerRoutes($request, $router);
             });
+
+            $this->registerRouterConstrains($request, $router);
         }
     }
 
@@ -123,13 +128,13 @@ abstract class HasOneOrMany extends Relation
     public function routes(Router $router): void
     {
         if ($this->asSubResource) {
-            $router->get('{rootResource}', [HasOneOrManyController::class, 'index']);
-            $router->post('{rootResource}', [HasOneOrManyController::class, 'store']);
-            $router->get('{rootResource}/create', [HasOneOrManyController::class, 'create']);
-            $router->get('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'show']);
-            $router->get('{rootResource}/{rootRelated}/edit', [HasOneOrManyController::class, 'edit']);
-            $router->patch('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'update']);
-            $router->delete('{rootResource}/{rootRelated}', [HasOneOrManyController::class, 'destroy']);
+            $router->get('/', [HasOneOrManyController::class, 'index']);
+            $router->post('/', [HasOneOrManyController::class, 'store']);
+            $router->get('/create', [HasOneOrManyController::class, 'create']);
+            $router->get("/{{$this->getRouteKeyName()}}", [HasOneOrManyController::class, 'show']);
+            $router->get("/{{$this->getRouteKeyName()}}/edit", [HasOneOrManyController::class, 'edit']);
+            $router->patch("/{{$this->getRouteKeyName()}}", [HasOneOrManyController::class, 'update']);
+            $router->delete("/{{$this->getRouteKeyName()}}", [HasOneOrManyController::class, 'destroy']);
         } else {
             parent::routes($router);
         }
@@ -140,9 +145,12 @@ abstract class HasOneOrMany extends Relation
      */
     public function toInput(RootRequest $request, Model $model): array
     {
-        return array_merge(parent::toInput($request, $model), [
+        $input = parent::toInput($request, $model);
+
+        return array_merge($input, [
             'related_name' => $this->getRelatedName(),
-            'url' => URL::to(sprintf('%s/%s', $this->getUri(), $model->getKey())),
+            'options' => $this->asSubResource ? [] : $input['options'],
+            'url' => $this->resolveUri($request),
         ]);
     }
 }

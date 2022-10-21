@@ -95,7 +95,7 @@ class ResourceController extends Controller
 
         $resource->created($request, $model);
 
-        return Redirect::route(sprintf('root.%s.show', $resource->getKey()), $model->getKey())
+        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
@@ -166,7 +166,7 @@ class ResourceController extends Controller
 
         $resource->updated($request, $model);
 
-        return Redirect::route(sprintf('root.%s.edit', $resource->getKey()), $model->getKey())
+        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
@@ -191,7 +191,30 @@ class ResourceController extends Controller
 
         $resource->deleted($request, $model);
 
-        return Redirect::route(sprintf('root.%s.index', $resource->getKey()))
+        return Redirect::to($resource->getUri())
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
+    }
+
+    /**
+     * Restore the specified resource in storage.
+     *
+     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function restore(ResourceRequest $request, Model $model): RedirectResponse
+    {
+        $resource = $request->resource();
+
+        if ($resource->getPolicy($model)) {
+            $this->authorize('restore', $model);
+        }
+
+        $model->restore();
+
+        $resource->restored($request, $model);
+
+        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
+                    ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
     }
 }

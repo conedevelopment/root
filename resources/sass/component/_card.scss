@@ -20,8 +20,8 @@
 
     &__title {
         color: spruce.color(secondary);
-        font-size: spruce.font-size(h4);
-        margin-block: 0;
+        font-size: spruce.responsive-font-size(1.15rem, 40);
+        margin-block: 0 clamp(spruce.spacer(xs), 3vw, spruce.spacer(s));
     }
 
     &__inner {

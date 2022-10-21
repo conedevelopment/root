@@ -16,8 +16,8 @@ return new class() extends Migration
         Schema::create('root_metas', static function (Blueprint $table): void {
             $table->id();
             $table->uuidMorphs('metable');
-            $table->string('key');
-            $table->text('value')->nullable();
+            $table->string('key')->index();
+            $table->text('value')->index()->nullable();
             $table->timestamps();
 
             $table->unique(['metable_id', 'metable_type', 'key']);

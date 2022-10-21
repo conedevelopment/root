@@ -3,7 +3,6 @@
 namespace Cone\Root\Support;
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\URL;
 
 class Asset
 {
@@ -104,9 +103,9 @@ class Asset
         $path = $this->getPath();
 
         if (str_contains($path, App::resourcePath())) {
-            return URL::asset(sprintf('%s/%s', basename(dirname($path)), basename($path)));
+            return sprintf('%s/%s', basename(dirname($path)), basename($path));
         }
 
-        return URL::asset(sprintf('vendor/%s/%s', $this->getKey(), basename($path)));
+        return sprintf('vendor/%s/%s', $this->getKey(), basename($path));
     }
 }

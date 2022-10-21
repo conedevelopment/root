@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Extracts;
+namespace Cone\Root\Tests\Resources;
 
 use Cone\Root\Tests\TestCase;
 

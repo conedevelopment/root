@@ -26,7 +26,7 @@ class BelongsToManyControllerTest extends TestCase
         $this->field->asSubResource();
 
         $this->resource->routeGroup(function ($router) {
-            $router->prefix('fields')->group(function ($router) {
+            $router->prefix('{resource_post}/fields')->group(function ($router) {
                 $this->field->registerRoutes($this->request, $router);
             });
         });
@@ -36,10 +36,10 @@ class BelongsToManyControllerTest extends TestCase
     public function a_belongs_to_many_controller_has_store()
     {
         $this->actingAs($this->admin)
-            ->post('/root/posts/fields/tags/1', [
+            ->post('/root/posts/1/fields/tags', [
                 'name' => 'New Tag',
             ])
-            ->assertRedirect('/root/posts/fields/tags/1/1')
+            ->assertRedirect('/root/posts/1/fields/tags/1')
             ->assertSessionHas('alerts.relation-created');
     }
 
@@ -53,11 +53,11 @@ class BelongsToManyControllerTest extends TestCase
         $related = $model->tags()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/tags/{rootResource}/{rootRelated}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/tags/{relation_tag}'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/tags/1/1')
+            ->get('/root/posts/1/fields/tags/1')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -78,11 +78,11 @@ class BelongsToManyControllerTest extends TestCase
         $related = $model->tags()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/tags/{rootResource}/{rootRelated}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/fields/tags/{relation_tag}/edit'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/posts/fields/tags/1/1/edit')
+            ->get('/root/posts/1/fields/tags/1/edit')
             ->assertOk()
             ->assertViewIs('root::app')
             ->assertViewHas([
@@ -97,10 +97,10 @@ class BelongsToManyControllerTest extends TestCase
     public function a_belongs_to_many_controller_has_update()
     {
         $this->actingAs($this->admin)
-            ->patch('/root/posts/fields/tags/1/1', [
+            ->patch('/root/posts/1/fields/tags/1', [
                 'name' => 'New Comment',
             ])
-            ->assertRedirect('/root/posts/fields/tags/1/1/edit')
+            ->assertRedirect('/root/posts/1/fields/tags/1/edit')
             ->assertSessionHas('alerts.relation-updated');
     }
 
@@ -108,8 +108,8 @@ class BelongsToManyControllerTest extends TestCase
     public function a_belongs_to_many_controller_has_delete()
     {
         $this->actingAs($this->admin)
-            ->delete('/root/posts/fields/tags/1/1')
-            ->assertRedirect('/root/posts/fields/tags/1')
+            ->delete('/root/posts/1/fields/tags/1')
+            ->assertRedirect('/root/posts/1/fields/tags')
             ->assertSessionHas('alerts.relation-deleted');
     }
 }

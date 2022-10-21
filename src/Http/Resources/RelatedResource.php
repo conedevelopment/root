@@ -3,8 +3,6 @@
 namespace Cone\Root\Http\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\URL;
 
 class RelatedResource extends ModelResource
 {
@@ -16,14 +14,10 @@ class RelatedResource extends ModelResource
      */
     protected function mapUrl(ResourceRequest $request): string
     {
-        $path = sprintf(
+        return sprintf(
             '%s/%s',
-            $request->resolved()->getUri(),
-            $this->resource instanceof Pivot ? $this->resource->pivotParent->getKey() : $this->resource->parent->getKey()
+            $request->resolved()->resolveUri($request),
+            $this->resource->getKey()
         );
-
-        return $this->resource->exists
-            ? URL::to(sprintf('%s/%s', $path, $this->resource->getKey()))
-            : URL::to($path);
     }
 }

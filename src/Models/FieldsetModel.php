@@ -4,7 +4,7 @@ namespace Cone\Root\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TemporaryJson extends Model
+class FieldsetModel extends Model
 {
     /**
      * The "type" of the primary key ID.

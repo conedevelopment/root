@@ -9,7 +9,6 @@
                 :key="field.name"
                 :name="field.name"
             ></FormHandler>
-
             <template #footer>
                 <button
                     type="submit"
@@ -44,7 +43,7 @@
 
         data() {
             return {
-                form: this.$inertia.form(this.action.key, Object.assign({}, this.action.data)),
+                form: this.$inertia.form(Object.assign({}, this.action.data)),
             };
         },
 
@@ -66,6 +65,7 @@
                     onSuccess: () => {
                         this.$emit('success');
                         this.$refs.modal.close();
+                        this.form.reset();
                     },
                     onError: (errors) => {
                         this.$emit('error');

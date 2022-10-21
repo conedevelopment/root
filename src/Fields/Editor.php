@@ -4,11 +4,13 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Models\Medium;
+use Cone\Root\Models\User;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
 
 class Editor extends Field
 {
@@ -83,7 +85,22 @@ class Editor extends Field
     public function withMedia(?Closure $callback = null): static
     {
         if (is_null($this->media)) {
-            $this->media = Media::make(__('Media'), 'media');
+            $this->media = Media::make(__('Media'), 'media', static function (): MorphToMany {
+                return new MorphToMany(
+                    (Medium::proxy())::query(),
+                    User::proxy(),
+                    'media',
+                    'root_media',
+                    'medium_id',
+                    'user_id',
+                    'id',
+                    'id'
+                );
+            });
+
+            $this->config['modules']['toolbar']['container'][3][] = 'image';
+
+            $this->config['formats'][] = 'image';
         }
 
         if (! is_null($callback)) {
@@ -132,7 +149,7 @@ class Editor extends Field
     {
         return array_merge(parent::toInput($request, $model), [
             'config' => $this->config,
-            'media_url' => is_null($this->media) ? null : URL::to($this->media->getUri()),
+            'media_url' => is_null($this->media) ? null : $this->media->resolveUri($request),
             'with_media' => ! is_null($this->media),
         ]);
     }

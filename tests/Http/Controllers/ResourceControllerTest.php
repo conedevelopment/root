@@ -17,7 +17,7 @@ class ResourceControllerTest extends TestCase
         $request = IndexRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->getByName('root.posts.index');
+            return $this->app['router']->getRoutes()->get('GET')['root/posts'];
         });
 
         $this->actingAs($this->admin)
@@ -38,7 +38,7 @@ class ResourceControllerTest extends TestCase
         $request = CreateRequest::createFrom($this->request);
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->getByName('root.posts.create');
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/create'];
         });
 
         $this->actingAs($this->admin)
@@ -72,7 +72,7 @@ class ResourceControllerTest extends TestCase
         $model = Post::query()->get()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->getByName('root.posts.show');
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}'];
         });
 
         $this->actingAs($this->admin)
@@ -95,7 +95,7 @@ class ResourceControllerTest extends TestCase
         $model = Post::query()->get()->first();
 
         $request->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->getByName('root.posts.show');
+            return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/edit'];
         });
 
         $this->actingAs($this->admin)
