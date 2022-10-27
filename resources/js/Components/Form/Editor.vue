@@ -4,15 +4,38 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <div ref="editor"></div>
+        <div>
+            <div v-if="editor" class="editor-menu">
+                <button
+                    type="button"
+                    @click="editor.chain().focus().toggleBold().run()"
+                    :class="{ 'is-active': editor.isActive('bold') }"
+                >
+                    B
+                </button>
+                <button
+                    type="button"
+                    @click="editor.chain().focus().toggleItalic().run()"
+                    :class="{ 'is-active': editor.isActive('italic') }"
+                >
+                    I
+                </button>
+                <button
+                    type="button"
+                    @click="editor.chain().focus().toggleLink({  }).run()"
+                    :class="{ 'is-active': editor.isActive('a') }"
+                >
+                    Link
+                </button>
+            </div>
+            <div ref="editor"></div>
+        </div>
         <Media
             v-if="with_media"
             ref="media"
             :url="media_url"
             :title="__('Media')"
-            :modelValue="selection"
             multiple
-            @update:modelValue="selectResolver"
         ></Media>
         <span
             class="field-feedback"
@@ -96,41 +119,15 @@
                     StarterKit,
                 ],
                 onUpdate: (value) => {
-                    this.$emit('update:modelValue', value);
+                    // this.$emit('update:modelValue', value);
                 },
             });
-
-            this.selectResolver = (values, selection) => {
-                this.insertMedia(editor, selection);
-
-                return values;
-            };
         },
 
         data() {
             return {
-                selectResolver: (values) => values,
+                editor: null,
             };
-        },
-
-        methods: {
-            insertMedia(editor, values) {
-                const range = editor.getSelection(true);
-
-                values.forEach((value) => {
-                    if (value.is_image) {
-                        editor.editor.insertEmbed(range.index, 'image', value.urls.original, Quill.sources.USER)
-                        editor.setSelection(range.index + 1, 0, Quill.sources.SILENT);
-                    } else {
-                        editor.editor.insertText(range.index, value.name, 'link', value.urls.original, Quill.sources.USER);
-                        editor.setSelection(range.index + value.name.length, 0, Quill.sources.SILENT);
-                    }
-                });
-
-                editor.emitter.emit('text-change');
-
-                this.$refs.media.clearSelection();
-            },
         },
     }
 </script>
