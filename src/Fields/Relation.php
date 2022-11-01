@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -340,9 +341,13 @@ abstract class Relation extends Field
                 if ($default instanceof Model) {
                     return $this->resolveDisplay($request, $default);
                 } elseif ($default instanceof Collection) {
-                    return $default->map(function (Model $related) use ($request): mixed {
+                    $value = $default->map(function (Model $related) use ($request): mixed {
                         return $this->resolveDisplay($request, $related);
-                    })->join(', ');
+                    });
+
+                    return $this->isAsync() && $request instanceof UpdateRequest
+                        ? $value->toArray()
+                        : $value->join(', ');
                 }
 
                 return $default;
