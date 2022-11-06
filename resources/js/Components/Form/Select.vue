@@ -17,7 +17,7 @@
             >
                 {{ __('Select :label', { label }) }}
             </option>
-            <option v-for="option in options" :value="option.value" :key="option.value">
+            <option v-for="option in options" v-bind="option" :key="option.value">
                 {{ option.formatted_value }}
             </option>
         </select>

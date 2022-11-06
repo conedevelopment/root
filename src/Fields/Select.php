@@ -98,11 +98,10 @@ class Select extends Field
 
         $options = call_user_func_array($this->optionsResolver, [$request, $model]);
 
-        return array_map(static function (mixed $formattedValue, string $value): array {
-            return [
-                'value' => $value,
-                'formatted_value' => $formattedValue,
-            ];
+        return array_map(static function (mixed $formattedValue, int|string $value): array {
+            return $formattedValue instanceof Option
+                ? $formattedValue->toArray()
+                : ['value' => $value, 'formatted_value' => $formattedValue];
         }, $options, array_keys($options));
     }
 
