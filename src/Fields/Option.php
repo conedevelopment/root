@@ -27,6 +27,17 @@ class Option implements Arrayable
     }
 
     /**
+     * Set the disabled attribute.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function disabled(bool $value = true): static
+    {
+        return $this->setAttribute('disabled', $value);
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array<TKey, TValue>
