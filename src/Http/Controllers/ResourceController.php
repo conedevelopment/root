@@ -214,7 +214,7 @@ class ResourceController extends Controller
 
         $resource->restored($request, $model);
 
-        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
+        return Redirect::back()
                     ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
     }
 }
