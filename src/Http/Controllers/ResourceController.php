@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -191,7 +192,7 @@ class ResourceController extends Controller
 
         $resource->deleted($request, $model);
 
-        return Redirect::to($resource->getUri())
+        return Redirect::to(URL::previousPath() === $resource->getUri() ? URL::previous() : $resource->getUri())
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
 
