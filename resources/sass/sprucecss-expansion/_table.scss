@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '~sprucecss/scss/spruce';
 
 .table {
@@ -53,6 +54,12 @@
         svg {
             height: auto;
             width: 100%;
+        }
+    }
+
+    tbody {
+        tr.is-trashed {
+            background-color: color.scale(hsl(0 71% 51%), $lightness: 80%)
         }
     }
 }

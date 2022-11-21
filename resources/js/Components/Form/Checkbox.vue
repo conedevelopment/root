@@ -6,11 +6,9 @@
         </label>
         <label v-for="option in options" class="form-check" :key="option.value">
             <input
-                v-bind="$attrs"
+                v-bind="{ ...$attrs, ...option, name: `${name}.${option.value}` }"
                 class="form-check__control"
                 v-model="_value"
-                :name="`${name}.${option.value}`"
-                :value="option.value"
             >
             <span class="form-check__label" v-html="option.formatted_value"></span>
         </label>

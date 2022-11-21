@@ -1,5 +1,6 @@
 {
   "resources/js/app.js": {
+<<<<<<< HEAD
     "file": "assets/app.45b00158.js",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -9,6 +10,17 @@
   },
   "resources/js/app.css": {
     "file": "assets/app.39532465.css",
+=======
+    "file": "assets/app.0d97eca6.js",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app.5ff70d90.css"
+    ]
+  },
+  "resources/js/app.css": {
+    "file": "assets/app.5ff70d90.css",
+>>>>>>> master
     "src": "resources/js/app.css"
   }
 }

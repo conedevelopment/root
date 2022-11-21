@@ -7,6 +7,7 @@ use Cone\Root\Http\Requests\CreateRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
 abstract class Field implements Arrayable
 {
     use Authorizable;
+    use HasAttributes;
     use Makeable;
     use ResolvesVisibility;
 
@@ -33,13 +35,6 @@ abstract class Field implements Arrayable
      * @var bool|\Closure
      */
     protected bool|Closure $searchable = false;
-
-    /**
-     * The field attributes.
-     *
-     * @var array
-     */
-    protected array $attributes = [];
 
     /**
      * The format resolver callback.
@@ -119,106 +114,6 @@ abstract class Field implements Arrayable
     public function getComponent(): string
     {
         return $this->component;
-    }
-
-    /**
-     * Get the attributes.
-     *
-     * @return array
-     */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * Set the given attributes.
-     *
-     * @param  array  $attributes
-     * @return $this
-     */
-    public function setAttributes(array $attributes): static
-    {
-        $this->attributes = array_replace($this->attributes, $attributes);
-
-        return $this;
-    }
-
-    /**
-     * Determine if the given attributes exists.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function hasAttribute(string $key): bool
-    {
-        return isset($this->attributes[$key]);
-    }
-
-    /**
-     * Get the given attribute.
-     *
-     * @param  string  $key
-     * @param  mixed  $default
-     * @return mixed
-     */
-    public function getAttribute(string $key, mixed $default = null): mixed
-    {
-        return $this->hasAttribute($key) ? $this->attributes[$key] : $default;
-    }
-
-    /**
-     * Set the given attribute.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function setAttribute(string $key, mixed $value): static
-    {
-        $this->attributes[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Remove the given attribute.
-     *
-     * @param  string  $key
-     * @return $this
-     */
-    public function removeAttribute(string $key): static
-    {
-        unset($this->attributes[$key]);
-
-        return $this;
-    }
-
-    /**
-     * Remove the given attributes.
-     *
-     * @param  array  $keys
-     * @return $this
-     */
-    public function removeAttributes(array $keys): static
-    {
-        foreach ($keys as $key) {
-            $this->removeAttribute($key);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clear all the attributes.
-     *
-     * @return $this
-     */
-    public function clearAttributes(): static
-    {
-        $this->attributes = [];
-
-        return $this;
     }
 
     /**
@@ -588,7 +483,7 @@ abstract class Field implements Arrayable
      */
     public function toArray(): array
     {
-        return $this->attributes;
+        return $this->getAttributes();
     }
 
     /**

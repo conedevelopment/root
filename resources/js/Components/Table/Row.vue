@@ -18,6 +18,7 @@
                     class="btn btn--delete btn--sm btn--icon"
                     v-if="item.abilities.delete || item.abilities.forceDelete"
                     :aria-label="item.trashed ? __('Delete permanently') : __('Delete')"
+                    :title="item.trashed ? __('Delete permanently') : __('Delete')"
                     @click="destroy"
                 >
                     <Icon class="btn__icon" :name="item.trashed ? 'delete-forever' : 'delete'"></Icon>
@@ -27,6 +28,7 @@
                     class="btn btn--warning btn--sm btn--icon"
                     v-if="item.trashed && item.abilities.restore"
                     :aria-label="__('Restore')"
+                    :title="__('Restore')"
                     @click="restore"
                 >
                     <Icon class="btn__icon" name="restore-from-trash"></Icon>
@@ -36,6 +38,7 @@
                     class="btn btn--tertiary btn--sm btn--icon"
                     :href="item.url"
                     :aria-label="__('View')"
+                    :title="__('View')"
                 >
                     <Icon class="btn__icon" name="view"></Icon>
                 </Link>
@@ -44,6 +47,7 @@
                     class="btn btn--tertiary btn--sm btn--icon"
                     :href="`${item.url}/edit`"
                     :aria-label="__('Edit')"
+                    :title="__('Edit')"
                 >
                     <Icon class="btn__icon" name="edit"></Icon>
                 </Link>
