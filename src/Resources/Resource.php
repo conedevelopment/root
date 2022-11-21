@@ -305,7 +305,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         })->withQuery(function (RootRequest $request): Builder {
             return $this->resolveFilters($request)
                         ->available($request)
-                        ->apply($request, $this->query());
+                        ->apply($request, $this->resolveQuery($request));
         });
     }
 
@@ -320,8 +320,8 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         $extract->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (): Builder {
-            return $this->query();
+        })->withQuery(function (RootRequest $request): Builder {
+            return $this->resolveQuery($request);
         });
     }
 
