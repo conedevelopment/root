@@ -39,6 +39,8 @@ class NotificationsControllerTest extends TestCase
     /** @test */
     public function a_notifications_controller_has_update()
     {
+        $this->freezeTime();
+
         $notification = $this->admin->notifications->first();
 
         $this->assertFalse($notification->read());
