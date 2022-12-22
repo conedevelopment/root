@@ -98,6 +98,8 @@ return [
     |
     */
 
-    'editor' => [],
+    'editor' => [
+        //
+    ],
 
 ];

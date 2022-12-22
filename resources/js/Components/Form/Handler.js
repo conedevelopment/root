@@ -3,7 +3,7 @@ import { h, resolveComponent } from 'vue';
 import AsyncSelect from './AsyncSelect.vue';
 import Checkbox from './Checkbox.vue';
 import DateTime from './DateTime.vue';
-import Editor from './Editor.vue';
+import Editor from './Editor/Editor.vue';
 import Fieldset from './Fieldset.vue';
 import Hidden from './Hidden.vue';
 import Input from './Input.vue';

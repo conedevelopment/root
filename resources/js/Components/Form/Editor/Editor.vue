@@ -6,13 +6,7 @@
         </label>
         <div>
             <div v-if="editor" class="editor-menu">
-                <button
-                    type="button"
-                    @click="editor.chain().focus().toggleBold().run()"
-                    :class="{ 'is-active': editor.isActive('bold') }"
-                >
-                    B
-                </button>
+                <Bold :editor="editor"></Bold>
                 <button
                     type="button"
                     @click="editor.chain().focus().toggleItalic().run()"
@@ -22,7 +16,7 @@
                 </button>
                 <button
                     type="button"
-                    @click="editor.chain().focus().toggleLink({  }).run()"
+                    @click="editor.chain().focus().toggleLink({}).run()"
                     :class="{ 'is-active': editor.isActive('a') }"
                 >
                     Link
@@ -48,11 +42,13 @@
 
 <script>
     import { Editor } from '@tiptap/vue-3'
-    import Media from './../Media/Media.vue';
+    import Bold from './Bold.vue';
+    import Media from '../../../Media/Media.vue';
     import StarterKit from '@tiptap/starter-kit'
 
     export default {
         components: {
+            Bold,
             Media,
         },
 
