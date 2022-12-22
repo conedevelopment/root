@@ -7,20 +7,8 @@
         <div>
             <div v-if="editor" class="editor-menu">
                 <Bold :editor="editor"></Bold>
-                <button
-                    type="button"
-                    @click="editor.chain().focus().toggleItalic().run()"
-                    :class="{ 'is-active': editor.isActive('italic') }"
-                >
-                    I
-                </button>
-                <button
-                    type="button"
-                    @click="editor.chain().focus().toggleLink({}).run()"
-                    :class="{ 'is-active': editor.isActive('a') }"
-                >
-                    Link
-                </button>
+                <Italic :editor="editor"></Italic>
+                <Link :editor="editor"></Link>
             </div>
             <div ref="editor"></div>
         </div>
@@ -43,12 +31,16 @@
 <script>
     import { Editor } from '@tiptap/vue-3'
     import Bold from './Bold.vue';
+    import Italic from './Italic.vue';
+    import Link from './Link.vue';
     import Media from '../../../Media/Media.vue';
     import StarterKit from '@tiptap/starter-kit'
 
     export default {
         components: {
             Bold,
+            Italic,
+            Link,
             Media,
         },
 
@@ -118,6 +110,10 @@
                     // this.$emit('update:modelValue', value);
                 },
             });
+        },
+
+        beforeUnmount() {
+            this.editor.destroy();
         },
 
         data() {
