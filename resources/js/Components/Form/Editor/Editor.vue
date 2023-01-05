@@ -33,7 +33,6 @@
     import Bold from './Bold.vue';
     import Italic from './Italic.vue';
     import Link from './Link.vue';
-    import Media from '../../../Media/Media.vue';
     import StarterKit from '@tiptap/starter-kit'
 
     export default {
@@ -41,7 +40,6 @@
             Bold,
             Italic,
             Link,
-            Media,
         },
 
         props: {

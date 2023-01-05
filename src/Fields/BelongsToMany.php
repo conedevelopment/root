@@ -167,7 +167,7 @@ class BelongsToMany extends Relation
             ->withQuery(function (RootRequest $request, Builder $query, Model $model): Builder {
                 return $this->resolveQuery($request, $model->pivotParent);
             })
-            ->display(function (RootRequest $request, Model $related) {
+            ->display(function (RootRequest $request, Model $related): mixed {
                 return $this->resolveDisplay($request, $related);
             }),
         ];
