@@ -16,7 +16,7 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Http\Resources\ModelResource;
+use Cone\Root\Resources\Item;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
@@ -382,16 +382,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         ]);
     }
 
-/**
+    /**
      * Map the related model.
      *
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Cone\Root\Http\Resources\ModelResource
+     * @return \Cone\Root\Resources\Item
      */
-    public function mapItem(ResourceRequest $request, Model $model): ModelResource
+    public function mapItem(ResourceRequest $request, Model $model): Item
     {
-        return new ModelResource($model);
+        return new Item($model);
     }
 
     /**
@@ -567,7 +567,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
         return [
             'breadcrumbs' => $this->resolveBreadcrumbs($request),
-            'model' => (new ModelResource($model))->toForm(
+            'model' => (new Item($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
             'resource' => $this->toArray(),
@@ -587,7 +587,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         return [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
             'breadcrumbs' => $this->resolveBreadcrumbs($request),
-            'model' => (new ModelResource($model))->toDisplay(
+            'model' => (new Item($model))->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
             'resource' => $this->toArray(),
@@ -607,7 +607,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     {
         return [
             'breadcrumbs' => $this->resolveBreadcrumbs($request),
-            'model' => (new ModelResource($model))->toForm(
+            'model' => (new Item($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
             'resource' => $this->toArray(),

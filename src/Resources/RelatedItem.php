@@ -1,10 +1,10 @@
 <?php
 
-namespace Cone\Root\Http\Resources;
+namespace Cone\Root\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
 
-class RelatedResource extends ModelResource
+class RelatedItem extends Item
 {
     /**
      * Map the URL for the model.
@@ -17,7 +17,7 @@ class RelatedResource extends ModelResource
         return sprintf(
             '%s/%s',
             $request->resolved()->resolveUri($request),
-            $this->resource->getKey()
+            $this->model->getKey()
         );
     }
 }
