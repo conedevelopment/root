@@ -9,16 +9,11 @@
                 <Bold :editor="editor"></Bold>
                 <Italic :editor="editor"></Italic>
                 <Link :editor="editor"></Link>
+                <!-- Code -->
+                <!-- Highlight -->
             </div>
             <div ref="editor"></div>
         </div>
-        <Media
-            v-if="with_media"
-            ref="media"
-            :url="media_url"
-            :title="__('Media')"
-            multiple
-        ></Media>
         <span
             class="field-feedback"
             :class="{ 'field-feedback--invalid': error !== null }"
