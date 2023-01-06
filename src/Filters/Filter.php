@@ -23,7 +23,7 @@ abstract class Filter implements Arrayable
     protected ?string $component = 'Select';
 
     /**
-     * Indicates if mulitple options can be selected.
+     * Indicates if multiple options can be selected.
      *
      * @var bool
      */

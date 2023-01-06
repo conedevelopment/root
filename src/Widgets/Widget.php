@@ -173,7 +173,7 @@ abstract class Widget implements Arrayable, Renderable
     }
 
     /**
-     * The routes that should be registerd.
+     * The routes that should be registered.
      *
      * @param  \Illuminate\Routing\Router  $router
      * @return void

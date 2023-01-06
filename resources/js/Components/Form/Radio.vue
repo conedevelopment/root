@@ -51,7 +51,7 @@
             },
             id: {
                 type: String,
-                requried: true,
+                required: true,
             },
             options: {
                 type: Array,

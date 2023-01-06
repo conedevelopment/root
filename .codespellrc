@@ -1,0 +1,6 @@
+[codespell]
+skip=./.codespellrc,./.git,./*.lock,./public/build/assets
+check-hidden=
+check-filenames=
+builtin=clear,rare,informal,usage,code,names
+ignore-words-list=responsable,master,thead
