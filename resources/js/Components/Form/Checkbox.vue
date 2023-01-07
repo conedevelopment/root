@@ -64,11 +64,11 @@
             },
             id: {
                 type: String,
-                requried: true,
+                required: true,
             },
             name: {
                 type: String,
-                requried: true,
+                required: true,
             },
             options: {
                 type: Array,

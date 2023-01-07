@@ -18,7 +18,7 @@ class {{ class }} extends Filter
 %%/component%%
 %%multiple%%
     /**
-     * Indicates if mulitple options can be selected.
+     * Indicates if multiple options can be selected.
      *
      * @var bool
      */

@@ -73,7 +73,7 @@ trait RegistersRoutes
     }
 
     /**
-     * The routes that should be registerd.
+     * The routes that should be registered.
      *
      * @param  \Illuminate\Routing\Router  $router
      * @return void

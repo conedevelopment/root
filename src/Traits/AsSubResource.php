@@ -23,7 +23,7 @@ trait AsSubResource
     use ResolvesFilters;
 
     /**
-     * Indicates wheter the relation is a sub-resource.
+     * Indicates whether the relation is a sub-resource.
      *
      * @var bool
      */

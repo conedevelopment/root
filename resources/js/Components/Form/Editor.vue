@@ -75,7 +75,7 @@
             },
             config: {
                 type: Object,
-                requried: true,
+                required: true,
             },
             help: {
                 type: String,
