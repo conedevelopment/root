@@ -14,7 +14,7 @@
 **Root is an admin package for Laravel applications with extension support.**
 
 [![Github release](https://img.shields.io/github/v/release/conedevelopment/root?color=1583f9&logo=github&logoColor=white&style=for-the-badge)](https://github.com/conedevelopment/root/releases)
-[![Back-end](https://img.shields.io/github/workflow/status/conedevelopment/root/Back-end?logo=github&label=Back-end&style=for-the-badge)](https://github.com/conedevelopment/root/actions/workflows/back-end.yml)
+[![Back-end](https://img.shields.io/github/actions/workflow/status/conedevelopment/root/back-end.yml?branch=master&logo=github&label=Back-end&style=for-the-badge)](https://github.com/conedevelopment/root/actions/workflows/back-end.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/conedevelopment/root?color=1583f9&style=for-the-badge)](https://coveralls.io/github/conedevelopment/root)
 [![License](https://img.shields.io/badge/license-MIT-1583f9?style=for-the-badge)](LICENSE)
 
