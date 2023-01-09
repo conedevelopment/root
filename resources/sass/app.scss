@@ -10,11 +10,13 @@
 @use '~sprucecss/scss/spruce';
 
 :root {
-    --root-box-shadow: 0 0.25rem 2rem 0 hsl(223 42% 50% / 0.15);
-    --root-gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)});
-    --root-gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)});
-    --root-logo-height: 1.35rem;
-    --root-mobile-logo-height: 1.15rem;
+    @include spruce.set-css-variable((
+        --box-shadow: 0 0.25rem 2rem 0 hsl(223 42% 50% / 0.15),
+        --gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)}),
+        --gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)}),
+        --logo-height: 1.35rem,
+        --mobile-logo-height: 1.15rem
+    ));
 }
 
 .hidden {

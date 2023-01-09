@@ -7,12 +7,12 @@
         display: flex;
         gap: spruce.spacer(m);
         justify-content: space-between;
-        margin-inline: var(--root-gutter-lg);
+        margin-inline: spruce.get-css-variable(--gutter-lg);
         padding-block: spruce.spacer(s);
     }
 
     &__logo {
-        height: var(--root-mobile-logo-height);
+        height: spruce.get-css-variable(--mobile-logo-height);
         width: auto;
 
         @include spruce.breakpoint(md) {
