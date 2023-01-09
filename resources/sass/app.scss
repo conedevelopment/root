@@ -10,8 +10,8 @@
 :root {
     @include spruce.set-css-variable((
         --box-shadow: 0 0.25rem 2rem 0 hsl(223 42% 50% / 0.15),
-        --gutter-lg: clamp(#{spruce.spacer(s)}, 3vw, #{spruce.spacer(l)}),
-        --gutter-md: clamp(#{spruce.spacer(s)}, 2vw, #{spruce.spacer(m)}),
+        --gutter-lg: spruce.spacer-clamp(m, l),
+        --gutter-md: spruce.spacer-clamp(s, 2.25rem),
         --logo-height: 1.35rem,
         --mobile-logo-height: 1.15rem
     ));

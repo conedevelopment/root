@@ -7,7 +7,7 @@
             :aria-label="__('User Menu')"
             @click="toggle"
         >
-            <img class="user-menu__avatar" :src="$app.user.avatar">
+            <img class="user-menu__avatar" :src="$app.user.avatar" :aria-label="__('User avatar')">
             <div class="user-menu__caption">
                 <span class="user-menu__name">{{ $app.user.name }}</span>
                 <span class="user-menu__role">{{ $app.user.email }}</span>

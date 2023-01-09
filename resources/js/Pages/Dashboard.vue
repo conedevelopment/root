@@ -1,5 +1,5 @@
 <template>
-    <div class="app-widget">
+    <div v-if="widgets.length > 0" class="app-widget">
         <div class="app-widget-row">
             <Widget
                 v-for="widget in widgets"

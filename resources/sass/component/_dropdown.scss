@@ -49,14 +49,14 @@
         }
 
         a {
-          &:hover,
-          &:focus {
-              color: spruce.color(primary);
-          }
+            &:hover,
+            &:focus {
+                color: spruce.color(primary);
+            }
 
-          &[aria-current="page"] {
-              font-weight: 700;
-          }
+            &[aria-current="page"] {
+                font-weight: 700;
+            }
         }
     }
 
