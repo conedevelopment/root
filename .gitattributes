@@ -14,4 +14,6 @@
 /yarn.lock export-ignore
 /vite.config.js export-ignore
 /webpack.mix.js export-ignore
+/composer.lock linguist-generated
 /public/build/assets/ linguist-generated
+/yarn.lock linguist-generated
