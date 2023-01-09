@@ -1,6 +1,4 @@
 @forward 'config';
-@forward 'styles';
-
 @forward 'component';
 @forward 'layout';
 @forward 'plugin';
@@ -17,8 +15,4 @@
         --logo-height: 1.35rem,
         --mobile-logo-height: 1.15rem
     ));
-}
-
-.hidden {
-    display: none;
 }

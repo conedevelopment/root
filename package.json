@@ -5,7 +5,7 @@
         "build": "vite build",
         "test": "jest",
         "lint": "eslint resources/js/",
-        "lint-sass": "stylelint resources/sass/"
+        "lint:sass": "stylelint resources/sass/"
     },
     "dependencies": {
         "@inertiajs/inertia": "^0.11.0",

@@ -1,11 +1,11 @@
-@use 'sass:color';
-
 $color-primary-light: hsl(215 100% 96%);
 $color-primary: hsl(214 98% 49%);
+$color-delete: hsl(0 71% 51%);
 
 @use '~sprucecss/scss/spruce' with (
     $settings: (
-        prefix: root
+        prefix: root,
+        utilities: true
     ),
     $color-primary: $color-primary,
     $color-secondary: hsl(214 98% 25%),
@@ -22,10 +22,12 @@ $color-primary: hsl(214 98% 49%);
             tertiary-background-hover: $color-primary,
             tertiary-foreground: $color-primary,
             tertiary-foreground-hover: $color-primary-light,
-            delete-foreground: hsl(0 71% 51%),
+            tertiary-focus-ring: $color-primary,
+            delete-foreground: $color-delete,
             delete-foreground-hover: hsl(0 0% 100%),
-            delete-background: color.scale(hsl(0 71% 51%), $lightness: 90%),
-            delete-background-hover: hsl(0 71% 51%),
+            delete-background: hsl(0 71% 95%),
+            delete-background-hover: $color-delete,
+            delete-focus-ring: $color-delete,
             yellow-foreground: hsl(0 0% 0%),
             yellow-background: hsl(45 100% 49%),
             yellow-background-hover: hsl(45 100% 56%)
@@ -70,5 +72,6 @@ $color-primary: hsl(214 98% 49%);
     $form-control-font-size-sm: 0.9375rem,
     $form-label-font-weight: 600,
     $table-padding-sm: 0.5rem,
-    $transition-duration: 0.1s
+    $transition-duration: 0.1s,
+    $table-stripe: even
 );
