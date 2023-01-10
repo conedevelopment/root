@@ -1,6 +1,6 @@
 <template>
-    <button type="button" @click="handle" :class="{ 'is-active': isActive }">
-        I
+    <button class="btn btn--sm btn--icon" type="button" @click="handle" :class="{ 'btn--primary': isActive, 'btn--tertiary': !isActive }">
+        <Icon name="format-italic" class="btn__icon btn__icon--sm"></Icon>
     </button>
 </template>
 

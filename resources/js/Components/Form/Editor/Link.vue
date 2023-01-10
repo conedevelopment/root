@@ -1,6 +1,6 @@
 <template>
-    <button type="button" @click="handle" :class="{ 'is-active': isActive }">
-        Link
+    <button class="btn btn--icon" type="button" @click="handle" :class="{ 'btn--primary': isActive, 'btn--tertiary': !isActive }">
+        <Icon name="insert-link" class="btn__icon"></Icon>
     </button>
 </template>
 

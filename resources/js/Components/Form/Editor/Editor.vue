@@ -4,15 +4,15 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <div>
-            <div v-if="editor" class="editor-menu">
+        <div class="tiptap">
+            <div v-if="editor" class="tiptap__controls">
                 <Bold :editor="editor"></Bold>
                 <Italic :editor="editor"></Italic>
                 <Link :editor="editor"></Link>
                 <!-- Code -->
                 <!-- Highlight -->
             </div>
-            <div ref="editor"></div>
+            <div ref="editor" class="tiptap__editor"></div>
         </div>
         <span
             class="field-feedback"

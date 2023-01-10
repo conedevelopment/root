@@ -1,0 +1,39 @@
+@use '~sprucecss/scss/spruce';
+
+@include spruce.generate-form-control('.tiptap');
+
+.tiptap {
+    &:focus-within {
+        @include spruce.focus-ring(
+            $type: spruce.$form-control-focus-ring-type,
+            $border-color: spruce.color(border-focus, form),
+            $ring-color: spruce.color(ring-focus, form),
+            $box-shadow-type: spruce.$form-control-focus-ring-box-shadow-type,
+            $ring-width: spruce.$form-control-focus-ring-width,
+            $ring-offset: spruce.$form-control-focus-ring-offset
+        );
+    }
+
+    &__controls {
+        border-block-end: 1px solid spruce.color(border, form);
+        display: flex;
+        gap: spruce.spacer(xs);
+        padding-block-end: 0.5em;
+
+        button {
+            border-radius: spruce.$border-radius-sm;
+            height: 2rem;
+            padding: 0;
+            width: 2rem;
+        }
+    }
+
+    &__editor {
+        margin-block-start: 0.5em;
+
+        > [contenteditable="true"] {
+            @include spruce.layout-stack(xs);
+            outline: 0;
+        }
+    }
+}
