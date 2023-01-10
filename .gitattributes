@@ -5,15 +5,13 @@
 /.github export-ignore
 /.gitignore export-ignore
 /.vscode export-ignore
-/composer.lock export-ignore
+/composer.lock export-ignore linguist-generated
 /jest.config.js export-ignore
 /js-tests export-ignore
 /phpstan.neon.dist export-ignore
 /phpunit.xml.dist export-ignore
+/public/build/assets/ linguist-generated
 /tests export-ignore
-/yarn.lock export-ignore
+/yarn.lock export-ignore linguist-generated
 /vite.config.js export-ignore
 /webpack.mix.js export-ignore
-/composer.lock linguist-generated
-/public/build/assets/ linguist-generated
-/yarn.lock linguist-generated
