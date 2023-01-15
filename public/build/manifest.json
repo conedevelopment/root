@@ -1,14 +1,14 @@
 {
   "resources/js/app.css": {
-    "file": "assets/app-9eb45d3c.css",
+    "file": "assets/app-0753f043.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
-    "file": "assets/app-ae0a0b10.js",
+    "file": "assets/app-c84deffe.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-9eb45d3c.css"
+      "assets/app-0753f043.css"
     ]
   }
 }
