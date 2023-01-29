@@ -19,15 +19,6 @@ class Editor extends Field
     }
 
     /**
-     * The field attributes.
-     *
-     * @var array
-     */
-    protected array $attributes = [
-        'style' => ['height' => '250px'],
-    ];
-
-    /**
      * The Vue component.
      *
      * @var string
@@ -60,6 +51,7 @@ class Editor extends Field
         parent::__construct($label, $name);
 
         $this->config = Config::get('root.editor', []);
+        $this->height('250px');
     }
 
     /**
@@ -107,7 +99,7 @@ class Editor extends Field
         if (is_null($this->media)) {
             $this->media = Media::make(__('Media'), 'media', static function (): MorphToMany {
                 return new MorphToMany(
-                    (Medium::proxy())::query(),
+                    Medium::proxy()->newQuery(),
                     User::proxy(),
                     'media',
                     'root_media',
