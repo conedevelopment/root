@@ -19,6 +19,15 @@ class Editor extends Field
     }
 
     /**
+     * The field attributes.
+     *
+     * @var array
+     */
+    protected array $attributes = [
+        'style' => ['height' => '250px'],
+    ];
+
+    /**
      * The Vue component.
      *
      * @var string
@@ -51,6 +60,17 @@ class Editor extends Field
         parent::__construct($label, $name);
 
         $this->config = Config::get('root.editor', []);
+    }
+
+    /**
+     * Create a new method.
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function height(string $value): static
+    {
+        return $this->setAttribute('style.height', $value);
     }
 
     /**
@@ -97,10 +117,6 @@ class Editor extends Field
                     'id'
                 );
             });
-
-            $this->config['modules']['toolbar']['container'][3][] = 'image';
-
-            $this->config['formats'][] = 'image';
         }
 
         if (! is_null($callback)) {
