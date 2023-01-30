@@ -6,6 +6,7 @@
         </label>
         <div class="tiptap" style="display: flex; flex-direction: column; flex: 1;">
             <div v-if="editor" class="tiptap__controls">
+                <Heading :editor="editor"/>
                 <Bold :editor="editor"/>
                 <Italic :editor="editor"/>
                 <Link :editor="editor"/>
@@ -24,6 +25,7 @@
 <script>
     import { Editor } from '@tiptap/vue-3'
     import BoldHandler from './Bold.vue';
+    import HeadingHandler from './Heading.vue';
     import ItalicHandler from './Italic.vue';
     import Link from '@tiptap/extension-link';
     import LinkHandler from './Link.vue';
@@ -32,6 +34,7 @@
     export default {
         components: {
             Bold: BoldHandler,
+            Heading: HeadingHandler,
             Italic: ItalicHandler,
             Link: LinkHandler,
         },
