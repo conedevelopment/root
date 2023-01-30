@@ -1,7 +1,22 @@
 <template>
-    <button class="btn btn--icon" type="button" @click="handle" :class="{ 'btn--primary': isActive, 'btn--tertiary': !isActive }">
-        <Icon name="insert-link" class="btn__icon"></Icon>
-    </button>
+    <div>
+        <button
+            class="btn btn--icon"
+            type="button"
+            :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
+            @click="handle"
+        >
+            <Icon name="insert-link" class="btn__icon"/>
+        </button>
+        <button
+            class="btn btn--icon btn--tertiary"
+            type="button"
+            :disabled="! isActive"
+            @click="editor.chain().focus().unsetLink().run()"
+        >
+            <Icon name="remove-link" class="btn__icon"/>
+        </button>
+    </div>
 </template>
 
 <script>
@@ -44,7 +59,7 @@
 
         computed: {
             isActive() {
-                return this.editor.isActive('a');
+                return this.editor.isActive('link');
             },
         },
     }

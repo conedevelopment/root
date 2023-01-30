@@ -6,9 +6,9 @@
         </label>
         <div class="tiptap" style="display: flex; flex-direction: column; flex: 1;">
             <div v-if="editor" class="tiptap__controls">
-                <Bold :editor="editor"></Bold>
-                <Italic :editor="editor"></Italic>
-                <Link :editor="editor"></Link>
+                <Bold :editor="editor"/>
+                <Italic :editor="editor"/>
+                <Link :editor="editor"/>
             </div>
             <div ref="editor" class="tiptap__editor" style="flex: 1;"></div>
         </div>
@@ -23,16 +23,17 @@
 
 <script>
     import { Editor } from '@tiptap/vue-3'
-    import Bold from './Bold.vue';
-    import Italic from './Italic.vue';
-    import Link from './Link.vue';
+    import BoldHandler from './Bold.vue';
+    import ItalicHandler from './Italic.vue';
+    import Link from '@tiptap/extension-link';
+    import LinkHandler from './Link.vue';
     import StarterKit from '@tiptap/starter-kit'
 
     export default {
         components: {
-            Bold,
-            Italic,
-            Link,
+            Bold: BoldHandler,
+            Italic: ItalicHandler,
+            Link: LinkHandler,
         },
 
         props: {
@@ -96,6 +97,9 @@
                 content: this.modelValue,
                 extensions: [
                     StarterKit,
+                    Link.configure({
+                        openOnClick: false,
+                    }),
                 ],
                 onUpdate: (value) => {
                     // this.$emit('update:modelValue', value);

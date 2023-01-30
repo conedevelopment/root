@@ -1,5 +1,10 @@
 <template>
-    <button class="btn btn--sm btn--icon" type="button" @click="handle" :class="{ 'btn--primary': isActive, 'btn--tertiary': !isActive }">
+    <button
+        class="btn btn--sm btn--icon"
+        type="button"
+        :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
+        @click="handle"
+    >
         <Icon name="format-italic" class="btn__icon btn__icon--sm"></Icon>
     </button>
 </template>
