@@ -178,7 +178,7 @@ class Image
     }
 
     /**
-     * Save the resouce.
+     * Save the resource.
      *
      * @return void
      *

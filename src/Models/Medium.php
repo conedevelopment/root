@@ -193,7 +193,7 @@ class Medium extends Model implements Contract
     {
         $urls = ['original' => $this->getUrl()];
 
-        if (! $this->convertable()) {
+        if (! $this->convertible()) {
             return $urls;
         }
 
@@ -235,11 +235,11 @@ class Medium extends Model implements Contract
     }
 
     /**
-     * Determine if the medium should is convertable.
+     * Determine if the medium should is convertible.
      *
      * @return bool
      */
-    public function convertable(): bool
+    public function convertible(): bool
     {
         return $this->isImage && ! Str::is(['image/svg*', 'image/gif'], $this->mime_type);
     }

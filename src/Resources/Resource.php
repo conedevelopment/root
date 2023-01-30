@@ -158,7 +158,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Set the resouce icon.
+     * Set the resource icon.
      *
      * @param  string  $icon
      * @return $this
@@ -663,7 +663,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * The routes that should be registerd.
+     * The routes that should be registered.
      *
      * @param  \Illuminate\Routing\Router  $router
      * @return void

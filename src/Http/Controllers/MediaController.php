@@ -55,7 +55,7 @@ class MediaController extends Controller
 
         $medium = $field->store($request, $path);
 
-        MoveFile::withChain($medium->convertable() ? [new PerformConversions($medium)] : [])
+        MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
                 ->dispatch($medium, $path, false);
 
         return new JsonResponse($field->mapOption($request, $model, $medium), JsonResponse::HTTP_CREATED);
