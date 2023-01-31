@@ -10,6 +10,12 @@
                 <Bold :editor="editor"/>
                 <Italic :editor="editor"/>
                 <Link :editor="editor"/>
+                <OrderedList :editor="editor"/>
+                <UnorderedList :editor="editor"/>
+                <HorizontalRule :editor="editor"/>
+                <CodeBlock :editor="editor"/>
+                <Blockquote :editor="editor"/>
+                <History :editor="editor"/>
             </div>
             <div ref="editor" class="tiptap__editor" style="flex: 1;"></div>
         </div>
@@ -25,18 +31,30 @@
 <script>
     import { Editor } from '@tiptap/vue-3'
     import BoldHandler from './Bold.vue';
+    import BlockquoteHandler from './Blockquote.vue';
+    import CodeBlockHandler from './CodeBlock.vue';
     import HeadingHandler from './Heading.vue';
+    import HistoryHandler from './History.vue';
     import ItalicHandler from './Italic.vue';
     import Link from '@tiptap/extension-link';
     import LinkHandler from './Link.vue';
     import StarterKit from '@tiptap/starter-kit'
+    import OrderedListHandler from './OrderedList.vue';
+    import UnorderedListHandler from './UnorderedList.vue';
+    import HorizontalRuleHandler from './HorizontalRule.vue';
 
     export default {
         components: {
             Bold: BoldHandler,
+            Blockquote: BlockquoteHandler,
+            CodeBlock: CodeBlockHandler,
             Heading: HeadingHandler,
+            History: HistoryHandler,
+            HorizontalRule: HorizontalRuleHandler,
             Italic: ItalicHandler,
             Link: LinkHandler,
+            OrderedList: OrderedListHandler,
+            UnorderedList: UnorderedListHandler,
         },
 
         props: {

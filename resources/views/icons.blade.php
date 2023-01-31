@@ -139,6 +139,9 @@
         <symbol id="icon-perm-media" viewBox="0 0 24 24">
             <path d="M2,6l-2,0l0,5l0.01,0l-0.01,9c0,1.1 0.9,2 2,2l18,0l0,-2l-18,0l0,-14Zm20,-2l-8,0l-2,-2l-6,0c-1.1,0 -1.99,0.9 -1.99,2l-0.01,12c0,1.1 0.9,2 2,2l16,0c1.1,0 2,-0.9 2,-2l0,-10c0,-1.1 -0.9,-2 -2,-2Zm-15,11l4.5,-6l3.5,4.51l2.5,-3.01l3.5,4.5l-14,0Z" style="fill:currentColor;"/>
         </symbol>
+        <symbol id="icon-horizontal-rule" viewBox="0 0 24 24">
+            <path d="M4 13v-2h16v2Z" style="fill:currentColor;"/>
+        </symbol>
         @foreach(Cone\Root\Support\Facades\Asset::icons() as $icon)
             <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
                 @include($icon->getPath())

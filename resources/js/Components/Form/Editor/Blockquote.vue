@@ -1,11 +1,11 @@
 <template>
     <button
-        class="btn btn--sm btn--icon"
+        class="btn btn--icon"
         type="button"
         :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
         @click="handle"
     >
-        <Icon name="format-italic" class="btn__icon btn__icon--sm"/>
+        <Icon name="format-quote" class="btn__icon btn__icon--sm"/>
     </button>
 </template>
 
@@ -20,13 +20,13 @@
 
         methods: {
             handle() {
-                this.editor.chain().focus().toggleItalic().run();
+                this.editor.chain().focus().toggleBlockquote().run();
             },
         },
 
         computed: {
             isActive() {
-                return this.editor.isActive('italic');
+                return this.editor.isActive('blockquote');
             },
         },
     }

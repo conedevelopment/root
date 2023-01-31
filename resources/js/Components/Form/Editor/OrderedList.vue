@@ -5,7 +5,7 @@
         :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
         @click="handle"
     >
-        <Icon name="format-italic" class="btn__icon btn__icon--sm"/>
+        <Icon name="format-list-numbered" class="btn__icon btn__icon--sm"/>
     </button>
 </template>
 
@@ -20,13 +20,13 @@
 
         methods: {
             handle() {
-                this.editor.chain().focus().toggleItalic().run();
+                this.editor.chain().focus().toggleOrderedList().run();
             },
         },
 
         computed: {
             isActive() {
-                return this.editor.isActive('italic');
+                return this.editor.isActive('orderedList');
             },
         },
     }
