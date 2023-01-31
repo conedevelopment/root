@@ -20,7 +20,7 @@
         gap: spruce.spacer(xs);
         padding-block-end: 0.5em;
 
-        button {
+        .btn--control {
             border-radius: spruce.$border-radius-sm;
             height: 2rem;
             padding: 0;

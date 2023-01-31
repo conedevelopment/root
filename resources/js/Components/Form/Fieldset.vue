@@ -10,7 +10,7 @@
                 :key="`${name}-${field.name}`"
                 :id="`${name}.${field.name}`"
                 :name="`${name}.${field.name}`"
-            ></FormHandler>
+            />
         </div>
     </fieldset>
 </template>

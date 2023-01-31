@@ -1,7 +1,7 @@
 <template>
     <div>
         <button
-            class="btn btn--icon"
+            class="btn btn--icon btn--control"
             type="button"
             :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
             @click="handle"
@@ -9,7 +9,7 @@
             <Icon name="insert-link" class="btn__icon"/>
         </button>
         <button
-            class="btn btn--icon btn--tertiary"
+            class="btn btn--icon btn--tertiary btn--control"
             type="button"
             :disabled="! isActive"
             @click="editor.chain().focus().unsetLink().run()"

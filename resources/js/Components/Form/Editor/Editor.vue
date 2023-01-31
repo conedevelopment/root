@@ -15,6 +15,7 @@
                 <HorizontalRule :editor="editor"/>
                 <CodeBlock :editor="editor"/>
                 <Blockquote :editor="editor"/>
+                <Media v-if="with_media" :editor="editor" :url="media_url"/>
                 <History :editor="editor"/>
             </div>
             <div ref="editor" class="tiptap__editor" style="flex: 1;"></div>
@@ -38,6 +39,7 @@
     import ItalicHandler from './Italic.vue';
     import Link from '@tiptap/extension-link';
     import LinkHandler from './Link.vue';
+    import MediaHandler from './Media.vue';
     import StarterKit from '@tiptap/starter-kit'
     import OrderedListHandler from './OrderedList.vue';
     import UnorderedListHandler from './UnorderedList.vue';
@@ -53,6 +55,7 @@
             HorizontalRule: HorizontalRuleHandler,
             Italic: ItalicHandler,
             Link: LinkHandler,
+            Media: MediaHandler,
             OrderedList: OrderedListHandler,
             UnorderedList: UnorderedListHandler,
         },
@@ -139,6 +142,12 @@
             return {
                 editor: null,
             };
+        },
+
+        computed: {
+            form() {
+                return this.$parent.form;
+            },
         },
     }
 </script>

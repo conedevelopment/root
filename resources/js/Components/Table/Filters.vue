@@ -9,14 +9,14 @@
             <Icon
                 class="btn__icon btn__icon--start"
                 :name="isOpen ? 'filter-list-off' : 'filter-list'"
-            ></Icon>
+            />
             <span v-if="activeFilters > 0" class="btn__counter">{{ activeFilters }}</span>
         </button>
         <div class="app-drawer" v-show="isOpen">
             <h2 class="app-drawer__title">
                 {{ __('Filters') }}
                 <button type="button" class="btn btn--secondary btn--sm btn--icon" @click="close">
-                    <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
+                    <Icon class="btn__icon btn__icon--sm" name="close"/>
                 </button>
             </h2>
             <div class="app-drawer__inner">
@@ -29,7 +29,7 @@
                     :name="filter.key"
                     :label="filter.name"
                     @update:modelValue="emit"
-                ></FormHandler>
+                />
                 <div class="form-group--reset">
                     <button type="button" class="btn btn--sm btn--icon btn--tertiary" :aria-label="__('Reset')" @click="reset">
                         {{ __('Reset') }}

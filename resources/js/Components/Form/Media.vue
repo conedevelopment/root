@@ -27,7 +27,7 @@
                 :multiple="multiple"
                 @change="isDirty = true"
                 @update:modelValue="update"
-            ></Media>
+            />
         </div>
         <span
             class="field-feedback"

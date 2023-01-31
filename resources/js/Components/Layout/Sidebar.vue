@@ -13,7 +13,7 @@
                         :href="$app.config.url"
                         :class="{ 'is-active': $app.config.url === $page.props.url }"
                     >
-                        <Icon class="navigation-item__icon" name="dashboard"></Icon>
+                        <Icon class="navigation-item__icon" name="dashboard"/>
                         <span class="navigation-item__caption">{{ __('Dashboard') }}</span>
                     </Link>
                 </li>
@@ -31,7 +31,7 @@
                         :href="resource.urls.index"
                         :class="{ 'is-active': isActive(resource.urls.index) }"
                     >
-                        <Icon class="navigation-item__icon" :name="resource.icon"></Icon>
+                        <Icon class="navigation-item__icon" :name="resource.icon"/>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
                     </Link>
                     <ul class="navigation-submenu">

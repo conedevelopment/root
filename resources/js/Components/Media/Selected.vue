@@ -5,7 +5,7 @@
                 <img :src="url" class="media-accordion__image" alt="" @error.once="reload" @load="loading = false">
             </div>
             <span v-else class="media-accordion__icon">
-                <Icon name="description"></Icon>
+                <Icon name="description"/>
             </span>
             <span
                 class="accordion__caption"
@@ -30,7 +30,7 @@
                 :key="`${item.id}-${field.name}`"
                 :id="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
                 :name="`${$parent.$parent.$parent.name}.${item.id}.${field.name}`"
-            ></FormHandler>
+            />
             <div class="form-group">
                 <button type="button" class="btn btn--delete btn--sm btn--tertiary" @click="deselect">
                     {{ __('Remove from Selection') }}

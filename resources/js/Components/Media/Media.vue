@@ -16,7 +16,7 @@
                         :aria-label="__('Close modal')"
                         @click="close"
                     >
-                        <Icon name="close" class="btn__icon btn__icon--sm"></Icon>
+                        <Icon name="close" class="btn__icon btn__icon--sm"/>
                     </button>
                 </div>
                 <div
@@ -30,21 +30,10 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Filters
-                        :query="query"
-                        :filters="filters"
-                        @update:query="fetch"
-                    ></Filters>
-                    <div
-                        class="media-item-list-wrapper"
-                        :class="{ 'is-sidebar-open': value.length > 0 }"
-                    >
+                    <Filters :query="query" :filters="filters" @update:query="fetch"/>
+                    <div class="media-item-list-wrapper" :class="{ 'is-sidebar-open': value.length > 0 }">
                         <div class="media-item-list__body">
-                            <Queue
-                                ref="queue"
-                                :url="url"
-                                @processed="handleProcessed"
-                            ></Queue>
+                            <Queue ref="queue" :url="url" @processed="handleProcessed"/>
                             <Item
                                 v-for="item in response.data"
                                 :key="item.id"
@@ -52,18 +41,14 @@
                                 :selected="selected(item)"
                                 @select="select"
                                 @deselect="deselect"
-                            ></Item>
+                            />
                         </div>
                         <div v-show="value.length > 0" class="media-item-list__sidebar">
-                            <Selection
-                                v-model:selection="value"
-                                @deselect="deselect"
-                                @clear="clear"
-                            ></Selection>
+                            <Selection v-model:selection="value" @deselect="deselect" @clear="clear"/>
                         </div>
                     </div>
                 </div>
-                <Toolbar @upload="handleFiles" @update="update"></Toolbar>
+                <Toolbar @upload="handleFiles" @update="update"/>
             </div>
         </div>
     </div>

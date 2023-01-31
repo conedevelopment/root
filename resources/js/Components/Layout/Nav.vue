@@ -11,7 +11,7 @@
                     data-action="open-navigation"
                     @click="toggleSidebar"
                 >
-                    <Icon class="btn__icon btn__icon--start" :name="isOpen ? 'menu-open' : 'menu'"></Icon>
+                    <Icon class="btn__icon btn__icon--start" :name="isOpen ? 'menu-open' : 'menu'"/>
                 </button>
                 <Notifications></Notifications>
                 <UserMenu direction="bottom"></UserMenu>

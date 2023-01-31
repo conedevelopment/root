@@ -6,14 +6,14 @@
         :aria-label="__('View notifications')"
         @click="toggle"
     >
-        <Icon class="btn__icon btn__icon--start" name="notification"></Icon>
+        <Icon class="btn__icon btn__icon--start" name="notification"/>
         <span v-if="response.total_unread > 0" class="btn__counter">{{ response.total_unread }}</span>
     </button>
     <div ref="container" class="app-drawer" v-show="isOpen" style="overflow: auto;">
         <h2 class="app-drawer__title">
             {{ __('Notifications') }}
             <button type="button" class="btn btn--secondary btn--sm btn--icon" @click="close">
-                <Icon class="btn__icon btn__icon--sm" name="close"></Icon>
+                <Icon class="btn__icon btn__icon--sm" name="close"/>
             </button>
         </h2>
         <div class="app-drawer__inner">

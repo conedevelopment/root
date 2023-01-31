@@ -27,7 +27,7 @@
                 <div class="th-helper">
                     {{ column.label }}
                     <button v-if="column.sortable" type="button" @click="sort(column.name)" class="table-sort-btn">
-                        <Icon :name="icon(column.name)"></Icon>
+                        <Icon :name="icon(column.name)"/>
                     </button>
                 </div>
             </th>

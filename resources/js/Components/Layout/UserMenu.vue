@@ -13,7 +13,7 @@
                 <span class="user-menu__role">{{ $app.user.email }}</span>
             </div>
             <div class="user-menu__toggle">
-                <Icon class="user-menu__arrow" name="unfold-more"></Icon>
+                <Icon class="user-menu__arrow" name="unfold-more"/>
             </div>
         </button>
         <ul

@@ -6,7 +6,7 @@
         :form="$parent.form"
         :key="field.name"
         :name="field.name"
-    ></FormHandler>
+    />
 </template>
 
 <script>

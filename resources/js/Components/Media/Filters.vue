@@ -9,7 +9,7 @@
             :name="filter.key"
             :label="filter.name"
             @update:modelValue="emit"
-        ></FormHandler>
+        />
     </div>
 </template>
 

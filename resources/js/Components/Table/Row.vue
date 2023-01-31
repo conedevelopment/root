@@ -21,7 +21,7 @@
                     :title="item.trashed ? __('Delete permanently') : __('Delete')"
                     @click="destroy"
                 >
-                    <Icon class="btn__icon" :name="item.trashed ? 'delete-forever' : 'delete'"></Icon>
+                    <Icon class="btn__icon" :name="item.trashed ? 'delete-forever' : 'delete'"/>
                 </button>
                 <button
                     type="button"
@@ -31,7 +31,7 @@
                     :title="__('Restore')"
                     @click="restore"
                 >
-                    <Icon class="btn__icon" name="restore-from-trash"></Icon>
+                    <Icon class="btn__icon" name="restore-from-trash"/>
                 </button>
                 <Link
                     v-if="item.abilities.view"
@@ -40,7 +40,7 @@
                     :aria-label="__('View')"
                     :title="__('View')"
                 >
-                    <Icon class="btn__icon" name="view"></Icon>
+                    <Icon class="btn__icon" name="view"/>
                 </Link>
                 <Link
                     v-if="item.abilities.update"
@@ -49,7 +49,7 @@
                     :aria-label="__('Edit')"
                     :title="__('Edit')"
                 >
-                    <Icon class="btn__icon" name="edit"></Icon>
+                    <Icon class="btn__icon" name="edit"/>
                 </Link>
             </div>
         </td>

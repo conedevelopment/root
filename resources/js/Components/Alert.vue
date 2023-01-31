@@ -2,7 +2,7 @@
     <div class="alert" :class="`alert--${type}`" v-show="isOpen">
         <div class="alert__message" v-html="message"></div>
         <button type="button" class="alert__close" @click="close">
-            <Icon name="close"></Icon>
+            <Icon name="close"/>
         </button>
     </div>
 </template>
