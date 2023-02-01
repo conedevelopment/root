@@ -41,6 +41,15 @@
 
         methods: {
             handle(values) {
+                values.forEach((value) => {
+                    if (value.is_image) {
+                        this.editor.chain().focus().setImage({ src: value.urls.original }).run();
+                    } else {
+                        this.editor.commands.insertContent(`<a href="${value.urls.original}">${value.file_name}</a>`);
+                    }
+                });
+
+                this.selection = [];
                 this.$refs.media.close();
             },
         },

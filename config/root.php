@@ -99,7 +99,12 @@ return [
     */
 
     'editor' => [
-        //
+        'link' => [
+            'openOnClick' => false,
+        ],
+        'highlight' => [],
+        'strike' => [],
+        'image' => [],
     ],
 
 ];

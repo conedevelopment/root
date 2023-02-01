@@ -7,8 +7,12 @@
         <div class="tiptap" style="display: flex; flex-direction: column; flex: 1;">
             <div v-if="editor" class="tiptap__controls">
                 <Heading :editor="editor"/>
-                <Bold :editor="editor"/>
-                <Italic :editor="editor"/>
+                <div>
+                    <Bold :editor="editor"/>
+                    <Italic :editor="editor"/>
+                    <Strike :editor="editor"/>
+                    <Highlight :editor="editor"/>
+                </div>
                 <Link :editor="editor"/>
                 <OrderedList :editor="editor"/>
                 <UnorderedList :editor="editor"/>
@@ -35,28 +39,34 @@
     import BlockquoteHandler from './Blockquote.vue';
     import CodeBlockHandler from './CodeBlock.vue';
     import HeadingHandler from './Heading.vue';
+    import Highlight from '@tiptap/extension-highlight';
+    import HighlightHandler from './Highlight.vue';
     import HistoryHandler from './History.vue';
+    import HorizontalRuleHandler from './HorizontalRule.vue';
     import ItalicHandler from './Italic.vue';
+    import Image from '@tiptap/extension-image';
     import Link from '@tiptap/extension-link';
     import LinkHandler from './Link.vue';
     import MediaHandler from './Media.vue';
-    import StarterKit from '@tiptap/starter-kit'
     import OrderedListHandler from './OrderedList.vue';
+    import StarterKit from '@tiptap/starter-kit'
+    import StrikeHandler from './Strike.vue';
     import UnorderedListHandler from './UnorderedList.vue';
-    import HorizontalRuleHandler from './HorizontalRule.vue';
 
     export default {
         components: {
-            Bold: BoldHandler,
             Blockquote: BlockquoteHandler,
+            Bold: BoldHandler,
             CodeBlock: CodeBlockHandler,
             Heading: HeadingHandler,
+            Highlight: HighlightHandler,
             History: HistoryHandler,
             HorizontalRule: HorizontalRuleHandler,
             Italic: ItalicHandler,
             Link: LinkHandler,
             Media: MediaHandler,
             OrderedList: OrderedListHandler,
+            Strike: StrikeHandler,
             UnorderedList: UnorderedListHandler,
         },
 
@@ -121,12 +131,12 @@
                 content: this.modelValue,
                 extensions: [
                     StarterKit,
-                    Link.configure({
-                        openOnClick: false,
-                    }),
+                    Link.configure({ ...(this.config.link || {}) }),
+                    Highlight.configure({ ...(this.config.highlight || {}) }),
+                    Image.configure({ ...(this.config.image || {}) }),
                 ],
                 onUpdate: (value) => {
-                    // this.$emit('update:modelValue', value);
+                    this.$emit('update:modelValue', this.editor.isEmpty ? '' : this.editor.getHTML());
                 },
                 onCreate: (editor) => {
                     this.$refs.editor.querySelector('.ProseMirror').style.height = '100%';

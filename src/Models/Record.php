@@ -6,8 +6,8 @@ use Cone\Root\Database\Factories\RecordFactory;
 use Cone\Root\Interfaces\Models\Record as Contract;
 use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\RecordResource;
-use Cone\Root\Traits\HasUuid;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Record extends Model implements Contract, Resourceable
 {
     use HasFactory;
-    use HasUuid;
+    use HasUuids;
     use InteractsWithProxy;
 
     /**
