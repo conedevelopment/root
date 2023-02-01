@@ -43,9 +43,9 @@ jobs:
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
           composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
-          composer require --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress conedevelopment/root
+          composer require --no-interaction --no-progress --dev --${{ matrix.stability }} --prefer-dist --update-with-dependencies "conedevelopment/root:dev-${{ github.sha }}"
           # APP_ENV is local
-          cp .env.example .env
+          cp -v .env.example .env
           sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
           sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
           php artisan key:generate
@@ -55,7 +55,7 @@ jobs:
       - name: "Check stubs"
         run: |
           cd laravel/
-          composer require --prefer-dist --no-interaction --dev nunomaduro/larastan
+          composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
           php artisan root:action FooBar
           php artisan root:extract FooBar
           php artisan root:field FooBar
