@@ -51,7 +51,7 @@ class Editor extends Field
         parent::__construct($label, $name);
 
         $this->config = Config::get('root.editor', []);
-        $this->height('250px');
+        $this->height('350px');
     }
 
     /**
