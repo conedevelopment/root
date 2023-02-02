@@ -43,7 +43,7 @@ jobs:
           git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
           cd laravel/
           composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
-          composer require --no-interaction --no-progress --dev --${{ matrix.stability }} --prefer-dist --update-with-dependencies "conedevelopment/root:dev-${{ github.sha }}"
+          composer require --no-interaction --no-progress --dev --${{ matrix.stability }} --prefer-dist --update-with-dependencies "conedevelopment/root:dev-${{ github.sha }} || dev-${{ github.ref_name }}"
           # APP_ENV is local
           cp -v .env.example .env
           sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
