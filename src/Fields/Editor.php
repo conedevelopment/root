@@ -55,7 +55,7 @@ class Editor extends Field
     }
 
     /**
-     * Create a new method.
+     * Set the height style attribute.
      *
      * @param  string  $value
      * @return $this
