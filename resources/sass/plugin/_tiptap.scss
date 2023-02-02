@@ -3,6 +3,10 @@
 @include spruce.generate-form-control('.tiptap');
 
 .tiptap {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: calc(100% - 1.75em - 1px);
+
     &:focus-within {
         @include spruce.focus-ring(
             $type: spruce.$form-control-focus-ring-type,
@@ -15,9 +19,11 @@
     }
 
     &__controls {
+        align-items: center;
         border-block-end: 1px solid spruce.color(border, form);
         display: flex;
-        gap: spruce.spacer(xs);
+        flex-wrap: wrap;
+        gap: spruce.spacer(xs) spruce.spacer(s);
         padding-block-end: 0.5em;
 
         .btn--control {
@@ -26,10 +32,23 @@
             padding: 0;
             width: 2rem;
         }
+
+        .form-control {
+            width: auto;
+        }
+    }
+
+    &__group {
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(xs);
     }
 
     &__editor {
+        @include spruce.scrollbar;
         margin-block-start: 0.5em;
+        overflow-y: auto;
 
         > [contenteditable="true"] {
             @include spruce.layout-stack(xs);

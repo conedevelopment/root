@@ -4,22 +4,24 @@
             <span>{{ label }}</span>
             <span v-if="$attrs.required" class="form-label__required-marker" :aria-label="__('Required')">*</span>
         </label>
-        <div class="tiptap" style="display: flex; flex-direction: column; flex: 1;">
+        <div class="tiptap">
             <div v-if="editor" class="tiptap__controls">
                 <Heading :editor="editor"/>
-                <div>
+                <div class="tiptap__group">
                     <Bold :editor="editor"/>
                     <Italic :editor="editor"/>
                     <Strike :editor="editor"/>
                     <Highlight :editor="editor"/>
                 </div>
                 <Link :editor="editor"/>
-                <OrderedList :editor="editor"/>
-                <UnorderedList :editor="editor"/>
-                <HorizontalRule :editor="editor"/>
-                <CodeBlock :editor="editor"/>
-                <Blockquote :editor="editor"/>
-                <Media v-if="with_media" :editor="editor" :url="media_url"/>
+                <div class="tiptap__group">
+                    <OrderedList :editor="editor"/>
+                    <UnorderedList :editor="editor"/>
+                    <HorizontalRule :editor="editor"/>
+                    <CodeBlock :editor="editor"/>
+                    <Blockquote :editor="editor"/>
+                    <Media v-if="with_media" :editor="editor" :url="media_url"/>
+                </div>
                 <History :editor="editor"/>
             </div>
             <div ref="editor" class="tiptap__editor" style="flex: 1;"></div>

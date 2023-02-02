@@ -1,5 +1,5 @@
 <template>
-    <select @change="(event) => handle(event.target.value)">
+    <select @change="(event) => handle(event.target.value)" class="form-control form-control--sm">
         <option value="" :selected="! editor.isActive('heading')">{{ __('Paragraph') }}</option>
         <option value="1" :selected="editor.isActive('heading', { level: 1 })">{{ __('H1') }}</option>
         <option value="2" :selected="editor.isActive('heading', { level: 2 })">{{ __('H2') }}</option>

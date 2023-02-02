@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tiptap__group">
         <button
             class="btn btn--icon btn--control"
             type="button"

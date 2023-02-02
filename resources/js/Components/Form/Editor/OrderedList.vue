@@ -5,7 +5,7 @@
         :class="{ 'btn--primary': isActive, 'btn--tertiary': ! isActive }"
         @click="handle"
     >
-        <Icon name="format-list-numbered" class="btn__icon btn__icon--sm"/>
+        <Icon name="format-list-numbered" class="btn__icon"/>
     </button>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <button class="btn btn--control btn--icon btn--tertiary" type="button" @click="$refs.media.open">
-            <Icon name="perm-media" class="btn__icon btn__icon--sm"/>
+            <Icon name="perm-media" class="btn__icon btn__icon--md"/>
         </button>
         <Media
             ref="media"
