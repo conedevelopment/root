@@ -15,7 +15,7 @@ abstract class Root
      *
      * @var string
      */
-    public const VERSION = '0.10.5';
+    public const VERSION = '1.0.0';
 
     /**
      * The registered callbacks.

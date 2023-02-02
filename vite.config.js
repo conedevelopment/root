@@ -1,5 +1,3 @@
-const fs = require('node:fs');
-
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';

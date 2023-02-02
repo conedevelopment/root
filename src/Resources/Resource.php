@@ -207,7 +207,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Make a new eloquent query instance.
+     * Make a new Eloquent query instance.
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
