@@ -6,7 +6,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Root Domain
+    | Root  Domain
     |--------------------------------------------------------------------------
     |
     | This is the subdomain where Root will be accessible from. If this
