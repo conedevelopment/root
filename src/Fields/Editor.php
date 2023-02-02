@@ -157,8 +157,7 @@ class Editor extends Field
     {
         return array_merge(parent::toInput($request, $model), [
             'config' => $this->config,
-            'media_url' => is_null($this->media) ? null : $this->media->resolveUri($request),
-            'with_media' => ! is_null($this->media),
+            'media' => is_null($this->media) ? null : $this->media->toInput($request, $model),
         ]);
     }
 }

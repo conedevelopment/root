@@ -5,9 +5,10 @@
         </button>
         <Media
             ref="media"
-            multiple
-            :url="url"
-            :title="__('Media')"
+            :url="config.url"
+            :title="config.label"
+            :filters="config.filters"
+            :multiple="config.multiple"
             :modelValue="selection"
             @update:modelValue="handle"
         ></Media>
@@ -23,8 +24,8 @@
         },
 
         props: {
-            url: {
-                type: String,
+            config: {
+                type: Object,
                 required: true,
             },
             editor: {

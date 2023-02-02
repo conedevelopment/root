@@ -319,11 +319,13 @@ abstract class Relation extends Field
     public function getValue(RootRequest $request, Model $model): mixed
     {
         if ($this->relation instanceof Closure) {
-            if ($model->relationLoaded($this->name)) {
-                return $model->getAttribute($this->name);
+            $name = sprintf('__root_%s', $this->name);
+
+            if (! $model->relationLoaded($name)) {
+                $model->setRelation($name, call_user_func_array($this->relation, [$model])->getResults());
             }
 
-            return call_user_func_array($this->relation, [$model]);
+            return $model->getAttribute($name);
         }
 
         return $model->getAttribute($this->relation);

@@ -30,7 +30,7 @@
                     @dragleave.prevent="dragging = false"
                     @drop.prevent="handleFiles($event.dataTransfer.files)"
                 >
-                    <Filters :query="query" :filters="filters" @update:query="fetch"/>
+                    <Filters v-if="filters.length > 0" :query="query" :filters="filters" @update:query="fetch"/>
                     <div class="media-item-list-wrapper" :class="{ 'is-sidebar-open': value.length > 0 }">
                         <div class="media-item-list__body">
                             <Queue ref="queue" :url="url" @processed="handleProcessed"/>

@@ -20,7 +20,7 @@
                     <HorizontalRule :editor="editor"/>
                     <CodeBlock :editor="editor"/>
                     <Blockquote :editor="editor"/>
-                    <Media v-if="with_media" :editor="editor" :url="media_url"/>
+                    <Media v-if="media !== null" :editor="editor" :config="media"/>
                 </div>
                 <History :editor="editor"/>
             </div>
@@ -93,12 +93,8 @@
                 type: String,
                 default: '',
             },
-            with_media: {
-                type: Boolean,
-                default: false,
-            },
-            media_url: {
-                type: String,
+            media: {
+                type: Object,
                 default: null,
             },
             label: {
