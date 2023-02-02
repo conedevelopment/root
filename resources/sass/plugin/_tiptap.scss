@@ -1,0 +1,58 @@
+@use '~sprucecss/scss/spruce';
+
+@include spruce.generate-form-control('.tiptap');
+
+.tiptap {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: calc(100% - 1.75em - 1px);
+
+    &:focus-within {
+        @include spruce.focus-ring(
+            $type: spruce.$form-control-focus-ring-type,
+            $border-color: spruce.color(border-focus, form),
+            $ring-color: spruce.color(ring-focus, form),
+            $box-shadow-type: spruce.$form-control-focus-ring-box-shadow-type,
+            $ring-width: spruce.$form-control-focus-ring-width,
+            $ring-offset: spruce.$form-control-focus-ring-offset
+        );
+    }
+
+    &__controls {
+        align-items: center;
+        border-block-end: 1px solid spruce.color(border, form);
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(xs) spruce.spacer(s);
+        padding-block-end: 0.5em;
+
+        .btn--control {
+            border-radius: spruce.$border-radius-sm;
+            height: 2rem;
+            padding: 0;
+            width: 2rem;
+        }
+
+        .form-control {
+            width: auto;
+        }
+    }
+
+    &__group {
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spruce.spacer(xs);
+    }
+
+    &__editor {
+        @include spruce.scrollbar;
+        margin-block-start: 0.5em;
+        overflow-y: auto;
+
+        > [contenteditable="true"] {
+            @include spruce.layout-stack(xs);
+            outline: 0;
+        }
+    }
+}

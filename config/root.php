@@ -90,30 +90,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Quill Editor Settings
+    | TipTap Editor Settings
     |--------------------------------------------------------------------------
     |
-    | You can specify the default Quill editor config here. For more info visit
-    | the official documentation: https://quilljs.com/docs/configuration/
+    | You can specify the default TipTap editor config here. For more info visit
+    | the official documentation: https://tiptap.dev/introduction
     |
     */
 
     'editor' => [
-        'modules' => [
-            'toolbar' => [
-                'container' => [
-                    [['header' => [1, 2, 3, 4, false]]],
-                    ['bold', 'italic', 'underline'],
-                    [['list' => 'ordered'], ['list' => 'bullet'], ['align' => []]],
-                    ['link'],
-                    ['clean'],
-                ],
-                'handlers' => (object) [],
-            ],
-            'clipboard' => ['matchVisual' => false],
+        'link' => [
+            'openOnClick' => false,
         ],
-        'theme' => 'snow',
-        'formats' => ['header', 'align', 'bold', 'underline', 'italic', 'list', 'link'],
+        'highlight' => [],
+        'strike' => [],
+        'image' => [],
     ],
 
 ];

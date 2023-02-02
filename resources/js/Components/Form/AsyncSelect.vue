@@ -12,7 +12,7 @@
             <span v-for="(item, key) in formattedValue" class="tag" :key="key">
                 <span class="tag__label">{{ item }}</span>
                 <button type="button" class="tag__remove" @click="remove(key)">
-                    <Icon name="close"></Icon>
+                    <Icon name="close"/>
                 </button>
             </span>
             <input

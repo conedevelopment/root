@@ -4,7 +4,6 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Fields\BelongsTo;
 use Cone\Root\Fields\Date;
-use Cone\Root\Fields\MorphTo;
 use Cone\Root\Fields\Text;
 use Cone\Root\Http\Requests\RootRequest;
 

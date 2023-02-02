@@ -15,7 +15,7 @@
                     :key="item.id"
                     :item="item"
                     @deselect="deselect(item)"
-                ></Item>
+                />
             </div>
         </div>
     </div>

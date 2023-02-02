@@ -8,8 +8,7 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Http\Resources\ModelResource;
-use Cone\Root\Http\Resources\RelatedResource;
+use Cone\Root\Resources\RelatedItem;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
@@ -91,13 +90,13 @@ trait AsSubResource
      * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Cone\Root\Http\Resources\ModelResource
+     * @return \Cone\Root\Resources\RelatedItem
      */
-    public function mapItem(ResourceRequest $request, Model $model, Model $related): ModelResource
+    public function mapItem(ResourceRequest $request, Model $model, Model $related): RelatedItem
     {
         $related->setRelation('parent', $model);
 
-        return new RelatedResource($related);
+        return new RelatedItem($related);
     }
 
     /**
@@ -156,7 +155,7 @@ trait AsSubResource
             'field' => [
                 'abilities' => $this->mapAbilities(
                     $request,
-                    $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->resource,
+                    $this->mapItem($request, $model, $this->getRelation($model)->getRelated())->getModel(),
                 ),
                 'url' => $this->resolveUri($request),
                 'name' => $this->label,

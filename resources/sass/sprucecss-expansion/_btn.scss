@@ -24,6 +24,13 @@
         min-width: 1.2rem;
         position: absolute;
     }
+
+    &__icon {
+        &--md {
+            height: 0.85em;
+            width: 0.85em;
+        }
+    }
 }
 
 .btn--tertiary { @include spruce.btn-variant(tertiary); }

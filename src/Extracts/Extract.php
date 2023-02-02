@@ -12,7 +12,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Http\Resources\ModelResource;
+use Cone\Root\Resources\Item;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -196,7 +196,7 @@ abstract class Extract implements Arrayable
                     ->withQueryString()
                     ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
-                        return (new ModelResource($model))->toDisplay(
+                        return (new Item($model))->toDisplay(
                             $request, $this->resolveFields($request)->available($request, $model)
                         );
                     })

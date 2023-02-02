@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Traits;
 
+use Illuminate\Support\Arr;
+
 trait HasAttributes
 {
     /**
@@ -42,7 +44,7 @@ trait HasAttributes
      */
     public function hasAttribute(string $key): bool
     {
-        return isset($this->attributes[$key]);
+        return Arr::has($this->attributes, $key);
     }
 
     /**
@@ -54,7 +56,7 @@ trait HasAttributes
      */
     public function getAttribute(string $key, mixed $default = null): mixed
     {
-        return $this->hasAttribute($key) ? $this->attributes[$key] : $default;
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -66,7 +68,7 @@ trait HasAttributes
      */
     public function setAttribute(string $key, mixed $value): static
     {
-        $this->attributes[$key] = $value;
+        Arr::set($this->attributes, $key, $value);
 
         return $this;
     }
@@ -79,7 +81,7 @@ trait HasAttributes
      */
     public function removeAttribute(string $key): static
     {
-        unset($this->attributes[$key]);
+        Arr::forget($this->attributes, $key);
 
         return $this;
     }

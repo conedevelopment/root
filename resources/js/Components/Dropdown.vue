@@ -7,7 +7,7 @@
             :aria-controls="id"
             @click="toggle"
         >
-            <Icon name="more-vert"></Icon>
+            <Icon name="more-vert"/>
         </button>
         <ul class="dropdown__menu" :id="id">
             <slot></slot>

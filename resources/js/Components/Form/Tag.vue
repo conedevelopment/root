@@ -12,7 +12,7 @@
             <span v-for="(item, index) in modelValue" class="tag" :key="index">
                 <span class="tag__label">{{ item }}</span>
                 <button type="button" class="tag__remove" @click="remove(index)">
-                    <Icon name="close"></Icon>
+                    <Icon name="close"/>
                 </button>
             </span>
             <input

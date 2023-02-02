@@ -1,13 +1,11 @@
 import './../sass/app.scss';
-import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import * as Vue from 'vue';
 import Layout from './Components/Layout/Layout.vue';
-import Quill from 'quill';
 import Root from './Plugins/Root';
 
 window.Vue = Vue;
-window.Quill = Quill;
 
 createInertiaApp({
     resolve: (name) => {

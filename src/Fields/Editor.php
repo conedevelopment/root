@@ -51,6 +51,18 @@ class Editor extends Field
         parent::__construct($label, $name);
 
         $this->config = Config::get('root.editor', []);
+        $this->height('350px');
+    }
+
+    /**
+     * Set the height style attribute.
+     *
+     * @param  string  $value
+     * @return $this
+     */
+    public function height(string $value): static
+    {
+        return $this->setAttribute('style.height', $value);
     }
 
     /**
@@ -87,7 +99,7 @@ class Editor extends Field
         if (is_null($this->media)) {
             $this->media = Media::make(__('Media'), 'media', static function (): MorphToMany {
                 return new MorphToMany(
-                    (Medium::proxy())::query(),
+                    Medium::proxy()->newQuery(),
                     User::proxy(),
                     'media',
                     'root_media',
@@ -97,10 +109,6 @@ class Editor extends Field
                     'id'
                 );
             });
-
-            $this->config['modules']['toolbar']['container'][3][] = 'image';
-
-            $this->config['formats'][] = 'image';
         }
 
         if (! is_null($callback)) {

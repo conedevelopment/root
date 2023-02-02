@@ -7,8 +7,8 @@
 .card {
     background-color: spruce.color(background);
     border-radius: spruce.$border-radius-lg;
-    box-shadow: var(--root-box-shadow);
-    padding: var(--root-gutter-md);
+    box-shadow: spruce.get-css-variable(--box-shadow);
+    padding: spruce.get-css-variable(--gutter-md);
 
     &--edit {
         max-width: 50rem;
@@ -20,7 +20,7 @@
 
     &__title {
         color: spruce.color(secondary);
-        font-size: spruce.responsive-font-size(1.15rem, 40);
+        font-size: spruce.font-size(h3);
         margin-block: 0 clamp(spruce.spacer(xs), 3vw, spruce.spacer(s));
     }
 

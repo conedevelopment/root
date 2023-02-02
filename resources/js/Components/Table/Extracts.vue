@@ -11,7 +11,7 @@
             :label="__('Extract')"
             :options="options"
             @update:modelValue="submit"
-        ></FormHandler>
+        />
     </form>
 </template>
 

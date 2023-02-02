@@ -6,9 +6,9 @@ use Cone\Root\Database\Factories\NotificationFactory;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Interfaces\Models\Notification as Contract;
 use Cone\Root\Traits\Filterable;
-use Cone\Root\Traits\HasUuid;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
@@ -18,7 +18,7 @@ class Notification extends DatabaseNotification implements Contract
 {
     use Filterable;
     use HasFactory;
-    use HasUuid;
+    use HasUuids;
     use InteractsWithProxy;
 
     /**

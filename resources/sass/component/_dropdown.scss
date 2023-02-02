@@ -35,7 +35,7 @@
         @include spruce.clear-list;
         background-color: spruce.color(background);
         border-radius: spruce.$border-radius-sm;
-        box-shadow: var(--root-box-shadow);
+        box-shadow: spruce.get-css-variable(--box-shadow);
         display: none;
         font-weight: 400;
         left: 0;
@@ -49,14 +49,14 @@
         }
 
         a {
-          &:hover,
-          &:focus {
-              color: spruce.color(primary);
-          }
+            &:hover,
+            &:focus {
+                color: spruce.color(primary);
+            }
 
-          &[aria-current="page"] {
-              font-weight: 700;
-          }
+            &[aria-current="page"] {
+                font-weight: 700;
+            }
         }
     }
 

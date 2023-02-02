@@ -6,9 +6,9 @@ use Cone\Root\Database\Factories\MediumFactory;
 use Cone\Root\Interfaces\Models\Medium as Contract;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
-use Cone\Root\Traits\HasUuid;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +22,7 @@ class Medium extends Model implements Contract
 {
     use Filterable;
     use HasFactory;
-    use HasUuid;
+    use HasUuids;
     use InteractsWithProxy;
 
     /**

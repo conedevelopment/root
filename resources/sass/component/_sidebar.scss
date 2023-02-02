@@ -26,7 +26,7 @@
     }
 
     &__logo {
-        height: var(--root-logo-height);
+        height: spruce.get-css-variable(--logo-height);
         width: auto;
     }
 

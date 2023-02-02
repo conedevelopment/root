@@ -7,13 +7,13 @@
             :aria-label="__('User Menu')"
             @click="toggle"
         >
-            <img class="user-menu__avatar" :src="$app.user.avatar">
+            <img class="user-menu__avatar" :src="$app.user.avatar" :aria-label="__('User avatar')">
             <div class="user-menu__caption">
                 <span class="user-menu__name">{{ $app.user.name }}</span>
                 <span class="user-menu__role">{{ $app.user.email }}</span>
             </div>
             <div class="user-menu__toggle">
-                <Icon class="user-menu__arrow" name="unfold-more"></Icon>
+                <Icon class="user-menu__arrow" name="unfold-more"/>
             </div>
         </button>
         <ul

@@ -8,7 +8,7 @@
     &__inner {
         margin-inline: auto;
         max-width: 100rem;
-        padding-inline: var(--root-gutter-lg);
+        padding-inline: spruce.get-css-variable(--gutter-lg);
         width: 100%;
     }
 }

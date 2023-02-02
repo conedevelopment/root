@@ -1,16 +1,44 @@
 <?php
 
-namespace Cone\Root\Http\Resources;
+namespace Cone\Root\Resources;
 
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\MapsAbilities;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 
-class ModelResource extends JsonResource
+class Item implements Arrayable
 {
     use MapsAbilities;
+
+    /**
+     * The model instance.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected Model $model;
+
+    /**
+     * Create a new item instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model
+     * @return void
+     */
+    public function __construct(Model $model)
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * Get the model instance.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
 
     /**
      * Get the mappable abilities.
@@ -30,9 +58,23 @@ class ModelResource extends JsonResource
      */
     protected function mapUrl(ResourceRequest $request): string
     {
-        return $this->resource->exists
-            ? sprintf('%s/%s', $request->resource()->getUri(), $this->resource->getKey())
+        return $this->model->exists
+            ? sprintf('%s/%s', $request->resource()->getUri(), $this->model->getKey())
             : $request->resource()->getUri();
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array<TKey, TValue>
+     */
+    public function toArray(): array
+    {
+        return [
+            'exists' => $this->model->exists,
+            'id' => $this->model->getKey(),
+            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->model)) && $this->model->trashed(),
+        ];
     }
 
     /**
@@ -45,7 +87,9 @@ class ModelResource extends JsonResource
     public function toDisplay(ResourceRequest $request, Fields $fields): array
     {
         return array_merge($this->toArray($request), [
-            'fields' => $fields->mapToDisplay($request, $this->resource)->toArray(),
+            'abilities' => $this->mapAbilities($request, $this->model),
+            'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
+            'url' => $this->mapUrl($request),
         ]);
     }
 
@@ -58,30 +102,15 @@ class ModelResource extends JsonResource
      */
     public function toForm(ResourceRequest $request, Fields $fields): array
     {
-        $fields = $fields->mapToForm($request, $this->resource)->toArray();
+        $fields = $fields->mapToForm($request, $this->model)->toArray();
 
         return array_merge($this->toArray($request), [
+            'abilities' => $this->mapAbilities($request, $this->model),
             'data' => array_reduce($fields, static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);
             }, []),
             'fields' => $fields,
-        ]);
-    }
-
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return array
-     */
-    public function toArray($request): array
-    {
-        return [
-            'abilities' => $this->mapAbilities($request, $this->resource),
-            'exists' => $this->resource->exists,
-            'id' => $this->resource->getKey(),
-            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->resource)) && $this->resource->trashed(),
             'url' => $this->mapUrl($request),
-        ];
+        ]);
     }
 }
