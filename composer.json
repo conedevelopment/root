@@ -27,8 +27,7 @@
         "ext-exif": "*",
         "php": "^8.0",
         "laravel/framework": "^9.26.1",
-        "inertiajs/inertia-laravel": "^0.6.2",
-        "laravel/fortify": "^1.10"
+        "inertiajs/inertia-laravel": "^0.6.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
