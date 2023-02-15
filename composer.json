@@ -33,7 +33,7 @@
         "fakerphp/faker": "^1.9.1",
         "laravel/laravel": "^9.5.2 || ^10.0",
         "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^9.6.3 || ^10.0",
         "nunomaduro/larastan": "^2.1.6"
     },
     "extra": {
