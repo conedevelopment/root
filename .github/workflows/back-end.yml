@@ -58,7 +58,7 @@ jobs:
         run: composer dump-autoload --optimize --strict-psr
 
       - name: Execute tests
-        run: vendor/bin/phpunit --verbose
+        run: composer exec -- phpunit
 
       - name: Send coverage to Coveralls
         if: ${{ matrix.os == 'ubuntu-22.04' && matrix.php == '8.0' && matrix.laravel == '^9.0' }}
