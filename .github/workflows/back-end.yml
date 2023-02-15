@@ -50,6 +50,10 @@ jobs:
         if: ${{ matrix.dependency-version == 'highest' }}
         run: composer update --no-interaction --no-progress --prefer-dist --with="laravel/framework:${{ matrix.laravel }}"
 
+      - name: Downgrade PHPUnit
+        if: ${{ matrix.dependency-version == 'highest' && matrix.laravel == '^9.0' }}
+        run: composer require --no-interaction --no-progress "phpunit/phpunit:^9.6.3"
+
       - name: Install locked dependencies
         if: ${{ matrix.dependency-version == 'locked' }}
         run: composer install --prefer-dist --no-interaction --no-progress
