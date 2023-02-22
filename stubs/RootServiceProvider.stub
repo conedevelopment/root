@@ -7,7 +7,6 @@ use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\Models\User as BaseUser;
 use Cone\Root\RootApplicationServiceProvider;
 use Cone\Root\Widgets\Welcome;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 
 class RootServiceProvider extends RootApplicationServiceProvider
