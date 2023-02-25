@@ -13,19 +13,9 @@ jobs:
       fail-fast: true
       matrix:
         os: ["ubuntu-22.04"]
-        php: ["8.0", "8.1"]
-        laravel: ["^9.0", "^10.0"]
+        php: ["8.1", "8.2"]
+        laravel: ["^10.0"]
         dependency-version: ["highest"]
-        exclude:
-          - os: "ubuntu-22.04"
-            php: "8.0"
-            laravel: "^10.0"
-            dependency-version: "highest"
-        include:
-          - os: "ubuntu-22.04"
-            php: "8.1"
-            laravel: "^10.0"
-            dependency-version: "locked"
 
     name: "Unit - PHP ${{ matrix.php }} - L ${{ matrix.laravel }} - ${{ matrix.dependency-version }}"
 
@@ -50,10 +40,6 @@ jobs:
         if: ${{ matrix.dependency-version == 'highest' }}
         run: composer update --no-interaction --no-progress --prefer-dist --with="laravel/framework:${{ matrix.laravel }}"
 
-      - name: Downgrade PHPUnit
-        if: ${{ matrix.dependency-version == 'highest' && matrix.laravel == '^9.0' }}
-        run: composer require --no-interaction --no-progress --dev --with-all-dependencies "phpunit/phpunit:^9.6.3"
-
       - name: Install locked dependencies
         if: ${{ matrix.dependency-version == 'locked' }}
         run: composer install --prefer-dist --no-interaction --no-progress
@@ -65,7 +51,7 @@ jobs:
         run: composer exec -- phpunit
 
       - name: Send coverage to Coveralls
-        if: ${{ matrix.os == 'ubuntu-22.04' && matrix.php == '8.0' && matrix.laravel == '^9.0' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' && matrix.php == '8.1' && matrix.laravel == '^10.0' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
