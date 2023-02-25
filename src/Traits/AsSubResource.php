@@ -26,8 +26,6 @@ trait AsSubResource
 
     /**
      * Set the sub-resource property.
-     *
-     * @return $this
      */
     public function asSubResource(bool $value = true): static
     {

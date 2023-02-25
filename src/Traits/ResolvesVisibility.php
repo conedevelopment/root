@@ -32,8 +32,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on index.
-     *
-     * @return $this
      */
     public function hiddenOnIndex(?Closure $callback = null): static
     {
@@ -45,8 +43,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on create.
-     *
-     * @return $this
      */
     public function hiddenOnCreate(?Closure $callback = null): static
     {
@@ -58,8 +54,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on show.
-     *
-     * @return $this
      */
     public function hiddenOnShow(?Closure $callback = null): static
     {
@@ -71,8 +65,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on update.
-     *
-     * @return $this
      */
     public function hiddenOnUpdate(?Closure $callback = null): static
     {
@@ -84,8 +76,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on index.
-     *
-     * @return $this
      */
     public function visibleOnIndex(?Closure $callback = null): static
     {
@@ -97,8 +87,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on create.
-     *
-     * @return $this
      */
     public function visibleOnCreate(?Closure $callback = null): static
     {
@@ -110,8 +98,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on show.
-     *
-     * @return $this
      */
     public function visibleOnShow(?Closure $callback = null): static
     {
@@ -123,8 +109,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on update.
-     *
-     * @return $this
      */
     public function visibleOnUpdate(?Closure $callback = null): static
     {
@@ -136,8 +120,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on index or show.
-     *
-     * @return $this
      */
     public function hiddenOnDisplay(?Closure $callback = null): static
     {
@@ -149,8 +131,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility hidden on create or update.
-     *
-     * @return $this
      */
     public function hiddenOnForm(?Closure $callback = null): static
     {
@@ -162,8 +142,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on index or show.
-     *
-     * @return $this
      */
     public function visibleOnDisplay(?Closure $callback = null): static
     {
@@ -175,8 +153,6 @@ trait ResolvesVisibility
 
     /**
      * Set the visibility visible on create or update.
-     *
-     * @return $this
      */
     public function visibleOnForm(?Closure $callback = null): static
     {
@@ -188,8 +164,6 @@ trait ResolvesVisibility
 
     /**
      * Set a custom visibility resolver.
-     *
-     * @return $this
      */
     public function visibleOn(Closure $callback): static
     {
@@ -200,8 +174,6 @@ trait ResolvesVisibility
 
     /**
      * Set a custom visibility resolver.
-     *
-     * @return $this
      */
     public function hiddenOn(Closure $callback): static
     {

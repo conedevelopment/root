@@ -29,8 +29,6 @@ trait ResolvesFilters
 
     /**
      * Set the filters resolver.
-     *
-     * @return $this
      */
     public function withFilters(array|Closure $filters): static
     {

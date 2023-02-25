@@ -29,8 +29,6 @@ trait ResolvesActions
 
     /**
      * Set the actions resolver.
-     *
-     * @return $this
      */
     public function withActions(array|Closure $actions): static
     {

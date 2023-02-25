@@ -103,8 +103,6 @@ class BelongsToMany extends Relation
 
     /**
      * Resolve the related model for a bound value.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
@@ -165,8 +163,6 @@ class BelongsToMany extends Relation
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Fields\Field  $field
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {

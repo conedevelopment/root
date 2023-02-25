@@ -50,8 +50,6 @@ class Media extends MorphToMany
 
     /**
      * Set the multiple attribute.
-     *
-     * @return $this
      */
     public function multiple(bool $value = true): static
     {
@@ -80,8 +78,6 @@ class Media extends MorphToMany
 
     /**
      * Set the storing resolver callback.
-     *
-     * @return $this
      */
     public function storeUsing(Closure $callback): static
     {

@@ -14,8 +14,6 @@ trait Authorizable
 
     /**
      * Merge the current and the given resolvers.
-     *
-     * @return $this
      */
     public function mergeAuthorizationResolver(Closure $callback): static
     {
@@ -33,8 +31,6 @@ trait Authorizable
 
     /**
      * Set the authorization resolver.
-     *
-     * @return $this
      */
     public function authorize(Closure $callback): static
     {

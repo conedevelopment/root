@@ -10,9 +10,6 @@ class {{ class }} extends Extract
 {
     /**
      * Get the query for the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function resolveQuery(RootRequest $request): Builder
     {
@@ -21,9 +18,6 @@ class {{ class }} extends Extract
 
     /**
      * Define the fields for the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function fields(RootRequest $request): array
     {
@@ -34,9 +28,6 @@ class {{ class }} extends Extract
 
     /**
      * Define the filters for the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function filters(RootRequest $request): array
     {
@@ -47,9 +38,6 @@ class {{ class }} extends Extract
 
     /**
      * Define the actions for the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function actions(RootRequest $request): array
     {
@@ -60,9 +48,6 @@ class {{ class }} extends Extract
 
     /**
      * Define the widgets for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function widgets(RootRequest $request): array
     {

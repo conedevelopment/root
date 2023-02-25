@@ -12,8 +12,6 @@ class Actions extends Collection
 {
     /**
      * Filter the actions that are available for the given request.
-     *
-     * @param  array  ...$parameters
      */
     public function available(RootRequest $request, ...$parameters): static
     {

@@ -31,8 +31,6 @@ class Date extends Field
 
     /**
      * Create a new field instance.
-     *
-     * @return void
      */
     public function __construct(string $label, ?string $name = null)
     {
@@ -43,8 +41,6 @@ class Date extends Field
 
     /**
      * Set the "min" attribute.
-     *
-     * @return $this
      */
     public function min(string|DateTimeInterface $value): static
     {
@@ -53,8 +49,6 @@ class Date extends Field
 
     /**
      * Set the "max" attribute.
-     *
-     * @return $this
      */
     public function max(string|DateTimeInterface $value): static
     {
@@ -63,8 +57,6 @@ class Date extends Field
 
     /**
      * Set the with time attribute.
-     *
-     * @return $this
      */
     public function withTime(bool $value = true): static
     {
@@ -77,8 +69,6 @@ class Date extends Field
 
     /**
      * Set the timezone.
-     *
-     * @return $this
      */
     public function timezone(?string $value = null): static
     {

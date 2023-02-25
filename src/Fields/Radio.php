@@ -11,8 +11,6 @@ class Radio extends Select
 
     /**
      * Create a new field instance.
-     *
-     * @return void
      */
     public function __construct(string $label, ?string $name = null)
     {

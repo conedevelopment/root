@@ -68,8 +68,6 @@ abstract class Relation extends Field
 
     /**
      * Create a new relation field instance.
-     *
-     * @return void
      */
     public function __construct(string $label, ?string $name = null, Closure|string $relation = null)
     {
@@ -116,8 +114,6 @@ abstract class Relation extends Field
 
     /**
      * Set the nullable attribute.
-     *
-     * @return $this
      */
     public function nullable(bool $value = true): static
     {
@@ -136,8 +132,6 @@ abstract class Relation extends Field
 
     /**
      * Set the searachable attribute.
-     *
-     * @return $this
      */
     public function searchable(bool|Closure $value = true, array $columns = ['id']): static
     {
@@ -156,8 +150,6 @@ abstract class Relation extends Field
 
     /**
      * Set the sortable attribute.
-     *
-     * @return $this
      */
     public function sortable(bool|Closure $value = true, string $column = 'id'): static
     {
@@ -176,8 +168,6 @@ abstract class Relation extends Field
 
     /**
      * Set the display resolver.
-     *
-     * @return $this
      */
     public function display(Closure|string $callback): static
     {
@@ -206,8 +196,6 @@ abstract class Relation extends Field
 
     /**
      * Set the async attribute.
-     *
-     * @return $this
      */
     public function async(bool $value = true): static
     {
@@ -308,8 +296,6 @@ abstract class Relation extends Field
 
     /**
      * Set the query resolver.
-     *
-     * @return $this
      */
     public function withQuery(Closure $callback): static
     {

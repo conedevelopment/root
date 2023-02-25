@@ -29,8 +29,6 @@ trait ResolvesFields
 
     /**
      * Set the fields resolver.
-     *
-     * @return $this
      */
     public function withFields(array|Closure $fields): static
     {

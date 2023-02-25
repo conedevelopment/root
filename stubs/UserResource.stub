@@ -13,8 +13,6 @@ class UserResource extends Resource
 {
     /**
      * The icon for the resource.
-     *
-     * @var string
      */
     protected string $icon = 'person';
 

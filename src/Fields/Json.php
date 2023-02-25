@@ -24,8 +24,6 @@ class Json extends Field
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Fields\Field  $field
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {

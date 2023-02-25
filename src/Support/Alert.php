@@ -33,8 +33,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Create a new alert instance.
-     *
-     * @return void
      */
     public function __construct(string $message, string $type)
     {

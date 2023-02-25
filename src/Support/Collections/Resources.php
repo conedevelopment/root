@@ -11,8 +11,6 @@ class Resources extends Collection implements Contract
 {
     /**
      * Filter the available resources.
-     *
-     * @return \Cone\Root\Support\Collections\Resources
      */
     public function available(RootRequest $request): static
     {

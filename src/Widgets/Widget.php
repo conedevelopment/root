@@ -77,8 +77,6 @@ abstract class Widget implements Arrayable, Renderable
 
     /**
      * Set the async attribute.
-     *
-     * @return $this
      */
     public function async(bool $value = true): static
     {

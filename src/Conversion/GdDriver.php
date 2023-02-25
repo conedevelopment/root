@@ -37,8 +37,6 @@ class GdDriver extends Driver
 
     /**
      * Create a new image instance.
-     *
-     * @return \Cone\Root\Conversion\Image
      */
     protected function createImage(Medium $medium): Image
     {

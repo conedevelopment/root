@@ -34,8 +34,6 @@ class Asset
 
     /**
      * Create a new asset instance.
-     *
-     * @return void
      */
     public function __construct(string $key, string $type, string $path, ?string $url = null)
     {

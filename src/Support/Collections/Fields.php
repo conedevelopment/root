@@ -13,8 +13,6 @@ class Fields extends Collection
 {
     /**
      * Filter the fields that are available for the given request.
-     *
-     * @param  array  ...$parameters
      */
     public function available(RootRequest $request, ...$parameters): static
     {

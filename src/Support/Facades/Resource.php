@@ -33,9 +33,6 @@ class Resource extends Facade
 
     /**
      * Resolve the resource by its key.
-     *
-     *
-     * @throws \Cone\Root\Exceptions\ResourceResolutionException
      */
     public static function resolve(string $key): Item
     {

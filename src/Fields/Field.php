@@ -68,8 +68,6 @@ abstract class Field implements Arrayable
 
     /**
      * Create a new field instance.
-     *
-     * @return void
      */
     public function __construct(string $label, ?string $name = null)
     {
@@ -96,8 +94,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the label attribute.
-     *
-     * @return $this
      */
     public function label(string|Closure $value): static
     {
@@ -106,8 +102,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the name attribute.
-     *
-     * @return $this
      */
     public function name(string|Closure $value): static
     {
@@ -116,8 +110,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the id attribute.
-     *
-     * @return $this
      */
     public function id(string|Closure $value): static
     {
@@ -126,8 +118,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the readonly attribute.
-     *
-     * @return $this
      */
     public function readonly(bool|Closure $value = true): static
     {
@@ -136,8 +126,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the disabled attribute.
-     *
-     * @return $this
      */
     public function disabled(bool|Closure $value = true): static
     {
@@ -146,8 +134,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the required attribute.
-     *
-     * @return $this
      */
     public function required(bool|Closure $value = true): static
     {
@@ -156,8 +142,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the type attribute.
-     *
-     * @return $this
      */
     public function type(string|Closure $value): static
     {
@@ -166,8 +150,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the placeholder attribute.
-     *
-     * @return $this
      */
     public function placeholder(string|Closure $value): static
     {
@@ -176,8 +158,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the sortable attribute.
-     *
-     * @return $this
      */
     public function sortable(bool|Closure $value = true): static
     {
@@ -200,8 +180,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the searachable attribute.
-     *
-     * @return $this
      */
     public function searchable(bool|Closure $value = true): static
     {
@@ -224,8 +202,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the help attribute.
-     *
-     * @return $this
      */
     public function help(?string $value = null): static
     {
@@ -236,8 +212,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the value resolver.
-     *
-     * @return $this
      */
     public function value(Closure $callback): static
     {
@@ -270,8 +244,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the format resolver.
-     *
-     * @return $this
      */
     public function format(Closure $callback): static
     {
@@ -316,8 +288,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the hydrate resolver.
-     *
-     * @return $this
      */
     public function hydrate(Closure $callback): static
     {
@@ -340,8 +310,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the validation rules.
-     *
-     * @return $this
      */
     public function rules(array|Closure $rules, string $context = '*'): static
     {
@@ -352,8 +320,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the create validation rules.
-     *
-     * @return $this
      */
     public function createRules(array|Closure $rules): static
     {
@@ -362,8 +328,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the update validation rules.
-     *
-     * @return $this
      */
     public function updateRules(array|Closure $rules): static
     {

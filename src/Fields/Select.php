@@ -26,8 +26,6 @@ class Select extends Field
 
     /**
      * Set the nullable attribute.
-     *
-     * @return $this
      */
     public function nullable(bool $value = true): static
     {
@@ -46,8 +44,6 @@ class Select extends Field
 
     /**
      * Set the multiple attribute.
-     *
-     * @return $this
      */
     public function multiple(bool $value = true): static
     {
@@ -56,8 +52,6 @@ class Select extends Field
 
     /**
      * Set the options attribute.
-     *
-     * @return $this
      */
     public function options(array|Closure $value): static
     {

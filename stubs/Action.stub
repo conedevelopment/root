@@ -11,8 +11,6 @@ class {{ class }} extends Action
 {
     /**
      * Create a new action instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -21,10 +19,6 @@ class {{ class }} extends Action
 
     /**
      * Handle the action.
-     *
-     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
-     * @return void
      */
     public function handle(ActionRequest $request, Collection $models): void
     {
@@ -33,9 +27,6 @@ class {{ class }} extends Action
 
     /**
      * Define the fields for the action.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function fields(RootRequest $request): array
     {

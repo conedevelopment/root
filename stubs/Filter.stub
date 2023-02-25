@@ -11,26 +11,17 @@ class {{ class }} extends Filter
 %%component%%
     /**
      * The Vue component.
-     *
-     * @var string|null
      */
     protected ?string $component = '{{ component }}';
 %%/component%%
 %%multiple%%
     /**
      * Indicates if multiple options can be selected.
-     *
-     * @var bool
      */
     protected bool $multiple = true;
 %%/multiple%%
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
@@ -39,9 +30,6 @@ class {{ class }} extends Filter
 
     /**
      * Get the filter options.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function options(RootRequest $request): array
     {

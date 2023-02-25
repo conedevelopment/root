@@ -17,8 +17,6 @@ abstract class Driver
 
     /**
      * Create a new driver instance.
-     *
-     * @return void
      */
     public function __construct(array $config = [])
     {

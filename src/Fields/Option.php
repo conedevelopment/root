@@ -13,8 +13,6 @@ class Option implements Arrayable
 
     /**
      * Create a new option instance.
-     *
-     * @return void
      */
     public function __construct(string $label, string $value)
     {
@@ -26,8 +24,6 @@ class Option implements Arrayable
 
     /**
      * Set the disabled attribute.
-     *
-     * @return $this
      */
     public function disabled(bool $value = true): static
     {
@@ -36,8 +32,6 @@ class Option implements Arrayable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array<TKey, TValue>
      */
     public function toArray(): array
     {

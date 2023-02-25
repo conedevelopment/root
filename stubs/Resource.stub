@@ -10,9 +10,6 @@ class {{ class }} extends Resource
 {
     /**
      * Define the fields for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function fields(RootRequest $request): array
     {
@@ -23,9 +20,6 @@ class {{ class }} extends Resource
 
     /**
      * Define the filters for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function filters(RootRequest $request): array
     {
@@ -36,9 +30,6 @@ class {{ class }} extends Resource
 
     /**
      * Define the actions for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function actions(RootRequest $request): array
     {
@@ -49,9 +40,6 @@ class {{ class }} extends Resource
 
     /**
      * Define the extracts for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function extracts(RootRequest $request): array
     {
@@ -62,9 +50,6 @@ class {{ class }} extends Resource
 
     /**
      * Define the widgets for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function widgets(RootRequest $request): array
     {

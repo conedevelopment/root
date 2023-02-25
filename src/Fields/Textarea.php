@@ -13,8 +13,6 @@ class Textarea extends Field
 
     /**
      * Set the rows attribute.
-     *
-     * @return $this
      */
     public function rows(int|Closure $value): static
     {
@@ -23,8 +21,6 @@ class Textarea extends Field
 
     /**
      * Set the cols attribute.
-     *
-     * @return $this
      */
     public function cols(int|Closure $value): static
     {

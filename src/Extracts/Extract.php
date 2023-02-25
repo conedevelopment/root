@@ -64,8 +64,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Set the query resolver.
-     *
-     * @return $this
      */
     public function withQuery(Closure $callback): static
     {
@@ -76,9 +74,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Resolve the query for the extract.
-     *
-     *
-     * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
     public function resolveQuery(RootRequest $request): Builder
     {

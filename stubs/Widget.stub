@@ -10,30 +10,22 @@ class {{ class }} extends Widget
 %%async%%
     /**
      * Indicates if the widget is async.
-     *
-     * @var bool
      */
     protected bool $async = true;
 %%/async%%
 %%component%%
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = '{{ component }}';
 %%/component%%
     /**
      * The Blade template.
-     *
-     * @var string
      */
     protected string $template = '{{ template }}';
 
     /**
      * Create a new widget instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -42,9 +34,6 @@ class {{ class }} extends Widget
 
     /**
      * Get the data.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function data(RootRequest $request): array
     {

@@ -19,9 +19,6 @@ class Item implements Arrayable
 
     /**
      * Create a new item instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model
-     * @return void
      */
     public function __construct(Model $model)
     {

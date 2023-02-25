@@ -17,10 +17,8 @@ class Image
 
     /**
      * The path of the image.
-     *
-     * @var string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * The file type.
@@ -43,8 +41,6 @@ class Image
 
     /**
      * Create a new image instance.
-     *
-     * @return void
      */
     public function __construct(Medium $medium)
     {
@@ -67,10 +63,8 @@ class Image
 
     /**
      * Set the width of the image.
-     *
-     * @return $this
      */
-    public function setWidth(int $width): Image
+    public function setWidth(int $width): static
     {
         $this->attributes['width'] = $width;
 
@@ -79,10 +73,8 @@ class Image
 
     /**
      * Set the height of the image.
-     *
-     * @return $this
      */
-    public function setHeight(int $height): Image
+    public function setHeight(int $height): static
     {
         $this->attributes['height'] = $height;
 
@@ -91,10 +83,8 @@ class Image
 
     /**
      * Set the quality of the image.
-     *
-     * @return $this
      */
-    public function setQuality(int $quality): Image
+    public function setQuality(int $quality): static
     {
         $this->attributes['quality'] = $quality;
 
@@ -106,7 +96,7 @@ class Image
      *
      * @return $this
      */
-    public function crop(?int $width = null, ?int $height = null): Image
+    public function crop(?int $width = null, ?int $height = null): static
     {
         $this->resize($width, $height, true);
 
@@ -115,8 +105,6 @@ class Image
 
     /**
      * Resize the image.
-     *
-     * @return $this
      */
     public function resize(?int $width = null, ?int $height = null, bool $crop = false): static
     {
@@ -160,9 +148,6 @@ class Image
 
     /**
      * Save the resource.
-     *
-     *
-     * @throws \Exception
      */
     public function save(): void
     {
@@ -186,9 +171,6 @@ class Image
 
      /**
       * Create the resource.
-      *
-      *
-      * @throws \Exception
       */
      protected function create(): void
      {

@@ -21,8 +21,6 @@ trait HasAttributes
 
     /**
      * Set the given attributes.
-     *
-     * @return $this
      */
     public function setAttributes(array $attributes): static
     {
@@ -41,8 +39,6 @@ trait HasAttributes
 
     /**
      * Get the given attribute.
-     *
-     * @param  mixed  $default
      */
     public function getAttribute(string $key, mixed $default = null): mixed
     {
@@ -51,8 +47,6 @@ trait HasAttributes
 
     /**
      * Set the given attribute.
-     *
-     * @return $this
      */
     public function setAttribute(string $key, mixed $value): static
     {
@@ -63,8 +57,6 @@ trait HasAttributes
 
     /**
      * Remove the given attribute.
-     *
-     * @return $this
      */
     public function removeAttribute(string $key): static
     {
@@ -75,8 +67,6 @@ trait HasAttributes
 
     /**
      * Remove the given attributes.
-     *
-     * @return $this
      */
     public function removeAttributes(array $keys): static
     {
@@ -89,8 +79,6 @@ trait HasAttributes
 
     /**
      * Clear all the attributes.
-     *
-     * @return $this
      */
     public function clearAttributes(): static
     {

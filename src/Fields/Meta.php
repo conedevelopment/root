@@ -16,8 +16,6 @@ class Meta extends MorphMany
 
     /**
      * Create a new relation field instance.
-     *
-     * @return void
      */
     public function __construct(string $label, string $name = 'metas')
     {

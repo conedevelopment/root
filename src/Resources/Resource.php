@@ -69,8 +69,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Create a new resource instance.
-     *
-     * @return void
      */
     public function __construct(string $model)
     {
@@ -135,8 +133,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Set the resource icon.
-     *
-     * @return $this
      */
     public function icon(string $icon): static
     {
@@ -155,8 +151,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Set the relations to eagerload.
-     *
-     * @return $this
      */
     public function with(array $relations): static
     {
@@ -167,8 +161,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Set the relation counts to eagerload.
-     *
-     * @return $this
      */
     public function withCount(array $relations): static
     {

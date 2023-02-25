@@ -29,8 +29,6 @@ trait ResolvesWidgets
 
     /**
      * Set the widgets resolver.
-     *
-     * @return $this
      */
     public function withWidgets(array|Closure $widgets): static
     {

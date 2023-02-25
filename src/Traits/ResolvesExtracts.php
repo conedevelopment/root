@@ -29,8 +29,6 @@ trait ResolvesExtracts
 
     /**
      * Set the extracts resolver.
-     *
-     * @return $this
      */
     public function withExtracts(array|Closure $extracts): static
     {

@@ -47,8 +47,6 @@ class Manager extends BaseManager implements Contract
 
     /**
      * Create the GD driver.
-     *
-     * @return \Cone\Root\Conversion\GdDriver
      */
     public function createGdDriver(): GdDriver
     {

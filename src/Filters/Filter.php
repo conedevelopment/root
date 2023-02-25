@@ -90,8 +90,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Set the multiple attribute.
-     *
-     * @return $this
      */
     public function multiple(bool $value = true): static
     {
