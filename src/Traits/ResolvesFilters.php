@@ -11,23 +11,16 @@ trait ResolvesFilters
 {
     /**
      * The filters resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $filtersResolver = null;
 
     /**
      * The resolved filters.
-     *
-     * @var \Cone\Root\Support\Collections\Filters|null
      */
     protected ?Filters $resolvedFilters = null;
 
     /**
      * Define the filters for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function filters(RootRequest $request): array
     {
@@ -37,7 +30,6 @@ trait ResolvesFilters
     /**
      * Set the filters resolver.
      *
-     * @param  array|\Closure  $filters
      * @return $this
      */
     public function withFilters(array|Closure $filters): static
@@ -55,9 +47,6 @@ trait ResolvesFilters
 
     /**
      * Resolve the filters.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Cone\Root\Support\Collections\Filters
      */
     public function resolveFilters(RootRequest $request): Filters
     {
@@ -78,10 +67,6 @@ trait ResolvesFilters
 
     /**
      * Handle the resolving event on the filter instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Filters\Filter  $filter
-     * @return void
      */
     protected function resolveFilter(RootRequest $request, Filter $filter): void
     {

@@ -10,10 +10,6 @@ trait MapsAbilities
 {
     /**
      * Map the abilities.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function mapAbilities(RootRequest $request, Model $model): array
     {
@@ -32,9 +28,6 @@ trait MapsAbilities
 
     /**
      * Get the policy.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model|string  $model
-     * @return mixed
      */
     public function getPolicy(string|Model $model): mixed
     {
@@ -43,8 +36,6 @@ trait MapsAbilities
 
     /**
      * Get the mappable abilities.
-     *
-     * @return array
      */
     public function getAbilities(): array
     {

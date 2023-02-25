@@ -19,8 +19,6 @@ class PerformConversions implements ShouldQueue
 
     /**
      * The medium instance.
-     *
-     * @var \Cone\Root\Models\Medium
      */
     public Medium $medium;
 
@@ -34,7 +32,6 @@ class PerformConversions implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \Cone\Root\Models\Medium  $medium
      * @return void
      */
     public function __construct(Medium $medium)
@@ -44,8 +41,6 @@ class PerformConversions implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -54,9 +49,6 @@ class PerformConversions implements ShouldQueue
 
     /**
      * Handle a job failure.
-     *
-     * @param  \Throwable  $exception
-     * @return void
      */
     public function failed(Throwable $exception): void
     {

@@ -9,8 +9,6 @@ trait Recordable
 {
     /**
      * Get the records for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function records(): MorphMany
     {

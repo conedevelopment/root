@@ -14,8 +14,6 @@ class Item implements Arrayable
 
     /**
      * The model instance.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
      */
     protected Model $model;
 
@@ -32,8 +30,6 @@ class Item implements Arrayable
 
     /**
      * Get the model instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModel(): Model
     {
@@ -42,8 +38,6 @@ class Item implements Arrayable
 
     /**
      * Get the mappable abilities.
-     *
-     * @return array
      */
     public function getAbilities(): array
     {
@@ -52,9 +46,6 @@ class Item implements Arrayable
 
     /**
      * Map the URL for the model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return string
      */
     protected function mapUrl(ResourceRequest $request): string
     {
@@ -79,10 +70,6 @@ class Item implements Arrayable
 
     /**
      * Get the resource display representation of the model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
-     * @return array
      */
     public function toDisplay(ResourceRequest $request, Fields $fields): array
     {
@@ -95,10 +82,6 @@ class Item implements Arrayable
 
     /**
      * Get the resource form representation of the model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
-     * @return array
      */
     public function toForm(ResourceRequest $request, Fields $fields): array
     {

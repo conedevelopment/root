@@ -313,7 +313,7 @@ class FieldTest extends TestCase
 
         $this->assertTrue($this->field->isSearchable($this->request));
 
-        $this->field->searchable(function() {
+        $this->field->searchable(function () {
             return false;
         });
 
@@ -329,7 +329,7 @@ class FieldTest extends TestCase
 
         $this->assertTrue($this->field->isSortable($this->request));
 
-        $this->field->sortable(function() {
+        $this->field->sortable(function () {
             return false;
         });
 

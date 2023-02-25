@@ -17,10 +17,6 @@ class Resource extends Facade
 {
     /**
      * Register the given item.
-     *
-     * @param  string  $key
-     * @param  \Cone\Root\Resources\Resource  $item
-     * @return void
      */
     public static function register(string $key, Item $item): void
     {
@@ -38,8 +34,6 @@ class Resource extends Facade
     /**
      * Resolve the resource by its key.
      *
-     * @param  string  $key
-     * @return \Cone\Root\Resources\Resource
      *
      * @throws \Cone\Root\Exceptions\ResourceResolutionException
      */
@@ -54,8 +48,6 @@ class Resource extends Facade
 
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
     protected static function getFacadeAccessor(): string
     {

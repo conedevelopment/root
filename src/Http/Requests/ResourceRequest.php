@@ -9,8 +9,6 @@ class ResourceRequest extends RootRequest
 {
     /**
      * Resolve the resource for the request.
-     *
-     * @return \Cone\Root\Resources\Resource
      */
     public function resource(): Resource
     {

@@ -9,15 +9,11 @@ trait InteractsWithProxy
 {
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     abstract public static function getProxiedInterface(): string;
 
     /**
      * Resolve and get the proxy instance.
-     *
-     * @return static
      */
     public static function proxy(): static
     {
@@ -38,8 +34,6 @@ trait InteractsWithProxy
 
     /**
      * Get the proxied class.
-     *
-     * @return string
      */
     public static function getProxiedClass(): string
     {

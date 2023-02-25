@@ -11,16 +11,12 @@ class Meta extends MorphMany
 {
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Fieldset';
 
     /**
      * Create a new relation field instance.
      *
-     * @param  string  $label
-     * @param  string  $name
      * @return void
      */
     public function __construct(string $label, string $name = 'metas')
@@ -145,10 +141,6 @@ class Meta extends MorphMany
 
     /**
      * Get the validation representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toValidate(RootRequest $request, Model $model): array
     {

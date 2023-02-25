@@ -14,9 +14,7 @@ class Fields extends Collection
     /**
      * Filter the fields that are available for the given request.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  array ...$parameters
-     * @return static
+     * @param  array  ...$parameters
      */
     public function available(RootRequest $request, ...$parameters): static
     {
@@ -28,9 +26,6 @@ class Fields extends Collection
 
     /**
      * Filter the searchable fields.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return static
      */
     public function searchable(RootRequest $request): static
     {
@@ -39,9 +34,6 @@ class Fields extends Collection
 
     /**
      * Filter the sortable fields.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return static
      */
     public function sortable(RootRequest $request): static
     {
@@ -50,10 +42,6 @@ class Fields extends Collection
 
     /**
      * Map the fields to display.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
     public function mapToDisplay(RootRequest $request, Model $model): Collection
     {
@@ -62,10 +50,6 @@ class Fields extends Collection
 
     /**
      * Map the fields to form.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
     public function mapToForm(RootRequest $request, Model $model): Collection
     {
@@ -74,10 +58,6 @@ class Fields extends Collection
 
     /**
      * Map the fields to validate.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function mapToValidate(RootRequest $request, Model $model): array
     {
@@ -88,10 +68,6 @@ class Fields extends Collection
 
     /**
      * Register the field routes.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {

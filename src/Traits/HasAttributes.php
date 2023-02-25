@@ -8,15 +8,11 @@ trait HasAttributes
 {
     /**
      * The field attributes.
-     *
-     * @var array
      */
     protected array $attributes = [];
 
     /**
      * Get the attributes.
-     *
-     * @return array
      */
     public function getAttributes(): array
     {
@@ -26,7 +22,6 @@ trait HasAttributes
     /**
      * Set the given attributes.
      *
-     * @param  array  $attributes
      * @return $this
      */
     public function setAttributes(array $attributes): static
@@ -38,9 +33,6 @@ trait HasAttributes
 
     /**
      * Determine if the given attributes exists.
-     *
-     * @param  string  $key
-     * @return bool
      */
     public function hasAttribute(string $key): bool
     {
@@ -50,9 +42,7 @@ trait HasAttributes
     /**
      * Get the given attribute.
      *
-     * @param  string  $key
      * @param  mixed  $default
-     * @return mixed
      */
     public function getAttribute(string $key, mixed $default = null): mixed
     {
@@ -62,8 +52,6 @@ trait HasAttributes
     /**
      * Set the given attribute.
      *
-     * @param  string  $key
-     * @param  mixed  $value
      * @return $this
      */
     public function setAttribute(string $key, mixed $value): static
@@ -76,7 +64,6 @@ trait HasAttributes
     /**
      * Remove the given attribute.
      *
-     * @param  string  $key
      * @return $this
      */
     public function removeAttribute(string $key): static
@@ -89,7 +76,6 @@ trait HasAttributes
     /**
      * Remove the given attributes.
      *
-     * @param  array  $keys
      * @return $this
      */
     public function removeAttributes(array $keys): static

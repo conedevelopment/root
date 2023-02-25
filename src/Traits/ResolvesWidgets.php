@@ -11,23 +11,16 @@ trait ResolvesWidgets
 {
     /**
      * The widgets resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $widgetsResolver = null;
 
     /**
      * The resolved fields.
-     *
-     * @var \Cone\Root\Support\Collections\Widgets|null
      */
     protected ?Widgets $resolvedWidgets = null;
 
     /**
      * Define the widgets for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function widgets(RootRequest $request): array
     {
@@ -37,7 +30,6 @@ trait ResolvesWidgets
     /**
      * Set the widgets resolver.
      *
-     * @param  array|\Closure  $widgets
      * @return $this
      */
     public function withWidgets(array|Closure $widgets): static
@@ -55,9 +47,6 @@ trait ResolvesWidgets
 
     /**
      * Resolve the widgets.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Cone\Root\Support\Collections\Widgets
      */
     public function resolveWidgets(RootRequest $request): Widgets
     {
@@ -78,10 +67,6 @@ trait ResolvesWidgets
 
     /**
      * Handle the resolving event on the widget instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Widgets\Widget  $widget
-     * @return void
      */
     protected function resolveWidget(RootRequest $request, Widget $widget): void
     {

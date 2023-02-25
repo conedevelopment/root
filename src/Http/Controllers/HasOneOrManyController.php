@@ -19,10 +19,6 @@ class HasOneOrManyController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function index(IndexRequest $request, Model $model): Response
     {
@@ -36,10 +32,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function create(CreateRequest $request, Model $model): Response
     {
@@ -53,10 +45,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateRequest $request, Model $model): RedirectResponse
     {
@@ -84,10 +72,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function show(ShowRequest $request, Model $model, Model $related): Response
     {
@@ -99,10 +83,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function edit(UpdateRequest $request, Model $model, Model $related): Response
     {
@@ -116,11 +96,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
     {
@@ -144,11 +119,6 @@ class HasOneOrManyController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
     {

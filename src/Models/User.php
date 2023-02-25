@@ -69,8 +69,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * The "booted" method of the model.
-     *
-     * @return void
      */
     protected static function booted(): void
     {
@@ -81,8 +79,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory|null
      */
     protected static function newFactory(): ?Factory
     {
@@ -91,8 +87,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     public static function getProxiedInterface(): string
     {
@@ -101,8 +95,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the uploads for the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function uploads(): HasMany
     {
@@ -111,8 +103,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the records for the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function records(): HasMany
     {
@@ -121,8 +111,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the notifications for the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function notifications(): MorphMany
     {
@@ -131,8 +119,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the avatar attribute.
-     *
-     * @return string
      */
     public function getAvatarAttribute(): string
     {
@@ -141,8 +127,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the Root representation of the model.
-     *
-     * @return array
      */
     public function toRoot(): array
     {
@@ -153,8 +137,6 @@ class User extends Authenticatable implements Contract, Resourceable
 
     /**
      * Get the resource representation of the model.
-     *
-     * @return \Cone\Root\Resources\Resource
      */
     public static function toResource(): Resource
     {

@@ -9,8 +9,6 @@ trait HasMeta
 {
     /**
      * Get the metas for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function metas(): MorphMany
     {
@@ -19,8 +17,6 @@ trait HasMeta
 
     /**
      * Get the casts for the meta values.
-     *
-     * @return array
      */
     public function getMetaCasts(): array
     {

@@ -8,15 +8,12 @@ class Textarea extends Field
 {
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Textarea';
 
     /**
      * Set the rows attribute.
      *
-     * @param  int|\Closure  $value
      * @return $this
      */
     public function rows(int|Closure $value): static
@@ -27,7 +24,6 @@ class Textarea extends Field
     /**
      * Set the cols attribute.
      *
-     * @param  int|\Closure  $value
      * @return $this
      */
     public function cols(int|Closure $value): static

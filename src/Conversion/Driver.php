@@ -12,15 +12,12 @@ abstract class Driver
 {
     /**
      * The driver config.
-     *
-     * @var array
      */
     protected array $config = [];
 
     /**
      * Create a new driver instance.
      *
-     * @param  array  $config
      * @return void
      */
     public function __construct(array $config = [])
@@ -31,8 +28,6 @@ abstract class Driver
     /**
      * Perform the registered conversions on the medium.
      *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @return void
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -60,11 +55,6 @@ abstract class Driver
 
     /**
      * Convert the medium using the given conversion.
-     *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @param  string  $conversion
-     * @param  \Closure  $callback
-     * @return void
      */
     abstract public function convert(Medium $medium, string $conversion, Closure $callback): void;
 }

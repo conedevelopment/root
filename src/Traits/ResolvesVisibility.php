@@ -13,16 +13,11 @@ trait ResolvesVisibility
 {
     /**
      * The visibility resolver callbacks.
-     *
-     * @var array
      */
     protected array $visibilityResolvers = [];
 
     /**
      * Determine if the object is visible for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return bool
      */
     public function visible(RootRequest $request): bool
     {
@@ -38,7 +33,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on index.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnIndex(?Closure $callback = null): static
@@ -52,7 +46,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on create.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnCreate(?Closure $callback = null): static
@@ -66,7 +59,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on show.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnShow(?Closure $callback = null): static
@@ -80,7 +72,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on update.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnUpdate(?Closure $callback = null): static
@@ -94,7 +85,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on index.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnIndex(?Closure $callback = null): static
@@ -108,7 +98,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on create.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnCreate(?Closure $callback = null): static
@@ -122,7 +111,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on show.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnShow(?Closure $callback = null): static
@@ -136,7 +124,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on update.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnUpdate(?Closure $callback = null): static
@@ -150,7 +137,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on index or show.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnDisplay(?Closure $callback = null): static
@@ -164,7 +150,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility hidden on create or update.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function hiddenOnForm(?Closure $callback = null): static
@@ -178,7 +163,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on index or show.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnDisplay(?Closure $callback = null): static
@@ -192,7 +176,6 @@ trait ResolvesVisibility
     /**
      * Set the visibility visible on create or update.
      *
-     * @param  \Closure|null  $callback
      * @return $this
      */
     public function visibleOnForm(?Closure $callback = null): static
@@ -206,7 +189,6 @@ trait ResolvesVisibility
     /**
      * Set a custom visibility resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function visibleOn(Closure $callback): static
@@ -219,7 +201,6 @@ trait ResolvesVisibility
     /**
      * Set a custom visibility resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function hiddenOn(Closure $callback): static

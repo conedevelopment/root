@@ -9,8 +9,6 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Resources\RelatedItem;
-use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
 
 trait AsSubResource
@@ -23,15 +21,12 @@ trait AsSubResource
 
     /**
      * Indicates whether the relation is a sub-resource.
-     *
-     * @var bool
      */
     protected bool $asSubResource = false;
 
     /**
      * Set the sub-resource property.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function asSubResource(bool $value = true): static
@@ -45,10 +40,6 @@ trait AsSubResource
 
     /**
      * Map the related models.
-     *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function mapItems(IndexRequest $request, Model $model): array
     {
@@ -75,9 +66,6 @@ trait AsSubResource
 
     /**
      * Get the model for the breadcrumbs.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModelForBreadcrumbs(ResourceRequest $request): Model
     {
@@ -86,11 +74,6 @@ trait AsSubResource
 
     /**
      * Map the related model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Cone\Root\Resources\RelatedItem
      */
     public function mapItem(ResourceRequest $request, Model $model, Model $related): RelatedItem
     {
@@ -101,8 +84,6 @@ trait AsSubResource
 
     /**
      * Get the mappable abilities.
-     *
-     * @return array
      */
     public function getAbilities(): array
     {
@@ -111,9 +92,6 @@ trait AsSubResource
 
     /**
      * Resolve the breadcrumbs for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function resolveBreadcrumbs(RootRequest $request): array
     {
@@ -142,10 +120,6 @@ trait AsSubResource
 
     /**
      * Get the sub resource representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toSubResource(ResourceRequest $request, Model $model): array
     {
@@ -166,10 +140,6 @@ trait AsSubResource
 
     /**
      * Get the index representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toIndex(IndexRequest $request, Model $model): array
     {
@@ -181,10 +151,6 @@ trait AsSubResource
 
     /**
      * Get the create representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toCreate(CreateRequest $request, Model $model): array
     {
@@ -200,11 +166,6 @@ trait AsSubResource
 
     /**
      * Get the show representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
      */
     public function toShow(ShowRequest $request, Model $model, Model $related): array
     {
@@ -220,11 +181,6 @@ trait AsSubResource
 
     /**
      * Get the edit representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
      */
     public function toEdit(UpdateRequest $request, Model $model, Model $related): array
     {

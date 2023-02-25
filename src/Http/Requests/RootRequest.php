@@ -13,9 +13,7 @@ class RootRequest extends Request
     /**
      * Validate the request.
      *
-     * @param  array  $rules
      * @param  array  ...$parameters
-     * @return void
      */
     public function validate(array $rules, ...$parameters): void
     {
@@ -36,8 +34,6 @@ class RootRequest extends Request
 
     /**
      * Get the resolved component.
-     *
-     * @return mixed
      */
     public function resolved(): mixed
     {

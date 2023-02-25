@@ -16,7 +16,8 @@ class RelationTest extends TestCase
     {
         parent::setUp();
 
-        $this->field = new class('Author') extends Relation {
+        $this->field = new class('Author') extends Relation
+        {
             //
         };
     }
@@ -35,7 +36,7 @@ class RelationTest extends TestCase
         $this->assertInstanceOf(EloquentRelation::class, $this->field->getRelation($model));
 
         $field = new class('Author', 'author', function ($related) {
-            return $related->belongsTo(Author::class, 'id', 'author_id','author');
+            return $related->belongsTo(Author::class, 'id', 'author_id', 'author');
         }) extends Relation {};
 
         $this->assertInstanceOf(EloquentRelation::class, $field->getRelation($model));

@@ -23,73 +23,52 @@ abstract class Relation extends Field
 
     /**
      * The relation name on the model.
-     *
-     * @var \Closure|string
      */
     protected Closure|string $relation;
 
     /**
      * The searchable columns.
-     *
-     * @var array
      */
     protected array $searchableColumns = ['id'];
 
     /**
      * The sortable column.
-     *
-     * @var string
      */
     protected string $sortableColumn = 'id';
 
     /**
      * Indicates if the field should be nullable.
-     *
-     * @var bool
      */
     protected bool $nullable = false;
 
     /**
      * Indicates if the component is async.
-     *
-     * @var bool
      */
     protected bool $async = false;
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Select';
 
     /**
      * The display resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $displayResolver = null;
 
     /**
      * The query resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
 
     /**
      * The query scopes.
-     *
-     * @var array
      */
     protected static array $scopes = [];
 
     /**
      * Create a new relation field instance.
      *
-     * @param  string  $label
-     * @param  string|null  $name
-     * @param  \Closure|string|null  $relation
      * @return void
      */
     public function __construct(string $label, ?string $name = null, Closure|string $relation = null)
@@ -101,9 +80,6 @@ abstract class Relation extends Field
 
     /**
      * Add a new scope for the relation query.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
     public static function scopeQuery(Closure $callback): void
     {
@@ -112,9 +88,6 @@ abstract class Relation extends Field
 
     /**
      * Get the relation instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function getRelation(Model $model): EloquentRelation
     {
@@ -127,8 +100,6 @@ abstract class Relation extends Field
 
     /**
      * Get the related model name.
-     *
-     * @return string
      */
     public function getRelatedName(): string
     {
@@ -137,8 +108,6 @@ abstract class Relation extends Field
 
     /**
      * Create a new method.
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -148,7 +117,6 @@ abstract class Relation extends Field
     /**
      * Set the nullable attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function nullable(bool $value = true): static
@@ -160,8 +128,6 @@ abstract class Relation extends Field
 
     /**
      * Determine if the field is nullable.
-     *
-     * @return bool
      */
     public function isNullable(): bool
     {
@@ -171,8 +137,6 @@ abstract class Relation extends Field
     /**
      * Set the searachable attribute.
      *
-     * @param  bool|\Closure  $value
-     * @param  array  $columns
      * @return $this
      */
     public function searchable(bool|Closure $value = true, array $columns = ['id']): static
@@ -184,8 +148,6 @@ abstract class Relation extends Field
 
     /**
      * Get the searchable columns.
-     *
-     * @return array
      */
     public function getSearchableColumns(): array
     {
@@ -195,8 +157,6 @@ abstract class Relation extends Field
     /**
      * Set the sortable attribute.
      *
-     * @param  bool|\Closure  $value
-     * @param  string  $column
      * @return $this
      */
     public function sortable(bool|Closure $value = true, string $column = 'id'): static
@@ -208,8 +168,6 @@ abstract class Relation extends Field
 
     /**
      * Get the sortable columns.
-     *
-     * @return string
      */
     public function getSortableColumn(): string
     {
@@ -219,7 +177,6 @@ abstract class Relation extends Field
     /**
      * Set the display resolver.
      *
-     * @param  \Closure|string  $callback
      * @return $this
      */
     public function display(Closure|string $callback): static
@@ -237,10 +194,6 @@ abstract class Relation extends Field
 
     /**
      * Resolve the display format or the query result.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return mixed
      */
     public function resolveDisplay(RootRequest $request, Model $related): mixed
     {
@@ -254,7 +207,6 @@ abstract class Relation extends Field
     /**
      * Set the async attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function async(bool $value = true): static
@@ -268,8 +220,6 @@ abstract class Relation extends Field
 
     /**
      * Determine if the field is asnyc.
-     *
-     * @return bool
      */
     public function isAsync(): bool
     {
@@ -278,9 +228,6 @@ abstract class Relation extends Field
 
     /**
      * Resolve the URI.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return string
      */
     public function resolveUri(ResourceRequest $request): string
     {
@@ -362,7 +309,6 @@ abstract class Relation extends Field
     /**
      * Set the query resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function withQuery(Closure $callback): static
@@ -374,10 +320,6 @@ abstract class Relation extends Field
 
     /**
      * Resolve the related model's eloquent query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function resolveQuery(RootRequest $request, Model $model): Builder
     {
@@ -396,10 +338,6 @@ abstract class Relation extends Field
 
     /**
      * Resolve the options for the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function resolveOptions(RootRequest $request, Model $model): array
     {
@@ -413,11 +351,6 @@ abstract class Relation extends Field
 
     /**
      * Map the given option.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
      */
     public function mapOption(RootRequest $request, Model $model, Model $related): array
     {
@@ -429,10 +362,6 @@ abstract class Relation extends Field
 
     /**
      * Resolve the resource model for a bound value.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
@@ -441,10 +370,6 @@ abstract class Relation extends Field
 
     /**
      * Register the router constrains.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRouterConstrains(RootRequest $request, Router $router): void
     {
@@ -468,9 +393,6 @@ abstract class Relation extends Field
 
     /**
      * The routes that should be registered.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function routes(Router $router): void
     {

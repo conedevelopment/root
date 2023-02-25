@@ -63,8 +63,6 @@ class Record extends Model implements Contract, Resourceable
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory(): Factory
     {
@@ -73,8 +71,6 @@ class Record extends Model implements Contract, Resourceable
 
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     public static function getProxiedInterface(): string
     {
@@ -83,8 +79,6 @@ class Record extends Model implements Contract, Resourceable
 
     /**
      * Get the user for the record.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -93,8 +87,6 @@ class Record extends Model implements Contract, Resourceable
 
     /**
      * Get the target for the record.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function target(): MorphTo
     {
@@ -103,8 +95,6 @@ class Record extends Model implements Contract, Resourceable
 
     /**
      * Get the resource representation of the model.
-     *
-     * @return \Cone\Root\Resources\RecordResource
      */
     public static function toResource(): RecordResource
     {

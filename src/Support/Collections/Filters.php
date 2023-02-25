@@ -11,9 +11,6 @@ class Filters extends Collection
 {
     /**
      * Filter the filters that are available for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return static
      */
     public function available(RootRequest $request): static
     {
@@ -22,10 +19,6 @@ class Filters extends Collection
 
     /**
      * Apply the filters on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(RootRequest $request, Builder $query): Builder
     {
@@ -40,9 +33,6 @@ class Filters extends Collection
 
     /**
      * Map the filters to form.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Support\Collection
      */
     public function mapToForm(RootRequest $request): Collection
     {
@@ -51,10 +41,6 @@ class Filters extends Collection
 
     /**
      * Map the filters into their query representation.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return array
      */
     public function mapToQuery(RootRequest $request, Builder $query): array
     {

@@ -15,7 +15,8 @@ class MetaTest extends TestCase
     {
         parent::setUp();
 
-        $this->model = new class(Medium::factory()->make()->toArray()) extends Medium {
+        $this->model = new class(Medium::factory()->make()->toArray()) extends Medium
+        {
             use HasMeta;
         };
 

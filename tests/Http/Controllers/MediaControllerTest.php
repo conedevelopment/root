@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Queue;
 
 class MediaControllerTest extends TestCase
 {
-    protected $field, $medium;
+    protected $field;
+
+    protected $medium;
 
     public function setUp(): void
     {

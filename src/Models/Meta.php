@@ -34,8 +34,6 @@ class Meta extends Model implements Contract
 
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     public static function getProxiedInterface(): string
     {
@@ -44,8 +42,6 @@ class Meta extends Model implements Contract
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory(): Factory
     {
@@ -54,8 +50,6 @@ class Meta extends Model implements Contract
 
     /**
      * Get the metable model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function metable(): MorphTo
     {
@@ -64,8 +58,6 @@ class Meta extends Model implements Contract
 
     /**
      * Get the casts array.
-     *
-     * @return array
      */
     public function getCasts(): array
     {

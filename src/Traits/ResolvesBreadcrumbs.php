@@ -8,9 +8,6 @@ trait ResolvesBreadcrumbs
 {
     /**
      * Resolve the breadcrumbs for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function resolveBreadcrumbs(RootRequest $request): array
     {

@@ -19,17 +19,13 @@ class Json extends Field
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Fieldset';
 
     /**
      * Handle the resolving event on the field instance.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {
@@ -40,10 +36,6 @@ class Json extends Field
 
     /**
      * Register the routes using the given router.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
@@ -81,10 +73,6 @@ class Json extends Field
 
     /**
      * Get the validation representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toValidate(RootRequest $request, Model $model): array
     {

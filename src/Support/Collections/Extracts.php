@@ -10,9 +10,6 @@ class Extracts extends Collection
 {
     /**
      * Filter the extracts that are available for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return static
      */
     public function available(RootRequest $request): static
     {
@@ -21,10 +18,6 @@ class Extracts extends Collection
 
     /**
      * Register the extract routes.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {

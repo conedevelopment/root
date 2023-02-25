@@ -17,32 +17,21 @@ abstract class Filter implements Arrayable
 
     /**
      * The Vue component.
-     *
-     * @var string|null
      */
     protected ?string $component = 'Select';
 
     /**
      * Indicates if multiple options can be selected.
-     *
-     * @var bool
      */
     protected bool $multiple = false;
 
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     abstract public function apply(RootRequest $request, Builder $query, mixed $value): Builder;
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -51,8 +40,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Get the name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -61,8 +48,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Get the Vue component.
-     *
-     * @return string|null
      */
     public function getComponent(): ?string
     {
@@ -71,9 +56,6 @@ abstract class Filter implements Arrayable
 
     /**
      * The default value of the filter.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return mixed
      */
     public function default(RootRequest $request): mixed
     {
@@ -84,9 +66,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Determine if the filter is active.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return bool
      */
     public function active(RootRequest $request): bool
     {
@@ -95,8 +74,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Determine if the filter is functional.
-     *
-     * @return bool
      */
     public function functional(): bool
     {
@@ -105,9 +82,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Get the filter options.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function options(RootRequest $request): array
     {
@@ -117,7 +91,6 @@ abstract class Filter implements Arrayable
     /**
      * Set the multiple attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function multiple(bool $value = true): static
@@ -129,8 +102,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -143,9 +114,6 @@ abstract class Filter implements Arrayable
 
     /**
      * Get the input representation of the filter.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function toInput(RootRequest $request): array
     {

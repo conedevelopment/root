@@ -9,36 +9,31 @@ use Stringable;
 class Alert implements Arrayable, Jsonable, Stringable
 {
     public const INFO = 'info';
+
     public const SUCCESS = 'success';
+
     public const ERROR = 'danger';
+
     public const WARNING = 'warning';
 
     /**
      * The alert message.
-     *
-     * @var string
      */
     protected string $message;
 
     /**
      * The alert type.
-     *
-     * @var string
      */
     protected string $type;
 
     /**
      * The alert timestamp.
-     *
-     * @var string
      */
     protected string $timestamp;
 
     /**
      * Create a new alert instance.
      *
-     * @param  string  $message
-     * @param  string  $type
      * @return void
      */
     public function __construct(string $message, string $type)
@@ -50,9 +45,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Make a new info alert instance.
-     *
-     * @param  string  $message
-     * @return static
      */
     public static function info(string $message): static
     {
@@ -61,9 +53,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Make a new success alert instance.
-     *
-     * @param  string  $message
-     * @return static
      */
     public static function success(string $message): static
     {
@@ -72,9 +61,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Make a new error alert instance.
-     *
-     * @param  string  $message
-     * @return static
      */
     public static function error(string $message): static
     {
@@ -83,9 +69,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Make a new warning alert instance.
-     *
-     * @param  string  $message
-     * @return static
      */
     public static function warning(string $message): static
     {
@@ -94,8 +77,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Get the array representation of the object.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -110,7 +91,6 @@ class Alert implements Arrayable, Jsonable, Stringable
      * Get the JSON representation of the object.
      *
      * @param  int  $options
-     * @return string
      */
     public function toJson($options = 0): string
     {
@@ -119,8 +99,6 @@ class Alert implements Arrayable, Jsonable, Stringable
 
     /**
      * Get the string representation of the object.
-     *
-     * @return string
      */
     public function __toString(): string
     {

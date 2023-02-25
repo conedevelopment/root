@@ -11,10 +11,10 @@ class FilterMakeTest extends TestCase
     public function a_filter_make_command_creates_filter()
     {
         $this->artisan('root:filter', [
-                'name' => 'TestFilter',
-                '--component' => 'test',
-                '--multiple' => true,
-            ])
+            'name' => 'TestFilter',
+            '--component' => 'test',
+            '--multiple' => true,
+        ])
             ->assertExitCode(Command::SUCCESS);
 
         $this->assertFileExists($this->app->path('/Root/Filters/TestFilter.php'));

@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Search;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Http\Requests\ResourceRequest;
@@ -18,36 +17,26 @@ class Media extends MorphToMany
 {
     /**
      * The searchable columns.
-     *
-     * @var array
      */
     protected array $searchableColumns = ['file_name'];
 
     /**
      * Indicates if the component is async.
-     *
-     * @var bool
      */
     protected bool $async = true;
 
     /**
      * Indicates if multiple items can be selected.
-     *
-     * @var bool
      */
     protected bool $multiple = true;
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Media';
 
     /**
      * The storing resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $storingResolver = null;
 
@@ -62,7 +51,6 @@ class Media extends MorphToMany
     /**
      * Set the multiple attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function multiple(bool $value = true): static
@@ -93,7 +81,6 @@ class Media extends MorphToMany
     /**
      * Set the storing resolver callback.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function storeUsing(Closure $callback): static
@@ -105,10 +92,6 @@ class Media extends MorphToMany
 
     /**
      * Store the file using the given path and request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $path
-     * @return \Cone\Root\Models\Medium
      */
     public function store(RootRequest $request, string $path): Medium
     {
@@ -212,11 +195,6 @@ class Media extends MorphToMany
 
     /**
      * Map the pivot values.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return array
      */
     protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
     {
@@ -260,10 +238,6 @@ class Media extends MorphToMany
 
     /**
      * Map the items.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function mapItems(ResourceRequest $request, Model $model): array
     {

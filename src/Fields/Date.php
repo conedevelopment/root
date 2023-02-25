@@ -11,37 +11,27 @@ class Date extends Field
 {
     /**
      * The date format.
-     *
-     * @var string
      */
     protected string $format = 'Y-m-d';
 
     /**
      * The timezone.
-     *
-     * @var string|null
      */
     protected ?string $timezone = null;
 
     /**
      * Indicates if the field should include time.
-     *
-     * @var bool
      */
     protected bool $withTime = false;
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'DateTime';
 
     /**
      * Create a new field instance.
      *
-     * @param  string  $label
-     * @param  string|null  $name
      * @return void
      */
     public function __construct(string $label, ?string $name = null)
@@ -54,7 +44,6 @@ class Date extends Field
     /**
      * Set the "min" attribute.
      *
-     * @param  \DateTimeInterface|string  $value
      * @return $this
      */
     public function min(string|DateTimeInterface $value): static
@@ -65,7 +54,6 @@ class Date extends Field
     /**
      * Set the "max" attribute.
      *
-     * @param  \DateTimeInterface|string  $value
      * @return $this
      */
     public function max(string|DateTimeInterface $value): static
@@ -76,7 +64,6 @@ class Date extends Field
     /**
      * Set the with time attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function withTime(bool $value = true): static
@@ -91,7 +78,6 @@ class Date extends Field
     /**
      * Set the timezone.
      *
-     * @param  string|null  $value
      * @return $this
      */
     public function timezone(?string $value = null): static
@@ -117,10 +103,6 @@ class Date extends Field
 
     /**
      * Get the input representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toInput(RootRequest $request, Model $model): array
     {

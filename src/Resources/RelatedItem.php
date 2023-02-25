@@ -8,9 +8,6 @@ class RelatedItem extends Item
 {
     /**
      * Map the URL for the model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return string
      */
     protected function mapUrl(ResourceRequest $request): string
     {

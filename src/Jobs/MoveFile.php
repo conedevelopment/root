@@ -22,22 +22,16 @@ class MoveFile implements ShouldQueue
 
     /**
      * The medium instance.
-     *
-     * @var \Cone\Root\Models\Medium
      */
     public Medium $medium;
 
     /**
      * The path to the file.
-     *
-     * @var string
      */
     public string $path;
 
     /**
      * Indicates if the original file should be preserved.
-     *
-     * @var bool
      */
     public bool $preserve = true;
 
@@ -51,9 +45,6 @@ class MoveFile implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \Cone\Root\Models\Medium  $medium
-     * @param  string  $path
-     * @param  bool  $preserve
      * @return void
      */
     public function __construct(Medium $medium, string $path, bool $preserve = true)
@@ -65,8 +56,6 @@ class MoveFile implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -85,13 +74,9 @@ class MoveFile implements ShouldQueue
 
     /**
      * Handle a job failure.
-     *
-     * @param  \Throwable  $exception
-     * @return void
      */
     public function failed(Throwable $exception): void
     {
         $this->medium->delete();
     }
 }
-

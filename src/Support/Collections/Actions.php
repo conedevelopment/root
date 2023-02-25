@@ -13,9 +13,7 @@ class Actions extends Collection
     /**
      * Filter the actions that are available for the given request.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  array  ...$parameters
-     * @return static
      */
     public function available(RootRequest $request, ...$parameters): static
     {
@@ -27,10 +25,6 @@ class Actions extends Collection
 
     /**
      * Map the actions to form.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Support\Collection
      */
     public function mapToForm(RootRequest $request, Model $model): Collection
     {
@@ -39,10 +33,6 @@ class Actions extends Collection
 
     /**
      * Register the action routes.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {

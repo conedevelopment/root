@@ -15,22 +15,17 @@ class Sort extends Filter
 {
     /**
      * The sortable fields.
-     *
-     * @var \Cone\Root\Support\Collections\Fields
      */
     protected Fields $fields;
 
     /**
      * The Vue component.
-     *
-     * @var string|null
      */
     protected ?string $component = null;
 
     /**
      * Create a new filter instance.
      *
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return void
      */
     public function __construct(Fields $fields)
@@ -40,11 +35,6 @@ class Sort extends Filter
 
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
@@ -81,9 +71,6 @@ class Sort extends Filter
 
     /**
      * The default value of the filter.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return mixed
      */
     public function default(RootRequest $request): mixed
     {
@@ -95,8 +82,6 @@ class Sort extends Filter
 
     /**
      * Map the sortable columns.
-     *
-     * @return array
      */
     protected function mapColumns(): array
     {

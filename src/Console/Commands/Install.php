@@ -26,8 +26,6 @@ class Install extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -48,8 +46,6 @@ class Install extends Command
 
     /**
      * Register the Root service provider in the application configuration file.
-     *
-     * @return void
      */
     protected function registerRootServiceProvider(): void
     {
@@ -71,13 +67,13 @@ class Install extends Command
         ));
 
         file_put_contents($this->laravel->path('Providers/RootServiceProvider.php'), str_replace(
-            ["namespace App\\Providers;", "use App\\Models\\User;"],
+            ['namespace App\\Providers;', 'use App\\Models\\User;'],
             ["namespace {$namespace}\\Providers;", "use {$namespace}\\Models\\User;"],
             file_get_contents($this->laravel->path('Providers/RootServiceProvider.php'))
         ));
 
         file_put_contents($this->laravel->path('Root/Resources/UserResource.php'), str_replace(
-            "namespace App\\Root\\Resources;",
+            'namespace App\\Root\\Resources;',
             "namespace {$namespace}\\Root\\Resources;",
             file_get_contents($this->laravel->path('Root/Resources/UserResource.php'))
         ));

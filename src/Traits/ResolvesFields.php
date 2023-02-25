@@ -11,23 +11,16 @@ trait ResolvesFields
 {
     /**
      * The fields resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $fieldsResolver = null;
 
     /**
      * The resolved fields.
-     *
-     * @var \Cone\Root\Support\Collections\Fields|null
      */
     protected ?Fields $resolvedFields = null;
 
     /**
      * Define the fields for the object.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function fields(RootRequest $request): array
     {
@@ -37,7 +30,6 @@ trait ResolvesFields
     /**
      * Set the fields resolver.
      *
-     * @param  array|\Closure  $fields
      * @return $this
      */
     public function withFields(array|Closure $fields): static
@@ -55,9 +47,6 @@ trait ResolvesFields
 
     /**
      * Resolve the fields.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Cone\Root\Support\Collections\Fields
      */
     public function resolveFields(RootRequest $request): Fields
     {
@@ -78,10 +67,6 @@ trait ResolvesFields
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {

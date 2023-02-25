@@ -43,15 +43,11 @@ abstract class Extract implements Arrayable
 
     /**
      * The query resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -60,8 +56,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Get the name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -71,7 +65,6 @@ abstract class Extract implements Arrayable
     /**
      * Set the query resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function withQuery(Closure $callback): static
@@ -84,8 +77,6 @@ abstract class Extract implements Arrayable
     /**
      * Resolve the query for the extract.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      *
      * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
@@ -100,9 +91,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Define the filters for the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function filters(RootRequest $request): array
     {
@@ -120,10 +108,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {
@@ -134,10 +118,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Handle the resolving event on the filter instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Filters\Filter  $filter
-     * @return void
      */
     protected function resolveFilter(RootRequest $request, Filter $filter): void
     {
@@ -148,10 +128,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Handle the resolving event on the action instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Actions\Action  $action
-     * @return void
      */
     protected function resolveAction(RootRequest $request, Action $action): void
     {
@@ -166,10 +142,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Handle the resolving event on the widget instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Widgets\Widget  $widget
-     * @return void
      */
     protected function resolveWidget(RootRequest $request, Widget $widget): void
     {
@@ -180,9 +152,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Map the items.
-     *
-     * @param  \Cone\Root\Http\Requests\ExtractRequest  $request
-     * @return array
      */
     public function mapItems(ExtractRequest $request): array
     {
@@ -209,10 +178,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Register the routes using the given router.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
@@ -227,9 +192,6 @@ abstract class Extract implements Arrayable
 
     /**
      * The routes that should be registered.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function routes(Router $router): void
     {
@@ -238,9 +200,6 @@ abstract class Extract implements Arrayable
 
     /**
      * Resolve the breadcrumbs for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function resolveBreadcrumbs(RootRequest $request): array
     {
@@ -252,23 +211,18 @@ abstract class Extract implements Arrayable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
         return [
-           'key' => $this->getKey(),
-           'name' => $this->getName(),
-           'url' => $this->getUri(),
+            'key' => $this->getKey(),
+            'name' => $this->getName(),
+            'url' => $this->getUri(),
         ];
     }
 
     /**
      * Get the index representation of the extract.
-     *
-     * @param  \Cone\Root\Http\Requests\ExtractRequest  $request
-     * @return array
      */
     public function toIndex(ExtractRequest $request): array
     {

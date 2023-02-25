@@ -11,9 +11,9 @@ class FieldMakeTest extends TestCase
     public function a_field_make_command_creates_field()
     {
         $this->artisan('root:field', [
-                'name' => 'TestField',
-                '--component' => 'foo',
-            ])
+            'name' => 'TestField',
+            '--component' => 'foo',
+        ])
             ->assertExitCode(Command::SUCCESS);
 
         $this->assertFileExists($this->app->path('/Root/Fields/TestField.php'));

@@ -35,8 +35,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     public static function getProxiedInterface(): string
     {
@@ -45,8 +43,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory(): Factory
     {
@@ -55,9 +51,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Create a new Eloquent query for the given Root request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function rootQuery(RootRequest $request): Builder
     {
@@ -66,8 +59,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the formatted type attribute.
-     *
-     * @return string|null
      */
     public function getFormattedTypeAttribute(): ?string
     {
@@ -76,8 +67,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the title attribute.
-     *
-     * @return string|null
      */
     public function getTitleAttribute(): ?string
     {
@@ -86,8 +75,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the content attribute.
-     *
-     * @return string|null
      */
     public function getContentAttribute(): ?string
     {
@@ -96,8 +83,6 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the formatted created at attribute.
-     *
-     * @return string|null
      */
     public function getFormattedCreatedAtAttribute(): ?string
     {

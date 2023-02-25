@@ -8,8 +8,6 @@ class ExtractRequest extends ResourceRequest
 {
     /**
      * Get the extract bound to the request.
-     *
-     * @return \Cone\Root\Extracts\Extract
      */
     public function extract(): Extract
     {

@@ -9,10 +9,6 @@ trait Filterable
 {
     /**
      * Apply all the relevant filters on the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter(Builder $query, Request $request): Builder
     {

@@ -10,11 +10,6 @@ class TrashStatus extends Filter
 {
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
@@ -34,9 +29,6 @@ class TrashStatus extends Filter
 
     /**
      * Get the filter options.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function options(RootRequest $request): array
     {

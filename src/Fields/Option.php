@@ -14,8 +14,6 @@ class Option implements Arrayable
     /**
      * Create a new option instance.
      *
-     * @param  string  $label
-     * @param  string  $value
      * @return void
      */
     public function __construct(string $label, string $value)
@@ -29,7 +27,6 @@ class Option implements Arrayable
     /**
      * Set the disabled attribute.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function disabled(bool $value = true): static

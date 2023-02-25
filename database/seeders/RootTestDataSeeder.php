@@ -12,8 +12,6 @@ class RootTestDataSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @return void
      */
     public function run(): void
     {
@@ -23,8 +21,6 @@ class RootTestDataSeeder extends Seeder
 
     /**
      * Seed the user models.
-     *
-     * @return void
      */
     protected function seedUsers(): void
     {
@@ -36,8 +32,6 @@ class RootTestDataSeeder extends Seeder
 
     /**
      * Seed the media models.
-     *
-     * @return void
      */
     protected function seedMedia(): void
     {

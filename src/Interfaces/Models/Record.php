@@ -9,15 +9,11 @@ interface Record
 {
     /**
      * Get the user for the record.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo;
 
     /**
      * Get the target for the record.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function target(): MorphTo;
 }

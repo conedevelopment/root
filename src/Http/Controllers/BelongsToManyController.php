@@ -17,10 +17,6 @@ class BelongsToManyController extends HasOneOrManyController
 {
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateRequest $request, Model $model): RedirectResponse
     {
@@ -50,11 +46,6 @@ class BelongsToManyController extends HasOneOrManyController
 
     /**
      * Display the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Inertia\Response
      */
     public function show(ShowRequest $request, Model $model, Model $related): Response
     {
@@ -68,11 +59,6 @@ class BelongsToManyController extends HasOneOrManyController
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Inertia\Response
      */
     public function edit(UpdateRequest $request, Model $model, Model $related): Response
     {
@@ -86,11 +72,6 @@ class BelongsToManyController extends HasOneOrManyController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
     {
@@ -114,11 +95,6 @@ class BelongsToManyController extends HasOneOrManyController
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
     {

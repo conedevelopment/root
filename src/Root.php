@@ -19,16 +19,11 @@ abstract class Root
 
     /**
      * The registered callbacks.
-     *
-     * @var array
      */
     protected static array $callbacks = [];
 
     /**
      * Determine if Root should run on the given request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
     public static function shouldRun(Request $request): bool
     {
@@ -44,9 +39,6 @@ abstract class Root
 
     /**
      * Run Root and call the registered callbacks.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
      */
     public static function run(Request $request): void
     {
@@ -57,9 +49,6 @@ abstract class Root
 
     /**
      * Register a callback when Root is running.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
     public static function running(Closure $callback): void
     {
@@ -68,9 +57,6 @@ abstract class Root
 
     /**
      * Register the root routes.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
     public static function routes(Closure $callback): void
     {
@@ -83,8 +69,6 @@ abstract class Root
 
     /**
      * Get the Root URI path.
-     *
-     * @return string
      */
     public static function getPath(): string
     {
@@ -93,8 +77,6 @@ abstract class Root
 
     /**
      * Get the Root domain.
-     *
-     * @return string
      */
     public static function getDomain(): string
     {

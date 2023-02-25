@@ -16,7 +16,6 @@ use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
-use Cone\Root\Resources\Item;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
@@ -50,36 +49,27 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * The model class.
-     *
-     * @var string
      */
     protected string $model;
 
     /**
      * The relations to eager load on every query.
-     *
-     * @var array
      */
     protected array $with = [];
 
     /**
      * The relations to eager load on every query.
-     *
-     * @var array
      */
     protected array $withCount = [];
 
     /**
      * The icon for the resource.
-     *
-     * @var string
      */
     protected string $icon = 'inventory-2';
 
     /**
      * Create a new resource instance.
      *
-     * @param  string  $model
      * @return void
      */
     public function __construct(string $model)
@@ -89,8 +79,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the model for the resource.
-     *
-     * @return string
      */
     public function getModel(): string
     {
@@ -99,8 +87,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -109,8 +95,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the route key name.
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -119,8 +103,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the URI of the resource.
-     *
-     * @return string
      */
     public function getUri(): string
     {
@@ -129,8 +111,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -139,8 +119,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the model name.
-     *
-     * @return string
      */
     public function getModelName(): string
     {
@@ -149,8 +127,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the model instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModelInstance(): Model
     {
@@ -160,7 +136,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Set the resource icon.
      *
-     * @param  string  $icon
      * @return $this
      */
     public function icon(string $icon): static
@@ -172,8 +147,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the resource icon.
-     *
-     * @return string
      */
     public function getIcon(): string
     {
@@ -183,7 +156,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Set the relations to eagerload.
      *
-     * @param  array  $relations
      * @return $this
      */
     public function with(array $relations): static
@@ -196,7 +168,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Set the relation counts to eagerload.
      *
-     * @param  array  $relations
      * @return $this
      */
     public function withCount(array $relations): static
@@ -208,8 +179,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Make a new Eloquent query instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(): Builder
     {
@@ -218,9 +187,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Resolve the query for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function resolveQuery(ResourceRequest $request): Builder
     {
@@ -231,8 +197,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * Resolve the resource model for a bound value.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
@@ -245,9 +209,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Define the filters for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function filters(RootRequest $request): array
     {
@@ -265,10 +226,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {
@@ -279,10 +236,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resolving event on the filter instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Filters\Filter  $filter
-     * @return void
      */
     protected function resolveFilter(RootRequest $request, Filter $filter): void
     {
@@ -293,10 +246,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resolving event on the action instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Actions\Action  $action
-     * @return void
      */
     protected function resolveAction(RootRequest $request, Action $action): void
     {
@@ -311,10 +260,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resolving event on the extract instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Extracts\Extract  $extract
-     * @return void
      */
     protected function resolveExtract(RootRequest $request, Extract $extract): void
     {
@@ -327,10 +272,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resolving event on the widget instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Widgets\Widget  $widget
-     * @return void
      */
     protected function resolveWidget(RootRequest $request, Widget $widget): void
     {
@@ -341,9 +282,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Map the URLs.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function mapUrls(RootRequest $request): array
     {
@@ -355,9 +293,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Map the items.
-     *
-     * @param \Cone\Root\Http\Requests\IndexRequest  $request
-     * @return array
      */
     public function mapItems(IndexRequest $request): array
     {
@@ -384,10 +319,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Map the related model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Cone\Root\Resources\Item
      */
     public function mapItem(ResourceRequest $request, Model $model): Item
     {
@@ -396,8 +327,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the mappable abilities.
-     *
-     * @return array
      */
     public function getAbilities(): array
     {
@@ -406,10 +335,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the created event.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
      */
     public function created(CreateRequest $request, Model $model): void
     {
@@ -418,10 +343,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the updated event.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
      */
     public function updated(UpdateRequest $request, Model $model): void
     {
@@ -430,10 +351,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the deleted event.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
      */
     public function deleted(ResourceRequest $request, Model $model): void
     {
@@ -442,10 +359,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the restored event.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
      */
     public function restored(ResourceRequest $request, Model $model): void
     {
@@ -454,8 +367,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Determine if the model soft deletable.
-     *
-     * @return bool
      */
     public function isSoftDeletable(): bool
     {
@@ -464,9 +375,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Resolve the breadcrumbs for the given request.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function resolveBreadcrumbs(RootRequest $request): array
     {
@@ -494,8 +402,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -515,7 +421,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      * Convert the object to its JSON representation.
      *
      * @param  int  $options
-     * @return string
      */
     public function toJson($options = 0): string
     {
@@ -524,8 +429,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Serialize the object as JSON.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {
@@ -534,9 +437,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the index representation of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\IndexRequest  $request
-     * @return array
      */
     public function toIndex(IndexRequest $request): array
     {
@@ -557,9 +457,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the create representation of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @return array
      */
     public function toCreate(CreateRequest $request): array
     {
@@ -577,10 +474,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the show representation of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toShow(ShowRequest $request, Model $model): array
     {
@@ -598,10 +491,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the edit representation of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toEdit(UpdateRequest $request, Model $model): array
     {
@@ -617,9 +506,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle the resource registered event.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return void
      */
     public function registered(RootRequest $request): void
     {
@@ -639,9 +525,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Register the routes for the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return void
      */
     protected function registerRoutes(RootRequest $request): void
     {
@@ -664,9 +547,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * The routes that should be registered.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function routes(Router $router): void
     {
@@ -685,9 +565,6 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
 
     /**
      * Wrap the given routes into the route group.
-     *
-     * @param  \Closure  $callback
-     * @return void
      */
     public function routeGroup(Closure $callback): void
     {

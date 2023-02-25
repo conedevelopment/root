@@ -12,22 +12,17 @@ class Search extends Filter
 {
     /**
      * The searchable fields.
-     *
-     * @var \Cone\Root\Support\Collections\Fields
      */
     protected Fields $fields;
 
     /**
      * The Vue component.
-     *
-     * @var string|null
      */
     protected ?string $component = 'Input';
 
     /**
      * Create a new filter instance.
      *
-     * @param  \Cone\Root\Support\Collections\Fields  $fields
      * @return void
      */
     public function __construct(Fields $fields)
@@ -37,11 +32,6 @@ class Search extends Filter
 
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(RootRequest $request, Builder $query, mixed $value): Builder
     {
@@ -74,8 +64,6 @@ class Search extends Filter
 
     /**
      * Map the searchable columns.
-     *
-     * @return array
      */
     protected function mapColumns(): array
     {

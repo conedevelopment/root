@@ -15,8 +15,6 @@ class Conversion extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
     protected static function getFacadeAccessor(): string
     {
@@ -25,10 +23,6 @@ class Conversion extends Facade
 
     /**
      * Register a new conversion.
-     *
-     * @param  string  $name
-     * @param  \Closure  $callback
-     * @return void
      */
     public static function register(string $name, Closure $callback): void
     {
@@ -37,9 +31,6 @@ class Conversion extends Facade
 
     /**
      * Remove the given conversion.
-     *
-     * @param  string  $name
-     * @return void
      */
     public static function remove(string $name): void
     {
@@ -48,8 +39,6 @@ class Conversion extends Facade
 
     /**
      * Get all the registered conversions.
-     *
-     * @return array
      */
     public static function all(): array
     {

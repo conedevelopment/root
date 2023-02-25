@@ -11,9 +11,6 @@ class NotificationsController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index(RootRequest $request): JsonResponse
     {
@@ -31,10 +28,6 @@ class NotificationsController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show(RootRequest $request, string $id): JsonResponse
     {
@@ -45,10 +38,6 @@ class NotificationsController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(RootRequest $request, string $id): JsonResponse
     {
@@ -61,10 +50,6 @@ class NotificationsController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(RootRequest $request, string $id): JsonResponse
     {

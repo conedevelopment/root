@@ -13,8 +13,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -25,8 +23,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -37,8 +33,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * Register the resources.
-     *
-     * @return void
      */
     protected function registerResources(): void
     {
@@ -51,8 +45,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * Register the routes.
-     *
-     * @return void
      */
     protected function registerRoutes(): void
     {
@@ -67,8 +59,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * Register the default authorization gate.
-     *
-     * @return void
      */
     protected function gate(): void
     {
@@ -79,8 +69,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * The resources.
-     *
-     * @return array
      */
     protected function resources(): array
     {
@@ -89,8 +77,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
     /**
      * The dashboard widgets.
-     *
-     * @return array
      */
     protected function widgets(): array
     {

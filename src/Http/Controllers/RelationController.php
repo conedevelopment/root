@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -12,10 +11,6 @@ class RelationController extends Controller
 {
     /**
      * Handle the incoming request.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-     * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(ResourceRequest $request, Model $model = null): JsonResponse
     {

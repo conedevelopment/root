@@ -12,8 +12,6 @@ class Image
 {
     /**
      * The medium instance.
-     *
-     * @var \Cone\Root\Models\Medium
      */
     protected Medium $medium;
 
@@ -26,22 +24,16 @@ class Image
 
     /**
      * The file type.
-     *
-     * @var int
      */
     protected int $type;
 
     /**
      * The resource.
-     *
-     * @var \GdImage
      */
     protected GdImage $resource;
 
     /**
      * The attributes.
-     *
-     * @var array
      */
     protected array $attributes = [
         'height' => 0,
@@ -52,7 +44,6 @@ class Image
     /**
      * Create a new image instance.
      *
-     * @param  \Cone\Root\Models\Medium  $medium
      * @return void
      */
     public function __construct(Medium $medium)
@@ -68,8 +59,6 @@ class Image
 
     /**
      * Get the image path.
-     *
-     * @return string
      */
     public function getPath(): string
     {
@@ -79,7 +68,6 @@ class Image
     /**
      * Set the width of the image.
      *
-     * @param  int  $width
      * @return $this
      */
     public function setWidth(int $width): Image
@@ -92,7 +80,6 @@ class Image
     /**
      * Set the height of the image.
      *
-     * @param  int  $height
      * @return $this
      */
     public function setHeight(int $height): Image
@@ -105,7 +92,6 @@ class Image
     /**
      * Set the quality of the image.
      *
-     * @param  int  $quality
      * @return $this
      */
     public function setQuality(int $quality): Image
@@ -118,8 +104,6 @@ class Image
     /**
      * Crop the image.
      *
-     * @param  int|null  $width
-     * @param  int|null  $height
      * @return $this
      */
     public function crop(?int $width = null, ?int $height = null): Image
@@ -132,9 +116,6 @@ class Image
     /**
      * Resize the image.
      *
-     * @param  int|null  $width
-     * @param  int|null  $height
-     * @param  bool  $crop
      * @return $this
      */
     public function resize(?int $width = null, ?int $height = null, bool $crop = false): static
@@ -180,7 +161,6 @@ class Image
     /**
      * Save the resource.
      *
-     * @return void
      *
      * @throws \Exception
      */
@@ -204,37 +184,34 @@ class Image
         }
     }
 
-    /**
-     * Create the resource.
-     *
-     * @return void
-     *
-     * @throws \Exception
-     */
+     /**
+      * Create the resource.
+      *
+      *
+      * @throws \Exception
+      */
      protected function create(): void
-    {
-        switch ($this->type) {
-            case IMAGETYPE_GIF:
-                $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_JPEG:
-                $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_PNG:
-                $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_WEBP:
-                $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
-                break;
-            default:
-                throw new Exception("The file type [{$this->type}] is not supported.");
-        }
-    }
+     {
+         switch ($this->type) {
+             case IMAGETYPE_GIF:
+                 $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
+                 break;
+             case IMAGETYPE_JPEG:
+                 $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
+                 break;
+             case IMAGETYPE_PNG:
+                 $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
+                 break;
+             case IMAGETYPE_WEBP:
+                 $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
+                 break;
+             default:
+                 throw new Exception("The file type [{$this->type}] is not supported.");
+         }
+     }
 
     /**
      * Destroy the resource.
-     *
-     * @return void
      */
     public function destroy(): void
     {

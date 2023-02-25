@@ -9,8 +9,6 @@ class Number extends Field
     /**
      * Create a new field instance.
      *
-     * @param  string  $label
-     * @param  string|null  $name
      * @return void
      */
     public function __construct(string $label, ?string $name = null)
@@ -23,7 +21,6 @@ class Number extends Field
     /**
      * Set the "min" attribute.
      *
-     * @param  int|float|\Closure  $value
      * @return $this
      */
     public function min(int|float|Closure $value): static
@@ -34,7 +31,6 @@ class Number extends Field
     /**
      * Set the "max" attribute.
      *
-     * @param  int|float|\Closure  $value
      * @return $this
      */
     public function max(int|float|Closure $value): static
@@ -45,7 +41,6 @@ class Number extends Field
     /**
      * Set the "step" attribute.
      *
-     * @param  int|float|\Closure  $value
      * @return $this
      */
     public function step(int|float|Closure $value): static

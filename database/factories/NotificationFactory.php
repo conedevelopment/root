@@ -17,8 +17,6 @@ class NotificationFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
     public function definition(): array
     {
@@ -36,7 +34,7 @@ class NotificationFactory extends Factory
      *
      * @return \Cone\Root\Database\Factories\NotificationFactory
      */
-    public function read(): self
+    public function read(): static
     {
         return $this->state(function (array $attributes): array {
             return [

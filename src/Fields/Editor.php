@@ -20,31 +20,21 @@ class Editor extends Field
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Editor';
 
     /**
      * The media field instance.
-     *
-     * @var \Cone\Root\Fields\Media|null
      */
     protected ?Media $media = null;
 
     /**
      * The editor config.
-     *
-     * @var array
      */
     protected array $config = [];
 
     /**
      * Create a new field instance.
-     *
-     * @param  string  $label
-     * @param  string|null  $name
-     * @return void
      */
     public function __construct(string $label, ?string $name = null)
     {
@@ -56,9 +46,6 @@ class Editor extends Field
 
     /**
      * Set the height style attribute.
-     *
-     * @param  string  $value
-     * @return $this
      */
     public function height(string $value): static
     {
@@ -67,9 +54,6 @@ class Editor extends Field
 
     /**
      * Set the configuration.
-     *
-     * @param  \Closure  $callback
-     * @return $this
      */
     public function withConfig(Closure $callback): static
     {
@@ -80,8 +64,6 @@ class Editor extends Field
 
     /**
      * Get the editor configuration.
-     *
-     * @return array
      */
     public function getConfig(): array
     {
@@ -90,9 +72,6 @@ class Editor extends Field
 
     /**
      * Configure the media field.
-     *
-     * @param  \Closure|null  $callback
-     * @return $this
      */
     public function withMedia(?Closure $callback = null): static
     {
@@ -120,8 +99,6 @@ class Editor extends Field
 
     /**
      * Get the media field.
-     *
-     * @return \Cone\Root\Fields\Media|null
      */
     public function getMedia(): ?Media
     {
@@ -130,10 +107,6 @@ class Editor extends Field
 
     /**
      * Register the routes using the given router.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
@@ -148,10 +121,6 @@ class Editor extends Field
 
     /**
      * Get the input representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toInput(RootRequest $request, Model $model): array
     {

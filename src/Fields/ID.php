@@ -6,16 +6,12 @@ class ID extends Field
 {
     /**
      * Indicates if the field is UUID.
-     *
-     * @var bool
      */
     protected bool $uuid = false;
 
     /**
      * Create a new field instance.
      *
-     * @param  string  $label
-     * @param  string|null  $name
      * @return void
      */
     public function __construct(string $label = 'ID', ?string $name = null)
@@ -28,7 +24,6 @@ class ID extends Field
     /**
      * Mark the field as UUID.
      *
-     * @param  bool  $value
      * @return $this
      */
     public function uuid(bool $value = true): static
@@ -40,8 +35,6 @@ class ID extends Field
 
     /**
      * Determine if the field is UUID.
-     *
-     * @return bool
      */
     public function isUuid(): bool
     {

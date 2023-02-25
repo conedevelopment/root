@@ -25,8 +25,6 @@ class Publish extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -43,8 +41,6 @@ class Publish extends Command
 
     /**
      * Update the "packages.json" file.
-     *
-     * @return void
      */
     protected function packages(): void
     {

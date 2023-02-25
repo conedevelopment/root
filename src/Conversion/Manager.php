@@ -10,8 +10,6 @@ class Manager extends BaseManager implements Contract
 {
     /**
      * The registered conversions.
-     *
-     * @var array
      */
     protected array $conversions = [];
 
@@ -25,10 +23,6 @@ class Manager extends BaseManager implements Contract
 
     /**
      * Register a new conversion.
-     *
-     * @param  string  $name
-     * @param  \Closure  $callback
-     * @return void
      */
     public function registerConversion(string $name, Closure $callback): void
     {
@@ -37,9 +31,6 @@ class Manager extends BaseManager implements Contract
 
     /**
      * Remove the given conversion.
-     *
-     * @param  string  $name
-     * @return void
      */
     public function removeConversion(string $name): void
     {
@@ -48,8 +39,6 @@ class Manager extends BaseManager implements Contract
 
     /**
      * Get all the registered conversions.
-     *
-     * @return array
      */
     public function getConversions(): array
     {

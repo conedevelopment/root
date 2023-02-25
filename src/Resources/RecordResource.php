@@ -11,15 +11,11 @@ class RecordResource extends Resource
 {
     /**
      * The icon for the resource.
-     *
-     * @var string
      */
     protected string $icon = 'event-note';
 
     /**
      * The relations to eager load on every query.
-     *
-     * @var array
      */
     protected array $with = [
         'user',

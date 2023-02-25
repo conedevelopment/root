@@ -92,8 +92,6 @@ class Medium extends Model implements Contract
 
     /**
      * The "booted" method of the model.
-     *
-     * @return void
      */
     protected static function booted(): void
     {
@@ -104,8 +102,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the proxied interface.
-     *
-     * @return string
      */
     public static function getProxiedInterface(): string
     {
@@ -114,8 +110,6 @@ class Medium extends Model implements Contract
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     protected static function newFactory(): Factory
     {
@@ -124,9 +118,6 @@ class Medium extends Model implements Contract
 
     /**
      * Make a new medium instance from the given path.
-     *
-     * @param  string  $path
-     * @return static
      */
     public static function makeFrom(string $path): static
     {
@@ -151,9 +142,6 @@ class Medium extends Model implements Contract
 
     /**
      * Create a new medium from the given path.
-     *
-     * @param  string  $path
-     * @return static
      */
     public static function createFrom(string $path): static
     {
@@ -166,8 +154,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the user for the medium.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -176,8 +162,6 @@ class Medium extends Model implements Contract
 
     /**
      * Determine if the file is image.
-     *
-     * @return bool
      */
     public function getIsImageAttribute(): bool
     {
@@ -186,8 +170,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the conversion URLs.
-     *
-     * @return array
      */
     public function getUrlsAttribute(): array
     {
@@ -204,8 +186,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the formatted size attribute.
-     *
-     * @return string
      */
     public function getFormattedSizeAttribute(): string
     {
@@ -222,8 +202,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the dimensions attribute.
-     *
-     * @return string|null
      */
     public function getDimensionsAttribute(): ?string
     {
@@ -236,8 +214,6 @@ class Medium extends Model implements Contract
 
     /**
      * Determine if the medium should is convertible.
-     *
-     * @return bool
      */
     public function convertible(): bool
     {
@@ -258,10 +234,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the path to the conversion.
-     *
-     * @param  string|null  $conversion
-     * @param  bool  $absolute
-     * @return string
      */
     public function getPath(?string $conversion = null, bool $absolute = false): string
     {
@@ -278,9 +250,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the full path to the conversion.
-     *
-     * @param  string|null  $conversion
-     * @return string
      */
     public function getAbsolutePath(?string $conversion = null): string
     {
@@ -289,9 +258,6 @@ class Medium extends Model implements Contract
 
     /**
      * Get the url to the conversion.
-     *
-     * @param  string|null  $conversion
-     * @return string
      */
     public function getUrl(?string $conversion = null): string
     {
@@ -300,10 +266,6 @@ class Medium extends Model implements Contract
 
     /**
      * Scope the query only to the given search term.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSearch(Builder $query, ?string $value = null): Builder
     {
@@ -316,10 +278,6 @@ class Medium extends Model implements Contract
 
     /**
      * Scope the query only to the given type.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeType(Builder $query, string $value): Builder
     {
@@ -335,10 +293,6 @@ class Medium extends Model implements Contract
 
     /**
      * Sort the query by the given order.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array|null  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSort(Builder $query, ?array $value = []): Builder
     {

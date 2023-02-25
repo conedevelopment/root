@@ -8,8 +8,6 @@ class ActionRequest extends ResourceRequest
 {
     /**
      * Get the action bound to the request.
-     *
-     * @return \Cone\Root\Actions\Action
      */
     public function action(): Action
     {

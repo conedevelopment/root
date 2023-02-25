@@ -13,23 +13,16 @@ trait RegistersRoutes
 {
     /**
      * The URI.
-     *
-     * @var string|null
      */
     protected ?string $uri = null;
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     abstract public function getKey(): string;
 
     /**
      * Set the URI attribute.
-     *
-     * @param  string  $uri
-     * @return void
      */
     public function setUri(string $uri): void
     {
@@ -38,8 +31,6 @@ trait RegistersRoutes
 
     /**
      * Get the URI attribute.
-     *
-     * @return string|null
      */
     public function getUri(): ?string
     {
@@ -48,10 +39,6 @@ trait RegistersRoutes
 
     /**
      * Register the routes using the given router.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
@@ -74,9 +61,6 @@ trait RegistersRoutes
 
     /**
      * The routes that should be registered.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function routes(Router $router): void
     {

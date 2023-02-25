@@ -9,15 +9,12 @@ trait Authorizable
 {
     /**
      * The authorization resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $authorizationResolver = null;
 
     /**
      * Merge the current and the given resolvers.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function mergeAuthorizationResolver(Closure $callback): static
@@ -37,7 +34,6 @@ trait Authorizable
     /**
      * Set the authorization resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function authorize(Closure $callback): static
@@ -50,9 +46,7 @@ trait Authorizable
     /**
      * Resolve the authorization.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  array  ...$parameters
-     * @return bool
      */
     public function authorized(RootRequest $request, ...$parameters): bool
     {

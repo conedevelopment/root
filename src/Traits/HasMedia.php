@@ -10,8 +10,6 @@ trait HasMedia
 {
     /**
      * Boot the trait.
-     *
-     * @return void
      */
     protected static function bootHasMedia(): void
     {
@@ -24,8 +22,6 @@ trait HasMedia
 
     /**
      * Get the media for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function media(): MorphToMany
     {

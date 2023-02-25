@@ -8,7 +8,6 @@ use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Facades\Resource as ResourceRegistry;
 use Cone\Root\Tests\Actions\PublishPosts;
-use Cone\Root\Tests\CreatesApplication;
 use Cone\Root\Tests\Extracts\LongPosts;
 use Cone\Root\Tests\Filters\Published;
 use Cone\Root\Tests\Widgets\PostsCount;
@@ -22,7 +21,11 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected $admin, $request, $resource;
+    protected $admin;
+
+    protected $request;
+
+    protected $resource;
 
     public function setUp(): void
     {

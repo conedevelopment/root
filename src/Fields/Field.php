@@ -24,43 +24,31 @@ abstract class Field implements Arrayable
 
     /**
      * Indicates if the field is sortable.
-     *
-     * @var bool|\Closure
      */
     protected bool|Closure $sortable = false;
 
     /**
      * Indicates if the field is searchable.
-     *
-     * @var bool|\Closure
      */
     protected bool|Closure $searchable = false;
 
     /**
      * The format resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $formatResolver = null;
 
     /**
      * The value resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $valueResolver = null;
 
     /**
      * The hydrate resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $hydrateResolver = null;
 
     /**
      * The validation rules.
-     *
-     * @var array
      */
     protected array $rules = [
         '*' => [],
@@ -70,23 +58,17 @@ abstract class Field implements Arrayable
 
     /**
      * The Vue component.
-     *
-     * @var string
      */
     protected string $component = 'Input';
 
     /**
      * The help text for the field.
-     *
-     * @var string|null
      */
     protected ?string $help = null;
 
     /**
      * Create a new field instance.
      *
-     * @param  string  $label
-     * @param  string|null  $name
      * @return void
      */
     public function __construct(string $label, ?string $name = null)
@@ -98,8 +80,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -108,8 +88,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the Vue component.
-     *
-     * @return string
      */
     public function getComponent(): string
     {
@@ -119,7 +97,6 @@ abstract class Field implements Arrayable
     /**
      * Set the label attribute.
      *
-     * @param  string|\Closure  $value
      * @return $this
      */
     public function label(string|Closure $value): static
@@ -130,7 +107,6 @@ abstract class Field implements Arrayable
     /**
      * Set the name attribute.
      *
-     * @param  string|\Closure  $value
      * @return $this
      */
     public function name(string|Closure $value): static
@@ -141,7 +117,6 @@ abstract class Field implements Arrayable
     /**
      * Set the id attribute.
      *
-     * @param  string|\Closure  $value
      * @return $this
      */
     public function id(string|Closure $value): static
@@ -152,7 +127,6 @@ abstract class Field implements Arrayable
     /**
      * Set the readonly attribute.
      *
-     * @param  bool|\Closure  $value
      * @return $this
      */
     public function readonly(bool|Closure $value = true): static
@@ -163,7 +137,6 @@ abstract class Field implements Arrayable
     /**
      * Set the disabled attribute.
      *
-     * @param  bool|\Closure  $value
      * @return $this
      */
     public function disabled(bool|Closure $value = true): static
@@ -174,7 +147,6 @@ abstract class Field implements Arrayable
     /**
      * Set the required attribute.
      *
-     * @param  bool|\Closure  $value
      * @return $this
      */
     public function required(bool|Closure $value = true): static
@@ -185,7 +157,6 @@ abstract class Field implements Arrayable
     /**
      * Set the type attribute.
      *
-     * @param  string|\Closure  $value
      * @return $this
      */
     public function type(string|Closure $value): static
@@ -196,7 +167,6 @@ abstract class Field implements Arrayable
     /**
      * Set the placeholder attribute.
      *
-     * @param  string|\Closure  $value
      * @return $this
      */
     public function placeholder(string|Closure $value): static
@@ -207,7 +177,6 @@ abstract class Field implements Arrayable
     /**
      * Set the sortable attribute.
      *
-     * @param  bool|\Closure  $value
      * @return $this
      */
     public function sortable(bool|Closure $value = true): static
@@ -219,9 +188,6 @@ abstract class Field implements Arrayable
 
     /**
      * Determine if the field is sortable.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return bool
      */
     public function isSortable(RootRequest $request): bool
     {
@@ -235,7 +201,6 @@ abstract class Field implements Arrayable
     /**
      * Set the searachable attribute.
      *
-     * @param  bool|\Closure  $value
      * @return $this
      */
     public function searchable(bool|Closure $value = true): static
@@ -247,9 +212,6 @@ abstract class Field implements Arrayable
 
     /**
      * Determine if the field is searchable.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return bool
      */
     public function isSearchable(RootRequest $request): bool
     {
@@ -263,7 +225,6 @@ abstract class Field implements Arrayable
     /**
      * Set the help attribute.
      *
-     * @param  string|null  $value
      * @return $this
      */
     public function help(?string $value = null): static
@@ -276,7 +237,6 @@ abstract class Field implements Arrayable
     /**
      * Set the value resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function value(Closure $callback): static
@@ -288,10 +248,6 @@ abstract class Field implements Arrayable
 
     /**
      * Resolve the value.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
      */
     public function resolveValue(RootRequest $request, Model $model): mixed
     {
@@ -306,10 +262,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the default value from the model.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
      */
     public function getValue(RootRequest $request, Model $model): mixed
     {
@@ -319,7 +271,6 @@ abstract class Field implements Arrayable
     /**
      * Set the format resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function format(Closure $callback): static
@@ -331,10 +282,6 @@ abstract class Field implements Arrayable
 
     /**
      * Format the value.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
      */
     public function resolveFormat(RootRequest $request, Model $model): mixed
     {
@@ -349,10 +296,6 @@ abstract class Field implements Arrayable
 
     /**
      * Persist the request value on the model.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
      */
     public function persist(RootRequest $request, Model $model): void
     {
@@ -365,10 +308,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the value for hydrating the model.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return mixed
      */
     public function getValueForHydrate(RootRequest $request, Model $model): mixed
     {
@@ -378,7 +317,6 @@ abstract class Field implements Arrayable
     /**
      * Set the hydrate resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function hydrate(Closure $callback): static
@@ -390,11 +328,6 @@ abstract class Field implements Arrayable
 
     /**
      * Hydrate the model.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
-     * @return void
      */
     public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
@@ -408,8 +341,6 @@ abstract class Field implements Arrayable
     /**
      * Set the validation rules.
      *
-     * @param  array|\Closure  $rules
-     * @param  string  $context
      * @return $this
      */
     public function rules(array|Closure $rules, string $context = '*'): static
@@ -422,7 +353,6 @@ abstract class Field implements Arrayable
     /**
      * Set the create validation rules.
      *
-     * @param  array|\Closure  $rules
      * @return $this
      */
     public function createRules(array|Closure $rules): static
@@ -433,7 +363,6 @@ abstract class Field implements Arrayable
     /**
      * Set the update validation rules.
      *
-     * @param  array|\Closure  $rules
      * @return $this
      */
     public function updateRules(array|Closure $rules): static
@@ -443,10 +372,6 @@ abstract class Field implements Arrayable
 
     /**
      * Resolve the attributes.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function resolveAttributes(RootRequest $request, Model $model): array
     {
@@ -461,11 +386,6 @@ abstract class Field implements Arrayable
 
     /**
      * Resolve the given attribute.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @return mixed
      */
     public function resolveAttribute(RootRequest $request, Model $model, string $key): mixed
     {
@@ -478,8 +398,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -488,10 +406,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the display representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toDisplay(RootRequest $request, Model $model): array
     {
@@ -505,10 +419,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the input representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toInput(RootRequest $request, Model $model): array
     {
@@ -522,10 +432,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the validation representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toValidate(RootRequest $request, Model $model): array
     {
@@ -547,10 +453,6 @@ abstract class Field implements Arrayable
 
     /**
      * Set the given attribute.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
      */
     public function __set(string $key, mixed $value): void
     {
@@ -559,9 +461,6 @@ abstract class Field implements Arrayable
 
     /**
      * Get the given attribute.
-     *
-     * @param  string  $key
-     * @return mixed
      */
     public function __get(string $key): mixed
     {
@@ -570,9 +469,6 @@ abstract class Field implements Arrayable
 
     /**
      * Determine if the given attribute exists.
-     *
-     * @param  string  $key
-     * @return bool
      */
     public function __isset(string $key): bool
     {
@@ -581,9 +477,6 @@ abstract class Field implements Arrayable
 
     /**
      * Remove the given attribute.
-     *
-     * @param  string  $key
-     * @return void
      */
     public function __unset(string $key): void
     {

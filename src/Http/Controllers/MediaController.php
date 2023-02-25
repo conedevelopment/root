@@ -14,10 +14,6 @@ class MediaController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index(ResourceRequest $request, Model $model = null): JsonResponse
     {
@@ -30,10 +26,6 @@ class MediaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ResourceRequest $request, Model $model = null): JsonResponse
     {
@@ -63,10 +55,6 @@ class MediaController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(ResourceRequest $request, Model $model = null): JsonResponse
     {

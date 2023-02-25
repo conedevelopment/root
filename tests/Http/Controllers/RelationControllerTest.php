@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests\Http\Controllers;
 
 use Cone\Root\Fields\BelongsTo;
-use Cone\Root\Fields\Text;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 

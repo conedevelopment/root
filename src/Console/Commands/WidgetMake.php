@@ -31,8 +31,6 @@ class WidgetMake extends GeneratorCommand
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
@@ -43,7 +41,6 @@ class WidgetMake extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
@@ -54,7 +51,6 @@ class WidgetMake extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      */
     protected function buildClass($name): string
     {
@@ -69,9 +65,6 @@ class WidgetMake extends GeneratorCommand
 
     /**
      * Replace the async related code.
-     *
-     * @param  string  $class
-     * @return string
      */
     protected function replaceAsync(string $class): string
     {
@@ -84,9 +77,6 @@ class WidgetMake extends GeneratorCommand
 
     /**
      * Replace the component related code.
-     *
-     * @param  string  $class
-     * @return string
      */
     protected function replaceComponent(string $class): string
     {
@@ -103,9 +93,6 @@ class WidgetMake extends GeneratorCommand
 
     /**
      * Replace the template related code.
-     *
-     * @param  string  $class
-     * @return string
      */
     protected function replaceTemplate(string $class): string
     {
@@ -116,8 +103,6 @@ class WidgetMake extends GeneratorCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
     protected function getOptions(): array
     {

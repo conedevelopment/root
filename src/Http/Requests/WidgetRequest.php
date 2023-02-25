@@ -8,8 +8,6 @@ class WidgetRequest extends RootRequest
 {
     /**
      * Get the widget bound to the request.
-     *
-     * @return \Cone\Root\Widgets\Widget
      */
     public function widget(): Widget
     {

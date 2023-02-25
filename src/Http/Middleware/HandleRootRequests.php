@@ -18,9 +18,6 @@ class HandleRootRequests extends Middleware
 
     /**
      * Defines the props that are shared by default.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     public function share(Request $request): array
     {

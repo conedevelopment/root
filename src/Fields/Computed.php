@@ -12,8 +12,6 @@ class Computed extends Field
     /**
      * Create a new field instance.
      *
-     * @param  string  $label
-     * @param  \Closure  $callback
      * @return void
      */
     public function __construct(string $label, Closure $callback)

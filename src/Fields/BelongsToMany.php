@@ -105,8 +105,6 @@ class BelongsToMany extends Relation
      * Resolve the related model for a bound value.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function resolveRouteBinding(ResourceRequest $request, string $id): Model
     {
@@ -123,11 +121,6 @@ class BelongsToMany extends Relation
 
     /**
      * Map the related model.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Cone\Root\Resources\RelatedItem
      */
     public function mapItem(ResourceRequest $request, Model $model, Model $related): RelatedItem
     {
@@ -148,9 +141,6 @@ class BelongsToMany extends Relation
 
     /**
      * Define the fields for the object.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
     public function fields(RootRequest $request): array
     {
@@ -176,9 +166,7 @@ class BelongsToMany extends Relation
     /**
      * Handle the resolving event on the field instance.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
      * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {
@@ -189,9 +177,6 @@ class BelongsToMany extends Relation
 
     /**
      * Get the model for the breadcrumbs.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModelForBreadcrumbs(ResourceRequest $request): Model
     {
@@ -250,10 +235,6 @@ class BelongsToMany extends Relation
 
     /**
      * Get the create representation of the field.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toCreate(CreateRequest $request, Model $model): array
     {

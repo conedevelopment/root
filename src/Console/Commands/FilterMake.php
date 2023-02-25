@@ -30,8 +30,6 @@ class FilterMake extends GeneratorCommand
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
@@ -42,7 +40,6 @@ class FilterMake extends GeneratorCommand
      * Get the default namespace for the class.
      *
      * @param  string  $rootNamespace
-     * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
@@ -53,7 +50,6 @@ class FilterMake extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
      */
     protected function buildClass($name): string
     {
@@ -66,9 +62,6 @@ class FilterMake extends GeneratorCommand
 
     /**
      * Replace the component related code.
-     *
-     * @param  string  $class
-     * @return string
      */
     protected function replaceComponent(string $class): string
     {
@@ -85,9 +78,6 @@ class FilterMake extends GeneratorCommand
 
     /**
      * Replace the multiple related code.
-     *
-     * @param  string  $class
-     * @return string
      */
     protected function replaceMultiple(string $class): string
     {
@@ -100,8 +90,6 @@ class FilterMake extends GeneratorCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
     protected function getOptions(): array
     {

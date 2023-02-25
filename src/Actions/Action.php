@@ -36,38 +36,26 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * The query resolver callback.
-     *
-     * @var \Closure|null
      */
     protected ?Closure $queryResolver = null;
 
     /**
      * Indicates if the action is descrtuctive.
-     *
-     * @var bool
      */
     protected bool $destructive = false;
 
     /**
      * Indicates if the action is confirmable.
-     *
-     * @var bool
      */
     protected bool $confirmable = false;
 
     /**
      * Handle the action.
-     *
-     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
-     * @return void
      */
     abstract public function handle(ActionRequest $request, Collection $models): void;
 
     /**
      * Get the key.
-     *
-     * @return string
      */
     public function getKey(): string
     {
@@ -76,8 +64,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Get the name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -86,9 +72,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Set the destructive property.
-     *
-     * @param  bool  $value
-     * @return $this
      */
     public function destructive(bool $value = true): static
     {
@@ -99,8 +82,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Determine if the action is destructive.
-     *
-     * @return bool
      */
     public function isDestructive(): bool
     {
@@ -109,9 +90,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Set the confirmable property.
-     *
-     * @param  bool  $value
-     * @return $this
      */
     public function confirmable(bool $value = true): static
     {
@@ -122,8 +100,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Determine if the action is confirmable.
-     *
-     * @return bool
      */
     public function isConfirmable(): bool
     {
@@ -132,9 +108,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Perform the action.
-     *
-     * @param  \Cone\Root\Http\Requests\ActionRequest  $request
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function perform(ActionRequest $request): Response
     {
@@ -159,7 +132,6 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Set the query resolver.
      *
-     * @param  \Closure  $callback
      * @return $this
      */
     public function withQuery(Closure $callback): static
@@ -172,8 +144,6 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Resolve the query for the extract.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Illuminate\Database\Eloquent\Builder
      *
      * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
@@ -188,10 +158,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Handle the resolving event on the field instance.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Cone\Root\Fields\Field  $field
-     * @return void
      */
     protected function resolveField(RootRequest $request, Field $field): void
     {
@@ -202,10 +168,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Register the action routes.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function registerRoutes(RootRequest $request, Router $router): void
     {
@@ -218,9 +180,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * The routes that should be registered.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
      */
     public function routes(Router $router): void
     {
@@ -229,8 +188,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Get the instance as an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -245,10 +202,6 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Get the form representation of the action.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array
      */
     public function toForm(RootRequest $request, Model $model): array
     {
@@ -269,13 +222,12 @@ abstract class Action implements Arrayable, Responsable
      * Create an HTTP response that represents the object.
      *
      * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function toResponse($request): Response
     {
         return Redirect::back()->with(
             sprintf('alerts.action-%s', $this->getKey()),
-            Alert::info(__(':action was successful!' , ['action' => $this->getName()]))
+            Alert::info(__(':action was successful!', ['action' => $this->getName()]))
         );
     }
 }
