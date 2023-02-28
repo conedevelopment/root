@@ -8,6 +8,7 @@ use Cone\Root\Interfaces\Models\Notification as Contract;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,32 +61,48 @@ class Notification extends DatabaseNotification implements Contract
     /**
      * Get the formatted type attribute.
      */
-    public function getFormattedTypeAttribute(): ?string
+    protected function formattedType(): Attribute
     {
-        return is_null($this->type) ? null : __(Str::headline(class_basename($this->type)));
+        return new Attribute(
+            get: static function (mixed $value, array $attributes): ?string {
+                return ! isset($attributes['type']) ? null : __(Str::headline(class_basename($attributes['type'])));
+            }
+        );
     }
 
     /**
      * Get the title attribute.
      */
-    public function getTitleAttribute(): ?string
+    protected function title(): Attribute
     {
-        return $this->data['title'] ?? $this->formattedType;
+        return new Attribute(
+            get: function (mixed $value, array $attributes): ?string {
+                return $attributes['data']['title'] ?? $this->formattedType;
+            }
+        );
     }
 
     /**
      * Get the content attribute.
      */
-    public function getContentAttribute(): ?string
+    protected function content(): Attribute
     {
-        return $this->data['content'] ?? null;
+        return new Attribute(
+            get: static function (mixed $value, array $attributes): ?string {
+                return $attributes['data']['content'] ?? null;
+            }
+        );
     }
 
     /**
      * Get the formatted created at attribute.
      */
-    public function getFormattedCreatedAtAttribute(): ?string
+    protected function formattedCreatedAt(): Attribute
     {
-        return is_null($this->created_at) ? null : $this->created_at->diffForHumans();
+        return new Attribute(
+            get: function (): ?string {
+                return is_null($this->created_at) ? null : $this->created_at->diffForHumans();
+            }
+        );
     }
 }

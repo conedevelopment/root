@@ -8,6 +8,7 @@ use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -163,53 +164,67 @@ class Medium extends Model implements Contract
     /**
      * Determine if the file is image.
      */
-    public function getIsImageAttribute(): bool
+    protected function isImage(): Attribute
     {
-        return Str::is('image/*', $this->mime_type);
+        return new Attribute(
+            get: static function (mixed $value, array $attributes): bool {
+                return Str::is('image/*', $attributes['mime_type']);
+            }
+        );
     }
 
     /**
      * Get the conversion URLs.
      */
-    public function getUrlsAttribute(): array
+    protected function urls(): Attribute
     {
-        $urls = ['original' => $this->getUrl()];
+        return new Attribute(
+            get: function (mixed $value, array $attributes): array {
+                $urls = ['original' => $this->getUrl()];
 
-        if (! $this->convertible()) {
-            return $urls;
-        }
+                if (! $this->convertible()) {
+                    return $urls;
+                }
 
-        return array_reduce($this->properties['conversions'] ?? [], function (array $urls, string $conversion): array {
-            return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
-        }, $urls);
+                return array_reduce($attributes['properties']['conversions'] ?? [], function (array $urls, string $conversion): array {
+                    return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
+                }, $urls);
+            }
+        );
     }
 
     /**
      * Get the formatted size attribute.
      */
-    public function getFormattedSizeAttribute(): string
+    protected function formattedSize(): Attribute
     {
-        if ($this->size === 0) {
-            return '0 KB';
-        }
+        return new Attribute(
+            get: static function (mixed $value, array $attributes): string {
+                if ($attributes['size'] === 0) {
+                    return '0 KB';
+                }
 
-        $units = ['KB', 'MB', 'GB', 'TB', 'PB'];
+                $units = ['KB', 'MB', 'GB', 'TB', 'PB'];
 
-        $index = floor(log($this->size, 1024));
+                $index = floor(log($attributes['size'], 1024));
 
-        return sprintf('%.1f %s', round($this->size / pow(1024, $index), 1), $units[$index]);
+                return sprintf('%.1f %s', round($attributes['size'] / pow(1024, $index), 1), $units[$index]);
+            }
+        );
     }
 
     /**
      * Get the dimensions attribute.
      */
-    public function getDimensionsAttribute(): ?string
+    protected function dimensions(): Attribute
     {
-        if (is_null($this->width) || is_null($this->height)) {
-            return null;
-        }
-
-        return sprintf('%dx%d px', $this->width, $this->height);
+        return new Attribute(
+            get: static function (mixed $value, array $attributes): ?string {
+                return isset($attributes['width'], $attributes['height'])
+                    ? sprintf('%dx%d px', $attributes['width'], $attributes['height'])
+                    : null;
+            }
+        );
     }
 
     /**

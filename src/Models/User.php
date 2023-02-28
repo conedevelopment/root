@@ -8,6 +8,7 @@ use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -120,9 +121,11 @@ class User extends Authenticatable implements Contract, Resourceable
     /**
      * Get the avatar attribute.
      */
-    public function getAvatarAttribute(): string
+    protected function avatar(): Attribute
     {
-        return sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($this->email));
+        return new Attribute(get: static function (mixed $value, array $attributes): ?string {
+            return isset($attributes['email']) ? sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($attributes['email'])) : null;
+        });
     }
 
     /**
