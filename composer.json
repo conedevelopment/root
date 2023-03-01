@@ -25,8 +25,8 @@
     "require": {
         "ext-gd": "*",
         "ext-exif": "*",
-        "php": "^8.0 || ^8.1",
-        "laravel/framework": "^9.52 || ^10.0",
+        "php": "^8.1 || ^8.2",
+        "laravel/framework": "^10.0",
         "inertiajs/inertia-laravel": "^0.6.2"
     },
     "require-dev": {
@@ -44,7 +44,7 @@
             ]
         },
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.x-dev"
         }
     },
     "minimum-stability": "dev",
