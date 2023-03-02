@@ -62,6 +62,11 @@ abstract class Relation extends Field
     protected ?Closure $queryResolver = null;
 
     /**
+     * The option group resolver.
+     */
+    protected string|Closure|null $groupResolver = null;
+
+    /**
      * The query scopes.
      */
     protected static array $scopes = [];
@@ -323,14 +328,34 @@ abstract class Relation extends Field
     }
 
     /**
+     * Set the group resolver attribute.
+     */
+    public function groupOptions(string|Closure $key): static
+    {
+        $this->groupResolver = $key;
+
+        return $this;
+    }
+
+    /**
      * Resolve the options for the field.
      */
     public function resolveOptions(RootRequest $request, Model $model): array
     {
         return $this->resolveQuery($request, $model)
                     ->get()
-                    ->map(function (Model $related) use ($request, $model): array {
-                        return $this->mapOption($request, $model, $related);
+                    ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
+                        return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
+                            $options = $group->map(function (Model $related) use ($request, $model): array {
+                                return $this->mapOption($request, $model, $related);
+                            });
+
+                            return (new OptGroup($key))->options($options->toArray());
+                        });
+                    }, function (Collection $collection) use ($request, $model): Collection {
+                        return $collection->map(function (Model $related) use ($request, $model): array {
+                            return $this->mapOption($request, $model, $related);
+                        });
                     })
                     ->toArray();
     }

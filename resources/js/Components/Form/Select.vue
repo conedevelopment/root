@@ -13,9 +13,16 @@
             <option :disabled="! nullable || $attrs.multiple" :value="null" selected>
                 {{ __('Select :label', { label }) }}
             </option>
-            <option v-for="option in options" v-bind="option" :key="option.value">
-                {{ option.formatted_value }}
-            </option>
+            <template v-for="(option, index) in options" :key="index">
+                <optgroup v-if="option.options" :label="option.label" :disabled="option.disabled">
+                    <option v-for="item in option.options" v-bind="item" :key="item.value">
+                        {{ item.formatted_value }}
+                    </option>
+                </optgroup>
+                <option v-else v-bind="option" :key="option.value">
+                    {{ option.formatted_value }}
+                </option>
+            </template>
         </select>
         <span
             class="field-feedback"

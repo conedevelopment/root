@@ -6,20 +6,35 @@ use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Option implements Arrayable
+class OptGroup implements Arrayable
 {
     use HasAttributes;
     use Makeable;
 
     /**
-     * Create a new option instance.
+     * The options.
      */
-    public function __construct(string $label, string $value)
+    protected array $options = [];
+
+    /**
+     * Create a new option group instance.
+     */
+    public function __construct(string $label)
     {
         $this->setAttributes([
-            'formatted_value' => $label,
-            'value' => $value,
+            'label' => $label,
+            'disabled' => false,
         ]);
+    }
+
+    /**
+     * Set the options attribute.
+     */
+    public function options(array $value): static
+    {
+        $this->options = $value;
+
+        return $this;
     }
 
     /**
@@ -43,6 +58,8 @@ class Option implements Arrayable
      */
     public function toArray(): array
     {
-        return $this->getAttributes();
+        return array_merge($this->getAttributes(), [
+            'options' => $this->options,
+        ]);
     }
 }
