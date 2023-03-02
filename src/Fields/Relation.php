@@ -330,7 +330,7 @@ abstract class Relation extends Field
     /**
      * Set the group resolver attribute.
      */
-    public function groupOptions(string|Closure $key): static
+    public function groupOptionsBy(string|Closure $key): static
     {
         $this->groupResolver = $key;
 
