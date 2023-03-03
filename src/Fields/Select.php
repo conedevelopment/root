@@ -51,6 +51,14 @@ class Select extends Field
     }
 
     /**
+     * Set the size attribute.
+     */
+    public function size(int $value): static
+    {
+        return $this->setAttribute('size', $value);
+    }
+
+    /**
      * Set the options attribute.
      */
     public function options(array|Closure $value): static
