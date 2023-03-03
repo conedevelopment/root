@@ -29,7 +29,7 @@ class Medium extends Model implements Contract
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var array<string>
      */
     protected $appends = [
         'is_image',
@@ -39,7 +39,7 @@ class Medium extends Model implements Contract
     /**
      * The attributes that should have default values.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $attributes = [
         'properties' => '{"conversions":[]}',
@@ -57,7 +57,7 @@ class Medium extends Model implements Contract
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'disk',

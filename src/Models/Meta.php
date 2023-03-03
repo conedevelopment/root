@@ -26,6 +26,15 @@ class Meta extends Model implements Contract
     ];
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'value' => 'json',
+    ];
+
+    /**
      * The table associated with the model.
      *
      * @var string
