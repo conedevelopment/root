@@ -15,7 +15,7 @@ class Meta extends MorphMany
     protected string $component = 'Fieldset';
 
     /**
-     * Create a new relation field instance.
+     * Create a new meta field instance.
      */
     public function __construct(string $label, string $name = 'metas')
     {

@@ -1,7 +1,11 @@
 <template>
     <fieldset :class="class" :style="style">
         <legend>{{ label }}</legend>
-        <div></div>
+        <div>
+            <!-- Add new row -->
+            <!-- Collapse -->
+            <!-- Remove row -->
+        </div>
     </fieldset>
 </template>
 
