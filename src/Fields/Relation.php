@@ -74,7 +74,7 @@ abstract class Relation extends Field
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, ?string $name = null, Closure|string $relation = null)
+    public function __construct(string $label, string $name = null, Closure|string $relation = null)
     {
         parent::__construct($label, $name);
 
