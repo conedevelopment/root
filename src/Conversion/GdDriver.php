@@ -26,7 +26,7 @@ class GdDriver extends Driver
     {
         $image = $this->createImage($medium);
 
-        call_user_func_array($callback, [$image]);
+        call_user_func_array($callback, [$image, $medium]);
 
         $image->save();
 
