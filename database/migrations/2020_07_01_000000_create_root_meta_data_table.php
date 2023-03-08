@@ -11,7 +11,7 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('root_metas', static function (Blueprint $table): void {
+        Schema::create('root_meta_data', static function (Blueprint $table): void {
             $table->id();
             $table->uuidMorphs('metable');
             $table->string('key')->index();
@@ -27,6 +27,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('root_metas');
+        Schema::dropIfExists('root_meta_data');
     }
 };

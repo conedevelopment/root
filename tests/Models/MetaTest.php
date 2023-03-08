@@ -5,7 +5,7 @@ namespace Cone\Root\Tests\Models;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\Meta;
 use Cone\Root\Tests\TestCase;
-use Cone\Root\Traits\HasMeta;
+use Cone\Root\Traits\HasMetaData;
 
 class MetaTest extends TestCase
 {
@@ -17,7 +17,7 @@ class MetaTest extends TestCase
 
         $this->model = new class(Medium::factory()->make()->toArray()) extends Medium
         {
-            use HasMeta;
+            use HasMetaData;
         };
 
         $this->model->save();
@@ -34,12 +34,12 @@ class MetaTest extends TestCase
     }
 
     /** @test */
-    public function a_metable_model_has_metas()
+    public function a_metable_model_has_meta_data()
     {
-        $this->model->metas()->save(
+        $this->model->metaData()->save(
             $meta = Meta::factory()->make()
         );
 
-        $this->assertTrue($this->model->metas->first()->is($meta));
+        $this->assertTrue($this->model->metaData->first()->is($meta));
     }
 }
