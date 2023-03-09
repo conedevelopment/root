@@ -15,7 +15,7 @@ return new class() extends Migration
             $table->id();
             $table->uuidMorphs('metable');
             $table->string('key')->index();
-            $table->json('value')->nullable();
+            $table->text('value')->nullable();
             $table->timestamps();
 
             $table->unique(['metable_id', 'metable_type', 'key']);
