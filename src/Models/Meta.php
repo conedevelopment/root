@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Models;
 
+use Cone\Root\Casts\MetaValue;
 use Cone\Root\Database\Factories\MetaFactory;
 use Cone\Root\Interfaces\Models\Meta as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -31,7 +32,7 @@ class Meta extends Model implements Contract
      * @var array<string, string>
      */
     protected $casts = [
-        'value' => 'json',
+        'value' => MetaValue::class,
     ];
 
     /**
