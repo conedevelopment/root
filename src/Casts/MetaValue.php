@@ -25,6 +25,10 @@ class MetaValue implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return json_encode($value) ?: null;
+        return match (true) {
+            is_null($value) => null,
+            is_string($value), is_numeric($value), $value instanceof Stringable => (string) $value,
+            default => json_encode($value) ?: (string) $value,
+        };
     }
 }
