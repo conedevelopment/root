@@ -4,7 +4,6 @@ namespace Cone\Root;
 
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Widgets;
-use Cone\Root\Support\Facades\Resource;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -36,11 +35,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     protected function registerResources(): void
     {
-        Root::running(function (): void {
-            foreach ($this->resources() as $resource) {
-                Resource::register($resource->getKey(), $resource);
-            }
-        });
+        //
     }
 
     /**
@@ -48,7 +43,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        Root::routes(function (Router $router): void {
+        $this->app->make('root')->routes(function (Router $router): void {
             $router->prefix('dashboard')->group(function (Router $router): void {
                 $this->app->make('root.widgets')->registerRoutes(
                     RootRequest::createFrom($this->app['request']), $router

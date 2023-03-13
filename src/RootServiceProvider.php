@@ -34,14 +34,16 @@ class RootServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton('root', static function (Application $app): Root {
+            return new Root($app);
+        });
+
         if (! $this->app->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__.'/../config/root.php', 'root');
         }
 
         $this->app->booted(static function (Application $app): void {
-            if ($app->runningInConsole() || Root::shouldRun($app['request'])) {
-                Root::run($app['request']);
-            }
+            $app->make('root')->boot();
         });
 
         $this->app->resolving(RootRequest::class, static function (RootRequest $request, Application $app): void {
@@ -145,7 +147,7 @@ class RootServiceProvider extends ServiceProvider
                 'user' => $request->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
-                    'url' => Root::getPath(),
+                    'url' => $app->make('root')->getPath(),
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);
