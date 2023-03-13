@@ -18,4 +18,12 @@ class Resources extends Collection implements Contract
             return $resource->authorized($request);
         });
     }
+
+    /**
+     * Register the given resource into the colleciton.
+     */
+    public function register(Resource $resource): void
+    {
+        $this->put($resource->getKey(), $resource);
+    }
 }

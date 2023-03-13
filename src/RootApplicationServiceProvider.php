@@ -35,7 +35,11 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     protected function registerResources(): void
     {
-        //
+        $this->app->make('root')->booting(function (Root $root): void {
+            foreach ($this->resources() as $resource) {
+                $root->resources->register($resource);
+            }
+        });
     }
 
     /**
