@@ -2,9 +2,6 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Support\Collections\Widgets;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,9 +12,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('root.widgets', function (): Widgets {
-            return Widgets::make($this->widgets());
-        });
+        //
     }
 
     /**
@@ -27,7 +22,6 @@ class RootApplicationServiceProvider extends ServiceProvider
     {
         $this->gate();
         $this->registerRoutes();
-        $this->registerResources();
     }
 
     /**
@@ -39,20 +33,6 @@ class RootApplicationServiceProvider extends ServiceProvider
             foreach ($this->resources() as $resource) {
                 $root->resources->register($resource);
             }
-        });
-    }
-
-    /**
-     * Register the routes.
-     */
-    protected function registerRoutes(): void
-    {
-        $this->app->make('root')->routes(function (Router $router): void {
-            $router->prefix('dashboard')->group(function (Router $router): void {
-                $this->app->make('root.widgets')->registerRoutes(
-                    RootRequest::createFrom($this->app['request']), $router
-                );
-            });
         });
     }
 
