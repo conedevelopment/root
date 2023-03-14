@@ -38,7 +38,7 @@ abstract class Root
 
         $segments = explode('/', $request->getRequestUri());
 
-        return $request->getHost() === $host
+        return (empty(static::getDomain()) || $request->getHost() === $host)
             && (static::getPath() === '/' || $segments[1] === trim(static::getPath(), '/'));
     }
 
