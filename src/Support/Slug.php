@@ -119,7 +119,9 @@ class Slug implements Stringable
             return $this->model->getAttribute($this->to);
         }
 
-        $value = Str::of(implode($this->separator, $this->model->getAttributes($this->from)))->slug($this->separator)->value();
+        $value = Str::of(implode($this->separator, $this->model->only($this->from)))
+                    ->slug($this->separator)
+                    ->value();
 
         if (! is_null($this->resolver)) {
             return call_user_func_array($this->resolver, [$this, $value]);
@@ -139,13 +141,15 @@ class Slug implements Stringable
                     ->limit(1)
                     ->value($this->to);
 
-        return is_null($match) ? $value : preg_replace_callback(
+        $value = is_null($match) ? $value : preg_replace_callback(
             sprintf('/%s([\d]+)?$/', preg_quote($this->separator)),
             static function (array $match): string {
                 return str_replace($match[1], ((int) $match[1]) + 1, $match[0]);
             },
             $match
         );
+
+        return $value === $match ? sprintf('%s%s1', $value, $this->separator) : $value;
     }
 
     /**
