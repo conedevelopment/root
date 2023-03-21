@@ -103,7 +103,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getUri(): string
     {
-        return Str::start(sprintf('%s/%s', Root::getPath(), $this->getKey()), '/');
+        return Str::start(sprintf('%s/%s', App::make(Root::class)->getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -370,7 +370,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function resolveBreadcrumbs(RootRequest $request): array
     {
         $breadcrumbs = [
-            Root::getPath() => __('Dashboard'),
+            App::make(Root::class)->getPath() => __('Dashboard'),
             $this->getUri() => $this->getName(),
         ];
 
