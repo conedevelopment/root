@@ -48,7 +48,7 @@ abstract class Widget implements Arrayable, Renderable
      */
     public function getKey(): string
     {
-        return Str::of(static::class)->classBasename()->kebab()->toString();
+        return Str::of(static::class)->classBasename()->kebab()->value();
     }
 
     /**
@@ -56,7 +56,7 @@ abstract class Widget implements Arrayable, Renderable
      */
     public function getName(): string
     {
-        return __(Str::of(static::class)->classBasename()->headline()->toString());
+        return __(Str::of(static::class)->classBasename()->headline()->value());
     }
 
     /**

@@ -65,7 +65,7 @@ abstract class HasOneOrMany extends Relation
 
             $this->resolveHydrate($request, $model, $value);
 
-            $models = $model->getRelation($this->name);
+            $models = $model->getRelation($this->getRelationName());
 
             $models = is_iterable($models) ? $models : Arr::wrap($models);
 
@@ -84,7 +84,7 @@ abstract class HasOneOrMany extends Relation
             $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
                 $related = $this->resolveQuery($request, $model)->find($value);
 
-                $model->setRelation($this->name, $related);
+                $model->setRelation($this->getRelationName(), $related);
             };
         }
 

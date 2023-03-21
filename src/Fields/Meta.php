@@ -2,24 +2,39 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Models\FieldsetModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 
-class Meta extends MorphMany
+class Meta extends MorphOne
 {
     /**
      * The Vue component.
      */
-    protected string $component = 'Fieldset';
+    protected string $component = 'Input';
 
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $name = 'metaData')
+    public function __construct(string $label, string $name = null, Closure|string $relation = null)
     {
-        parent::__construct($label, $name);
+        $relation ??= function (Model $model): EloquentRelation {
+            $related = $model->metaData()->getRelated();
+
+            return $model->morphOne(get_class($related), 'metable')
+                        ->ofMany(
+                            [$related->getCreatedAtColumn() => 'max'],
+                            function (Builder $query) use ($related): Builder {
+                                return $query->where($related->qualifyColumn('key'), $this->name);
+                            },
+                            'metaData'
+                        )
+                        ->withDefault(['key' => $this->name]);
+        };
+
+        parent::__construct($label, $name, $relation);
     }
 
     /**
@@ -51,17 +66,16 @@ class Meta extends MorphMany
      */
     public function getValue(RootRequest $request, Model $model): mixed
     {
-        $value = parent::getValue($request, $model);
+        $name = $this->getRelationName();
 
-        if (is_null($value)) {
-            return $value;
+        if (! $this->relation instanceof Closure
+            && $model->relationLoaded('metaData')
+            && ! $model->relationLoaded($name)
+            && ! is_null($value = $model->getRelation('metaData')->sortByDesc('created_at')->firstWhere('key', $this->name))) {
+            $model->setRelation($name, $value);
         }
 
-        $fields = $this->resolveFields($request)->available($request, $model)->map->getKey()->toArray();
-
-        return $value->filter(static function (Model $related) use ($fields): bool {
-            return in_array($related->getAttribute('key'), $fields);
-        })->values();
+        return parent::getValue($request, $model);
     }
 
     /**
@@ -71,13 +85,7 @@ class Meta extends MorphMany
     {
         if (is_null($this->valueResolver)) {
             $this->valueResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
-                if ($value instanceof Collection) {
-                    return $value->mapWithKeys(static function (Model $related): array {
-                        return [$related->getAttribute('key') => $related->getAttribute('value')];
-                    })->toArray();
-                }
-
-                return $value;
+                return $value?->value;
             };
         }
 
@@ -91,21 +99,11 @@ class Meta extends MorphMany
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
-                $relation = $this->getRelation($model);
+                $related = $this->getValue($request, $model);
 
-                $query = $relation->getQuery();
+                $related->setAttribute('value', $value);
 
-                $models = $query->whereIn($query->qualifyColumn('key'), $keys = array_keys($value))->get();
-
-                $models->each(static function (Model $related) use ($value): void {
-                    $related->setAttribute('value', $value[$related->getAttribute('key')] ?? null);
-                });
-
-                foreach (array_diff($keys, $models->pluck('key')->toArray()) as $key) {
-                    $models->push($relation->make(['key' => $key, 'value' => $value[$key]]));
-                }
-
-                $model->setRelation($this->name, $models);
+                $model->setRelation($this->getRelationName(), $related);
             };
         }
 
@@ -117,42 +115,6 @@ class Meta extends MorphMany
      */
     public function toInput(RootRequest $request, Model $model): array
     {
-        $data = parent::toInput($request, $model);
-
-        $data['value'] = (array) $data['value'];
-
-        $json = FieldsetModel::make()
-                    ->setRelation('parent', $model)
-                    ->forceFill($data['value']);
-
-        $fields = $this->resolveFields($request)
-                    ->available($request, $model)
-                    ->mapToForm($request, $json)
-                    ->toArray();
-
-        return array_replace_recursive($data, [
-            'fields' => $fields,
-            'formatted_value' => array_column($fields, 'formatted_value', 'name'),
-            'value' => array_column($fields, 'value', 'name'),
-        ]);
-    }
-
-    /**
-     * Get the validation representation of the field.
-     */
-    public function toValidate(RootRequest $request, Model $model): array
-    {
-        $rules = $this->resolveFields($request)
-                    ->available($request, $model)
-                    ->mapToValidate($request, $model);
-
-        return array_merge(
-            parent::toValidate($request, $model),
-            Collection::make($rules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
-                    })
-                    ->toArray(),
-        );
+        return parent::toInput($request, $model);
     }
 }

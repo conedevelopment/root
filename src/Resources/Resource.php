@@ -87,7 +87,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getKey(): string
     {
-        return Str::of($this->getModel())->classBasename()->plural()->kebab()->toString();
+        return Str::of($this->getModel())->classBasename()->plural()->kebab()->value();
     }
 
     /**
@@ -95,7 +95,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('resource_')->toString();
+        return Str::of($this->getKey())->singular()->prepend('resource_')->value();
     }
 
     /**
@@ -111,7 +111,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getName(): string
     {
-        return __(Str::of($this->getModel())->classBasename()->headline()->plural()->toString());
+        return __(Str::of($this->getModel())->classBasename()->headline()->plural()->value());
     }
 
     /**
@@ -119,7 +119,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function getModelName(): string
     {
-        return __(Str::of($this->getModel())->classBasename()->toString());
+        return __(Str::of($this->getModel())->classBasename()->value());
     }
 
     /**

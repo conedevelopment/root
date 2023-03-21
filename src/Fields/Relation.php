@@ -106,15 +106,25 @@ abstract class Relation extends Field
      */
     public function getRelatedName(): string
     {
-        return __(Str::of($this->name)->singular()->headline()->toString());
+        return __(Str::of($this->name)->singular()->headline()->value());
     }
 
     /**
-     * Create a new method.
+     * Get the relation name.
+     */
+    public function getRelationName(): string
+    {
+        return $this->relation instanceof Closure
+            ? sprintf('__root_%s', $this->name)
+            : $this->relation;
+    }
+
+    /**
+     * Get the route key name.
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('relation_')->toString();
+        return Str::of($this->getKey())->singular()->prepend('relation_')->value();
     }
 
     /**
@@ -258,17 +268,13 @@ abstract class Relation extends Field
      */
     public function getValue(RootRequest $request, Model $model): mixed
     {
-        if ($this->relation instanceof Closure) {
-            $name = sprintf('__root_%s', $this->name);
+        $name = $this->getRelationName();
 
-            if (! $model->relationLoaded($name)) {
-                $model->setRelation($name, call_user_func_array($this->relation, [$model])->getResults());
-            }
-
-            return $model->getAttribute($name);
+        if ($this->relation instanceof Closure && ! $model->relationLoaded($name)) {
+            $model->setRelation($name, call_user_func_array($this->relation, [$model])->getResults());
         }
 
-        return $model->getAttribute($this->relation);
+        return $model->getAttribute($name);
     }
 
     /**
