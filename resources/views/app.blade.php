@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&amp;family=IBM+Plex+Sans:wght@400;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    @foreach(Cone\Root\Support\Facades\Asset::styles() as $key => $style)
+    @foreach(App::make('root')->assets->styles() as $key => $style)
         <link id="style-{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">
     @endforeach
 
@@ -35,7 +35,7 @@
             ->useBuildDirectory('vendor/root/build')
             ->useHotFile(public_path('vendor/root/hot'))
     }}
-    @foreach(Cone\Root\Support\Facades\Asset::scripts() as $key => $script)
+    @foreach(App::make('root')->assets->scripts() as $key => $script)
         <script id="script-{{ $key }}" src="{{ $script->getUrl() }}"></script>
     @endforeach
 </body>

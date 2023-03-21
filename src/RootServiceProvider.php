@@ -141,13 +141,15 @@ class RootServiceProvider extends ServiceProvider
         $this->app['view']->composer('root::app', static function (View $view): void {
             $app = $view->getFactory()->getContainer();
 
+            $root = $app->make(Root::class);
+
             $view->with('root', [
-                'resources' => $app->make(Root::class)->resources->available($app->make(Root::class)->request())->values(),
+                'resources' => $root->resources->available($root->request())->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $app->make(Root::class)->request()->user()->toRoot(),
+                'user' => $root->request()->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
-                    'url' => $app->make(Root::class)->getPath(),
+                    'url' => $root->getPath(),
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);

@@ -2,16 +2,11 @@
 
 namespace Cone\Root\Support;
 
+use Cone\Root\Enums\AssetType;
 use Illuminate\Support\Facades\App;
 
 class Asset
 {
-    public const SCRIPT = 'script';
-
-    public const STYLE = 'style';
-
-    public const ICON = 'icon';
-
     /**
      * The asset key.
      */
@@ -20,7 +15,7 @@ class Asset
     /**
      * The asset type.
      */
-    protected string $type;
+    protected AssetType $type;
 
     /**
      * The asset path.
@@ -35,7 +30,7 @@ class Asset
     /**
      * Create a new asset instance.
      */
-    public function __construct(string $key, string $type, string $path, ?string $url = null)
+    public function __construct(string $key, AssetType $type, string $path, ?string $url = null)
     {
         $this->key = $key;
         $this->path = $path;
@@ -54,7 +49,7 @@ class Asset
     /**
      * Get the type.
      */
-    public function getType(): string
+    public function getType(): AssetType
     {
         return $this->type;
     }
@@ -76,7 +71,7 @@ class Asset
             return $this->url;
         }
 
-        if ($this->getType() === static::ICON) {
+        if ($this->getType() === AssetType::Icon) {
             return sprintf('#icon-%s', $this->getKey());
         }
 

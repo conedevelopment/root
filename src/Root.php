@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Closure;
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Support\Collections\Assets;
 use Cone\Root\Support\Collections\Resources;
 use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Foundation\Application;
@@ -47,6 +48,11 @@ class Root
     public readonly Widgets $widgets;
 
     /**
+     * The assets collection.
+     */
+    public readonly Assets $assets;
+
+    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -54,6 +60,7 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
+        $this->assets = new Assets();
     }
 
     /**
