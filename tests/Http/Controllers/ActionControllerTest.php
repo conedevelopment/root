@@ -17,10 +17,13 @@ class ActionControllerTest extends TestCase
 
         $this->action = new PublishPosts();
 
-        $this->resource->routeGroup(function ($router) {
-            $router->prefix('actions')->group(function ($router) {
-                $this->action->registerRoutes($this->request, $router);
-            });
+        $this->app->make('root')->routes(function ($router) {
+            $router->group(
+                ['prefix' => $this->resource->getKey().'/actions', 'resource' => $this->resource->getKey()],
+                function ($router) {
+                    $this->action->registerRoutes($this->request, $router);
+                }
+            );
         });
     }
 

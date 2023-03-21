@@ -27,10 +27,13 @@ class HasOneOrManyControllerTest extends TestCase
 
         $this->field->asSubResource();
 
-        $this->resource->routeGroup(function ($router) {
-            $router->prefix('{resource_post}/fields')->group(function ($router) {
-                $this->field->registerRoutes($this->request, $router);
-            });
+        $this->app->make('root')->routes(function ($router) {
+            $router->group(
+                ['prefix' => $this->resource->getKey().'/{resource_post}/fields', 'resource' => $this->resource->getKey()],
+                function ($router) {
+                    $this->field->registerRoutes($this->request, $router);
+                }
+            );
         });
     }
 

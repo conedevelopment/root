@@ -6,7 +6,7 @@ use Cone\Root\Fields\Text;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Facades\Resource as ResourceRegistry;
+use Cone\Root\Root;
 use Cone\Root\Tests\Actions\PublishPosts;
 use Cone\Root\Tests\Extracts\LongPosts;
 use Cone\Root\Tests\Filters\Published;
@@ -64,7 +64,8 @@ abstract class TestCase extends BaseTestCase
                             ->withExtracts([LongPosts::make()])
                             ->withWidgets([PostsCount::make()]);
 
-        ResourceRegistry::register('posts', $this->resource);
+        $this->app->make(Root::class)->resources->register($this->resource);
+        $this->resource->boot($this->app->make(Root::class));
     }
 
     protected function beforeRefreshingDatabase()

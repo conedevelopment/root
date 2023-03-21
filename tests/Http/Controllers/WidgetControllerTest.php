@@ -18,10 +18,13 @@ class WidgetControllerTest extends TestCase
 
         $this->widget->async();
 
-        $this->resource->routeGroup(function ($router) {
-            $router->prefix('widgets')->group(function ($router) {
-                $this->widget->registerRoutes($this->request, $router);
-            });
+        $this->app->make('root')->routes(function ($router) {
+            $router->group(
+                ['prefix' => $this->resource->getKey().'/widgets', 'resource' => $this->resource->getKey()],
+                function ($router) {
+                    $this->widget->registerRoutes($this->request, $router);
+                }
+            );
         });
     }
 

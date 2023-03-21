@@ -17,10 +17,13 @@ class ExtractControllerTest extends TestCase
 
         $this->extract = new LongPosts();
 
-        $this->resource->routeGroup(function ($router) {
-            $router->prefix('extracts')->group(function ($router) {
-                $this->extract->registerRoutes($this->request, $router);
-            });
+        $this->app->make('root')->routes(function ($router) {
+            $router->group(
+                ['prefix' => $this->resource->getKey().'/extracts', 'resource' => $this->resource->getKey()],
+                function ($router) {
+                    $this->extract->registerRoutes($this->request, $router);
+                }
+            );
         });
     }
 
