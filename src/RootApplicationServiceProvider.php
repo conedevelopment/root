@@ -2,6 +2,7 @@
 
 namespace Cone\Root;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,31 +22,43 @@ class RootApplicationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->gate();
-        $this->registerRoutes();
-        $this->registerWidgets();
+
+        $this->app->make('root')->booting(function (Root $root): void {
+            $this->registerResources($root);
+            $this->registerWidgets($root);
+            $this->registerRoutes($root);
+        });
     }
 
     /**
      * Register the resources.
      */
-    protected function registerResources(): void
+    protected function registerResources(Root $root): void
     {
-        $this->app->make('root')->booting(function (Root $root): void {
-            foreach ($this->resources() as $resource) {
-                $root->resources->register($resource);
-            }
-        });
+        foreach ($this->resources() as $resource) {
+            $root->resources->register($resource);
+        }
     }
 
     /**
      * Register the widgets.
      */
-    protected function registerWidgets(): void
+    protected function registerWidgets(Root $root): void
     {
-        $this->app->make('root')->booting(function (Root $root): void {
-            foreach ($this->widgets() as $widget) {
-                $root->widgets->push($widget);
-            }
+        foreach ($this->widgets() as $widget) {
+            $root->widgets->push($widget);
+        }
+    }
+
+    /**
+     * Register the routes.
+     */
+    protected function registerRoutes(Root $root): void
+    {
+        $root->routes(function (Router $router) use ($root): void {
+            $router->prefix('dashboard')->group(function (Router $router) use ($root): void {
+                $root->widgets->registerRoutes($root->request(), $router);
+            });
         });
     }
 
