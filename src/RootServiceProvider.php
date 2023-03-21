@@ -108,7 +108,7 @@ class RootServiceProvider extends ServiceProvider
             'root', $this->app['config']->get('root.middleware', [])
         );
 
-        Root::routes(function (): void {
+        $this->app->make('root')->routes(function (): void {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
@@ -139,12 +139,10 @@ class RootServiceProvider extends ServiceProvider
         $this->app['view']->composer('root::app', static function (View $view): void {
             $app = $view->getFactory()->getContainer();
 
-            $request = RootRequest::createFrom($app['request']);
-
             $view->with('root', [
-                'resources' => Support\Facades\Resource::available($request)->values(),
+                'resources' => $app->make('root')->resources->available($app->make('root')->request())->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $request->user()->toRoot(),
+                'user' => $app->make('root')->request()->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
                     'url' => $app->make('root')->getPath(),

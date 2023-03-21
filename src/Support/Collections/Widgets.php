@@ -16,8 +16,7 @@ class Widgets extends Collection
     {
         return $this->filter(static function (Widget $widget) use ($request): bool {
             return $widget->authorized($request) && $widget->visible($request);
-        })
-                    ->values();
+        })->values();
     }
 
     /**

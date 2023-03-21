@@ -3,7 +3,9 @@
 namespace Cone\Root;
 
 use Closure;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Resources;
+use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -40,12 +42,18 @@ class Root
     public readonly Resources $resources;
 
     /**
+     * The widgets collection.
+     */
+    public readonly Widgets $widgets;
+
+    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
     {
         $this->app = $app;
         $this->resources = new Resources();
+        $this->widgets = new Widgets();
     }
 
     /**
@@ -57,7 +65,7 @@ class Root
             call_user_func_array($callback, [$this]);
         }
 
-        //
+        $this->resources->each->boot($this);
 
         foreach ($this->booted as $callback) {
             call_user_func_array($callback, [$this]);
@@ -70,6 +78,18 @@ class Root
     public function booting(Closure $callback): void
     {
         $this->booting[] = $callback;
+    }
+
+    /**
+     * Get the Root Request instance.
+     */
+    public function request(): RootRequest
+    {
+        static $request;
+
+        $request = RootRequest::createFrom($this->app['request']);
+
+        return $request;
     }
 
     /**
@@ -91,7 +111,7 @@ class Root
 
         $segments = explode('/', $request->getRequestUri());
 
-        return $request->getHost() === $host
+        return (empty($this->getDomain()) || $request->getHost() === $host)
             && ($this->getPath() === '/' || $segments[1] === trim($this->getPath(), '/'));
     }
 
