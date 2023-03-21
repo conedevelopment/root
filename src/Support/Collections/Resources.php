@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Support\Collections;
 
+use Cone\Root\Exceptions\ResourceResolutionException;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Interfaces\Support\Collections\Resources as Contract;
 use Cone\Root\Resources\Resource;
@@ -17,5 +18,25 @@ class Resources extends Collection implements Contract
         return $this->filter(static function (Resource $resource) use ($request): bool {
             return $resource->authorized($request);
         });
+    }
+
+    /**
+     * Register the given resource into the colleciton.
+     */
+    public function register(Resource $resource): void
+    {
+        $this->put($resource->getKey(), $resource);
+    }
+
+    /**
+     * Resolve the resource registered with the given key.
+     */
+    public function resolve(string $key): Resource
+    {
+        if (! $this->has($key)) {
+            throw new ResourceResolutionException();
+        }
+
+        return $this->get($key);
     }
 }

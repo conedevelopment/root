@@ -3,7 +3,8 @@
 namespace Cone\Root\Http\Requests;
 
 use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Facades\Resource as Registry;
+use Cone\Root\Root;
+use Illuminate\Support\Facades\App;
 
 class ResourceRequest extends RootRequest
 {
@@ -12,6 +13,6 @@ class ResourceRequest extends RootRequest
      */
     public function resource(): Resource
     {
-        return Registry::resolve($this->route()->action['resource']);
+        return App::make(Root::class)->resources->resolve($this->route()->action['resource']);
     }
 }

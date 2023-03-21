@@ -3,66 +3,133 @@
 namespace Cone\Root;
 
 use Closure;
+use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Support\Collections\Assets;
+use Cone\Root\Support\Collections\Resources;
+use Cone\Root\Support\Collections\Widgets;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
-abstract class Root
+class Root
 {
     /**
      * The package version.
      *
      * @var string
      */
-    public const VERSION = '1.1.3';
+    public const VERSION = '1.2.0';
 
     /**
-     * The registered callbacks.
+     * The registered booting callbacks.
      */
-    protected static array $callbacks = [];
+    protected array $booting = [];
 
     /**
-     * Determine if Root should run on the given request.
+     * The registered booted callbacks.
      */
-    public static function shouldRun(Request $request): bool
+    protected array $booted = [];
+
+    /**
+     * The Application instance.
+     */
+    public readonly Application $app;
+
+    /**
+     * The resources collection.
+     */
+    public readonly Resources $resources;
+
+    /**
+     * The widgets collection.
+     */
+    public readonly Widgets $widgets;
+
+    /**
+     * The assets collection.
+     */
+    public readonly Assets $assets;
+
+    /**
+     * Create a new Root instance.
+     */
+    public function __construct(Application $app)
     {
-        $host = empty(static::getDomain())
-            ? parse_url(Config::get('app.url'), PHP_URL_HOST)
-            : static::getDomain();
-
-        $segments = explode('/', $request->getRequestUri());
-
-        return (empty(static::getDomain()) || $request->getHost() === $host)
-            && (static::getPath() === '/' || $segments[1] === trim(static::getPath(), '/'));
+        $this->app = $app;
+        $this->resources = new Resources();
+        $this->widgets = new Widgets();
+        $this->assets = new Assets();
     }
 
     /**
-     * Run Root and call the registered callbacks.
+     * Boot the Root application.
      */
-    public static function run(Request $request): void
+    public function boot(): void
     {
-        foreach (static::$callbacks as $callback) {
-            call_user_func_array($callback, [$request]);
+        foreach ($this->booting as $callback) {
+            call_user_func_array($callback, [$this]);
+        }
+
+        $this->resources->each->boot($this);
+
+        foreach ($this->booted as $callback) {
+            call_user_func_array($callback, [$this]);
         }
     }
 
     /**
-     * Register a callback when Root is running.
+     * Register a booting callback.
      */
-    public static function running(Closure $callback): void
+    public function booting(Closure $callback): void
     {
-        static::$callbacks[] = $callback;
+        $this->booting[] = $callback;
+    }
+
+    /**
+     * Get the Root Request instance.
+     */
+    public function request(): RootRequest
+    {
+        static $request;
+
+        $request = RootRequest::createFrom($this->app['request']);
+
+        return $request;
+    }
+
+    /**
+     * Register a booted callback.
+     */
+    public function booted(Closure $callback): void
+    {
+        $this->booted[] = $callback;
+    }
+
+    /**
+     * Determine if Root should run on the given request.
+     */
+    public function shouldRun(Request $request): bool
+    {
+        $host = empty($this->getDomain())
+            ? parse_url(Config::get('app.url'), PHP_URL_HOST)
+            : $this->getDomain();
+
+        $segments = explode('/', $request->getRequestUri());
+
+        return (empty($this->getDomain()) || $request->getHost() === $host)
+            && ($this->getPath() === '/' || $segments[1] === trim($this->getPath(), '/'));
     }
 
     /**
      * Register the root routes.
      */
-    public static function routes(Closure $callback): void
+    public function routes(Closure $callback): void
     {
         Route::as('root.')
-            ->domain(static::getDomain())
-            ->prefix(static::getPath())
+            ->domain($this->getDomain())
+            ->prefix($this->getPath())
             ->middleware(['root'])
             ->group($callback);
     }
@@ -70,7 +137,7 @@ abstract class Root
     /**
      * Get the Root URI path.
      */
-    public static function getPath(): string
+    public function getPath(): string
     {
         return Str::start(Config::get('root.path', 'root'), '/');
     }
@@ -78,7 +145,7 @@ abstract class Root
     /**
      * Get the Root domain.
      */
-    public static function getDomain(): string
+    public function getDomain(): string
     {
         return (string) Config::get('root.domain', null);
     }

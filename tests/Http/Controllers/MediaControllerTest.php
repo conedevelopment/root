@@ -26,10 +26,13 @@ class MediaControllerTest extends TestCase
 
         $this->medium = Medium::factory()->create();
 
-        $this->resource->routeGroup(function ($router) {
-            $router->prefix('fields')->group(function ($router) {
-                $this->field->registerRoutes($this->request, $router);
-            });
+        $this->app->make('root')->routes(function ($router) {
+            $router->group(
+                ['prefix' => $this->resource->getKey().'/fields', 'resource' => $this->resource->getKey()],
+                function ($router) {
+                    $this->field->registerRoutes($this->request, $router);
+                }
+            );
         });
     }
 

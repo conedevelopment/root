@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Support\Collections;
 
+use Cone\Root\Enums\AssetType;
 use Cone\Root\Interfaces\Support\Collections\Assets as Contract;
 use Cone\Root\Support\Asset;
 use Illuminate\Support\Collection;
@@ -13,7 +14,7 @@ class Assets extends Collection implements Contract
      */
     public function script(string $key, string $path, ?string $url = null): void
     {
-        $asset = new Asset($key, Asset::SCRIPT, $path, $url);
+        $asset = new Asset($key, AssetType::Script, $path, $url);
 
         $this->put($asset->getKey(), $asset);
     }
@@ -23,7 +24,7 @@ class Assets extends Collection implements Contract
      */
     public function style(string $key, string $path, ?string $url = null): void
     {
-        $asset = new Asset($key, Asset::STYLE, $path, $url);
+        $asset = new Asset($key, AssetType::Style, $path, $url);
 
         $this->put($asset->getKey(), $asset);
     }
@@ -33,44 +34,38 @@ class Assets extends Collection implements Contract
      */
     public function icon(string $key, string $path, ?string $url = null): void
     {
-        $asset = new Asset($key, Asset::ICON, $path, $url);
+        $asset = new Asset($key, AssetType::Icon, $path, $url);
 
         $this->put($asset->getKey(), $asset);
     }
 
     /**
      * Get the registered scripts.
-     *
-     * @return \Cone\Root\Support\Collections\Assets
      */
     public function scripts(): static
     {
         return $this->filter(static function (Asset $asset): bool {
-            return $asset->getType() === Asset::SCRIPT;
+            return $asset->getType() === AssetType::Script;
         });
     }
 
     /**
      * Get the registered styles.
-     *
-     * @return \Cone\Root\Support\Collections\Assets
      */
     public function styles(): static
     {
         return $this->filter(static function (Asset $asset): bool {
-            return $asset->getType() === Asset::STYLE;
+            return $asset->getType() === AssetType::Style;
         });
     }
 
     /**
      * Get the registered icons.
-     *
-     * @return \Cone\Root\Support\Collections\Assets
      */
     public function icons(): static
     {
         return $this->filter(static function (Asset $asset): bool {
-            return $asset->getType() === Asset::ICON;
+            return $asset->getType() === AssetType::Icon;
         });
     }
 }

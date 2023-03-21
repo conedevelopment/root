@@ -145,7 +145,7 @@
         <symbol id="icon-horizontal-rule" viewBox="0 0 24 24">
             <path d="M4 13v-2h16v2Z" style="fill:currentColor;"/>
         </symbol>
-        @foreach(Cone\Root\Support\Facades\Asset::icons() as $icon)
+        @foreach(App::make('root')->assets->icons() as $icon)
             <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
                 @include($icon->getPath())
             </symbol>

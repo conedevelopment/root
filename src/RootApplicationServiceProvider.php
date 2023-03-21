@@ -2,9 +2,6 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Support\Collections\Widgets;
-use Cone\Root\Support\Facades\Resource;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -16,9 +13,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('root.widgets', function (): Widgets {
-            return Widgets::make($this->widgets());
-        });
+        //
     }
 
     /**
@@ -27,32 +22,42 @@ class RootApplicationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->gate();
-        $this->registerRoutes();
-        $this->registerResources();
+
+        $this->app->make('root')->booting(function (Root $root): void {
+            $this->registerResources($root);
+            $this->registerWidgets($root);
+            $this->registerRoutes($root);
+        });
     }
 
     /**
      * Register the resources.
      */
-    protected function registerResources(): void
+    protected function registerResources(Root $root): void
     {
-        Root::running(function (): void {
-            foreach ($this->resources() as $resource) {
-                Resource::register($resource->getKey(), $resource);
-            }
-        });
+        foreach ($this->resources() as $resource) {
+            $root->resources->register($resource);
+        }
+    }
+
+    /**
+     * Register the widgets.
+     */
+    protected function registerWidgets(Root $root): void
+    {
+        foreach ($this->widgets() as $widget) {
+            $root->widgets->push($widget);
+        }
     }
 
     /**
      * Register the routes.
      */
-    protected function registerRoutes(): void
+    protected function registerRoutes(Root $root): void
     {
-        Root::routes(function (Router $router): void {
-            $router->prefix('dashboard')->group(function (Router $router): void {
-                $this->app->make('root.widgets')->registerRoutes(
-                    RootRequest::createFrom($this->app['request']), $router
-                );
+        $root->routes(function (Router $router) use ($root): void {
+            $router->prefix('dashboard')->group(function (Router $router) use ($root): void {
+                $root->widgets->registerRoutes($root->request(), $router);
             });
         });
     }

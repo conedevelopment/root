@@ -15,7 +15,7 @@ class DashboardControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Dashboard',
-                'page.props.widgets' => $this->app->make('root.widgets')->toArray(),
+                'page.props.widgets' => $this->app->make('root')->widgets->toArray(),
             ]);
     }
 }

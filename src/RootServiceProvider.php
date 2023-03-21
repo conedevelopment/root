@@ -34,14 +34,18 @@ class RootServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(Root::class, static function (Application $app): Root {
+            return new Root($app);
+        });
+
+        $this->app->alias(Root::class, 'root');
+
         if (! $this->app->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__.'/../config/root.php', 'root');
         }
 
         $this->app->booted(static function (Application $app): void {
-            if ($app->runningInConsole() || Root::shouldRun($app['request'])) {
-                Root::run($app['request']);
-            }
+            $app->make(Root::class)->boot();
         });
 
         $this->app->resolving(RootRequest::class, static function (RootRequest $request, Application $app): void {
@@ -106,7 +110,7 @@ class RootServiceProvider extends ServiceProvider
             'root', $this->app['config']->get('root.middleware', [])
         );
 
-        Root::routes(function (): void {
+        $this->app->make(Root::class)->routes(function (): void {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
@@ -137,15 +141,15 @@ class RootServiceProvider extends ServiceProvider
         $this->app['view']->composer('root::app', static function (View $view): void {
             $app = $view->getFactory()->getContainer();
 
-            $request = RootRequest::createFrom($app['request']);
+            $root = $app->make(Root::class);
 
             $view->with('root', [
-                'resources' => Support\Facades\Resource::available($request)->values(),
+                'resources' => $root->resources->available($root->request())->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $request->user()->toRoot(),
+                'user' => $root->request()->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
-                    'url' => Root::getPath(),
+                    'url' => $root->getPath(),
                     'branding' => $app['config']->get('root.branding'),
                 ],
             ]);
