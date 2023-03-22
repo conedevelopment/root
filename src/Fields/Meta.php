@@ -7,18 +7,19 @@ use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
+use Illuminate\Routing\Router;
 
 class Meta extends MorphOne
 {
     /**
-     * The Vue component.
+     * The field instance.
      */
-    protected string $component = 'Input';
+    protected Field $field;
 
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(string $label, string $name = null, string $field = Text::class, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
@@ -33,6 +34,8 @@ class Meta extends MorphOne
         };
 
         parent::__construct($label, $name, $relation);
+
+        $this->field = new $field($label, $name);
     }
 
     /**
@@ -48,6 +51,10 @@ class Meta extends MorphOne
      */
     public function async(bool $value = true): static
     {
+        if (method_exists($this->field, 'async')) {
+            $this->field->async($value);
+        }
+
         return $this;
     }
 
@@ -66,7 +73,7 @@ class Meta extends MorphOne
     {
         $name = $this->getRelationName();
 
-        if (! $this->relation instanceof Closure
+        if ($this->relation instanceof Closure
             && $model->relationLoaded('metaData')
             && ! $model->relationLoaded($name)
             && ! is_null($value = $model->getRelation('metaData')->sortByDesc('created_at')->firstWhere('key', $this->name))) {
@@ -111,8 +118,42 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
+    public function registerRoutes(RootRequest $request, Router $router): void
+    {
+        parent::registerRoutes($request, $router);
+
+        if (method_exists($this->field, 'registerRoutes')) {
+            $this->field->registeRoutes($request, $router);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toInput(RootRequest $request, Model $model): array
     {
-        return parent::toInput($request, $model);
+        $this->field->value(fn (): mixed => $this->resolveValue($request, $model));
+
+        return $this->field->toInput($request, $model);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toDisplay(RootRequest $request, Model $model): array
+    {
+        $this->field->format(fn (): mixed => $this->resolveFormat($request, $model));
+
+        return $this->field->toDisplay($request, $model);
+    }
+
+    /**
+     * Handle dynamic method calls into the field.
+     */
+    public function __call(string $method, array $arguments): static
+    {
+        call_user_func_array([$this->field, $method], $arguments);
+
+        return $this;
     }
 }
