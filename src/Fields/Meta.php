@@ -7,7 +7,6 @@ use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
-use Illuminate\Routing\Router;
 
 class Meta extends MorphOne
 {
@@ -19,7 +18,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $name = null, string $field = Text::class, Closure|string $relation = null)
+    public function __construct(string $label, string $name = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
@@ -33,9 +32,123 @@ class Meta extends MorphOne
                         ->withDefault(['key' => $this->name]);
         };
 
-        parent::__construct($label, $name, $relation);
+        $this->field = new Text($label, $name);
 
-        $this->field = new $field($label, $name);
+        parent::__construct($label, $name, $relation);
+    }
+
+    /**
+     * Set the field class.
+     */
+    public function as(string $field): static
+    {
+        $this->field = new $field($this->label, $this->name);
+
+        return $this;
+    }
+
+    /**
+     * Set the meta field as boolean.
+     */
+    public function asBoolean(): static
+    {
+        return $this->as(Boolean::class);
+    }
+
+    /**
+     * Set the meta field as checkbox.
+     */
+    public function asCheckbox(): static
+    {
+        return $this->as(Checkbox::class);
+    }
+
+    /**
+     * Set the meta field as color.
+     */
+    public function asColor(): static
+    {
+        return $this->as(Color::class);
+    }
+
+    /**
+     * Set the meta field as date.
+     */
+    public function asDate(): static
+    {
+        return $this->as(Date::class);
+    }
+
+    /**
+     * Set the meta field as editor.
+     */
+    public function asEditor(): static
+    {
+        return $this->as(Editor::class);
+    }
+
+    /**
+     * Set the meta field as hidden.
+     */
+    public function asHidden(): static
+    {
+        return $this->as(Hidden::class);
+    }
+
+    /**
+     * Set the meta field as number.
+     */
+    public function asNumber(): static
+    {
+        return $this->as(Number::class);
+    }
+
+    /**
+     * Set the meta field as radio.
+     */
+    public function asRadio(): static
+    {
+        return $this->as(Radio::class);
+    }
+
+    /**
+     * Set the meta field as range.
+     */
+    public function asRange(): static
+    {
+        return $this->as(Range::class);
+    }
+
+    /**
+     * Set the meta field as select.
+     */
+    public function asSelect(): static
+    {
+        return $this->as(Select::class);
+    }
+
+    /**
+     * Set the meta field as tag.
+     */
+    public function asTag(): static
+    {
+        return $this->as(Tag::class);
+    }
+
+    /**
+     * Set the meta field as text.
+     */
+    public function asText(): static
+    {
+        return $this->as(Text::class);
+    }
+
+    /**
+     * Set the meta field as textarea.
+     */
+    public function asTextarea(): static
+    {
+        return $this->as(Textarea::class);
     }
 
     /**
@@ -51,10 +164,6 @@ class Meta extends MorphOne
      */
     public function async(bool $value = true): static
     {
-        if (method_exists($this->field, 'async')) {
-            $this->field->async($value);
-        }
-
         return $this;
     }
 
@@ -113,18 +222,6 @@ class Meta extends MorphOne
         }
 
         parent::resolveHydrate($request, $model, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        parent::registerRoutes($request, $router);
-
-        if (method_exists($this->field, 'registerRoutes')) {
-            $this->field->registeRoutes($request, $router);
-        }
     }
 
     /**
