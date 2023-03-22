@@ -25,10 +25,8 @@ class Meta extends MorphOne
 
             return $model->morphOne(get_class($related), 'metable')
                         ->ofMany(
-                            [$related->getCreatedAtColumn() => 'max'],
-                            function (Builder $query) use ($related): Builder {
-                                return $query->where($related->qualifyColumn('key'), $this->name);
-                            },
+                            [$related->getCreatedAtColumn() => 'MAX'],
+                            fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->name),
                             'metaData'
                         )
                         ->withDefault(['key' => $this->name]);
