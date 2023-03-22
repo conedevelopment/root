@@ -212,7 +212,7 @@ class Meta extends MorphOne
     public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+            $this->hydrateResolver = function () use ($request, $model, $value): void {
                 $related = $this->getValue($request, $model);
 
                 $related->setAttribute('value', $value);

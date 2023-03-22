@@ -302,10 +302,12 @@ abstract class Field implements Arrayable
     public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $model->setAttribute($this->getKey(), $value);
-        } else {
-            call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
+            $this->hydrateResolver = function () use ($model, $value): void {
+                $model->setAttribute($this->getKey(), $value);
+            };
         }
+
+        call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
     }
 
     /**
