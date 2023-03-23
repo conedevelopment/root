@@ -40,9 +40,13 @@ class Meta extends MorphOne
     /**
      * Set the field class.
      */
-    public function as(string $field): static
+    public function as(string $field, Closure $callback = null): static
     {
         $this->field = new $field($this->label, $this->name);
+
+        if (! is_null($callback)) {
+            call_user_func_array($callback, [$this->field]);
+        }
 
         return $this;
     }
@@ -50,105 +54,113 @@ class Meta extends MorphOne
     /**
      * Set the meta field as boolean.
      */
-    public function asBoolean(): static
+    public function asBoolean(Closure $callback = null): static
     {
-        return $this->as(Boolean::class);
+        return $this->as(Boolean::class, $callback);
     }
 
     /**
      * Set the meta field as checkbox.
      */
-    public function asCheckbox(): static
+    public function asCheckbox(Closure $callback = null): static
     {
-        return $this->as(Checkbox::class);
+        return $this->as(Checkbox::class, $callback);
     }
 
     /**
      * Set the meta field as color.
      */
-    public function asColor(): static
+    public function asColor(Closure $callback = null): static
     {
-        return $this->as(Color::class);
+        return $this->as(Color::class, $callback);
     }
 
     /**
      * Set the meta field as date.
      */
-    public function asDate(): static
+    public function asDate(Closure $callback = null): static
     {
-        return $this->as(Date::class);
+        return $this->as(Date::class, $callback);
     }
 
     /**
      * Set the meta field as editor.
      */
-    public function asEditor(): static
+    public function asEditor(Closure $callback = null): static
     {
-        return $this->as(Editor::class);
+        return $this->as(Editor::class, $callback);
     }
 
     /**
      * Set the meta field as hidden.
      */
-    public function asHidden(): static
+    public function asHidden(Closure $callback = null): static
     {
-        return $this->as(Hidden::class);
+        return $this->as(Hidden::class, $callback);
+    }
+
+    /**
+     * Set the meta field as JSON.
+     */
+    public function asJson(Closure $callback = null): static
+    {
+        return $this->as(Json::class, $callback);
     }
 
     /**
      * Set the meta field as number.
      */
-    public function asNumber(): static
+    public function asNumber(Closure $callback = null): static
     {
-        return $this->as(Number::class);
+        return $this->as(Number::class, $callback);
     }
 
     /**
      * Set the meta field as radio.
      */
-    public function asRadio(): static
+    public function asRadio(Closure $callback = null): static
     {
-        return $this->as(Radio::class);
+        return $this->as(Radio::class, $callback);
     }
 
     /**
      * Set the meta field as range.
      */
-    public function asRange(): static
+    public function asRange(Closure $callback = null): static
     {
-        return $this->as(Range::class);
+        return $this->as(Range::class, $callback);
     }
 
     /**
      * Set the meta field as select.
      */
-    public function asSelect(): static
+    public function asSelect(Closure $callback = null): static
     {
-        return $this->as(Select::class);
+        return $this->as(Select::class, $callback);
     }
 
     /**
      * Set the meta field as tag.
      */
-    public function asTag(): static
+    public function asTag(Closure $callback = null): static
     {
-        return $this->as(Tag::class);
+        return $this->as(Tag::class, $callback);
     }
 
     /**
      * Set the meta field as text.
      */
-    public function asText(): static
+    public function asText(Closure $callback = null): static
     {
-        return $this->as(Text::class);
+        return $this->as(Text::class, $callback);
     }
 
     /**
      * Set the meta field as textarea.
      */
-    public function asTextarea(): static
+    public function asTextarea(Closure $callback = null): static
     {
-        return $this->as(Textarea::class);
+        return $this->as(Textarea::class, $callback);
     }
 
     /**
@@ -245,12 +257,10 @@ class Meta extends MorphOne
     }
 
     /**
-     * Handle dynamic method calls into the field.
+     * {@inheritdoc}
      */
-    public function __call(string $method, array $arguments): static
+    public function toValidate(RootRequest $request, Model $model): array
     {
-        call_user_func_array([$this->field, $method], $arguments);
-
-        return $this;
+        return $this->field->toValidate($request, $model);
     }
 }
