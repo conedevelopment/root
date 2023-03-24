@@ -2,7 +2,8 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\ExtractRequest;
+use Cone\Root\Extracts\Extract;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,11 +12,11 @@ class ExtractController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(ExtractRequest $request): Response
+    public function __invoke(Request $request, Extract $extract): Response
     {
         return Inertia::render(
             'Extracts/Index',
-            $request->extract()->toIndex($request)
+            $extract->toIndex($request)
         );
     }
 }

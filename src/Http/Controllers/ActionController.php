@@ -2,16 +2,17 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\ActionRequest;
+use Cone\Root\Actions\Action;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class ActionController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(ActionRequest $request): RedirectResponse
+    public function __invoke(Request $request, Action $action): RedirectResponse
     {
-        return $request->action()->perform($request);
+        return $action->perform($request);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Widgets\Widget;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Widget
 {
@@ -35,7 +35,7 @@ class {{ class }} extends Widget
     /**
      * Get the data.
      */
-    public function data(RootRequest $request): array
+    public function data(Request $request): array
     {
         return array_merge(parent::data($request), [
             //

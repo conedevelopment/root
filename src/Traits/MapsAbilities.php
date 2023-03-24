@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Traits;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 trait MapsAbilities
@@ -11,7 +11,7 @@ trait MapsAbilities
     /**
      * Map the abilities.
      */
-    public function mapAbilities(RootRequest $request, Model $model): array
+    public function mapAbilities(Request $request, Model $model): array
     {
         $policy = $this->getPolicy($model);
 

@@ -2,15 +2,17 @@
 
 namespace {{ namespace }};
 
+use Cone\Root\Forms\Form;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Tables\Table;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Resource
 {
     /**
      * Define the extracts for the resource.
      */
-    public function extracts(RootRequest $request): array
+    public function extracts(Request $request): array
     {
         return array_merge(parent::extracts($request), [
             //
@@ -20,9 +22,29 @@ class {{ class }} extends Resource
     /**
      * Define the widgets for the resource.
      */
-    public function widgets(RootRequest $request): array
+    public function widgets(Request $request): array
     {
         return array_merge(parent::widgets($request), [
+            //
+        ]);
+    }
+
+    /**
+     * Get the table representation of the resource.
+     */
+    public function toForm(Request $request): Form
+    {
+        return parent::toForm($request)->withFields([
+            //
+        ]);
+    }
+
+    /**
+     * Get the table representation of the resource.
+     */
+    public function toTable(Request $request): Table
+    {
+        return parent::toTable($request)->withColumns([
             //
         ]);
     }

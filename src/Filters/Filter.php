@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;

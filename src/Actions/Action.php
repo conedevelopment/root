@@ -4,25 +4,26 @@ namespace Cone\Root\Actions;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
-use Cone\Root\Fields\Field;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Forms\Form;
+use Cone\Root\Http\Controllers\ActionController;
+use Cone\Root\Interfaces\HasForm;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, Responsable
+abstract class Action implements Arrayable, HasForm, Responsable
 {
     use Makeable;
-    use ResolvesFields;
+    use RegistersRoutes;
 
     /**
      * The query resolver callback.
@@ -50,6 +51,14 @@ abstract class Action implements Arrayable, Responsable
     public function getKey(): string
     {
         return Str::of(static::class)->classBasename()->kebab()->value();
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
     }
 
     /**
@@ -105,11 +114,7 @@ abstract class Action implements Arrayable, Responsable
 
         $model = $query->getModel();
 
-        $request->validate(
-            $this->resolveFields($request)
-                ->available($request, $model)
-                ->mapToValidate($request, $model)
-        );
+        $this->toForm($request)->validate($request, $model);
 
         $this->handle(
             $request,
@@ -133,11 +138,8 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Resolve the query for the extract.
-     *
-     *
-     * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
-    public function resolveQuery(RootRequest $request): Builder
+    public function resolveQuery(Request $request): Builder
     {
         if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
@@ -147,13 +149,11 @@ abstract class Action implements Arrayable, Responsable
     }
 
     /**
-     * Handle the resolving event on the field instance.
+     * The routes that should be registered.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    public function routes(Router $router): void
     {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
+        $router->post('/', ActionController::class);
     }
 
     /**
@@ -166,32 +166,21 @@ abstract class Action implements Arrayable, Responsable
             'destructive' => $this->isDestructive(),
             'key' => $this->getKey(),
             'name' => $this->getName(),
-            'url' => $this->getUri(),
         ];
     }
 
     /**
      * Get the form representation of the action.
      */
-    public function toForm(RootRequest $request, Model $model): array
+    public function toForm(Request $request): Form
     {
-        $fields = $this->resolveFields($request)
-                        ->available($request, $model)
-                        ->mapToForm($request, $model)
-                        ->toArray();
-
-        return array_merge($this->toArray(), [
-            'data' => array_reduce($fields, static function (array $data, array $field): array {
-                return array_replace_recursive($data, [$field['name'] => $field['value']]);
-            }, []),
-            'fields' => $fields,
-        ]);
+        return new Form();
     }
 
     /**
      * Create an HTTP response that represents the object.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\Request  $request
      */
     public function toResponse($request): Response
     {

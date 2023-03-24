@@ -144,9 +144,9 @@ class RootServiceProvider extends ServiceProvider
             $root = $app->make(Root::class);
 
             $view->with('root', [
-                'resources' => $root->resources->available($root->request())->values(),
+                'resources' => $root->resources->available($app['request'])->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $root->request()->user()->toRoot(),
+                'user' => $app['request']->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
                     'url' => $root->getPath(),

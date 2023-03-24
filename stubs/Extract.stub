@@ -3,55 +3,36 @@
 namespace {{ namespace }};
 
 use Cone\Root\Extracts\Extract;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Extract
 {
     /**
      * Get the query for the extract.
      */
-    public function resolveQuery(RootRequest $request): Builder
+    public function resolveQuery(Request $request): Builder
     {
         return parent::resolveQuery($request);
     }
 
     /**
-     * Define the fields for the extract.
-     */
-    public function fields(RootRequest $request): array
-    {
-        return array_merge(parent::fields($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the filters for the extract.
-     */
-    public function filters(RootRequest $request): array
-    {
-        return array_merge(parent::filters($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the actions for the extract.
-     */
-    public function actions(RootRequest $request): array
-    {
-        return array_merge(parent::actions($request), [
-            //
-        ]);
-    }
-
-    /**
      * Define the widgets for the resource.
      */
-    public function widgets(RootRequest $request): array
+    public function widgets(Request $request): array
     {
         return array_merge(parent::widgets($request), [
+            //
+        ]);
+    }
+
+    /**
+     * Get the table representation of the resource.
+     */
+    public function toTable(Request $request): Table
+    {
+        return parent::toTable($request)->withColumns([
             //
         ]);
     }
