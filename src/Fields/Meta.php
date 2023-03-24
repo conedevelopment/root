@@ -23,7 +23,8 @@ class Meta extends MorphOne
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
 
-            return $model->morphOne(get_class($related), 'metable')
+            return $model->metaData()
+                        ->one()
                         ->ofMany(
                             [$related->getCreatedAtColumn() => 'MAX'],
                             fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->name),
