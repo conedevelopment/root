@@ -3,39 +3,30 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Router;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Actions extends Collection
 {
     /**
-     * Filter the actions that are available for the given request.
+     * Register the given actions.
      */
-    public function available(RootRequest $request, ...$parameters): static
+    public function register(array|Action $actions): static
     {
-        return $this->filter(static function (Action $action) use ($request, $parameters): bool {
-            return $action->authorized($request, ...$parameters)
-                && $action->visible($request);
-        })->values();
+        foreach (Arr::wrap($actions) as $action) {
+            $this->push($action);
+        }
+
+        return $this;
     }
 
     /**
      * Map the actions to form.
      */
-    public function mapToForm(RootRequest $request, Model $model): Collection
+    public function mapToForm(Request $request, Model $model): Collection
     {
         return $this->map->toForm($request, $model)->toBase();
-    }
-
-    /**
-     * Register the action routes.
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        $router->prefix('actions')->group(function (Router $router) use ($request): void {
-            $this->each->registerRoutes($request, $router);
-        });
     }
 }

@@ -89,26 +89,9 @@ class ResourceController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(ShowRequest $request, Model $model): Response
-    {
-        $resource = $request->resource();
-
-        if ($resource->getPolicy($model)) {
-            $this->authorize('view', $model);
-        }
-
-        return Inertia::render(
-            'Resources/Show',
-            $resource->toShow($request, $model)
-        );
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UpdateRequest $request, Model $model): Response
+    public function show(UpdateRequest $request, Model $model): Response
     {
         $resource = $request->resource();
 
@@ -143,7 +126,7 @@ class ResourceController extends Controller
 
         $resource->updated($request, $model);
 
-        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
+        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 

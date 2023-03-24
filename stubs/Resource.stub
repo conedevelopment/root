@@ -2,42 +2,11 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Fields\ID;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Http\Requests\RootRequest;
 
 class {{ class }} extends Resource
 {
-    /**
-     * Define the fields for the resource.
-     */
-    public function fields(RootRequest $request): array
-    {
-        return array_merge(parent::fields($request), [
-            ID::make()->sortable()->searchable(),
-        ]);
-    }
-
-    /**
-     * Define the filters for the resource.
-     */
-    public function filters(RootRequest $request): array
-    {
-        return array_merge(parent::filters($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the actions for the resource.
-     */
-    public function actions(RootRequest $request): array
-    {
-        return array_merge(parent::actions($request), [
-            //
-        ]);
-    }
-
     /**
      * Define the extracts for the resource.
      */

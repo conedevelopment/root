@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Tables\Columns;
 
-use Closure;
 use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\ResolvesModelValues;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 abstract class Column implements Arrayable
 {
     use Makeable;
+    use ResolvesModelValues;
 
     /**
      * The column label.
@@ -32,16 +33,6 @@ abstract class Column implements Arrayable
      * Indicates if the field is searchable.
      */
     protected bool $searchable = false;
-
-    /**
-     * The format resolver callback.
-     */
-    protected ?Closure $formatResolver = null;
-
-    /**
-     * The value resolver callback.
-     */
-    protected ?Closure $valueResolver = null;
 
     /**
      * Create a new column instance.
@@ -106,54 +97,6 @@ abstract class Column implements Arrayable
     public function isSearchable(): bool
     {
         return $this->searchable;
-    }
-
-    /**
-     * Set the value resolver.
-     */
-    public function value(Closure $callback): static
-    {
-        $this->valueResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the value.
-     */
-    public function resolveValue(Request $request, Model $model): mixed
-    {
-        $value = $model->getAttribute($this->name);
-
-        if (is_null($this->valueResolver)) {
-            return $value;
-        }
-
-        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
-    }
-
-    /**
-     * Set the format resolver.
-     */
-    public function format(Closure $callback): static
-    {
-        $this->formatResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Format the value.
-     */
-    public function resolveFormat(Request $request, Model $model): mixed
-    {
-        $value = $this->resolveValue($request, $model);
-
-        if (is_null($this->formatResolver)) {
-            return $value;
-        }
-
-        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
 
     /**

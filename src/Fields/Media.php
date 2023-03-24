@@ -10,6 +10,7 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
@@ -152,7 +153,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
         $fields = new Fields(array_map(static function (string $column): Field {
             return new Text($column, $column);

@@ -3,34 +3,35 @@
 namespace Cone\Root\Tables;
 
 use Closure;
-use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Support\Collections\Filters;
+use Cone\Root\Actions\Action;
+use Cone\Root\Tables\Columns\Column;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class Table implements Arrayable
 {
+    use ResolvesActions;
+    use ResolvesFilters;
+
     /**
      * The model instance.
      */
     protected Model $model;
 
     /**
-     * The columns collection.
+     * The columns resolver callback.
      */
-    protected Columns $columns;
+    protected ?Closure $columnsResolver = null;
 
     /**
-     * The filters collection.
+     * The resolved columns.
      */
-    protected Filters $filters;
-
-    /**
-     * The actions collection.
-     */
-    protected Actions $actions;
+    protected ?Columns $columns = null;
 
     /**
      * The Vue component.
@@ -53,15 +54,12 @@ class Table implements Arrayable
     public function __construct(Model $model)
     {
         $this->model = $model;
-        $this->actions = new Actions($this->actions());
-        $this->columns = new Columns($this->columns());
-        $this->filters = new Filters($this->filters());
     }
 
     /**
      * The default columns.
      */
-    public function columns(): array
+    public function columns(Request $request): array
     {
         return [];
     }
@@ -69,47 +67,51 @@ class Table implements Arrayable
     /**
      * Merge the given columns into the collection.
      */
-    public function withColumns(array $columns): static
+    public function withColumns(Closure|array $columns): static
     {
-        $this->columns->push(...$columns);
+        $this->columnsResolver = is_array($columns) ? fn (): array => $columns : $columns;
 
         return $this;
     }
 
     /**
-     * The default actions.
+     * Resolve the actions.
      */
-    public function actions(): array
+    public function resolveColumns(Request $request): Columns
     {
-        return [];
+        if (is_null($this->columns)) {
+            $this->columns = Columns::make()->register($this->columns($request));
+
+            if (! is_null($this->columnsResolver)) {
+                $this->columns->register(call_user_func_array($this->columnsResolver, [$request]));
+            }
+
+            $this->columns->each(function (Column $column) use ($request): void {
+                $this->resolveColumn($request, $column);
+            });
+        }
+
+        return $this->columns;
     }
 
     /**
-     * Merge the given actions into the collection.
+     * Handle the resolving event on the action instance.
      */
-    public function withActions(array $actions): static
+    protected function resolveColumn(Request $request, Column $column): void
     {
-        $this->actions->merge($actions);
-
-        return $this;
+        //
     }
 
     /**
-     * The default filters.
+     * Handle the resolving event on the action instance.
      */
-    public function filters(): array
+    protected function resolveAction(Request $request, Action $action): void
     {
-        return [];
-    }
-
-    /**
-     * Merge the given columns into the collection.
-     */
-    public function withFilters(array $filters): static
-    {
-        $this->filters->merge($filters);
-
-        return $this;
+        $action->withQuery(function (Request $request): Builder {
+            return $this->resolveFilters($request)
+                        ->available($request)
+                        ->apply($request, $this->resolveQuery());
+        });
     }
 
     /**
@@ -143,13 +145,12 @@ class Table implements Arrayable
      */
     public function toRows(Request $request): array
     {
-        // $filters = $this->resolveFilters($request)->available($request);
-
-        return $this->resolveQuery()
+        return $this->resolveFilters($request)
+                    ->apply($request, $this->resolveQuery())
                     ->latest()
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
-                    // ->setPath($this->getUri())
+                    ->setPath(Str::start($request->path(), '/'))
                     ->through(function (Model $model) use ($request): array {
                         return $this->toRow($request, $model);
                     })
@@ -162,8 +163,14 @@ class Table implements Arrayable
     public function toRow(Request $request, Model $model): array
     {
         return [
-            'columns' => $this->columns->map->toDisplay($request, $model)->toArray(),
-            'abilities' => [],
+            'columns' => $this->resolveColumns($request)->map->toDisplay($request, $model)->toArray(),
+            'trashed' => false,
+            'abilities' => [
+                'create' => true,
+                'update' => true,
+                'view' => true,
+                'delete' => true,
+            ],
         ];
     }
 
@@ -178,12 +185,15 @@ class Table implements Arrayable
     }
 
     /**
-     * Convert the table to processable data.
+     * Build the table.
      */
-    public function toData(Request $request): array
+    public function build(Request $request): array
     {
         return array_merge($this->toArray(), [
             'items' => $this->toRows($request),
+            'filters' => $this->resolveFilters($request)->mapToForm($request)->toArray(),
+            'actions' => $this->resolveActions($request)->mapToForm($request, $this->model)->toArray(),
+            'filter_values' => $this->resolveFilters($request)->mapToQuery($request, $this->resolveQuery()),
         ]);
     }
 }

@@ -19,13 +19,13 @@
             <div class="card">
                 <div class="table-responsive">
                     <table class="table table--striped table--clear-border table--rounded" v-if="items.data.length">
-                        <!-- <Head
+                        <Head
                             :items="items.data"
                             :query="query"
                             :selection="selection"
                             :columns="columns"
                             @update:query="fetch"
-                        ></Head> -->
+                        ></Head>
                         <tbody>
                             <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                         </tbody>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <Pagination :query="query" :items="items" @update:query="fetch"></Pagination> -->
+            <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
         </div>
     </div>
 </template>
@@ -69,6 +69,10 @@
                 type: Object,
                 required: true,
             },
+            filter_values: {
+                type: Object,
+                required: true,
+            },
         },
 
         data() {
@@ -76,15 +80,15 @@
                 selection: [],
                 allMatching: false,
                 processing: false,
-                // query: this.$inertia.form(window.location.href, this.query),
+                query: this.$inertia.form(window.location.href, this.filter_values),
             };
         },
 
         computed: {
             columns() {
-                const fields = this.items.data?.[0]?.fields || [];
+                const columns = this.items.data?.[0]?.columns || [];
 
-                return fields.map((field) => ({
+                return columns.map((field) => ({
                     label: field.label,
                     name: field.name,
                     sortable: field.sortable,

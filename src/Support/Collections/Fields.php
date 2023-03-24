@@ -4,22 +4,22 @@ namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Fields extends Collection
 {
     /**
-     * Filter the fields that are available for the given request.
+     * Register the given fields.
      */
-    public function available(RootRequest $request, ...$parameters): static
+    public function register(array|Field $fields): static
     {
-        return $this->filter(static function (Field $field) use ($request, $parameters): bool {
-            return $field->authorized($request, ...$parameters)
-                && $field->visible($request);
-        })->values();
+        foreach (Arr::wrap($fields) as $field) {
+            $this->push($field);
+        }
+
+        return $this;
     }
 
     /**
@@ -62,19 +62,5 @@ class Fields extends Collection
         return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
             return array_merge_recursive($rules, $field->toValidate($request, $model));
         }, []);
-    }
-
-    /**
-     * Register the field routes.
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        $router->prefix('fields')->group(function (Router $router) use ($request): void {
-            $this->each(static function (Field $field) use ($request, $router): void {
-                if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
-                    $field->registerRoutes($request, $router);
-                }
-            });
-        });
     }
 }

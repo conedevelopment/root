@@ -12,7 +12,7 @@
             v-html="column.formatted_value"
         ></td>
         <td>
-            <!-- <div class="table__actions">
+            <div class="table__actions">
                 <button
                     type="button"
                     class="btn btn--delete btn--sm btn--icon"
@@ -45,13 +45,13 @@
                 <Link
                     v-if="item.abilities.update"
                     class="btn btn--tertiary btn--sm btn--icon"
-                    :href="`${item.url}/edit`"
+                    :href="item.url"
                     :aria-label="__('Edit')"
                     :title="__('Edit')"
                 >
                     <Icon class="btn__icon" name="edit"/>
                 </Link>
-            </div> -->
+            </div>
         </td>
     </tr>
 </template>

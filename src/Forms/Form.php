@@ -2,30 +2,21 @@
 
 namespace Cone\Root\Forms;
 
-use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
-class Form implements Arrayable, Responsable
+class Form implements Arrayable
 {
-    /**
-     * The model instance.
-     */
-    protected Model $model;
-
-    /**
-     * The fields collection.
-     */
-    public readonly Fields $fields;
+    use ResolvesFields;
 
     /**
      * Create a new form instance.
      */
-    public function __construct(Model $model)
+    public function __construct()
     {
-        $this->model = $model;
-        $this->fields = new Fields();
+        //
     }
 
     /**
@@ -36,14 +27,18 @@ class Form implements Arrayable, Responsable
         return [];
     }
 
+    // handle
+    // validate
+
     /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Build the form.
      */
-    public function toResponse($request)
+    public function build(Request $request, Model $model): array
     {
-        //
+        return array_merge($this->toArray(), [
+            'id' => $model->getKey(),
+            'exists' => $model->exists,
+            'fields' => $this->resolveFields($request)->mapToForm($request, $model)->toArray()
+        ]);
     }
 }

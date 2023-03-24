@@ -5,34 +5,24 @@ namespace Cone\Root\Actions;
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
-use Cone\Root\Http\Controllers\ActionController;
-use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Alert;
-use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Router;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class Action implements Arrayable, Responsable
 {
-    use Authorizable;
     use Makeable;
     use ResolvesFields;
-    use ResolvesVisibility;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
-    }
 
     /**
      * The query resolver callback.
@@ -52,7 +42,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Handle the action.
      */
-    abstract public function handle(ActionRequest $request, Collection $models): void;
+    abstract public function handle(Request $request, Collection $models): void;
 
     /**
      * Get the key.
@@ -109,7 +99,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Perform the action.
      */
-    public function perform(ActionRequest $request): Response
+    public function perform(Request $request): Response
     {
         $query = $this->resolveQuery($request);
 
@@ -164,26 +154,6 @@ abstract class Action implements Arrayable, Responsable
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         });
-    }
-
-    /**
-     * Register the action routes.
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        $this->defaultRegisterRoutes($request, $router);
-
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
-    }
-
-    /**
-     * The routes that should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        $router->post('/', ActionController::class);
     }
 
     /**

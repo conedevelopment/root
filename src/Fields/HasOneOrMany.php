@@ -111,7 +111,6 @@ abstract class HasOneOrMany extends Relation
         if ($this->asSubResource) {
             $router->prefix($this->getKey()."/{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($request, $router);
-                $this->resolveActions($request)->registerRoutes($request, $router);
             });
 
             $this->registerRouterConstrains($request, $router);
