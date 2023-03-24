@@ -7,12 +7,12 @@
             </label>
         </th>
         <td
-            v-for="field in item.fields"
-            :key="`${item.id}-${field.name}`"
-            v-html="field.formatted_value"
+            v-for="column in item.columns"
+            :key="`${item.id}-${column.name}`"
+            v-html="column.formatted_value"
         ></td>
         <td>
-            <div class="table__actions">
+            <!-- <div class="table__actions">
                 <button
                     type="button"
                     class="btn btn--delete btn--sm btn--icon"
@@ -51,7 +51,7 @@
                 >
                     <Icon class="btn__icon" name="edit"/>
                 </Link>
-            </div>
+            </div> -->
         </td>
     </tr>
 </template>

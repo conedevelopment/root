@@ -16,6 +16,7 @@ use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Root;
+use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\ResolvesActions;
@@ -432,17 +433,18 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function toIndex(IndexRequest $request): array
     {
         return [
-            'actions' => $this->resolveActions($request)
-                            ->available($request)
-                            ->mapToForm($request, $this->getModelInstance())
-                            ->toArray(),
+            // 'actions' => $this->resolveActions($request)
+            //                 ->available($request)
+            //                 ->mapToForm($request, $this->getModelInstance())
+            //                 ->toArray(),
             'breadcrumbs' => $this->resolveBreadcrumbs($request),
-            'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
-            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
-            'items' => $this->mapItems($request),
+            // 'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
+            // 'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
+            // 'items' => $this->mapItems($request),
             'resource' => $this->toArray(),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
+            'table' => $this->toTable()->toData($request),
         ];
     }
 
@@ -556,5 +558,14 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
         if ($this->isSoftDeletable()) {
             $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore'])->name('restore');
         }
+    }
+
+    /**
+     * Get the table representation of the resource.
+     */
+    public function toTable(): Table
+    {
+        return (new Table($this->getModelInstance()))
+                ->withQuery(fn (): Builder => $this->query());
     }
 }

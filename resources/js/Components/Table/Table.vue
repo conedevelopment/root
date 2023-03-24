@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="filters.length > 0 || actions.length > 0 || extracts.length > 0" class="app-operation">
+        <div v-if="filters.length > 0 || actions.length > 0" class="app-operation">
             <Filters
                 v-if="filters.length > 0"
                 :query="query"
@@ -14,22 +14,18 @@
                 :selection="selection"
                 @success="clearSelection"
             ></Actions>
-            <Extracts
-                v-if="extracts.length > 0"
-                :extracts="extracts"
-            ></Extracts>
         </div>
         <div class="app-list">
             <div class="card">
                 <div class="table-responsive">
                     <table class="table table--striped table--clear-border table--rounded" v-if="items.data.length">
-                        <Head
+                        <!-- <Head
                             :items="items.data"
                             :query="query"
                             :selection="selection"
                             :columns="columns"
                             @update:query="fetch"
-                        ></Head>
+                        ></Head> -->
                         <tbody>
                             <Row v-for="item in items.data" :key="item.id" :item="item"></Row>
                         </tbody>
@@ -39,14 +35,13 @@
                     </div>
                 </div>
             </div>
-            <Pagination :query="query" :items="items" @update:query="fetch"></Pagination>
+            <!-- <Pagination :query="query" :items="items" @update:query="fetch"></Pagination> -->
         </div>
     </div>
 </template>
 
 <script>
     import Actions from './../Actions/Actions.vue';
-    import Extracts from './Extracts.vue';
     import Filters from './Filters.vue';
     import Head from './Head.vue';
     import Pagination from './Pagination.vue';
@@ -55,7 +50,6 @@
     export default {
         components: {
             Actions,
-            Extracts,
             Filters,
             Head,
             Pagination,
@@ -64,10 +58,6 @@
 
         props: {
             actions: {
-                type: Array,
-                default: () => [],
-            },
-            extracts: {
                 type: Array,
                 default: () => [],
             },
@@ -86,7 +76,7 @@
                 selection: [],
                 allMatching: false,
                 processing: false,
-                query: this.$inertia.form(window.location.href, this.items.query),
+                // query: this.$inertia.form(window.location.href, this.query),
             };
         },
 
