@@ -32,7 +32,7 @@ trait RegistersRoutes
      */
     public function registerRoutes(Router $router): void
     {
-        $this->uri = sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getUriKey());
+        $this->uri = Str::start(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getUriKey()), '/');
 
         if (! App::routesAreCached()) {
             $router->prefix($this->getUriKey())->group(function (Router $router): void {

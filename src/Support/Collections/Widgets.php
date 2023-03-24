@@ -3,6 +3,7 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Widgets\Widget;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -18,5 +19,15 @@ class Widgets extends Collection
         }
 
         return $this;
+    }
+
+    /**
+     * Register the routes.
+     */
+    public function registerRoutes(Router $router): void
+    {
+        $router->prefix('widgets')->group(function (Router $router): void {
+            $this->each->registerRoutes($router);
+        });
     }
 }

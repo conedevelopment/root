@@ -297,6 +297,9 @@ class Resource implements Arrayable
      */
     public function boot(Root $root): void
     {
+        $this->resolveWidgets($root->app['request']);
+        $this->resolveExtracts($root->app['request']);
+
         $root->routes(function (Router $router): void {
             $this->registerRoutes($router);
         });
@@ -310,7 +313,8 @@ class Resource implements Arrayable
         $this->__registerRoutes($router);
 
         $router->prefix($this->getUriKey())->group(function (Router $router): void {
-            $this->resolveWidgets($router->getCurrentRequest())->registerRoutes($router);
+            $this->widgets->registerRoutes($router);
+            $this->extracts->registerRoutes($router);
         });
     }
 

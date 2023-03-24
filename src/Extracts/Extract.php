@@ -14,6 +14,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Extract implements Arrayable, HasTable
@@ -76,14 +77,14 @@ abstract class Extract implements Arrayable, HasTable
     }
 
     /**
-     * Register the routes using the given router.
+     * Register the routes.
      */
     public function registerRoutes(Router $router): void
     {
         $this->__registerRoutes($router);
 
         $router->prefix($this->getUriKey())->group(function (Router $router): void {
-            $this->resolveWidgets($router->getCurrentRequest())->registerRoutes($router);
+            $this->resolveWidgets(App::make('request'))->registerRoutes($router);
         });
     }
 
@@ -114,6 +115,7 @@ abstract class Extract implements Arrayable, HasTable
     {
         return [
             'extract' => $this->toArray(),
+            'table' => $this->toTable($request)->build($request),
             'resource' => [],
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->toArray(),

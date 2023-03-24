@@ -6,7 +6,6 @@ use Closure;
 use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
@@ -19,7 +18,6 @@ abstract class Widget implements Arrayable, Renderable
 {
     use Makeable;
     use RegistersRoutes;
-    use ResolvesVisibility;
 
     /**
      * Indicates if the component is async.
