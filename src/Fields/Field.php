@@ -3,8 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValues;
@@ -52,14 +50,6 @@ abstract class Field implements Arrayable
         $this->label($label);
         $this->name($name ??= Str::of($label)->lower()->snake()->value());
         $this->id($name);
-    }
-
-    /**
-     * Get the key.
-     */
-    public function getKey(): string
-    {
-        return $this->name;
     }
 
     /**
@@ -161,7 +151,7 @@ abstract class Field implements Arrayable
      */
     public function getValueForHydrate(Request $request, Model $model): mixed
     {
-        return $request->input([$this->getKey()]);
+        return $request->input([$this->name]);
     }
 
     /**
@@ -181,7 +171,7 @@ abstract class Field implements Arrayable
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function () use ($model, $value): void {
-                $model->setAttribute($this->getKey(), $value);
+                $model->setAttribute($this->name, $value);
             };
         }
 
@@ -266,11 +256,7 @@ abstract class Field implements Arrayable
      */
     public function toValidate(Request $request, Model $model): array
     {
-        $key = match (get_class($request)) {
-            CreateRequest::class => 'create',
-            UpdateRequest::class => 'update',
-            default => '*',
-        };
+        $key = ! $model->exists ? 'create' : 'update';
 
         $rules = array_map(
             static function (array|Closure $rule) use ($request, $model): array {
@@ -279,7 +265,7 @@ abstract class Field implements Arrayable
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 
-        return [$this->getKey() => Arr::flatten($rules, 1)];
+        return [$this->name => Arr::flatten($rules, 1)];
     }
 
     /**

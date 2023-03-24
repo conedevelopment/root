@@ -2,30 +2,21 @@
 
 namespace Cone\Root\Support\Collections;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Widgets\Widget;
-use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Widgets extends Collection
 {
     /**
-     * Filter the widgets that are visible for the given request.
+     * Register the given widgets.
      */
-    public function available(RootRequest $request): static
+    public function register(array|Widget $widgets): static
     {
-        return $this->filter(static function (Widget $widget) use ($request): bool {
-            return $widget->authorized($request) && $widget->visible($request);
-        })->values();
-    }
+        foreach (Arr::wrap($widgets) as $widget) {
+            $this->push($widget);
+        }
 
-    /**
-     * Register the widget routes.
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        $router->prefix('widgets')->group(function (Router $router) use ($request): void {
-            $this->each->registerRoutes($request, $router);
-        });
+        return $this;
     }
 }

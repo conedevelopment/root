@@ -394,9 +394,6 @@ class Resource implements Arrayable
      */
     public function toForm(Request $request): Form
     {
-        return (new Form($this->getModelInstance()))
-                ->withFields([
-                    //
-                ]);
+        return new Form();
     }
 }

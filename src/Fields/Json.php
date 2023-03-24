@@ -2,20 +2,15 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\FieldsetModel;
-use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Router;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class Json extends Field
 {
     use ResolvesFields;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
-    }
 
     /**
      * The Vue component.
@@ -25,7 +20,7 @@ class Json extends Field
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -33,21 +28,9 @@ class Json extends Field
     }
 
     /**
-     * Register the routes using the given router.
-     */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        $this->defaultRegisterRoutes($request, $router);
-
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         $data = parent::toInput($request, $model);
 
@@ -72,7 +55,7 @@ class Json extends Field
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
                     ->available($request, $model)

@@ -57,7 +57,7 @@ class RootApplicationServiceProvider extends ServiceProvider
     {
         $root->routes(function (Router $router) use ($root): void {
             $router->prefix('dashboard')->group(function (Router $router) use ($root): void {
-                $root->widgets->registerRoutes($root->request(), $router);
+                //
             });
         });
     }

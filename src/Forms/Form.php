@@ -27,8 +27,27 @@ class Form implements Arrayable
         return [];
     }
 
-    // handle
-    // validate
+    /**
+     * Handle the form.
+     */
+    public function handle(Request $request, Model $model): void
+    {
+        $this->validate($request, $model);
+
+        $this->resolveFields($request)->each->persist($request, $model);
+
+        $model->save();
+    }
+
+    /**
+     * Validate the request.
+     */
+    public function validate(Request $request, Model $model)
+    {
+        $rules = $this->resolveFields($request)->mapToValidate($request, $model);
+
+        //
+    }
 
     /**
      * Build the form.
