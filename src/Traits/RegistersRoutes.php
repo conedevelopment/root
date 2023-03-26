@@ -28,6 +28,14 @@ trait RegistersRoutes
     }
 
     /**
+     * Get the route parameter name.
+     */
+    public function getParameterName(): string
+    {
+        return Str::of(self::class)->classBasename()->prepend('root')->value();
+    }
+
+    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Router $router): void
@@ -42,7 +50,7 @@ trait RegistersRoutes
 
         $router->matched(function (RouteMatched $event): void {
             if (str_starts_with(Str::start($event->route->uri(), '/'), $this->getUri())) {
-                $event->route->setParameter($this->getUri(), $this);
+                $event->route->setParameter($this->getParameterName(), $this);
             }
         });
 

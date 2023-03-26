@@ -7,7 +7,6 @@
                 :key="widget.key"
             ></Widget>
         </div>
-        <!-- <Table :actions="actions" :filters="filters" :items="items"></Table> -->
         <Table v-bind="table"></Table>
     </div>
 </template>

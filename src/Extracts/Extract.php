@@ -113,13 +113,11 @@ abstract class Extract implements Arrayable, HasTable
      */
     public function toIndex(Request $request): array
     {
-        return [
-            'extract' => $this->toArray(),
+        return array_merge($this->toArray(), [
             'table' => $this->toTable($request)->build($request),
-            'resource' => [],
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->toArray(),
-        ];
+        ]);
     }
 
     /**

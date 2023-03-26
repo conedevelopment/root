@@ -11,7 +11,6 @@ import Media from './Media.vue';
 import Radio from './Radio.vue';
 import Range from './Range.vue';
 import Select from './Select.vue';
-import SubResource from './SubResource.vue';
 import Tag from './Tag.vue';
 import Textarea from './Textarea.vue';
 
@@ -30,7 +29,6 @@ export default {
         Radio,
         Range,
         Select,
-        SubResource,
         Tag,
         Textarea,
     },

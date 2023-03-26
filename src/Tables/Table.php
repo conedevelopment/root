@@ -165,6 +165,7 @@ class Table implements Arrayable
         return [
             'columns' => $this->resolveColumns($request)->map->toDisplay($request, $model)->toArray(),
             'trashed' => false,
+            'url' => '',
             'abilities' => [
                 'create' => true,
                 'update' => true,
