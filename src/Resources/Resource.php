@@ -6,6 +6,8 @@ use Cone\Root\Actions\Action;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ResourceController;
+use Cone\Root\Interfaces\HasForm;
+use Cone\Root\Interfaces\HasTable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
 use Cone\Root\Tables\Table;
@@ -23,7 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Routable
+class Resource implements Arrayable, HasForm, HasTable, Routable
 {
     use ResolvesActions;
     use ResolvesExtracts;
@@ -264,16 +266,27 @@ class Resource implements Arrayable, Routable
         ];
     }
 
+    /**
+     * Convert the resource to a form.
+     */
     public function toForm(Request $request, Model $model): Form
     {
-        return new Form($model, $this->resolveFields($request));
+        return new Form(
+            $model,
+            $this->resolveFields($request)->authorized($request, $model)
+        );
     }
 
+    /**
+     * Convert the resource to a table.
+     */
     public function toTable(Request $request): Table
     {
+        $query = $this->resolveQuery($request);
+
         return new Table(
-            $this->resolveQuery($request),
-            $this->resolveFields($request),
+            $query,
+            $this->resolveFields($request)->authorized($request, $query->getModel()),
             $this->resolveActions($request),
             $this->resolveFilters($request)
         );

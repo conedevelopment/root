@@ -25,6 +25,14 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the authorized fields.
+     */
+    public function authorized(Request $request, Model $model): static
+    {
+        return $this->filter->authorized($request, $model);
+    }
+
+    /**
      * Filter the searchable fields.
      */
     public function searchable(Request $request): static

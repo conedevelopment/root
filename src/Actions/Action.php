@@ -4,7 +4,9 @@ namespace Cone\Root\Actions;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ActionController;
+use Cone\Root\Interfaces\HasForm;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Makeable;
@@ -14,13 +16,14 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, Responsable, Routable
+abstract class Action implements Arrayable, HasForm, Responsable, Routable
 {
     use Makeable;
     use RegistersRoutes;
@@ -166,6 +169,17 @@ abstract class Action implements Arrayable, Responsable, Routable
             'key' => $this->getKey(),
             'name' => $this->getName(),
         ];
+    }
+
+    /**
+     * Convert the resource to a form.
+     */
+    public function toForm(Request $request, Model $model): Form
+    {
+        return new Form(
+            $model,
+            $this->resolveFields($request)->authorized($request, $model)
+        );
     }
 
     /**

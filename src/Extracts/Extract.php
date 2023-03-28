@@ -5,9 +5,14 @@ namespace Cone\Root\Extracts;
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ExtractController;
+use Cone\Root\Interfaces\HasTable;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,9 +21,12 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Extract implements Arrayable, Routable
+abstract class Extract implements Arrayable, HasTable, Routable
 {
     use Makeable;
+    use ResolvesActions;
+    use ResolvesFields;
+    use ResolvesFilters;
     use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -113,9 +121,22 @@ abstract class Extract implements Arrayable, Routable
     public function toIndex(Request $request): array
     {
         return array_merge($this->toArray(), [
-            'table' => [],
+            'table' => $this->toTable($request)->build($request),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->toArray(),
         ]);
+    }
+
+    /**
+     * Convert the resource to a table.
+     */
+    public function toTable(Request $request): Table
+    {
+        return new Table(
+            $this->resolveQuery($request),
+            $this->resolveFields($request),
+            $this->resolveActions($request),
+            $this->resolveFilters($request)
+        );
     }
 }

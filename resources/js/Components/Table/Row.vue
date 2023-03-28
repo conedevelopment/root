@@ -34,15 +34,6 @@
                     <Icon class="btn__icon" name="restore-from-trash"/>
                 </button>
                 <Link
-                    v-if="item.abilities.view"
-                    class="btn btn--tertiary btn--sm btn--icon"
-                    :href="item.url"
-                    :aria-label="__('View')"
-                    :title="__('View')"
-                >
-                    <Icon class="btn__icon" name="view"/>
-                </Link>
-                <Link
                     v-if="item.abilities.update"
                     class="btn btn--tertiary btn--sm btn--icon"
                     :href="item.url"

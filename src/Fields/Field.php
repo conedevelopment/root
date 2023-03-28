@@ -34,6 +34,11 @@ abstract class Field implements Arrayable
     protected ?Closure $hydrateResolver = null;
 
     /**
+     * The authorization resolver callback.
+     */
+    protected ?Closure $authorizationResolver = null;
+
+    /**
      * The validation rules.
      */
     protected array $rules = [
@@ -282,6 +287,24 @@ abstract class Field implements Arrayable
         return $value instanceof Closure
                 ? call_user_func_array($value, [$request, $model])
                 : $value;
+    }
+
+    /**
+     * Set the authoriazion resolve callback.
+     */
+    public function authorize(bool|Closure $callback): static
+    {
+        $this->authorizationResolver = is_bool($callback) ? fn (): bool => $callback : $callback;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the user is authorized to handle the field.
+     */
+    public function authorized(Request $request, Model $model): bool
+    {
+        return call_user_func_array($this->authorizationResolver, [$request->user(), $model, $request]);
     }
 
     /**
