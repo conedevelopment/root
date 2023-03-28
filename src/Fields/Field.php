@@ -21,12 +21,12 @@ abstract class Field implements Arrayable
     /**
      * Indicates if the field is sortable.
      */
-    protected bool|Closure $sortable = false;
+    protected Closure|bool $sortable = false;
 
     /**
      * Indicates if the field is searchable.
      */
-    protected bool|Closure $searchable = false;
+    protected Closure|bool $searchable = false;
 
     /**
      * The hydrate resolver callback.
@@ -36,7 +36,7 @@ abstract class Field implements Arrayable
     /**
      * The authorization resolver callback.
      */
-    protected ?Closure $authorizationResolver = null;
+    protected Closure|bool|null $authorizationResolver = null;
 
     /**
      * The validation rules.
@@ -304,7 +304,8 @@ abstract class Field implements Arrayable
      */
     public function authorized(Request $request, Model $model): bool
     {
-        return call_user_func_array($this->authorizationResolver, [$request->user(), $model, $request]);
+        return is_null($this->authorizationResolver)
+            || call_user_func_array($this->authorizationResolver, [$request->user(), $model, $request]);
     }
 
     /**
