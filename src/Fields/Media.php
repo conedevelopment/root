@@ -5,17 +5,20 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Filters\Search;
 use Cone\Root\Http\Controllers\MediaController;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Models\Medium;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
-class Media extends MorphToMany
+class Media extends MorphToMany implements Routable
 {
     use ResolvesFields;
+    use RegistersRoutes;
 
     /**
      * The searchable columns.
@@ -235,6 +238,14 @@ class Media extends MorphToMany
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $this->resolveQuery($request, $model)),
         ]);
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->name;
     }
 
     /**

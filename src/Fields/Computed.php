@@ -3,8 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class Computed extends Field
@@ -17,7 +17,6 @@ class Computed extends Field
         parent::__construct($label, Str::random(6));
 
         $this->value($callback);
-        $this->visibleOnDisplay();
     }
 
     /**
@@ -39,7 +38,7 @@ class Computed extends Field
     /**
      * {@inheritdoc}
      */
-    public function persist(RootRequest $request, Model $model): void
+    public function persist(Request $request, Model $model): void
     {
         //
     }
@@ -47,7 +46,7 @@ class Computed extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         //
     }

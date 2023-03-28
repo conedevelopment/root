@@ -133,7 +133,7 @@ class ActionTest extends TestCase
         $this->assertSame(array_merge($this->action->toArray(), [
             'data' => array_column($fields, 'value', 'name'),
             'fields' => $fields,
-        ]), $this->action->toForm($this->request, $model));
+        ]), $this->action->toForm($this->request));
     }
 
     /** @test */

@@ -19,6 +19,16 @@ abstract class Field implements Arrayable
     use ResolvesModelValues;
 
     /**
+     * Indicates if the field is sortable.
+     */
+    protected bool|Closure $sortable = false;
+
+    /**
+     * Indicates if the field is searchable.
+     */
+    protected bool|Closure $searchable = false;
+
+    /**
      * The hydrate resolver callback.
      */
     protected ?Closure $hydrateResolver = null;
@@ -122,6 +132,50 @@ abstract class Field implements Arrayable
     public function placeholder(string|Closure $value): static
     {
         return $this->setAttribute('placeholder', $value);
+    }
+
+    /**
+     * Set the sortable attribute.
+     */
+    public function sortable(bool|Closure $value = true): static
+    {
+        $this->sortable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is sortable.
+     */
+    public function isSortable(Request $request): bool
+    {
+        if ($this->sortable instanceof Closure) {
+            return call_user_func_array($this->sortable, [$request]);
+        }
+
+        return $this->sortable;
+    }
+
+    /**
+     * Set the searachable attribute.
+     */
+    public function searchable(bool|Closure $value = true): static
+    {
+        $this->searchable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is searchable.
+     */
+    public function isSearchable(Request $request): bool
+    {
+        if ($this->searchable instanceof Closure) {
+            return call_user_func_array($this->searchable, [$request]);
+        }
+
+        return $this->searchable;
     }
 
     /**
@@ -236,6 +290,19 @@ abstract class Field implements Arrayable
     public function toArray(): array
     {
         return $this->getAttributes();
+    }
+
+    /**
+     * Get the display representation of the field.
+     */
+    public function toDisplay(Request $request, Model $model): array
+    {
+        return array_merge($this->resolveAttributes($request, $model), [
+            'formatted_value' => $this->resolveFormat($request, $model),
+            'searchable' => $this->isSearchable($request),
+            'sortable' => $this->isSortable($request),
+            'value' => $this->resolveValue($request, $model),
+        ]);
     }
 
     /**

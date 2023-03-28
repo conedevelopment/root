@@ -2,13 +2,18 @@
 
 namespace Cone\Root\Resources;
 
+use Cone\Root\Actions\Action;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ResourceController;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
 use Cone\Root\Tables\Table;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesExtracts;
+use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,12 +21,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable
+class Resource implements Arrayable, Routable
 {
+    use ResolvesActions;
     use ResolvesExtracts;
+    use ResolvesFields;
+    use ResolvesFilters;
     use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -188,46 +195,13 @@ class Resource implements Arrayable
     }
 
     /**
-     * Map the URLs.
+     * Handle the resolving event on the action instance.
      */
-    public function mapUrls(Request $request): array
+    protected function resolveAction(Request $request, Action $action): void
     {
-        return [
-            'index' => $this->getUri(),
-            'create' => sprintf('%s/create', $this->getUri()),
-        ];
-    }
-
-    /**
-     * Handle the created event.
-     */
-    public function created(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the updated event.
-     */
-    public function updated(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the deleted event.
-     */
-    public function deleted(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the restored event.
-     */
-    public function restored(Request $request, Model $model): void
-    {
-        //
+        $action->withQuery(function (Request $request): Builder {
+            return $this->resolveQuery($request);
+        });
     }
 
     /**
@@ -243,15 +217,13 @@ class Resource implements Arrayable
      */
     public function toArray(): array
     {
-        $request = App::make('request');
-
         return [
             'abilities' => [],
             'key' => $this->getKey(),
             'icon' => $this->getIcon(),
             'model_name' => $this->getModelName(),
             'name' => $this->getName(),
-            'urls' => $this->mapUrls($request),
+            'url' => $this->getUri(),
         ];
     }
 
@@ -274,7 +246,7 @@ class Resource implements Arrayable
     public function toCreate(Request $request): array
     {
         return [
-            'model' => $this->toForm($request)->build($request, $this->getModelInstance()),
+            'form' => $this->toForm($request, $this->getModelInstance())->build($request),
             'resource' => $this->toArray(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
@@ -286,10 +258,25 @@ class Resource implements Arrayable
     public function toEdit(Request $request, Model $model): array
     {
         return [
-            'model' => $this->toForm($request)->build($request, $model),
+            'form' => $this->toForm($request, $model)->build($request),
             'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];
+    }
+
+    public function toForm(Request $request, Model $model): Form
+    {
+        return new Form($model, $this->resolveFields($request));
+    }
+
+    public function toTable(Request $request): Table
+    {
+        return new Table(
+            $this->resolveQuery($request),
+            $this->resolveFields($request),
+            $this->resolveActions($request),
+            $this->resolveFilters($request)
+        );
     }
 
     /**
@@ -297,6 +284,9 @@ class Resource implements Arrayable
      */
     public function boot(Root $root): void
     {
+        $this->resolveFields($root->app['request']);
+        $this->resolveFilters($root->app['request']);
+        $this->resolveActions($root->app['request']);
         $this->resolveWidgets($root->app['request']);
         $this->resolveExtracts($root->app['request']);
 
@@ -315,6 +305,10 @@ class Resource implements Arrayable
         $router->prefix($this->getUriKey())->group(function (Router $router): void {
             $this->widgets->registerRoutes($router);
             $this->extracts->registerRoutes($router);
+            $this->actions->registerRoutes($router);
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router): void {
+                $this->fields->registerRoutes($router);
+            });
         });
     }
 
@@ -328,11 +322,6 @@ class Resource implements Arrayable
                 ? $this->getModelInstance()
                 : $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
-
-        $router->pattern(
-            $this->getRouteKeyName(),
-            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
-        );
     }
 
     /**
@@ -350,22 +339,5 @@ class Resource implements Arrayable
         if ($this->isSoftDeletable()) {
             $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
         }
-    }
-
-    /**
-     * Get the table representation of the resource.
-     */
-    public function toTable(Request $request): Table
-    {
-        return (new Table($this->getModelInstance()))
-                ->withQuery(fn (): Builder => $this->query());
-    }
-
-    /**
-     * Get the table representation of the resource.
-     */
-    public function toForm(Request $request): Form
-    {
-        return new Form();
     }
 }

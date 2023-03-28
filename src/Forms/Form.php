@@ -2,62 +2,33 @@
 
 namespace Cone\Root\Forms;
 
-use Cone\Root\Traits\ResolvesFields;
-use Illuminate\Contracts\Support\Arrayable;
+use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class Form implements Arrayable
+class Form
 {
-    use ResolvesFields;
+    protected Model $model;
 
-    /**
-     * Create a new form instance.
-     */
-    public function __construct()
+    protected Fields $fields;
+
+    public function __construct(Model $model, Fields $fields)
     {
         //
     }
 
-    /**
-     * Get the instance as an array.
-     */
-    public function toArray(): array
+    public function handle(Request $request): void
+    {
+        //
+    }
+
+    public function validate(Request $request): array
     {
         return [];
     }
 
-    /**
-     * Handle the form.
-     */
-    public function handle(Request $request, Model $model): void
+    public function build(Request $request): array
     {
-        $this->validate($request, $model);
-
-        $this->resolveFields($request)->each->persist($request, $model);
-
-        $model->save();
-    }
-
-    /**
-     * Validate the request.
-     */
-    public function validate(Request $request, Model $model)
-    {
-        $rules = $this->resolveFields($request)->mapToValidate($request, $model);
-
-        //
-    }
-
-    /**
-     * Build the form.
-     */
-    public function build(Request $request, Model $model): array
-    {
-        return array_merge($this->toArray(), [
-            'id' => $model->getKey(),
-            'exists' => $model->exists,
-            'fields' => $this->resolveFields($request)->mapToForm($request, $model)->toArray()
-        ]);
+        return [];
     }
 }

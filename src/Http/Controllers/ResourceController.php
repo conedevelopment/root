@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,87 +25,87 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, Resource $resource): Response
+    public function index(Request $request): Response
     {
         return Inertia::render(
             'Resources/Index',
-            $resource->toIndex($request)
+            $request->route('rootResource')->toIndex($request)
         );
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, Resource $resource): Response
+    public function create(Request $request): Response
     {
         return Inertia::render(
             'Resources/Form',
-            $resource->toCreate($request)
+            $request->route('rootResource')->toCreate($request)
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Resource $resource): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $model = $resource->getModelInstance();
+        $model = $request->route('rootResource')->getModelInstance();
 
-        $resource->toForm($request)->handle($request, $model);
+        $request->route('rootResource')->toForm($request)->handle($request, $model);
 
-        $resource->created($request, $model);
+        $request->route('rootResource')->created($request, $model);
 
-        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
+        return Redirect::to(sprintf('%s/%s', $request->route('rootResource')->getUri(), $model->getKey()))
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function show(Request $request, Resource $resource, Model $model): Response
+    public function show(Request $request, Model $model): Response
     {
         return Inertia::render(
             'Resources/Form',
-            $resource->toEdit($request, $model)
+            $request->route('rootResource')->toEdit($request, $model)
         );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Resource $resource, Model $model): RedirectResponse
+    public function update(Request $request, Model $model): RedirectResponse
     {
-        $resource->toForm($request)->handle($request, $model);
+        $request->route('rootResource')->toForm($request)->handle($request, $model);
 
-        $resource->updated($request, $model);
+        $request->route('rootResource')->updated($request, $model);
 
-        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
+        return Redirect::to(sprintf('%s/%s', $request->route('rootResource')->getUri(), $model->getKey()))
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Resource $resource, Model $model): RedirectResponse
+    public function destroy(Request $request, Model $model): RedirectResponse
     {
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
         $trashed ? $model->forceDelete() : $model->delete();
 
-        $resource->deleted($request, $model);
+        $request->route('rootResource')->deleted($request, $model);
 
-        return Redirect::to(URL::previousPath() === $resource->getUri() ? URL::previous() : $resource->getUri())
+        return Redirect::to(URL::previousPath() === $request->route('rootResource')->getUri() ? URL::previous() : $request->route('rootResource')->getUri())
                     ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
 
     /**
      * Restore the specified resource in storage.
      */
-    public function restore(Request $request, Resource $resource, Model $model): RedirectResponse
+    public function restore(Request $request, Model $model): RedirectResponse
     {
         $model->restore();
 
-        $resource->restored($request, $model);
+        $request->route('rootResource')->restored($request, $model);
 
         return Redirect::back()
                     ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));

@@ -15,8 +15,6 @@ class ID extends Field
     public function __construct(string $label = 'ID', ?string $name = null)
     {
         parent::__construct($label, $name);
-
-        $this->hiddenOnForm();
     }
 
     /**

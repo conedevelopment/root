@@ -4,12 +4,12 @@ namespace Cone\Root\Actions;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
-use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ActionController;
-use Cone\Root\Interfaces\HasForm;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,10 +20,11 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, HasForm, Responsable
+abstract class Action implements Arrayable, Responsable, Routable
 {
     use Makeable;
     use RegistersRoutes;
+    use ResolvesFields;
 
     /**
      * The query resolver callback.
@@ -112,9 +113,7 @@ abstract class Action implements Arrayable, HasForm, Responsable
     {
         $query = $this->resolveQuery($request);
 
-        $model = $query->getModel();
-
-        $this->toForm($request)->validate($request, $model);
+        // toForm
 
         $this->handle(
             $request,
@@ -167,14 +166,6 @@ abstract class Action implements Arrayable, HasForm, Responsable
             'key' => $this->getKey(),
             'name' => $this->getName(),
         ];
-    }
-
-    /**
-     * Get the form representation of the action.
-     */
-    public function toForm(Request $request): Form
-    {
-        return new Form();
     }
 
     /**

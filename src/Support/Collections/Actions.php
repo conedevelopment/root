@@ -28,7 +28,7 @@ class Actions extends Collection
      */
     public function mapToForm(Request $request, Model $model): Collection
     {
-        return $this->map->toForm($request, $model)->toBase();
+        return $this->map->toForm($request)->each->build($request, $model)->toBase();
     }
 
     /**
