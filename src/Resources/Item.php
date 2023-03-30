@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class Item implements Arrayable
 {
@@ -24,12 +25,43 @@ class Item implements Arrayable
     }
 
     /**
+     * Get the policy.
+     */
+    public function getPolicy(): mixed
+    {
+        return Gate::getPolicyFor($this->model);
+    }
+
+    /**
+     * Map the abilities for the model.
+     */
+    public function mapAbilities(Request $request): array
+    {
+        $poilicy = $this->getPolicy();
+
+        $user = $request->user();
+
+        return ! $this->model->exists
+            ? [
+                'viewAny' => is_null($poilicy) || $user->can('viewAny', get_class($this->model)),
+                'create' => is_null($poilicy) || $user->can('create', get_class($this->model)),
+            ]
+            : [
+                'view' => is_null($poilicy) || $user->can('view', $this->model),
+                'update' => is_null($poilicy) || $user->can('update', $this->model),
+                'delete' => is_null($poilicy) || $user->can('delete', $this->model),
+                'restore' => is_null($poilicy) || $user->can('restore', $this->model),
+                'forceDelete' => is_null($poilicy) || $user->can('forceDelete', $this->model),
+            ];
+    }
+
+    /**
      * Get the resource display representation of the model.
      */
     public function toDisplay(Request $request, Fields $fields): array
     {
         return array_merge($this->toArray($request), [
-            'abilities' => [],
+            'abilities' => $this->mapAbilities($request),
             'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
             'url' => null,
         ]);

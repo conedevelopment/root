@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable, HasForm, HasTable, Routable
@@ -222,7 +223,7 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
     public function toArray(): array
     {
         return [
-            'abilities' => [],
+            'abilities' => (new Item($this->getModelInstance()))->mapAbilities(App::make('request')),
             'key' => $this->getKey(),
             'icon' => $this->getIcon(),
             'model_name' => $this->getModelName(),
@@ -357,7 +358,7 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
         $router->get('/create', [ResourceController::class, 'create']);
         $router->post('/', [ResourceController::class, 'store']);
         $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
-        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'show']);
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
         $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
         $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
 

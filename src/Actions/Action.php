@@ -116,7 +116,7 @@ abstract class Action implements Arrayable, HasForm, Responsable, Routable
     {
         $query = $this->resolveQuery($request);
 
-        // toForm
+        $this->toForm($request, $query->getModel())->validate($request);
 
         $this->handle(
             $request,

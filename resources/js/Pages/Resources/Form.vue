@@ -1,6 +1,6 @@
 <template>
     <FormHandler
-        v-for="field in model.fields"
+        v-for="field in form.fields"
         v-bind="field"
         v-model="$parent.form[field.name]"
         :form="$parent.form"
@@ -16,11 +16,7 @@
 
     export default {
         props: {
-            model: {
-                type: Object,
-                required: true,
-            },
-            resource: {
+            form: {
                 type: Object,
                 required: true,
             },
