@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tables;
 
+use Cone\Root\Resources\Item;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -65,18 +66,9 @@ class Table
      */
     public function toRow(Request $request, Model $model): array
     {
-        return [
-            'id' => $model->getKey(),
-            'columns' => $this->fields->mapToDisplay($request, $model)->toArray(),
-            'trashed' => false,
-            'url' => '',
-            'abilities' => [
-                'create' => true,
-                'update' => true,
-                'view' => true,
-                'delete' => true,
-            ],
-        ];
+        return (new Item($model))->toDisplay(
+            $request, $this->fields
+        );
     }
 
     /**

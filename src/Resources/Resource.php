@@ -202,7 +202,9 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
     protected function resolveAction(Request $request, Action $action): void
     {
         $action->withQuery(function (Request $request): Builder {
-            return $this->resolveQuery($request);
+            return $this->resolveFilters($request)
+                        ->available($request)
+                        ->apply($request, $this->resolveQuery($request));
         });
     }
 
@@ -234,12 +236,11 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
      */
     public function toIndex(Request $request): array
     {
-        return [
-            'resource' => $this->toArray(),
+        return array_merge($this->toArray(), [
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->toArray(),
             'table' => $this->toTable($request)->build($request),
-        ];
+        ]);
     }
 
     /**
@@ -247,11 +248,10 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
      */
     public function toCreate(Request $request): array
     {
-        return [
+        return array_merge($this->toArray(), [
             'form' => $this->toForm($request, $this->getModelInstance())->build($request),
-            'resource' => $this->toArray(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
-        ];
+        ]);
     }
 
     /**
@@ -259,11 +259,22 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
      */
     public function toEdit(Request $request, Model $model): array
     {
-        return [
+        return array_merge($this->toArray(), [
             'form' => $this->toForm($request, $model)->build($request),
-            'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-        ];
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     */
+    public function toShow(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            // 'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
+            'model' => $this->toForm($request, $model)->build($request),
+            'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
+        ]);
     }
 
     /**
@@ -346,6 +357,7 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
         $router->get('/create', [ResourceController::class, 'create']);
         $router->post('/', [ResourceController::class, 'store']);
         $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'show']);
         $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
         $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
 

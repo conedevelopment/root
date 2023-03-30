@@ -86,7 +86,7 @@
 
         computed: {
             columns() {
-                const columns = this.items.data?.[0]?.columns || [];
+                const columns = this.items.data?.[0]?.fields || [];
 
                 return columns.map((field) => ({
                     label: field.label,

@@ -65,7 +65,18 @@ class ResourceController extends Controller
     public function show(Request $request, Model $model): Response
     {
         return Inertia::render(
-            'Resources/Form',
+            'Resources/Show',
+            $request->route('rootResource')->toShow($request, $model)
+        );
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Request $request, Model $model): Response
+    {
+        return Inertia::render(
+            'Resources/Show',
             $request->route('rootResource')->toEdit($request, $model)
         );
     }

@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Forms;
 
+use Cone\Root\Resources\Item;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -23,7 +24,8 @@ class Form
      */
     public function __construct(Model $model, Fields $fields)
     {
-        //
+        $this->model = $model;
+        $this->fields = $fields;
     }
 
     /**
@@ -31,7 +33,11 @@ class Form
      */
     public function handle(Request $request): void
     {
-        //
+        $this->validate($request);
+
+        $this->fields->each->persist($request, $this->model);
+
+        $this->model->save();
     }
 
     /**
@@ -39,7 +45,9 @@ class Form
      */
     public function validate(Request $request): array
     {
-        return [];
+        return $request->validate(
+            $this->fields->mapToValidate($request, $this->model)
+        );
     }
 
     /**
@@ -47,6 +55,8 @@ class Form
      */
     public function build(Request $request): array
     {
-        return [];
+        return (new Item($this->model))->toForm(
+            $request, $this->fields
+        );
     }
 }

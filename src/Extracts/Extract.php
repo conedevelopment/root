@@ -3,6 +3,7 @@
 namespace Cone\Root\Extracts;
 
 use Closure;
+use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\HasTable;
@@ -81,6 +82,18 @@ abstract class Extract implements Arrayable, HasTable, Routable
         }
 
         return call_user_func_array($this->queryResolver, [$request]);
+    }
+
+    /**
+     * Handle the resolving event on the action instance.
+     */
+    protected function resolveAction(Request $request, Action $action): void
+    {
+        $action->withQuery(function (Request $request): Builder {
+            return $this->resolveFilters($request)
+                        ->available($request)
+                        ->apply($request, $this->resolveQuery($request));
+        });
     }
 
     /**

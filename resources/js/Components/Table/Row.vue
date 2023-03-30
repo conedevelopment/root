@@ -7,7 +7,7 @@
             </label>
         </th>
         <td
-            v-for="column in item.columns"
+            v-for="column in item.fields"
             :key="`${item.id}-${column.name}`"
             v-html="column.formatted_value"
         ></td>
