@@ -9,42 +9,38 @@ use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\IndexRequest;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Http\Requests\ShowRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesBreadcrumbs;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use JsonSerializable;
 
-class Resource implements Arrayable, Jsonable, JsonSerializable
+class Resource implements Arrayable, Routable
 {
     use Authorizable;
     use MapsAbilities;
     use ResolvesActions;
-    use ResolvesBreadcrumbs;
     use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
 
     /**
      * The model class.
@@ -88,6 +84,14 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     public function getKey(): string
     {
         return Str::of($this->getModel())->classBasename()->plural()->kebab()->value();
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
     }
 
     /**
@@ -179,7 +183,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Resolve the query for the given request.
      */
-    public function resolveQuery(ResourceRequest $request): Builder
+    public function resolveQuery(Request $request): Builder
     {
         return $this->query();
     }
@@ -187,9 +191,9 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Resolve the resource model for a bound value.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Cone\Root\Http\Requests\Request  $request
      */
-    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
+    public function resolveRouteBinding(Request $request, string $id): Model
     {
         return $this->resolveQuery($request)
                     ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
@@ -201,7 +205,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Define the filters for the resource.
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
         $fields = $this->resolveFields($request)->available($request);
 
@@ -218,7 +222,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -228,7 +232,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resolving event on the filter instance.
      */
-    protected function resolveFilter(RootRequest $request, Filter $filter): void
+    protected function resolveFilter(Request $request, Filter $filter): void
     {
         $filter->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -238,11 +242,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resolving event on the action instance.
      */
-    protected function resolveAction(RootRequest $request, Action $action): void
+    protected function resolveAction(Request $request, Action $action): void
     {
         $action->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (RootRequest $request): Builder {
+        })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
                         ->available($request)
                         ->apply($request, $this->resolveQuery($request));
@@ -252,11 +256,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resolving event on the extract instance.
      */
-    protected function resolveExtract(RootRequest $request, Extract $extract): void
+    protected function resolveExtract(Request $request, Extract $extract): void
     {
         $extract->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (RootRequest $request): Builder {
+        })->withQuery(function (Request $request): Builder {
             return $this->resolveQuery($request);
         });
     }
@@ -264,7 +268,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the resolving event on the widget instance.
      */
-    protected function resolveWidget(RootRequest $request, Widget $widget): void
+    protected function resolveWidget(Request $request, Widget $widget): void
     {
         $widget->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -274,7 +278,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the URLs.
      */
-    public function mapUrls(RootRequest $request): array
+    public function mapUrls(Request $request): array
     {
         return [
             'index' => $this->getUri(),
@@ -285,7 +289,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the items.
      */
-    public function mapItems(IndexRequest $request): array
+    public function mapItems(Request $request): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
@@ -311,7 +315,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Map the related model.
      */
-    public function mapItem(ResourceRequest $request, Model $model): Item
+    public function mapItem(Request $request, Model $model): Item
     {
         return new Item($model);
     }
@@ -327,7 +331,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the created event.
      */
-    public function created(CreateRequest $request, Model $model): void
+    public function created(Request $request, Model $model): void
     {
         //
     }
@@ -335,7 +339,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the updated event.
      */
-    public function updated(UpdateRequest $request, Model $model): void
+    public function updated(Request $request, Model $model): void
     {
         //
     }
@@ -343,7 +347,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the deleted event.
      */
-    public function deleted(ResourceRequest $request, Model $model): void
+    public function deleted(Request $request, Model $model): void
     {
         //
     }
@@ -351,7 +355,7 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Handle the restored event.
      */
-    public function restored(ResourceRequest $request, Model $model): void
+    public function restored(Request $request, Model $model): void
     {
         //
     }
@@ -365,38 +369,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Resolve the breadcrumbs for the given request.
-     */
-    public function resolveBreadcrumbs(RootRequest $request): array
-    {
-        $breadcrumbs = [
-            App::make(Root::class)->getPath() => __('Dashboard'),
-            $this->getUri() => $this->getName(),
-        ];
-
-        $model = $request->route($this->getRouteKeyName());
-
-        if ($request instanceof CreateRequest) {
-            $breadcrumbs[sprintf('%s/create', $this->getUri())] = __('Create');
-        }
-
-        if ($request instanceof ShowRequest || $request instanceof UpdateRequest) {
-            $breadcrumbs[sprintf('%s/%s', $this->getUri(), $model->getKey())] = $model->getKey();
-        }
-
-        if ($request instanceof UpdateRequest) {
-            $breadcrumbs[sprintf('%s/%s/edit', $this->getUri(), $model->getKey())] = __('Edit');
-        }
-
-        return $breadcrumbs;
-    }
-
-    /**
      * Get the instance as an array.
      */
     public function toArray(): array
     {
-        $request = App::make(RootRequest::class);
+        $request = App::make('request');
 
         return [
             'abilities' => $this->mapAbilities($request, $this->getModelInstance()),
@@ -409,34 +386,16 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Convert the object to its JSON representation.
-     *
-     * @param  int  $options
-     */
-    public function toJson($options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
-    }
-
-    /**
-     * Serialize the object as JSON.
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
-    }
-
-    /**
      * Get the index representation of the resource.
      */
-    public function toIndex(IndexRequest $request): array
+    public function toIndex(Request $request): array
     {
         return [
             'actions' => $this->resolveActions($request)
                             ->available($request)
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
-            'breadcrumbs' => $this->resolveBreadcrumbs($request),
+            'breadcrumbs' => [],
             'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
@@ -449,12 +408,12 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the create representation of the resource.
      */
-    public function toCreate(CreateRequest $request): array
+    public function toCreate(Request $request): array
     {
         $model = $this->getModelInstance();
 
         return [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request),
+            'breadcrumbs' => [],
             'model' => (new Item($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -466,11 +425,11 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the show representation of the resource.
      */
-    public function toShow(ShowRequest $request, Model $model): array
+    public function toShow(Request $request, Model $model): array
     {
         return [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
-            'breadcrumbs' => $this->resolveBreadcrumbs($request),
+            'breadcrumbs' => [],
             'model' => (new Item($model))->toDisplay(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -483,10 +442,10 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the edit representation of the resource.
      */
-    public function toEdit(UpdateRequest $request, Model $model): array
+    public function toEdit(Request $request, Model $model): array
     {
         return [
-            'breadcrumbs' => $this->resolveBreadcrumbs($request),
+            'breadcrumbs' => [],
             'model' => (new Item($model))->toForm(
                 $request, $this->resolveFields($request)->available($request, $model)
             ),
@@ -500,43 +459,39 @@ class Resource implements Arrayable, Jsonable, JsonSerializable
      */
     public function boot(Root $root): void
     {
-        $this->registerRoutes($root);
-
-        $root->app->make('router')->bind($this->getRouteKeyName(), function (string $id) use ($root): Model {
-            return $id === 'create'
-                ? $this->getModelInstance()
-                : $this->resolveRouteBinding($root->app->make(ResourceRequest::class), $id);
+        $root->routes(function (Router $router): void {
+            $this->registerRoutes($router);
         });
-
-        $root->app->make('router')->pattern(
-            $this->getRouteKeyName(),
-            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
-        );
     }
 
     /**
-     * Register the routes for the resource.
+     * Register the routes.
      */
-    protected function registerRoutes(Root $root): void
+    public function registerRoutes(Router $router): void
     {
-        $root->routes(function (Router $router) use ($root): void {
-            $router->group(
-                ['prefix' => $this->getKey(), 'resource' => $this->getKey()],
-                function (Router $router) use ($root): void {
-                    if (! $root->app->routesAreCached()) {
-                        $router->as(sprintf('%s.', $this->getKey()))->group(function (Router $router): void {
-                            $this->routes($router);
-                        });
-                    }
+        $this->__registerRoutes($router);
 
-                    $this->resolveExtracts($root->request())->registerRoutes($root->request(), $router);
-                    $this->resolveActions($root->request())->registerRoutes($root->request(), $router);
-                    $this->resolveWidgets($root->request())->registerRoutes($root->request(), $router);
-                    $router->prefix("{{$this->getRouteKeyName()}}")->group(function ($router) use ($root) {
-                        $this->resolveFields($root->request())->registerRoutes($root->request(), $router);
-                    });
-                }
-            );
+        $request = App::make('request');
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveWidgets($request)->registerRoutes($router);
+            $this->resolveExtracts($request)->registerRoutes($router);
+            $this->resolveActions($request)->registerRoutes($router);
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($router);
+            });
+        });
+    }
+
+    /**
+     * Register the route constraints.
+     */
+    public function registerRouteConstraints(Router $router): void
+    {
+        $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
+            return $id === 'create'
+                ? $this->getModelInstance()
+                : $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
     }
 

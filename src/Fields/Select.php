@@ -3,8 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
 class Select extends Field
@@ -77,7 +77,7 @@ class Select extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(RootRequest $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         if (is_null($this->optionsResolver)) {
             return [];
@@ -95,10 +95,10 @@ class Select extends Field
     /**
      * Format the value.
      */
-    public function resolveFormat(RootRequest $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (RootRequest $request, Model $model, mixed $value): mixed {
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): mixed {
                 $options = array_column(
                     $this->resolveOptions($request, $model), 'formatted_value', 'value'
                 );
@@ -117,7 +117,7 @@ class Select extends Field
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),

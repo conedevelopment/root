@@ -2,11 +2,11 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +15,7 @@ class MediaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ResourceRequest $request, Model $model = null): JsonResponse
+    public function index(Request $request, Model $model = null): JsonResponse
     {
         $field = $request->resolved();
 
@@ -27,7 +27,7 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ResourceRequest $request, Model $model = null): JsonResponse
+    public function store(Request $request, Model $model = null): JsonResponse
     {
         $request->validate(['file' => ['required', 'file']]);
 
@@ -56,7 +56,7 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ResourceRequest $request, Model $model = null): JsonResponse
+    public function destroy(Request $request, Model $model = null): JsonResponse
     {
         $field = $request->resolved();
 

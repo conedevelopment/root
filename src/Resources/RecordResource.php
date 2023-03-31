@@ -5,7 +5,7 @@ namespace Cone\Root\Resources;
 use Cone\Root\Fields\BelongsTo;
 use Cone\Root\Fields\Date;
 use Cone\Root\Fields\Text;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 class RecordResource extends Resource
 {
@@ -25,7 +25,7 @@ class RecordResource extends Resource
     /**
      * {@inheritdoc}
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return array_merge(parent::fields($request), [
             Text::make(__('Event'), 'event'),

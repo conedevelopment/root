@@ -4,8 +4,8 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Cone\Root\Actions\Action;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Actions;
+use Illuminate\Http\Request;
 
 trait ResolvesActions
 {
@@ -17,12 +17,12 @@ trait ResolvesActions
     /**
      * The resolved actions.
      */
-    protected ?Actions $resolvedActions = null;
+    protected ?Actions $actions = null;
 
     /**
      * Define the actions for the resource.
      */
-    public function actions(RootRequest $request): array
+    public function actions(Request $request): array
     {
         return [];
     }
@@ -32,13 +32,7 @@ trait ResolvesActions
      */
     public function withActions(array|Closure $actions): static
     {
-        if (is_array($actions)) {
-            $actions = static function (RootRequest $request, Actions $collection) use ($actions): Actions {
-                return $collection->merge($actions);
-            };
-        }
-
-        $this->actionsResolver = $actions;
+        $this->actionsResolver = is_array($actions) ? fn (): array => $actions : $actions;
 
         return $this;
     }
@@ -46,27 +40,27 @@ trait ResolvesActions
     /**
      * Resolve the actions.
      */
-    public function resolveActions(RootRequest $request): Actions
+    public function resolveActions(Request $request): Actions
     {
-        if (is_null($this->resolvedActions)) {
-            $actions = Actions::make($this->actions($request));
+        if (is_null($this->actions)) {
+            $this->actions = Actions::make()->register($this->actions($request));
 
             if (! is_null($this->actionsResolver)) {
-                $actions = call_user_func_array($this->actionsResolver, [$request, $actions]);
+                $this->actions->register(call_user_func_array($this->actionsResolver, [$request]));
             }
 
-            $this->resolvedActions = $actions->each(function (Action $action) use ($request): void {
+            $this->actions->each(function (Action $action) use ($request): void {
                 $this->resolveAction($request, $action);
             });
         }
 
-        return $this->resolvedActions;
+        return $this->actions;
     }
 
     /**
      * Handle the resolving event on the action instance.
      */
-    protected function resolveAction(RootRequest $request, Action $action): void
+    protected function resolveAction(Request $request, Action $action): void
     {
         //
     }

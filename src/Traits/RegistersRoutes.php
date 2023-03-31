@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Traits;
 
-use Cone\Root\Http\Middleware\AuthorizeResolved;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
@@ -17,17 +15,9 @@ trait RegistersRoutes
     protected ?string $uri = null;
 
     /**
-     * Get the key.
+     * Get the URI key.
      */
-    abstract public function getKey(): string;
-
-    /**
-     * Set the URI attribute.
-     */
-    public function setUri(string $uri): void
-    {
-        $this->uri = $uri;
-    }
+    abstract public function getUriKey(): string;
 
     /**
      * Get the URI attribute.
@@ -38,25 +28,41 @@ trait RegistersRoutes
     }
 
     /**
+     * Get the route parameter name.
+     */
+    public function getParameterName(): string
+    {
+        return Str::of(self::class)->classBasename()->prepend('root')->value();
+    }
+
+    /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->setUri(sprintf('/%s/%s', $router->getLastGroupPrefix(), $this->getKey()));
+        $this->uri = Str::start(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getUriKey()), '/');
 
         if (! App::routesAreCached()) {
-            $router->prefix($this->getKey())
-                ->middleware([AuthorizeResolved::class])
-                ->group(function (Router $router): void {
-                    $this->routes($router);
-                });
+            $router->prefix($this->getUriKey())->group(function (Router $router): void {
+                $this->routes($router);
+            });
         }
 
         $router->matched(function (RouteMatched $event): void {
             if (str_starts_with(Str::start($event->route->uri(), '/'), $this->getUri())) {
-                $event->route->setParameter('resolved', $this);
+                $event->route->setParameter($this->getParameterName(), $this);
             }
         });
+
+        $this->registerRouteConstraints($router);
+    }
+
+    /**
+     * Register the route constraints.
+     */
+    public function registerRouteConstraints(Router $router): void
+    {
+        //
     }
 
     /**

@@ -6,8 +6,7 @@ use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
-use Cone\Root\Http\Requests\ActionRequest;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
@@ -19,19 +18,21 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, Responsable
+abstract class Action implements Arrayable, Responsable, Routable
 {
     use Authorizable;
     use Makeable;
     use ResolvesFields;
     use ResolvesVisibility;
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
+        RegistersRoutes::registerRoutes as __registerRoutes;
     }
 
     /**
@@ -52,7 +53,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Handle the action.
      */
-    abstract public function handle(ActionRequest $request, Collection $models): void;
+    abstract public function handle(Request $request, Collection $models): void;
 
     /**
      * Get the key.
@@ -109,7 +110,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Perform the action.
      */
-    public function perform(ActionRequest $request): Response
+    public function perform(Request $request): Response
     {
         $query = $this->resolveQuery($request);
 
@@ -143,11 +144,8 @@ abstract class Action implements Arrayable, Responsable
 
     /**
      * Resolve the query for the extract.
-     *
-     *
-     * @throws \Cone\Root\Exceptions\QueryResolutionException
      */
-    public function resolveQuery(RootRequest $request): Builder
+    public function resolveQuery(Request $request): Builder
     {
         if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
@@ -159,7 +157,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -169,9 +167,11 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Register the action routes.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->defaultRegisterRoutes($request, $router);
+        $this->__registerRoutes($router);
+
+        $request = App::make('request');
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
@@ -203,7 +203,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Get the form representation of the action.
      */
-    public function toForm(RootRequest $request, Model $model): array
+    public function toForm(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
                         ->available($request, $model)
@@ -221,7 +221,7 @@ abstract class Action implements Arrayable, Responsable
     /**
      * Create an HTTP response that represents the object.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      */
     public function toResponse($request): Response
     {

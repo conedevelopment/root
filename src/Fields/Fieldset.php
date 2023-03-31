@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
@@ -13,7 +13,7 @@ class Fieldset extends Field
 {
     use ResolvesFields;
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
+        RegistersRoutes::registerRoutes as __registerRoutes;
     }
 
     /**
@@ -24,7 +24,7 @@ class Fieldset extends Field
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -34,7 +34,7 @@ class Fieldset extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Request $request, Router $router): void
     {
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
@@ -44,7 +44,7 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function persist(RootRequest $request, Model $model): void
+    public function persist(Request $request, Model $model): void
     {
         $this->resolveHydrate($request, $model, $this->getValueForHydrate($request, $model));
 
@@ -58,7 +58,7 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         $this->resolveFields($request)
             ->available($request, $model)
@@ -70,7 +70,7 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
                     ->available($request, $model)
@@ -87,7 +87,7 @@ class Fieldset extends Field
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
                     ->available($request, $model)

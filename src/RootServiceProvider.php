@@ -2,7 +2,6 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\ServiceProvider;
@@ -46,10 +45,6 @@ class RootServiceProvider extends ServiceProvider
 
         $this->app->booted(static function (Application $app): void {
             $app->make(Root::class)->boot();
-        });
-
-        $this->app->resolving(RootRequest::class, static function (RootRequest $request, Application $app): void {
-            RootRequest::createFrom($app['request'], $request);
         });
     }
 
@@ -144,9 +139,9 @@ class RootServiceProvider extends ServiceProvider
             $root = $app->make(Root::class);
 
             $view->with('root', [
-                'resources' => $root->resources->available($root->request())->values(),
+                'resources' => $root->resources->available($app->make('request'))->values(),
                 'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $root->request()->user()->toRoot(),
+                'user' => $app->make('request')->user()->toRoot(),
                 'config' => [
                     'name' => $app['config']->get('app.name'),
                     'url' => $root->getPath(),

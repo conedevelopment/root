@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Tag extends Field
 {
@@ -15,10 +15,10 @@ class Tag extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(RootRequest $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (RootRequest $request, Model $model): mixed {
+            $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($request, $model);
 
                 return implode(', ', (array) $default);

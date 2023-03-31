@@ -3,18 +3,31 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Fields\Field;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Interfaces\Routable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Fields extends Collection
 {
     /**
+     * Register the given fields.
+     */
+    public function register(array|Field $fields): static
+    {
+        foreach (Arr::wrap($fields) as $field) {
+            $this->push($field);
+        }
+
+        return $this;
+    }
+
+    /**
      * Filter the fields that are available for the given request.
      */
-    public function available(RootRequest $request, ...$parameters): static
+    public function available(Request $request, ...$parameters): static
     {
         return $this->filter(static function (Field $field) use ($request, $parameters): bool {
             return $field->authorized($request, ...$parameters)
@@ -25,7 +38,7 @@ class Fields extends Collection
     /**
      * Filter the searchable fields.
      */
-    public function searchable(RootRequest $request): static
+    public function searchable(Request $request): static
     {
         return $this->filter->isSearchable($request);
     }
@@ -33,7 +46,7 @@ class Fields extends Collection
     /**
      * Filter the sortable fields.
      */
-    public function sortable(RootRequest $request): static
+    public function sortable(Request $request): static
     {
         return $this->filter->isSortable($request);
     }
@@ -41,7 +54,7 @@ class Fields extends Collection
     /**
      * Map the fields to display.
      */
-    public function mapToDisplay(RootRequest $request, Model $model): Collection
+    public function mapToDisplay(Request $request, Model $model): Collection
     {
         return $this->map->toDisplay($request, $model)->toBase();
     }
@@ -49,7 +62,7 @@ class Fields extends Collection
     /**
      * Map the fields to form.
      */
-    public function mapToForm(RootRequest $request, Model $model): Collection
+    public function mapToForm(Request $request, Model $model): Collection
     {
         return $this->map->toInput($request, $model)->toBase();
     }
@@ -57,7 +70,7 @@ class Fields extends Collection
     /**
      * Map the fields to validate.
      */
-    public function mapToValidate(RootRequest $request, Model $model): array
+    public function mapToValidate(Request $request, Model $model): array
     {
         return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
             return array_merge_recursive($rules, $field->toValidate($request, $model));
@@ -67,12 +80,12 @@ class Fields extends Collection
     /**
      * Register the field routes.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $router->prefix('fields')->group(function (Router $router) use ($request): void {
-            $this->each(static function (Field $field) use ($request, $router): void {
-                if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
-                    $field->registerRoutes($request, $router);
+        $router->prefix('fields')->group(function (Router $router): void {
+            $this->each(static function (Field $field) use ($router): void {
+                if ($field instanceof Routable) {
+                    $field->registerRoutes($router);
                 }
             });
         });

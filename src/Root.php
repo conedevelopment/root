@@ -3,7 +3,6 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Assets;
 use Cone\Root\Support\Collections\Resources;
 use Cone\Root\Support\Collections\Widgets;
@@ -85,18 +84,6 @@ class Root
     public function booting(Closure $callback): void
     {
         $this->booting[] = $callback;
-    }
-
-    /**
-     * Get the Root Request instance.
-     */
-    public function request(): RootRequest
-    {
-        static $request;
-
-        $request = RootRequest::createFrom($this->app['request']);
-
-        return $request;
     }
 
     /**

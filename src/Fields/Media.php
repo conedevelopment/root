@@ -5,16 +5,20 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Filters\Search;
 use Cone\Root\Http\Controllers\MediaController;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Cone\Root\Support\Collections\Fields;
+use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 class Media extends MorphToMany
 {
+    use ResolvesFields;
+    use ResolvesFilters;
+
     /**
      * The searchable columns.
      */
@@ -61,14 +65,6 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function asSubResource(bool $value = true): static
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function searchable(bool|Closure $value = true, array $columns = ['id']): static
     {
         $this->searchableColumns = $columns;
@@ -89,7 +85,7 @@ class Media extends MorphToMany
     /**
      * Store the file using the given path and request.
      */
-    public function store(RootRequest $request, string $path): Medium
+    public function store(Request $request, string $path): Medium
     {
         $medium = (Medium::proxy())::makeFrom($path);
 
@@ -105,7 +101,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function persist(RootRequest $request, Model $model): void
+    public function persist(Request $request, Model $model): void
     {
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
@@ -119,10 +115,10 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+            $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
                 $results = $this->resolveQuery($request, $model)
@@ -144,7 +140,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return [];
     }
@@ -152,7 +148,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
         $fields = new Fields(array_map(static function (string $column): Field {
             return new Text($column, $column);
@@ -166,7 +162,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(RootRequest $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         return [];
     }
@@ -174,10 +170,10 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(RootRequest $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = function (RootRequest $request, Model $model, mixed $value): array {
+            $this->valueResolver = function (Request $request, Model $model, mixed $value): array {
                 return $value->mapWithKeys(function (Model $related) use ($request, $model): array {
                     return [
                         $related->getKey() => $this->mapPivotValues($request, $model, $related),
@@ -192,7 +188,7 @@ class Media extends MorphToMany
     /**
      * Map the pivot values.
      */
-    protected function mapPivotValues(RootRequest $request, Model $model, Model $related): array
+    protected function mapPivotValues(Request $request, Model $model, Model $related): array
     {
         $relation = $this->getRelation($model);
 
@@ -211,7 +207,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function mapOption(RootRequest $request, Model $model, Model $related): array
+    public function mapOption(Request $request, Model $model, Model $related): array
     {
         $relation = $this->getRelation($model);
 
@@ -235,7 +231,7 @@ class Media extends MorphToMany
     /**
      * Map the items.
      */
-    public function mapItems(ResourceRequest $request, Model $model): array
+    public function mapItems(Request $request, Model $model): array
     {
         $filters = $this->resolveFilters($request)->available($request);
 
@@ -269,7 +265,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         $models = $this->getValue($request, $model);
 
@@ -286,7 +282,6 @@ class Media extends MorphToMany
             }),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'multiple' => $this->multiple,
-            'url' => $this->resolveUri($request),
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
             }),
@@ -296,7 +291,7 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
         $pivotRules = $this->resolveFields($request)
                             ->available($request, $model)

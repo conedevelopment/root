@@ -2,25 +2,12 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Controllers\BelongsToManyController;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Resources\RelatedItem;
-use Cone\Root\Traits\AsSubResource;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Routing\Router;
+use Illuminate\Http\Request;
 
 class BelongsToMany extends Relation
 {
-    use AsSubResource {
-        AsSubResource::toCreate as defaultToCreate;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -34,46 +21,8 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function visible(RootRequest $request): bool
+    public function persist(Request $request, Model $model): void
     {
-        if ($this->asSubResource && $request instanceof CreateRequest) {
-            return false;
-        }
-
-        return parent::visible($request);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function async(bool $value = true): static
-    {
-        parent::async($value);
-
-        if ($this->asSubResource) {
-            $this->component = 'SubResource';
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isSortable(RootRequest $request): bool
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function persist(RootRequest $request, Model $model): void
-    {
-        if ($this->asSubResource) {
-            return;
-        }
-
         $model->saved(function (Model $model) use ($request): void {
             $value = $this->getValueForHydrate($request, $model);
 
@@ -86,10 +35,10 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+            $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
                 $results = $this->resolveQuery($request, $model)->findMany((array) $value);
@@ -102,140 +51,13 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Resolve the related model for a bound value.
-     */
-    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
-    {
-        $relation = $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()));
-
-        $model = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
-
-        return tap($model, static function (Model $related) use ($relation, $id): void {
-            $pivot = $related->getRelation($relation->getPivotAccessor());
-
-            $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
-        });
-    }
-
-    /**
-     * Map the related model.
-     */
-    public function mapItem(ResourceRequest $request, Model $model, Model $related): RelatedItem
-    {
-        $relation = $this->getRelation($model);
-
-        $pivot = $related->relationLoaded($relation->getPivotAccessor())
-                    ? $related->getRelation($relation->getPivotAccessor())
-                    : $relation->newPivot();
-
-        if ($pivot->exists) {
-            $pivot->setAttribute($pivot->getKeyName(), $pivot->getKey());
-        }
-
-        $pivot->setRelation('related', $related);
-
-        return new RelatedItem($pivot);
-    }
-
-    /**
-     * Define the fields for the object.
-     */
-    public function fields(RootRequest $request): array
-    {
-        return [
-            BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
-                return $model->belongsTo(
-                    get_class($model->getRelation('related')),
-                    $model->getRelatedKey(),
-                    $model->getForeignKey(),
-                    'related'
-                );
-            })
-            ->async($this->async)
-            ->withQuery(function (RootRequest $request, Builder $query, Model $model): Builder {
-                return $this->resolveQuery($request, $model->pivotParent);
-            })
-            ->display(function (RootRequest $request, Model $related): mixed {
-                return $this->resolveDisplay($request, $related);
-            }),
-        ];
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(RootRequest $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Get the model for the breadcrumbs.
-     */
-    public function getModelForBreadcrumbs(ResourceRequest $request): Model
-    {
-        $relation = $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()));
-
-        return $request->route($this->getRouteKeyName())->getRelation($relation->getPivotAccessor());
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
-    {
-        parent::registerRoutes($request, $router);
-
-        if ($this->asSubResource) {
-            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-                $this->resolveFields($request)->registerRoutes($request, $router);
-                $this->resolveActions($request)->registerRoutes($request, $router);
-            });
-
-            $this->registerRouterConstrains($request, $router);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function routes(Router $router): void
-    {
-        if ($this->asSubResource) {
-            $router->get('/', [BelongsToManyController::class, 'index']);
-            $router->post('/', [BelongsToManyController::class, 'store']);
-            $router->get('/create', [BelongsToManyController::class, 'create']);
-            $router->get("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'show']);
-            $router->get("/{{$this->getRouteKeyname()}}/edit", [BelongsToManyController::class, 'edit']);
-            $router->patch("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'update']);
-            $router->delete("/{{$this->getRouteKeyname()}}", [BelongsToManyController::class, 'destroy']);
-        } else {
-            parent::routes($router);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
-            'async' => $this->async,
             'multiple' => true,
             'related_name' => $this->getRelatedName(),
-            'url' => $this->resolveUri($request),
-        ]);
-    }
-
-    /**
-     * Get the create representation of the field.
-     */
-    public function toCreate(CreateRequest $request, Model $model): array
-    {
-        return array_merge($this->defaultToCreate($request, $model), [
-            'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
         ]);
     }
 }

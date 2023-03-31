@@ -3,15 +3,11 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Middleware\AuthorizeResource;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\IndexRequest;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\ShowRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -30,7 +26,7 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(IndexRequest $request): Response
+    public function index(Request $request): Response
     {
         $resource = $request->resource();
 
@@ -47,7 +43,7 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CreateRequest $request): Response
+    public function create(Request $request): Response
     {
         $resource = $request->resource();
 
@@ -64,7 +60,7 @@ class ResourceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $resource = $request->resource();
 
@@ -91,7 +87,7 @@ class ResourceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ShowRequest $request, Model $model): Response
+    public function show(Request $request, Model $model): Response
     {
         $resource = $request->resource();
 
@@ -108,7 +104,7 @@ class ResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UpdateRequest $request, Model $model): Response
+    public function edit(Request $request, Model $model): Response
     {
         $resource = $request->resource();
 
@@ -125,7 +121,7 @@ class ResourceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRequest $request, Model $model): RedirectResponse
+    public function update(Request $request, Model $model): RedirectResponse
     {
         $resource = $request->resource();
 
@@ -150,7 +146,7 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ResourceRequest $request, Model $model): RedirectResponse
+    public function destroy(Request $request, Model $model): RedirectResponse
     {
         $resource = $request->resource();
 
@@ -171,7 +167,7 @@ class ResourceController extends Controller
     /**
      * Restore the specified resource in storage.
      */
-    public function restore(ResourceRequest $request, Model $model): RedirectResponse
+    public function restore(Request $request, Model $model): RedirectResponse
     {
         $resource = $request->resource();
 

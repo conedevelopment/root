@@ -4,19 +4,20 @@ namespace Cone\Root\Widgets;
 
 use Closure;
 use Cone\Root\Http\Controllers\WidgetController;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Renderable
+abstract class Widget implements Arrayable, Renderable, Routable
 {
     use Authorizable;
     use Makeable;
@@ -49,6 +50,14 @@ abstract class Widget implements Arrayable, Renderable
     public function getKey(): string
     {
         return Str::of(static::class)->classBasename()->kebab()->value();
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
     }
 
     /**
@@ -96,7 +105,7 @@ abstract class Widget implements Arrayable, Renderable
     /**
      * Get the data.
      */
-    public function data(RootRequest $request): array
+    public function data(Request $request): array
     {
         return [];
     }
@@ -120,7 +129,7 @@ abstract class Widget implements Arrayable, Renderable
     /**
      * Resolve the data.
      */
-    public function resolveData(RootRequest $request): array
+    public function resolveData(Request $request): array
     {
         return array_merge(
             $this->data($request),
