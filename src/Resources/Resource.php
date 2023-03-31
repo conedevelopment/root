@@ -263,6 +263,13 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
         return array_merge($this->toArray(), [
             'form' => $this->toForm($request, $model)->build($request),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
+            'labels' => [
+                'save' => __('Save'),
+                'restore' => __('Restore'),
+                'delete' => __('Delete'),
+                'force_delete' => __('Delete permanently'),
+                'model_name' => $this->getModelName(),
+            ],
         ]);
     }
 
@@ -272,8 +279,9 @@ class Resource implements Arrayable, HasForm, HasTable, Routable
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            // 'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
-            'model' => $this->toForm($request, $model)->build($request),
+            'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
+            'model' => (new Item($model))->toDisplay($request, $this->resolveFields($request)),
+            'relations' => [],
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ]);
     }
