@@ -2,11 +2,11 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Traits\MapsAbilities;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Item implements Arrayable
 {
@@ -44,11 +44,11 @@ class Item implements Arrayable
     /**
      * Map the URL for the model.
      */
-    protected function mapUrl(ResourceRequest $request): string
+    protected function mapUrl(Request $request): string
     {
         return $this->model->exists
-            ? sprintf('%s/%s', $request->resource()->getUri(), $this->model->getKey())
-            : $request->resource()->getUri();
+            ? sprintf('%s/%s', $request->route('rootResource')->getUri(), $this->model->getKey())
+            : $request->route('rootResource')->getUri();
     }
 
     /**
@@ -68,9 +68,9 @@ class Item implements Arrayable
     /**
      * Get the resource display representation of the model.
      */
-    public function toDisplay(ResourceRequest $request, Fields $fields): array
+    public function toDisplay(Request $request, Fields $fields): array
     {
-        return array_merge($this->toArray($request), [
+        return array_merge($this->toArray(), [
             'abilities' => $this->mapAbilities($request, $this->model),
             'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
             'url' => $this->mapUrl($request),
@@ -80,11 +80,11 @@ class Item implements Arrayable
     /**
      * Get the resource form representation of the model.
      */
-    public function toForm(ResourceRequest $request, Fields $fields): array
+    public function toForm(Request $request, Fields $fields): array
     {
         $fields = $fields->mapToForm($request, $this->model)->toArray();
 
-        return array_merge($this->toArray($request), [
+        return array_merge($this->toArray(), [
             'abilities' => $this->mapAbilities($request, $this->model),
             'data' => array_reduce($fields, static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);

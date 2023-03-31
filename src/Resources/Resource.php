@@ -396,7 +396,6 @@ class Resource implements Arrayable, Routable
                             ->mapToForm($request, $this->getModelInstance())
                             ->toArray(),
             'breadcrumbs' => [],
-            'extracts' => $this->resolveExtracts($request)->available($request)->toArray(),
             'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
             'items' => $this->mapItems($request),
             'resource' => $this->toArray(),

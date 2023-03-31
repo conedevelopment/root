@@ -28,7 +28,7 @@ class ResourceController extends Controller
      */
     public function index(Request $request): Response
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('viewAny', $resource->getModel());
@@ -45,7 +45,7 @@ class ResourceController extends Controller
      */
     public function create(Request $request): Response
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
@@ -62,7 +62,7 @@ class ResourceController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
@@ -89,7 +89,7 @@ class ResourceController extends Controller
      */
     public function show(Request $request, Model $model): Response
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($model)) {
             $this->authorize('view', $model);
@@ -106,7 +106,7 @@ class ResourceController extends Controller
      */
     public function edit(Request $request, Model $model): Response
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($model)) {
             $this->authorize('update', $model);
@@ -123,7 +123,7 @@ class ResourceController extends Controller
      */
     public function update(Request $request, Model $model): RedirectResponse
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($model)) {
             $this->authorize('update', $model);
@@ -148,7 +148,7 @@ class ResourceController extends Controller
      */
     public function destroy(Request $request, Model $model): RedirectResponse
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
@@ -169,7 +169,7 @@ class ResourceController extends Controller
      */
     public function restore(Request $request, Model $model): RedirectResponse
     {
-        $resource = $request->resource();
+        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy($model)) {
             $this->authorize('restore', $model);
