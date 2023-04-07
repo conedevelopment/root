@@ -24,8 +24,6 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
-        Interfaces\Support\Collections\Assets::class => Support\Collections\Assets::class,
-        Interfaces\Support\Collections\Resources::class => Support\Collections\Resources::class,
     ];
 
     /**

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -30,7 +31,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($resource->getModel())) {
+        if (Gate::getPolicyFor($resource->getModel())) {
             $this->authorize('viewAny', $resource->getModel());
         }
 
@@ -47,7 +48,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($resource->getModel())) {
+        if (Gate::getPolicyFor($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
         }
 
@@ -64,7 +65,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($resource->getModel())) {
+        if (Gate::getPolicyFor($resource->getModel())) {
             $this->authorize('create', $resource->getModel());
         }
 
@@ -91,7 +92,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($model)) {
+        if (Gate::getPolicyFor($model)) {
             $this->authorize('view', $model);
         }
 
@@ -108,7 +109,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($model)) {
+        if (Gate::getPolicyFor($model)) {
             $this->authorize('update', $model);
         }
 
@@ -125,7 +126,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($model)) {
+        if (Gate::getPolicyFor($model)) {
             $this->authorize('update', $model);
         }
 
@@ -152,7 +153,7 @@ class ResourceController extends Controller
 
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
-        if ($resource->getPolicy($model)) {
+        if (Gate::getPolicyFor($model)) {
             $this->authorize($trashed ? 'forceDelete' : 'delete', $model);
         }
 
@@ -171,7 +172,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if ($resource->getPolicy($model)) {
+        if (Gate::getPolicyFor($model)) {
             $this->authorize('restore', $model);
         }
 

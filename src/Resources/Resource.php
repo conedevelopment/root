@@ -18,6 +18,7 @@ use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Routable
@@ -37,6 +39,7 @@ class Resource implements Arrayable, Routable
     use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
+    use ResolvesRelations;
     use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -499,16 +502,16 @@ class Resource implements Arrayable, Routable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', [ResourceController::class, 'index'])->name('index');
-        $router->get('/create', [ResourceController::class, 'create'])->name('create');
-        $router->post('/', [ResourceController::class, 'store'])->name('store');
-        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show'])->name('show');
-        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit'])->name('edit');
-        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update'])->name('update');
-        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy'])->name('destroy');
+        $router->get('/', [ResourceController::class, 'index']);
+        $router->get('/create', [ResourceController::class, 'create']);
+        $router->post('/', [ResourceController::class, 'store']);
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
+        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
+        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
+        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
 
         if ($this->isSoftDeletable()) {
-            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore'])->name('restore');
+            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
         }
     }
 }

@@ -17,7 +17,6 @@ class Computed extends Field
         parent::__construct($label, Str::random(6));
 
         $this->value($callback);
-        $this->visibleOnDisplay();
     }
 
     /**
