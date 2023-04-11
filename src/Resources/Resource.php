@@ -12,6 +12,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
+use Cone\Root\Support\Form;
 use Cone\Root\Support\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
@@ -371,6 +372,19 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Get the form representation of the resource.
+     */
+    public function toForm(Request $request, Model $model): Form
+    {
+        return new Form(
+            $model,
+            $this->resolveFields($request)
+                ->visible($model->exists ? ResourceContext::Create->value : ResourceContext::Update->value)
+                ->authorized($request, $model)
+        );
+    }
+
+    /**
      * Get the index representation of the resource.
      */
     public function toIndex(Request $request): array
@@ -424,9 +438,13 @@ class Resource implements Arrayable, Routable
     {
         return [
             'breadcrumbs' => [],
-            'model' => (new Item($model))->toForm(
-                $request, $this->resolveFields($request)->available($request, $model)
-            ),
+            // 'model' => (new Item($model))->toForm(
+            //     $request, $this->resolveFields($request)->available($request, $model)
+            // ),
+            'model' => array_merge($this->toForm($request, $model)->toSchema($request), [
+                'abilities' => [],
+                'url' => '',
+            ]),
             'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];

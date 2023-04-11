@@ -28,11 +28,35 @@ class Form
     }
 
     /**
+     * Handle the form request.
+     */
+    public function handle(Request $request): void
+    {
+        $this->validate($request);
+
+        $this->fields->each->persist($request, $this->model);
+
+        $this->model->save();
+    }
+
+    /**
+     * Validate the form using the given request.
+     */
+    public function validate(Request $request): array
+    {
+        return $request->validate(
+            $this->fields->mapToValidate($request, $this->model)
+        );
+    }
+
+    /**
      * Get the form schema.
      */
     public function toSchema(Request $request): array
     {
         return [
+            'exists' => $this->model->exists,
+            'id' => $this->model->getKey(),
             'fields' => $fields = $this->fields->mapToForm($request, $this->model)->toArray(),
             'data' => array_reduce($fields, static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);

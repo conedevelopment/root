@@ -69,15 +69,9 @@ class ResourceController extends Controller
             $this->authorize('create', $resource->getModel());
         }
 
-        $fields = $resource->resolveFields($request)->available($request);
-
         $model = $resource->getModelInstance();
 
-        $request->validate($fields->mapToValidate($request, $model));
-
-        $fields->each->persist($request, $model);
-
-        $model->save();
+        $resource->toForm($request, $model)->handle($request);
 
         $resource->created($request, $model);
 
@@ -130,13 +124,7 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        $fields = $resource->resolveFields($request)->available($request, $model);
-
-        $request->validate($fields->mapToValidate($request, $model));
-
-        $fields->each->persist($request, $model);
-
-        $model->save();
+        $resource->toForm($request, $model)->handle($request);
 
         $resource->updated($request, $model);
 

@@ -13,7 +13,7 @@ trait MapsAbilities
      */
     public function mapAbilities(Request $request, Model $model): array
     {
-        $policy = $this->getPolicy($model);
+        $policy = $this->getPolicy();
 
         return array_reduce(
             $this->getAbilities(),
@@ -29,9 +29,9 @@ trait MapsAbilities
     /**
      * Get the policy.
      */
-    public function getPolicy(string|Model $model): mixed
+    public function getPolicy(): mixed
     {
-        return Gate::getPolicyFor($model);
+        return Gate::getPolicyFor($this->model);
     }
 
     /**
