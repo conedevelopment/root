@@ -9,11 +9,11 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
+use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
-use Cone\Root\Support\Form;
-use Cone\Root\Support\Table;
+use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
@@ -255,7 +255,7 @@ class Resource implements Arrayable, Routable
             return $this->authorized(...$parameters);
         })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
-                        ->available($request)
+                        ->authorized($request)
                         ->apply($request, $this->resolveQuery($request));
         });
     }
@@ -376,12 +376,14 @@ class Resource implements Arrayable, Routable
      */
     public function toForm(Request $request, Model $model): Form
     {
-        return new Form(
+        return (new Form(
             $model,
             $this->resolveFields($request)
-                ->visible($model->exists ? ResourceContext::Create->value : ResourceContext::Update->value)
+                ->visible($model->exists ? ResourceContext::Update->value : ResourceContext::Create->value)
                 ->authorized($request, $model)
-        );
+        ))->url(function () use ($model): string {
+            return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
+        });
     }
 
     /**
@@ -406,9 +408,7 @@ class Resource implements Arrayable, Routable
 
         return [
             'breadcrumbs' => [],
-            'model' => (new Item($model))->toForm(
-                $request, $this->resolveFields($request)->available($request, $model)
-            ),
+            'model' => $this->toForm($request, $model)->toSchema($request),
             'resource' => $this->toArray(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
@@ -422,9 +422,7 @@ class Resource implements Arrayable, Routable
         return [
             'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
             'breadcrumbs' => [],
-            'model' => (new Item($model))->toDisplay(
-                $request, $this->resolveFields($request)->available($request, $model)
-            ),
+            'model' => [],
             'resource' => $this->toArray(),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
@@ -438,13 +436,7 @@ class Resource implements Arrayable, Routable
     {
         return [
             'breadcrumbs' => [],
-            // 'model' => (new Item($model))->toForm(
-            //     $request, $this->resolveFields($request)->available($request, $model)
-            // ),
-            'model' => array_merge($this->toForm($request, $model)->toSchema($request), [
-                'abilities' => [],
-                'url' => '',
-            ]),
+            'model' => $this->toForm($request, $model)->toSchema($request),
             'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];

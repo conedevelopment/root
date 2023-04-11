@@ -1,8 +1,8 @@
 <?php
 
-namespace Cone\Root\Support;
+namespace Cone\Root\Tables;
 
-use Cone\Root\Resources\Item;
+use Closure;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -34,6 +34,11 @@ class Table
     protected Filters $filters;
 
     /**
+     * Set the row resolver callback.
+     */
+    protected ?Closure $rowResolver = null;
+
+    /**
      * Create a new table instance.
      */
     public function __construct(Builder $query, Fields $fields, Actions $actions, Filters $filters)
@@ -42,6 +47,16 @@ class Table
         $this->fields = $fields;
         $this->actions = $actions;
         $this->filters = $filters;
+    }
+
+    /**
+     * Set the row resovler callback.
+     */
+    public function row(Closure $callback): static
+    {
+        $this->rowResolver = $callback;
+
+        return $this;
     }
 
     /**
@@ -69,15 +84,19 @@ class Table
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->setPath(Str::start($request->path(), '/'))
-                    ->through(fn (Model $model): array => $this->toRow($request, $model))
+                    ->through(fn (Model $model): array => $this->toRow($request, $model)->build($request))
                     ->toArray();
     }
 
     /**
      * Get a table row.
      */
-    public function toRow(Request $request, Model $model): array
+    public function toRow(Request $request, Model $model): Row
     {
-        return (new Item($model))->toDisplay($request, $this->fields);
+        $row = new Row($model, $this->fields);
+
+        return is_null($this->rowResolver)
+            ? $row
+            : call_user_func_array($this->rowResolver, [$row, $model, $request]);
     }
 }
