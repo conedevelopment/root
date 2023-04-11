@@ -4,14 +4,14 @@ namespace {{ namespace }};
 
 use Cone\Root\Fields\ID;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Resource
 {
     /**
      * Define the fields for the resource.
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return array_merge(parent::fields($request), [
             ID::make()->sortable()->searchable(),
@@ -21,7 +21,7 @@ class {{ class }} extends Resource
     /**
      * Define the filters for the resource.
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
         return array_merge(parent::filters($request), [
             //
@@ -31,7 +31,7 @@ class {{ class }} extends Resource
     /**
      * Define the actions for the resource.
      */
-    public function actions(RootRequest $request): array
+    public function actions(Request $request): array
     {
         return array_merge(parent::actions($request), [
             //
@@ -41,7 +41,7 @@ class {{ class }} extends Resource
     /**
      * Define the extracts for the resource.
      */
-    public function extracts(RootRequest $request): array
+    public function extracts(Request $request): array
     {
         return array_merge(parent::extracts($request), [
             //
@@ -51,7 +51,7 @@ class {{ class }} extends Resource
     /**
      * Define the widgets for the resource.
      */
-    public function widgets(RootRequest $request): array
+    public function widgets(Request $request): array
     {
         return array_merge(parent::widgets($request), [
             //

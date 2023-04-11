@@ -2,11 +2,11 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Extracts\Extract;
+use Cone\Root\Relations\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class {{ class }} extends Extract
+class {{ class }} extends Relation
 {
     /**
      * Get the query for the extract.
@@ -42,16 +42,6 @@ class {{ class }} extends Extract
     public function actions(Request $request): array
     {
         return array_merge(parent::actions($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the widgets for the resource.
-     */
-    public function widgets(Request $request): array
-    {
-        return array_merge(parent::widgets($request), [
             //
         ]);
     }

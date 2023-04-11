@@ -4,9 +4,9 @@ namespace App\Root\Resources;
 
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class UserResource extends Resource
@@ -19,7 +19,7 @@ class UserResource extends Resource
     /**
      * {@inheritdoc}
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return array_merge(parent::fields($request), [
             ID::make(),
@@ -31,7 +31,7 @@ class UserResource extends Resource
                 ->type('email')
                 ->rules(['required', 'string', 'email', 'max:256'])
                 ->createRules(['unique:users'])
-                ->updateRules(static function (RootRequest $request, Model $model): array {
+                ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
         ]);

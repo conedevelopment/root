@@ -15,4 +15,12 @@ abstract class Relation
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+
+    /**
+     * Create a new relation instance.
+     */
+    public function __construct()
+    {
+        //
+    }
 }

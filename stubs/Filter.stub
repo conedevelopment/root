@@ -4,7 +4,7 @@ namespace {{ namespace }};
 
 use Cone\Root\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Filter
 {
@@ -23,7 +23,7 @@ class {{ class }} extends Filter
     /**
      * Apply the filter on the query.
      */
-    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         return $query;
     }
@@ -31,7 +31,7 @@ class {{ class }} extends Filter
     /**
      * Get the filter options.
      */
-    public function options(RootRequest $request): array
+    public function options(Request $request): array
     {
         return [];
     }
