@@ -4,9 +4,9 @@ namespace Cone\Root\Filters;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class Search extends Filter
 {
@@ -31,7 +31,7 @@ class Search extends Filter
     /**
      * Apply the filter on the query.
      */
-    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         $attributes = $this->mapColumns();
 
@@ -75,7 +75,7 @@ class Search extends Filter
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request): array
+    public function toInput(Request $request): array
     {
         return array_merge(parent::toInput($request), [
             'debounce' => 1000,

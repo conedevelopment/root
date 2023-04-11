@@ -4,12 +4,12 @@ namespace Cone\Root\Filters;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use Illuminate\Http\Request;
 
 class Sort extends Filter
 {
@@ -36,7 +36,7 @@ class Sort extends Filter
     /**
      * Apply the filter on the query.
      */
-    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         $value = array_replace(['by' => 'id', 'order' => 'desc'], (array) $value);
 
@@ -72,7 +72,7 @@ class Sort extends Filter
     /**
      * The default value of the filter.
      */
-    public function default(RootRequest $request): mixed
+    public function default(Request $request): mixed
     {
         return [
             'by' => $request->query('sort.by', Model::CREATED_AT),

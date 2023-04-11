@@ -2,11 +2,11 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -28,7 +28,7 @@ abstract class Filter implements Arrayable
     /**
      * Apply the filter on the query.
      */
-    abstract public function apply(RootRequest $request, Builder $query, mixed $value): Builder;
+    abstract public function apply(Request $request, Builder $query, mixed $value): Builder;
 
     /**
      * Get the key.
@@ -57,7 +57,7 @@ abstract class Filter implements Arrayable
     /**
      * The default value of the filter.
      */
-    public function default(RootRequest $request): mixed
+    public function default(Request $request): mixed
     {
         $default = $request->query($this->getKey());
 
@@ -67,7 +67,7 @@ abstract class Filter implements Arrayable
     /**
      * Determine if the filter is active.
      */
-    public function active(RootRequest $request): bool
+    public function active(Request $request): bool
     {
         return ! empty($request->query($this->getKey()));
     }
@@ -83,7 +83,7 @@ abstract class Filter implements Arrayable
     /**
      * Get the filter options.
      */
-    public function options(RootRequest $request): array
+    public function options(Request $request): array
     {
         return [];
     }
@@ -113,7 +113,7 @@ abstract class Filter implements Arrayable
     /**
      * Get the input representation of the filter.
      */
-    public function toInput(RootRequest $request): array
+    public function toInput(Request $request): array
     {
         $options = $this->options($request);
 

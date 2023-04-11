@@ -25,14 +25,19 @@ class Fields extends Collection
     }
 
     /**
-     * Filter the fields that are available for the given request.
+     * Filter the fields that are available for the current request and model.
      */
-    public function available(Request $request, ...$parameters): static
+    public function authorized(Request $request, ?Model $model = null): static
     {
-        return $this->filter(static function (Field $field) use ($request, $parameters): bool {
-            return $field->authorized($request, ...$parameters)
-                && $field->visible($request);
-        })->values();
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the fields that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
     }
 
     /**

@@ -25,7 +25,7 @@ class Filters extends Collection
     /**
      * Filter the filters that are available for the given request.
      */
-    public function available(Request $request): static
+    public function authorized(Request $request): static
     {
         return $this->filter->authorized($request)->values();
     }

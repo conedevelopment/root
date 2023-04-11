@@ -24,14 +24,19 @@ class Actions extends Collection
     }
 
     /**
-     * Filter the actions that are available for the given request.
+     * Filter the actions that are available for the current request and model.
      */
-    public function available(Request $request, ...$parameters): static
+    public function authorized(Request $request, ?Model $model = null): static
     {
-        return $this->filter(static function (Action $action) use ($request, $parameters): bool {
-            return $action->authorized($request, ...$parameters)
-                && $action->visible($request);
-        })->values();
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the actions that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
+use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
@@ -11,6 +12,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
+use Cone\Root\Support\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
@@ -28,7 +30,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Routable
@@ -210,7 +211,9 @@ class Resource implements Arrayable, Routable
      */
     public function filters(Request $request): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)
+                    ->visible(ResourceContext::Index->value)
+                    ->authorized($request, $this->getModelInstance());
 
         $searchables = $fields->searchable($request);
 
@@ -290,40 +293,6 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Map the items.
-     */
-    public function mapItems(Request $request): array
-    {
-        $filters = $this->resolveFilters($request)->available($request);
-
-        $query = $this->resolveQuery($request);
-
-        $items = $filters->apply($request, $query)
-                    ->latest()
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->setPath($this->getUri())
-                    ->through(function (Model $model) use ($request): array {
-                        return $this->mapItem($request, $model)->toDisplay(
-                            $request, $this->resolveFields($request)->available($request, $model)
-                        );
-                    })
-                    ->toArray();
-
-        return array_merge($items, [
-            'query' => $filters->mapToQuery($request, $query),
-        ]);
-    }
-
-    /**
-     * Map the related model.
-     */
-    public function mapItem(Request $request, Model $model): Item
-    {
-        return new Item($model);
-    }
-
-    /**
      * Get the mappable abilities.
      */
     public function getAbilities(): array
@@ -389,22 +358,29 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Get the table representation of the resource.
+     */
+    public function toTable(Request $request): Table
+    {
+        return new Table(
+            $this->resolveQuery($request),
+            $this->resolveFields($request)->visible(ResourceContext::Index->value)->authorized($request, $this->getModelInstance()),
+            $this->resolveActions($request)->visible(ResourceContext::Index->value)->authorized($request, $this->getModelInstance()),
+            $this->resolveFilters($request)->authorized($request)
+        );
+    }
+
+    /**
      * Get the index representation of the resource.
      */
     public function toIndex(Request $request): array
     {
-        return [
-            'actions' => $this->resolveActions($request)
-                            ->available($request)
-                            ->mapToForm($request, $this->getModelInstance())
-                            ->toArray(),
+        return array_merge($this->toTable($request)->toData($request), [
             'breadcrumbs' => [],
-            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
-            'items' => $this->mapItems($request),
             'resource' => $this->toArray(),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
-        ];
+        ]);
     }
 
     /**
