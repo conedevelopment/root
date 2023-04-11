@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tables;
+namespace Cone\Root\Resources;
 
 use Closure;
 use Cone\Root\Support\Collections\Fields;
@@ -8,17 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
-class Row
+class Resourcable
 {
     /**
      * The model instance.
      */
     protected Model $model;
-
-    /**
-     * The fields collection.
-     */
-    protected Fields $fields;
 
     /**
      * The URL resolver callback.
@@ -28,25 +23,9 @@ class Row
     /**
      * Create a new row instance.
      */
-    public function __construct(Model $model, Fields $fields)
+    public function __construct(Model $model)
     {
         $this->model = $model;
-        $this->fields = $fields;
-    }
-
-    /**
-     * Build the table row.
-     */
-    public function build(Request $request): array
-    {
-        return [
-            'exists' => $this->model->exists,
-            'id' => $this->model->getKey(),
-            'trashed' => $this->isTrashed(),
-            'fields' => $this->fields->mapToDisplay($request, $this->model)->toArray(),
-            'abilities' => $this->resolveAbilities($request),
-            'url' => $this->resolveUrl($request),
-        ];
     }
 
     /**
@@ -54,7 +33,8 @@ class Row
      */
     public function isTrashed(): bool
     {
-        return in_array(SoftDeletes::class, class_uses_recursive($this->model)) && $this->model->trashed();
+        return in_array(SoftDeletes::class, class_uses_recursive($this->model))
+            && $this->model->trashed();
     }
 
     /**
@@ -89,5 +69,41 @@ class Row
             'restore' => $request->user()->can('restore', $this->model),
             'forceDelete' => $request->user()->can('forceDelete', $this->model),
         ];
+    }
+
+    /**
+     * Get the array representation of the object.
+     */
+    public function toArray(): array
+    {
+        return [
+            'exists' => $this->model->exists,
+            'id' => $this->model->getKey(),
+            'trashed' => $this->isTrashed(),
+        ];
+    }
+
+    /**
+     * Get the displayable format of the object.
+     */
+    public function toDisplay(Request $request, Fields $fields): array
+    {
+        return array_merge($this->toArray(), [
+            'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
+            'abilities' => $this->resolveAbilities($request),
+            'url' => $this->resolveUrl($request),
+        ]);
+    }
+
+    /**
+     * Get the from schema of the object.
+     */
+    public function toForm(Request $request, Fields $fields): array
+    {
+        return array_merge($this->toArray(), [
+            'fields' => $fields->mapToForm($request, $this->model)->toArray(),
+            'abilities' => $this->resolveAbilities($request),
+            'url' => $this->resolveUrl($request),
+        ]);
     }
 }

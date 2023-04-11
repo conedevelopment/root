@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="filters.length > 0 || actions.length > 0 || extracts.length > 0" class="app-operation">
+        <div v-if="filters.length > 0 || actions.length > 0" class="app-operation">
             <Filters
                 v-if="filters.length > 0"
                 :query="query"

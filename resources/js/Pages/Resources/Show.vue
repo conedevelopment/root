@@ -78,10 +78,6 @@
                 type: Array,
                 default: () => [],
             },
-            resource: {
-                type: Object,
-                required: true,
-            },
         },
 
         layout: function (h, page) {

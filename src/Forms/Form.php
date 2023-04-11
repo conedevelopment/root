@@ -3,6 +3,7 @@
 namespace Cone\Root\Forms;
 
 use Closure;
+use Cone\Root\Resources\Resourcable;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -86,34 +87,16 @@ class Form
     }
 
     /**
-     * Resolve the abilities.
-     */
-    protected function resolveAbilities(Request $request): array
-    {
-        return [
-            'view' => $request->user()->can('view', $this->model),
-            'update' => $request->user()->can('update', $this->model),
-            'delete' => $request->user()->can('delete', $this->model),
-            'restore' => $request->user()->can('restore', $this->model),
-            'forceDelete' => $request->user()->can('forceDelete', $this->model),
-        ];
-    }
-
-    /**
      * Get the form schema.
      */
     public function toSchema(Request $request): array
     {
-        return [
-            'exists' => $this->model->exists,
-            'id' => $this->model->getKey(),
-            'trashed' => $this->isTrashed(),
-            'fields' => $fields = $this->fields->mapToForm($request, $this->model)->toArray(),
-            'data' => array_reduce($fields, static function (array $data, array $field): array {
+        $data = (new Resourcable($this->model))->toForm($request, $this->fields);
+
+        return array_merge($data, [
+            'data' => array_reduce($data['fields'], static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);
             }, []),
-            'abilities' => $this->resolveAbilities($request),
-            'url' => $this->resolveUrl($request),
-        ];
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace Cone\Root\Tables;
 
 use Closure;
+use Cone\Root\Resources\Resourcable;
 use Cone\Root\Support\Collections\Actions;
 use Cone\Root\Support\Collections\Fields;
 use Cone\Root\Support\Collections\Filters;
@@ -84,16 +85,16 @@ class Table
                     ->paginate($request->input('per_page'))
                     ->withQueryString()
                     ->setPath(Str::start($request->path(), '/'))
-                    ->through(fn (Model $model): array => $this->toRow($request, $model)->build($request))
+                    ->through(fn (Model $model): array => $this->toRow($request, $model))
                     ->toArray();
     }
 
     /**
      * Get a table row.
      */
-    public function toRow(Request $request, Model $model): Row
+    public function toRow(Request $request, Model $model): array
     {
-        $row = new Row($model, $this->fields);
+        $row = (new Resourcable($model))->toDisplay($request, $this->fields);
 
         return is_null($this->rowResolver)
             ? $row

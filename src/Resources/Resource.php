@@ -376,12 +376,11 @@ class Resource implements Arrayable, Routable
      */
     public function toForm(Request $request, Model $model): Form
     {
-        return (new Form(
-            $model,
-            $this->resolveFields($request)
-                ->visible($model->exists ? ResourceContext::Update->value : ResourceContext::Create->value)
-                ->authorized($request, $model)
-        ))->url(function () use ($model): string {
+        $fields = $this->resolveFields($request)
+                    ->visible($model->exists ? ResourceContext::Update->value : ResourceContext::Create->value)
+                    ->authorized($request, $model);
+
+        return (new Form($model, $fields))->url(function () use ($model): string {
             return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
         });
     }
@@ -391,12 +390,12 @@ class Resource implements Arrayable, Routable
      */
     public function toIndex(Request $request): array
     {
-        return array_merge($this->toTable($request)->toData($request), [
+        return [
             'breadcrumbs' => [],
-            'resource' => $this->toArray(),
+            'table' => $this->toTable($request)->toData($request),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
-        ]);
+        ];
     }
 
     /**
@@ -420,12 +419,18 @@ class Resource implements Arrayable, Routable
     public function toShow(Request $request, Model $model): array
     {
         return [
-            'actions' => $this->resolveActions($request)->available($request)->mapToForm($request, $model)->toArray(),
+            'actions' => $this->resolveActions($request)
+                            ->visible(ResourceContext::Show->value)
+                            ->authorized($request, $model)
+                            ->mapToForm($request, $model)
+                            ->toArray(),
             'breadcrumbs' => [],
-            'model' => [],
-            'resource' => $this->toArray(),
+            'model' => (new Resourcable($model))->toDisplay(
+                $request, $this->resolveFields($request)->visible(ResourceContext::Show->value)->authorized($request, $model)
+            ),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
+            // relations
         ];
     }
 
