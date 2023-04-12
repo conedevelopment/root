@@ -16,7 +16,7 @@ class DashboardController extends Controller
     {
         return Inertia::render('Dashboard', [
             'title' => __('Dashboard'),
-            'widgets' => $root->widgets->available($request)->toArray(),
+            'widgets' => $root->widgets->authorized($request)->toArray(),
         ]);
     }
 }

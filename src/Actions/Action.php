@@ -64,6 +64,14 @@ abstract class Action implements Arrayable, Responsable, Routable
     }
 
     /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
+    }
+
+    /**
      * Get the name.
      */
     public function getName(): string
@@ -118,7 +126,7 @@ abstract class Action implements Arrayable, Responsable, Routable
 
         $request->validate(
             $this->resolveFields($request)
-                ->available($request, $model)
+                ->authorized($request, $model)
                 ->mapToValidate($request, $model)
         );
 
@@ -174,7 +182,7 @@ abstract class Action implements Arrayable, Responsable, Routable
         $request = App::make('request');
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($router);
         });
     }
 
@@ -206,9 +214,9 @@ abstract class Action implements Arrayable, Responsable, Routable
     public function toForm(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
-                        ->available($request, $model)
-                        ->mapToForm($request, $model)
-                        ->toArray();
+                    ->authorized($request, $model)
+                    ->mapToForm($request, $model)
+                    ->toArray();
 
         return array_merge($this->toArray(), [
             'data' => array_reduce($fields, static function (array $data, array $field): array {

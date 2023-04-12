@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Notification;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 class NotificationsController extends Controller
@@ -12,7 +12,7 @@ class NotificationsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(RootRequest $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $notifications = (Notification::proxy())::rootQuery($request)
                                 ->filter($request)
@@ -29,7 +29,7 @@ class NotificationsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RootRequest $request, string $id): JsonResponse
+    public function show(Request $request, string $id): JsonResponse
     {
         $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 
@@ -39,7 +39,7 @@ class NotificationsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(RootRequest $request, string $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse
     {
         $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 
@@ -51,7 +51,7 @@ class NotificationsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RootRequest $request, string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
 

@@ -3,7 +3,6 @@
 namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\NotificationFactory;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Interfaces\Models\Notification as Contract;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 
@@ -53,7 +53,7 @@ class Notification extends DatabaseNotification implements Contract
     /**
      * Create a new Eloquent query for the given Root request.
      */
-    public static function rootQuery(RootRequest $request): Builder
+    public static function rootQuery(Request $request): Builder
     {
         return $request->user()->notifications()->getQuery();
     }

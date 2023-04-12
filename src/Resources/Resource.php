@@ -9,11 +9,9 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
-use Cone\Root\Forms\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
-use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
@@ -290,12 +288,41 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Make a new resourcable instance.
+     * Map the items.
      */
-    public function newResourcable(Model $model): Resourcable
+    public function mapItems(Request $request): array
     {
-        return (new Resourcable($model))->url(function () use ($model): string {
-            return sprintf('%s/%s', $this->getUri(), $model->getRouteKey());
+        $filters = $this->resolveFilters($request)->authorized($request);
+
+        $query = $this->resolveQuery($request);
+
+        $items = $filters->apply($request, $query)
+                    ->latest()
+                    ->paginate($request->input('per_page'))
+                    ->withQueryString()
+                    ->setPath($this->getUri())
+                    ->through(function (Model $model) use ($request): array {
+                        return $this->newItem($model)->toDisplay(
+                            $request,
+                            $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Index->value)
+                        );
+                    })
+                    ->toArray();
+
+        return array_merge($items, [
+            'query' => $filters->mapToQuery($request, $query),
+        ]);
+    }
+
+    /**
+     * Make a new item instance.
+     */
+    public function newItem(Model $model): Item
+    {
+        return (new Item($model))->url(function () use ($model): string {
+            return $model->exists
+                ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey())
+                : $this->getUri();
         });
     }
 
@@ -363,42 +390,24 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Get the table representation of the resource.
-     */
-    public function toTable(Request $request): Table
-    {
-        return new Table(
-            $this->resolveQuery($request),
-            $this->resolveFields($request)->visible(ResourceContext::Index->value)->authorized($request, $this->getModelInstance()),
-            $this->resolveActions($request)->visible(ResourceContext::Index->value)->authorized($request, $this->getModelInstance()),
-            $this->resolveFilters($request)->authorized($request)
-        );
-    }
-
-    /**
-     * Get the form representation of the resource.
-     */
-    public function toForm(Request $request, Model $model): Form
-    {
-        $fields = $this->resolveFields($request)
-                    ->visible($model->exists ? ResourceContext::Update->value : ResourceContext::Create->value)
-                    ->authorized($request, $model);
-
-        return (new Form($model, $fields))->url(function () use ($model): string {
-            return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
-        });
-    }
-
-    /**
      * Get the index representation of the resource.
      */
     public function toIndex(Request $request): array
     {
         return [
-            'breadcrumbs' => [],
-            'table' => $this->toTable($request)->toData($request),
+            'actions' => $this->resolveActions($request)
+                            ->authorized($request)
+                            ->visible(ResourceContext::Index->value)
+                            ->mapToForm($request, $this->getModelInstance())
+                            ->toArray(),
+            'filters' => $this->resolveFilters($request)
+                            ->authorized($request)
+                            ->mapToForm($request)
+                            ->toArray(),
+            'items' => $this->mapItems($request),
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
+            'breadcrumbs' => [],
+            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }
 
@@ -411,7 +420,10 @@ class Resource implements Arrayable, Routable
 
         return [
             'breadcrumbs' => [],
-            'model' => $this->toForm($request, $model)->toSchema($request),
+            'model' => $this->newItem($model)->toForm(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
+            ),
             'resource' => $this->toArray(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
@@ -429,12 +441,13 @@ class Resource implements Arrayable, Routable
                             ->mapToForm($request, $model)
                             ->toArray(),
             'breadcrumbs' => [],
-            'model' => $this->newResourcable($model)->toDisplay(
-                $request, $this->resolveFields($request)->visible(ResourceContext::Show->value)->authorized($request, $model)
+            'model' => $this->newItem($model)->toDisplay(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
             ),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
-            // relations
+            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            'relations' => [],
         ];
     }
 
@@ -445,7 +458,10 @@ class Resource implements Arrayable, Routable
     {
         return [
             'breadcrumbs' => [],
-            'model' => $this->toForm($request, $model)->toSchema($request),
+            'model' => $this->newItem($model)->toForm(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
+            ),
             'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];

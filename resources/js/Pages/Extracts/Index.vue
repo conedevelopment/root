@@ -7,7 +7,7 @@
                 :key="widget.key"
             ></Widget>
         </div>
-        <Table v-bind="table"></Table>
+        <Table :actions="actions" :filters="filters" :items="items"></Table>
     </div>
 </template>
 
@@ -22,7 +22,15 @@
         },
 
         props: {
-            table: {
+            actions: {
+                type: Array,
+                default: () => [],
+            },
+            filters: {
+                type: Array,
+                default: () => [],
+            },
+            items: {
                 type: Object,
                 required: true,
             },

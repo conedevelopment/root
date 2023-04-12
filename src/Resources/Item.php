@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
-class Resourcable
+class Item
 {
     /**
      * The model instance.
@@ -49,7 +49,7 @@ class Resourcable
     }
 
     /**
-     * Resolve the URL for the row.
+     * Resolve the URL for the item.
      */
     protected function resolveUrl(Request $request): string
     {
@@ -111,9 +111,14 @@ class Resourcable
      */
     public function toForm(Request $request, Fields $fields): array
     {
+        $fields = $fields->mapToForm($request, $this->model)->toArray();
+
         return array_merge($this->toArray(), [
-            'fields' => $fields->mapToForm($request, $this->model)->toArray(),
             'abilities' => $this->resolveAbilities($request),
+            'data' => array_reduce($fields, static function (array $data, array $field): array {
+                return array_replace_recursive($data, [$field['name'] => $field['value']]);
+            }, []),
+            'fields' => $fields,
             'url' => $this->resolveUrl($request),
         ]);
     }

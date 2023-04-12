@@ -2,13 +2,13 @@
 
 namespace Cone\Root\Http\Controllers;
 
+use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -31,7 +31,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($resource->getModel())) {
+        if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
         }
 
@@ -48,7 +48,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($resource->getModel())) {
+        if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
 
@@ -65,13 +65,21 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($resource->getModel())) {
+        if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
 
         $model = $resource->getModelInstance();
 
-        $resource->toForm($request, $model)->handle($request);
+        $fields = $resource->resolveFields($request)
+                        ->authorized($request, $model)
+                        ->visible(ResourceContext::Update->value);
+
+        $request->validate($fields->mapToValidate($request, $model));
+
+        $fields->each->persist($request, $model);
+
+        $model->save();
 
         $resource->created($request, $model);
 
@@ -86,7 +94,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($model)) {
+        if ($resource->getPolicy()) {
             $this->authorize('view', $model);
         }
 
@@ -103,7 +111,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($model)) {
+        if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
@@ -120,11 +128,19 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($model)) {
+        if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
-        $resource->toForm($request, $model)->handle($request);
+        $fields = $resource->resolveFields($request)
+                        ->authorized($request, $model)
+                        ->visible(ResourceContext::Update->value);
+
+        $request->validate($fields->mapToValidate($request, $model));
+
+        $fields->each->persist($request, $model);
+
+        $model->save();
 
         $resource->updated($request, $model);
 
@@ -141,7 +157,7 @@ class ResourceController extends Controller
 
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
-        if (Gate::getPolicyFor($model)) {
+        if ($resource->getPolicy()) {
             $this->authorize($trashed ? 'forceDelete' : 'delete', $model);
         }
 
@@ -160,7 +176,7 @@ class ResourceController extends Controller
     {
         $resource = $request->route('rootResource');
 
-        if (Gate::getPolicyFor($model)) {
+        if ($resource->getPolicy()) {
             $this->authorize('restore', $model);
         }
 

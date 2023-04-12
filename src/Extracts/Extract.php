@@ -11,8 +11,6 @@ use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Resources\Item;
-use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -138,7 +136,7 @@ abstract class Extract implements Arrayable, Routable
             return $this->authorized(...$parameters);
         })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
-                        ->available($request)
+                        ->authorized($request)
                         ->apply($request, $this->resolveQuery($request));
         });
     }
@@ -160,7 +158,7 @@ abstract class Extract implements Arrayable, Routable
     {
         $query = $this->resolveQuery($request);
 
-        $filters = $this->resolveFilters($request)->available($request);
+        $filters = $this->resolveFilters($request)->authorized($request);
 
         $items = $filters->apply($request, $query)
                     ->latest()
@@ -168,9 +166,12 @@ abstract class Extract implements Arrayable, Routable
                     ->withQueryString()
                     ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
-                        return (new Item($model))->toDisplay(
-                            $request, $this->resolveFields($request)->available($request, $model)
-                        );
+                        return $request->route('rootResource')
+                                        ->newItem($model)
+                                        ->toDisplay(
+                                            $request,
+                                            $this->resolveFields($request)->authorized($request, $model)
+                                        );
                     })
                     ->toArray();
 
@@ -216,27 +217,22 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
-     * Get the table representation of the extract.
-     */
-    public function toTable(Request $request): Table
-    {
-        return new Table(
-            $query = $this->resolveQuery($request),
-            $this->resolveFields($request)->authorized($request, $query->getModel()),
-            $this->resolveActions($request)->authorized($request, $query->getModel()),
-            $this->resolveFilters($request)->authorized($request)
-        );
-    }
-
-    /**
      * Get the index representation of the extract.
      */
     public function toIndex(Request $request): array
     {
         return [
-            'breadcrumbs' => [],
-            'table' => $this->toTable($request)->toData($request),
+            'actions' => $this->resolveActions($request)
+                            ->authorized($request)
+                            ->mapToForm($request, $this->resolveQuery($request)->getModel())
+                            ->toArray(),
+            'filters' => $this->resolveFilters($request)
+                            ->authorized($request)
+                            ->mapToForm($request)
+                            ->toArray(),
+            'items' => $this->mapItems($request),
             'title' => $this->getName(),
+            'breadcrumbs' => [],
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }
