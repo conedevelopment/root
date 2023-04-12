@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Tests\Http\Controllers;
 
-use Cone\Root\Http\Requests\ExtractRequest;
 use Cone\Root\Tests\Extracts\LongPosts;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
@@ -21,7 +20,7 @@ class ExtractControllerTest extends TestCase
             $router->group(
                 ['prefix' => $this->resource->getKey().'/extracts', 'resource' => $this->resource->getKey()],
                 function ($router) {
-                    $this->extract->registerRoutes($this->request, $router);
+                    $this->extract->registerRoutes($router);
                 }
             );
         });
@@ -30,9 +29,7 @@ class ExtractControllerTest extends TestCase
     /** @test */
     public function an_extract_controller_has_index()
     {
-        $request = ExtractRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/extracts/long-posts'];
         });
 
@@ -46,8 +43,8 @@ class ExtractControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Extracts/Index',
-                'page.props' => function ($props) use ($request) {
-                    return empty(array_diff_key($this->extract->toIndex($request), $props));
+                'page.props' => function ($props) {
+                    return empty(array_diff_key($this->extract->toIndex($this->app['request']), $props));
                 },
             ]);
     }

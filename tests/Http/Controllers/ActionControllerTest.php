@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Tests\Http\Controllers;
 
-use Cone\Root\Http\Requests\ActionRequest;
 use Cone\Root\Tests\Actions\PublishPosts;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
@@ -21,7 +20,7 @@ class ActionControllerTest extends TestCase
             $router->group(
                 ['prefix' => $this->resource->getKey().'/actions', 'resource' => $this->resource->getKey()],
                 function ($router) {
-                    $this->action->registerRoutes($this->request, $router);
+                    $this->action->registerRoutes($router);
                 }
             );
         });
@@ -30,9 +29,7 @@ class ActionControllerTest extends TestCase
     /** @test */
     public function an_action_controller_has_index()
     {
-        $request = ActionRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/actions/publish-posts'];
         });
 

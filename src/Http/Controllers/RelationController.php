@@ -14,9 +14,9 @@ class RelationController extends Controller
      */
     public function __invoke(Request $request, Model $model = null): JsonResponse
     {
-        $field = $request->resolved();
+        $field = $request->route('rootRelation');
 
-        $model ??= $request->resource()->getModelInstance();
+        $model ??= $request->route('rootResource')->getModelInstance();
 
         $models = $field->resolveQuery($request, $model)
                         ->tap(static function (Builder $query) use ($request): void {
@@ -25,7 +25,7 @@ class RelationController extends Controller
                             }
                         })
                         ->paginate()
-                        ->setPath($field->resolveUri($request))
+                        ->setPath($field->getUri())
                         ->through(static function (Model $related) use ($request, $model, $field): array {
                             return $field->mapOption($request, $model, $related);
                         });

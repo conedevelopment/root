@@ -46,7 +46,7 @@ trait ResolvesExtracts
             $this->extracts = Extracts::make()->register($this->extracts($request));
 
             if (! is_null($this->extractsResolver)) {
-                $this->extracts->regiser(call_user_func_array($this->extractsResolver, [$request]));
+                $this->extracts->register(call_user_func_array($this->extractsResolver, [$request]));
             }
 
             $this->extracts->each(function (Extract $extract) use ($request): void {

@@ -2,10 +2,6 @@
 
 namespace Cone\Root\Tests\Http\Controllers;
 
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\IndexRequest;
-use Cone\Root\Http\Requests\ShowRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
@@ -14,9 +10,7 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_index()
     {
-        $request = IndexRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts'];
         });
 
@@ -26,8 +20,8 @@ class ResourceControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Resources/Index',
-                'page.props' => function ($props) use ($request) {
-                    return empty(array_diff_key($this->resource->toIndex($request), $props));
+                'page.props' => function ($props) {
+                    return empty(array_diff_key($this->resource->toIndex($this->app['request']), $props));
                 },
             ]);
     }
@@ -35,9 +29,7 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_create()
     {
-        $request = CreateRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/create'];
         });
 
@@ -47,8 +39,8 @@ class ResourceControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Resources/Form',
-                'page.props' => function ($props) use ($request) {
-                    return empty(array_diff_key($this->resource->toCreate($request), $props));
+                'page.props' => function ($props) {
+                    return empty(array_diff_key($this->resource->toCreate($this->app['request']), $props));
                 },
             ]);
     }
@@ -67,11 +59,9 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_show()
     {
-        $request = ShowRequest::createFrom($this->request);
-
         $model = Post::query()->get()->first();
 
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}'];
         });
 
@@ -81,8 +71,8 @@ class ResourceControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Resources/Show',
-                'page.props' => function ($props) use ($request, $model) {
-                    return empty(array_diff_key($this->resource->toShow($request, $model), $props));
+                'page.props' => function ($props) use ($model) {
+                    return empty(array_diff_key($this->resource->toShow($this->app['request'], $model), $props));
                 },
             ]);
     }
@@ -90,11 +80,9 @@ class ResourceControllerTest extends TestCase
     /** @test */
     public function a_resource_controller_has_edit()
     {
-        $request = UpdateRequest::createFrom($this->request);
-
         $model = Post::query()->get()->first();
 
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/{resource_post}/edit'];
         });
 
@@ -104,8 +92,8 @@ class ResourceControllerTest extends TestCase
             ->assertViewIs('root::app')
             ->assertViewHas([
                 'page.component' => 'Resources/Form',
-                'page.props' => function ($props) use ($request, $model) {
-                    return empty(array_diff_key($this->resource->toEdit($request, $model), $props));
+                'page.props' => function ($props) use ($model) {
+                    return empty(array_diff_key($this->resource->toEdit($this->app['request'], $model), $props));
                 },
             ]);
     }

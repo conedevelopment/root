@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Tests\Http\Controllers;
 
-use Cone\Root\Http\Requests\WidgetRequest;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\Widgets\PostsCount;
 
@@ -22,7 +21,7 @@ class WidgetControllerTest extends TestCase
             $router->group(
                 ['prefix' => $this->resource->getKey().'/widgets', 'resource' => $this->resource->getKey()],
                 function ($router) {
-                    $this->widget->registerRoutes($this->request, $router);
+                    $this->widget->registerRoutes($router);
                 }
             );
         });
@@ -31,9 +30,7 @@ class WidgetControllerTest extends TestCase
     /** @test */
     public function a_widget_controller_has_index()
     {
-        $request = WidgetRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/widgets/posts-count'];
         });
 

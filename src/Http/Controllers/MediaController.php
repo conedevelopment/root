@@ -17,9 +17,9 @@ class MediaController extends Controller
      */
     public function index(Request $request, Model $model = null): JsonResponse
     {
-        $field = $request->resolved();
+        $field = $request->route('rootRelation');
 
-        $model ??= $request->resource()->getModelInstance();
+        $model ??= $request->route('rootResource')->getModelInstance();
 
         return new JsonResponse($field->mapItems($request, $model));
     }
@@ -31,9 +31,9 @@ class MediaController extends Controller
     {
         $request->validate(['file' => ['required', 'file']]);
 
-        $field = $request->resolved();
+        $field = $request->route('rootRelation');
 
-        $model ??= $request->resource()->getModelInstance();
+        $model ??= $request->route('rootResource')->getModelInstance();
 
         $file = $request->file('file');
 
@@ -58,9 +58,9 @@ class MediaController extends Controller
      */
     public function destroy(Request $request, Model $model = null): JsonResponse
     {
-        $field = $request->resolved();
+        $field = $request->route('rootRelation');
 
-        $field->resolveQuery($request, $model ?: $request->resource()->getModelInstance())
+        $field->resolveQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
               ->find($request->input('models', []))
               ->each
               ->delete();

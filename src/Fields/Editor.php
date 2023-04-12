@@ -108,13 +108,13 @@ class Editor extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->__registerRoutes($request, $router);
+        $this->__registerRoutes($router);
 
         if (! is_null($this->media)) {
-            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-                $this->media->registerRoutes($request, $router);
+            $router->prefix($this->getKey())->group(function (Router $router): void {
+                $this->media->registerRoutes($router);
             });
         }
     }

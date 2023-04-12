@@ -12,6 +12,6 @@ class WidgetController extends Controller
      */
     public function __invoke(Request $request): Response
     {
-        return new Response($request->widget()->render());
+        return new Response($request->route('rootWidget')->render());
     }
 }

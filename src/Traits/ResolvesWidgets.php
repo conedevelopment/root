@@ -32,7 +32,7 @@ trait ResolvesWidgets
      */
     public function withWidgets(array|Closure $widgets): static
     {
-        $this->widgetsResolver = is_array($widgets) ? fn (): array => $widgets: $widgets;
+        $this->widgetsResolver = is_array($widgets) ? fn (): array => $widgets : $widgets;
 
         return $this;
     }

@@ -33,7 +33,7 @@ class HasManyTest extends TestCase
             Post::query()->get()->map(function ($model) {
                 return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $author)
+            $this->field->resolveOptions($this->app['request'], $author)
         );
     }
 
@@ -48,7 +48,7 @@ class HasManyTest extends TestCase
             Post::query()->get()->map(function ($model) {
                 return ['value' => $model->getKey(), 'formatted_value' => $model->title];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $author)
+            $this->field->resolveOptions($this->app['request'], $author)
         );
 
         $closure = function ($request, $model) {
@@ -59,9 +59,9 @@ class HasManyTest extends TestCase
 
         $this->assertSame(
             Post::query()->get()->map(function ($model) use ($closure) {
-                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->request, $model)];
+                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->app['request'], $model)];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $author)
+            $this->field->resolveOptions($this->app['request'], $author)
         );
     }
 
@@ -72,14 +72,14 @@ class HasManyTest extends TestCase
 
         $this->assertSame(
             'select * from "posts"',
-            $this->field->resolveQuery($this->request, $author)->getQuery()->toSql()
+            $this->field->resolveQuery($this->app['request'], $author)->getQuery()->toSql()
         );
 
         $this->field->withQuery(function ($request, $query) {
             return $query->where('posts.title', 'Foo');
         });
 
-        $query = $this->field->resolveQuery($this->request, $author)->getQuery();
+        $query = $this->field->resolveQuery($this->app['request'], $author)->getQuery();
 
         $this->assertSame('select * from "posts" where "posts"."title" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());

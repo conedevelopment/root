@@ -48,13 +48,13 @@ class SelectTest extends TestCase
     {
         $model = new Author();
 
-        $this->assertEmpty($this->field->resolveOptions($this->request, $model));
+        $this->assertEmpty($this->field->resolveOptions($this->app['request'], $model));
 
         $this->field->options(['key' => 'value']);
 
         $this->assertSame(
             [['value' => 'key', 'formatted_value' => 'value']],
-            $this->field->resolveOptions($this->request, $model)
+            $this->field->resolveOptions($this->app['request'], $model)
         );
     }
 }

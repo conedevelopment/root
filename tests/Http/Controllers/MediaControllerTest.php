@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests\Http\Controllers;
 
 use Cone\Root\Fields\Media;
-use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
@@ -30,7 +29,7 @@ class MediaControllerTest extends TestCase
             $router->group(
                 ['prefix' => $this->resource->getKey().'/fields', 'resource' => $this->resource->getKey()],
                 function ($router) {
-                    $this->field->registerRoutes($this->request, $router);
+                    $this->field->registerRoutes($router);
                 }
             );
         });
@@ -39,16 +38,14 @@ class MediaControllerTest extends TestCase
     /** @test */
     public function a_media_controller_has_index()
     {
-        $request = ResourceRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/media'];
         });
 
         $this->actingAs($this->admin)
             ->get('/root/posts/fields/media')
             ->assertOk()
-            ->assertJson($this->field->mapItems($request, new Post()));
+            ->assertJson($this->field->mapItems($this->app['request'], new Post()));
     }
 
     /** @test */
@@ -56,9 +53,7 @@ class MediaControllerTest extends TestCase
     {
         Queue::fake();
 
-        $request = ResourceRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('POST')['root/posts/fields/media'];
         });
 
@@ -89,9 +84,7 @@ class MediaControllerTest extends TestCase
     /** @test */
     public function a_media_controller_has_destroy()
     {
-        $request = ResourceRequest::createFrom($this->request);
-
-        $request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('DELETE')['root/posts/fields/media'];
         });
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
 class Json extends Field
 {
@@ -35,12 +36,14 @@ class Json extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->__registerRoutes($request, $router);
+        $this->__registerRoutes($router);
+
+        $request = App::make('request');
 
         $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($router);
         });
     }
 
@@ -58,7 +61,7 @@ class Json extends Field
                     ->forceFill($data['value']);
 
         $fields = $this->resolveFields($request)
-                    ->available($request, $model)
+                    ->authorized($request, $model)
                     ->mapToForm($request, $json)
                     ->toArray();
 
@@ -75,7 +78,7 @@ class Json extends Field
     public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
-                    ->available($request, $model)
+                    ->authorized($request, $model)
                     ->mapToValidate($request, $model);
 
         return array_merge(

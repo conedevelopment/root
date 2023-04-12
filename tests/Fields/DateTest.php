@@ -33,11 +33,11 @@ class DateTest extends TestCase
 
         $model->setAttribute('created_at', $now);
 
-        $this->assertSame($now->format('Y-m-d'), $this->field->resolveFormat($this->request, $model));
+        $this->assertSame($now->format('Y-m-d'), $this->field->resolveFormat($this->app['request'], $model));
 
         $this->field->withTime();
 
-        $this->assertSame($now->format('Y-m-d H:i:s'), $this->field->resolveFormat($this->request, $model));
+        $this->assertSame($now->format('Y-m-d H:i:s'), $this->field->resolveFormat($this->app['request'], $model));
     }
 
     /** @test */
@@ -49,13 +49,13 @@ class DateTest extends TestCase
 
         $model->setAttribute('created_at', $now);
 
-        $this->assertSame($now->format('Y-m-d'), $this->field->resolveFormat($this->request, $model));
+        $this->assertSame($now->format('Y-m-d'), $this->field->resolveFormat($this->app['request'], $model));
 
         $this->field->withTime()->timezone('Europe/Budapest');
 
         $this->assertSame(
             $now->tz('Europe/Budapest')->format('Y-m-d H:i:s'),
-            $this->field->resolveFormat($this->request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
     }
 }

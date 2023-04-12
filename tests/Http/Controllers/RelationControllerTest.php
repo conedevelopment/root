@@ -22,7 +22,7 @@ class RelationControllerTest extends TestCase
             $router->group(
                 ['prefix' => $this->resource->getKey().'/fields', 'resource' => $this->resource->getKey()],
                 function ($router) {
-                    $this->field->registerRoutes($this->request, $router);
+                    $this->field->registerRoutes($router);
                 }
             );
         });
@@ -31,18 +31,18 @@ class RelationControllerTest extends TestCase
     /** @test */
     public function a_relation_controller_has_index()
     {
-        $this->request->setRouteResolver(function () {
+        $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/posts/fields/author'];
         });
 
         $model = new Post();
 
         $results = $this->field
-                        ->resolveQuery($this->request, $model)
+                        ->resolveQuery($this->app['request'], $model)
                         ->paginate()
                         ->setPath('/root/posts/fields/author')
                         ->through(function ($related) use ($model): array {
-                            return $this->field->mapOption($this->request, $model, $related);
+                            return $this->field->mapOption($this->app['request'], $model, $related);
                         });
 
         $this->actingAs($this->admin)
