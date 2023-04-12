@@ -3,23 +3,12 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Exceptions\ResourceResolutionException;
-use Cone\Root\Interfaces\Support\Collections\Resources as Contract;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class Resources extends Collection implements Contract
+class Resources extends Collection
 {
-    /**
-     * Filter the available resources.
-     */
-    public function available(Request $request): static
-    {
-        return $this->filter(static function (Resource $resource) use ($request): bool {
-            return $resource->authorized($request);
-        });
-    }
-
     /**
      * Register the given resource into the colleciton.
      */
@@ -38,5 +27,21 @@ class Resources extends Collection implements Contract
         }
 
         return $this->get($key);
+    }
+
+    /**
+     * Filter the authorized resources.
+     */
+    public function authorized(Request $request): static
+    {
+        return $this->filter->authorized($request)->values();
+    }
+
+    /**
+     * Map the resources into navigation compatible format.
+     */
+    public function mapToNavigation(Request $request): array
+    {
+        return $this->map->toNavigation($request)->toArray();
     }
 }

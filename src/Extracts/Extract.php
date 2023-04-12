@@ -12,6 +12,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Resources\Item;
+use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -96,7 +97,7 @@ abstract class Extract implements Arrayable, Routable
      */
     public function filters(Request $request): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->authorized($request);
 
         $searchables = $fields->searchable($request);
 
@@ -215,22 +216,28 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
+     * Get the table representation of the extract.
+     */
+    public function toTable(Request $request): Table
+    {
+        return new Table(
+            $query = $this->resolveQuery($request),
+            $this->resolveFields($request)->authorized($request, $query->getModel()),
+            $this->resolveActions($request)->authorized($request, $query->getModel()),
+            $this->resolveFilters($request)->authorized($request)
+        );
+    }
+
+    /**
      * Get the index representation of the extract.
      */
     public function toIndex(Request $request): array
     {
         return [
-            'actions' => $this->resolveActions($request)
-                            ->available($request)
-                            ->mapToForm($request, $this->resolveQuery($request)->getModel())
-                            ->toArray(),
             'breadcrumbs' => [],
-            'extract' => $this->toArray(),
-            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
-            'items' => $this->mapItems($request),
-            'resource' => $request->resource()->toArray(),
+            'table' => $this->toTable($request)->toData($request),
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }
 }

@@ -15,7 +15,7 @@ class ExtractController extends Controller
     {
         return Inertia::render(
             'Extracts/Index',
-            $request->extract()->toIndex($request)
+            $request->route('rootExtract')->toIndex($request)
         );
     }
 }

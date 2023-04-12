@@ -7,6 +7,7 @@ use Cone\Root\Support\Collections\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class Resourcable
 {
@@ -58,16 +59,26 @@ class Resourcable
     }
 
     /**
+     * Get the policy for the model.
+     */
+    public function getPolicy(): mixed
+    {
+        return Gate::getPolicyFor($this->model);
+    }
+
+    /**
      * Resolve the abilities.
      */
     protected function resolveAbilities(Request $request): array
     {
+        $policy = $this->getPolicy();
+
         return [
-            'view' => $request->user()->can('view', $this->model),
-            'update' => $request->user()->can('update', $this->model),
-            'delete' => $request->user()->can('delete', $this->model),
-            'restore' => $request->user()->can('restore', $this->model),
-            'forceDelete' => $request->user()->can('forceDelete', $this->model),
+            'view' => is_null($policy) || $request->user()->can('view', $this->model),
+            'update' => is_null($policy) || $request->user()->can('update', $this->model),
+            'delete' => is_null($policy) || $request->user()->can('delete', $this->model),
+            'restore' => is_null($policy) || $request->user()->can('restore', $this->model),
+            'forceDelete' => is_null($policy) || $request->user()->can('forceDelete', $this->model),
         ];
     }
 

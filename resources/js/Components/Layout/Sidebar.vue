@@ -51,6 +51,14 @@
                                 {{ __('Create :model', { model: resource.model_name }) }}
                             </Link>
                         </li>
+                        <li v-for="link in resource.links" :key="link.url">
+                            <Link
+                                :href="link.url"
+                                :aria-current="link.url === $page.props.url ? 'page' : ''"
+                            >
+                                {{ link.label }}
+                            </Link>
+                        </li>
                     </ul>
                 </li>
             </ul>

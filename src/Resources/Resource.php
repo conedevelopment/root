@@ -15,7 +15,6 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Root;
 use Cone\Root\Tables\Table;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesExtracts;
@@ -31,12 +30,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class Resource implements Arrayable, Routable
 {
     use Authorizable;
-    use MapsAbilities;
     use ResolvesActions;
     use ResolvesExtracts;
     use ResolvesFields;
@@ -155,6 +154,14 @@ class Resource implements Arrayable, Routable
     public function getIcon(): string
     {
         return $this->icon;
+    }
+
+    /**
+     * Get the policy for the model.
+     */
+    public function getPolicy(): mixed
+    {
+        return Gate::getPolicyFor($this->getModel());
     }
 
     /**
@@ -283,22 +290,13 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Map the URLs.
+     * Make a new resourcable instance.
      */
-    public function mapUrls(Request $request): array
+    public function newResourcable(Model $model): Resourcable
     {
-        return [
-            'index' => $this->getUri(),
-            'create' => sprintf('%s/create', $this->getUri()),
-        ];
-    }
-
-    /**
-     * Get the mappable abilities.
-     */
-    public function getAbilities(): array
-    {
-        return ['viewAny', 'create'];
+        return (new Resourcable($model))->url(function () use ($model): string {
+            return sprintf('%s/%s', $this->getUri(), $model->getRouteKey());
+        });
     }
 
     /**
@@ -346,15 +344,21 @@ class Resource implements Arrayable, Routable
      */
     public function toArray(): array
     {
-        $request = App::make('request');
+        $policy = $this->getPolicy();
 
         return [
-            'abilities' => $this->mapAbilities($request, $this->getModelInstance()),
             'key' => $this->getKey(),
             'icon' => $this->getIcon(),
             'model_name' => $this->getModelName(),
             'name' => $this->getName(),
-            'urls' => $this->mapUrls($request),
+            'urls' => [
+                'index' => $this->getUri(),
+                'create' => sprintf('%s/create', $this->getUri()),
+            ],
+            'abilities' => [
+                'viewAny' => is_null($policy) || Gate::allows('viewAny', $this->getModel()),
+                'create' => is_null($policy) || Gate::allows('create', $this->getModel()),
+            ],
         ];
     }
 
@@ -425,7 +429,7 @@ class Resource implements Arrayable, Routable
                             ->mapToForm($request, $model)
                             ->toArray(),
             'breadcrumbs' => [],
-            'model' => (new Resourcable($model))->toDisplay(
+            'model' => $this->newResourcable($model)->toDisplay(
                 $request, $this->resolveFields($request)->visible(ResourceContext::Show->value)->authorized($request, $model)
             ),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
@@ -445,6 +449,24 @@ class Resource implements Arrayable, Routable
             'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];
+    }
+
+    /**
+     * Get the navigation compatible format of the resource.
+     */
+    public function toNavigation(Request $request): array
+    {
+        return array_merge($this->toArray(), [
+            'links' => $this->resolveExtracts($request)
+                            ->authorized($request)
+                            ->map(static function (Extract $extract): array {
+                                return [
+                                    'url' => $extract->getUri(),
+                                    'label' => $extract->getName(),
+                                ];
+                            })
+                            ->toArray(),
+        ]);
     }
 
     /**

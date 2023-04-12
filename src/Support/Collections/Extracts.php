@@ -23,9 +23,9 @@ class Extracts extends Collection
     }
 
     /**
-     * Filter the extracts that are available for the given request.
+     * Filter the extracts that are authorized for the given request.
      */
-    public function available(Request $request): static
+    public function authorized(Request $request): static
     {
         return $this->filter->authorized($request)->values();
     }

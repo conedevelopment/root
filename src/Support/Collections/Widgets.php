@@ -3,6 +3,7 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Widgets\Widget;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
@@ -23,13 +24,19 @@ class Widgets extends Collection
     }
 
     /**
-     * Filter the widgets that are visible for the given request.
+     * Filter the widgets that are available for the current request and model.
      */
-    public function available(Request $request): static
+    public function authorized(Request $request, ?Model $model = null): static
     {
-        return $this->filter(static function (Widget $widget) use ($request): bool {
-            return $widget->authorized($request) && $widget->visible($request);
-        })->values();
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the widgets that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
     }
 
     /**
