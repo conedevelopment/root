@@ -113,7 +113,7 @@ class Editor extends Field
         $this->__registerRoutes($router);
 
         if (! is_null($this->media)) {
-            $router->prefix($this->getKey())->group(function (Router $router): void {
+            $router->prefix($this->getUriKey())->group(function (Router $router): void {
                 $this->media->registerRoutes($router);
             });
         }
