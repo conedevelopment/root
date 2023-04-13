@@ -6,7 +6,7 @@ use Cone\Root\Fields\BelongsTo;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
-class RelationControllerTest extends TestCase
+class RelationFieldControllerTest extends TestCase
 {
     protected $field;
 

@@ -36,7 +36,7 @@ class Fieldset extends Field
      */
     public function registerRoutes(Request $request, Router $router): void
     {
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
         });
     }

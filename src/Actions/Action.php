@@ -181,7 +181,7 @@ abstract class Action implements Arrayable, Responsable, Routable
 
         $request = App::make('request');
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($router);
         });
     }

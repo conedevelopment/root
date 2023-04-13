@@ -3,7 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Http\Controllers\RelationFieldController;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -120,7 +120,7 @@ abstract class Relation extends Field
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('relation_')->value();
+        return Str::of($this->getKey())->singular()->prepend('field_')->value();
     }
 
     /**
@@ -275,9 +275,7 @@ abstract class Relation extends Field
                         return $this->resolveDisplay($request, $related);
                     });
 
-                    return $this->isAsync() && $request instanceof UpdateRequest
-                        ? $value->toArray()
-                        : $value->join(', ');
+                    return $this->isAsync() ? $value->toArray() : $value->join(', ');
                 }
 
                 return $default;
@@ -365,7 +363,7 @@ abstract class Relation extends Field
     public function routes(Router $router): void
     {
         if ($this->async) {
-            $router->get('/', RelationController::class);
+            $router->get('/', RelationFieldController::class);
         }
     }
 

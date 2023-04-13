@@ -189,7 +189,7 @@ abstract class Extract implements Arrayable, Routable
 
         $request = App::make('request');
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($router);
             $this->resolveActions($request)->registerRoutes($router);
             $this->resolveWidgets($request)->registerRoutes($router);

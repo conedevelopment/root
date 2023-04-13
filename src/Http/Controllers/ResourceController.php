@@ -83,7 +83,7 @@ class ResourceController extends Controller
 
         $resource->created($request, $model);
 
-        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getKey()))
+        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getRouteKey()))
                     ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
@@ -144,7 +144,7 @@ class ResourceController extends Controller
 
         $resource->updated($request, $model);
 
-        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getKey()))
+        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getRouteKey()))
                     ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
