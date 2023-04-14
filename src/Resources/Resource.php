@@ -398,12 +398,10 @@ class Resource implements Arrayable, Routable
             'actions' => $this->resolveActions($request)
                             ->authorized($request)
                             ->visible(ResourceContext::Index->value)
-                            ->mapToForm($request, $this->getModelInstance())
-                            ->toArray(),
+                            ->mapToForm($request, $this->getModelInstance()),
             'filters' => $this->resolveFilters($request)
                             ->authorized($request)
-                            ->mapToForm($request)
-                            ->toArray(),
+                            ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
             'breadcrumbs' => [],
@@ -438,8 +436,7 @@ class Resource implements Arrayable, Routable
             'actions' => $this->resolveActions($request)
                             ->visible(ResourceContext::Show->value)
                             ->authorized($request, $model)
-                            ->mapToForm($request, $model)
-                            ->toArray(),
+                            ->mapToForm($request, $model),
             'breadcrumbs' => [],
             'model' => $this->newItem($model)->toDisplay(
                 $request,
@@ -447,7 +444,9 @@ class Resource implements Arrayable, Routable
             ),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-            'relations' => [],
+            'relations' => $this->resolveRelations($request)
+                                ->authorized($request, $model)
+                                ->mapToTable($request, $model),
         ];
     }
 
@@ -510,6 +509,7 @@ class Resource implements Arrayable, Routable
             $this->resolveActions($request)->registerRoutes($router);
             $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($router);
+                $this->resolveRelations($request)->registerRoutes($router);
             });
         });
     }

@@ -100,7 +100,7 @@ class Item
     public function toDisplay(Request $request, Fields $fields): array
     {
         return array_merge($this->toArray(), [
-            'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
+            'fields' => $fields->mapToDisplay($request, $this->model),
             'abilities' => $this->resolveAbilities($request),
             'url' => $this->resolveUrl($request),
         ]);
@@ -111,7 +111,7 @@ class Item
      */
     public function toForm(Request $request, Fields $fields): array
     {
-        $fields = $fields->mapToForm($request, $this->model)->toArray();
+        $fields = $fields->mapToForm($request, $this->model);
 
         return array_merge($this->toArray(), [
             'abilities' => $this->resolveAbilities($request),

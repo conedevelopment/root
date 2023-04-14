@@ -74,8 +74,7 @@ class Fieldset extends Field
     {
         $fields = $this->resolveFields($request)
                     ->available($request, $model)
-                    ->mapToForm($request, $model)
-                    ->toArray();
+                    ->mapToForm($request, $model);
 
         return array_replace_recursive(parent::toInput($request, $model), [
             'fields' => $fields,

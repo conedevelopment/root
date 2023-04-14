@@ -47,9 +47,9 @@ class Filters extends Collection
     /**
      * Map the filters to form.
      */
-    public function mapToForm(Request $request): Collection
+    public function mapToForm(Request $request): array
     {
-        return $this->reject->functional()->map->toInput($request)->values()->toBase();
+        return $this->reject->functional()->map->toInput($request)->values()->toArray();
     }
 
     /**

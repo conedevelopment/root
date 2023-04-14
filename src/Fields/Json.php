@@ -62,8 +62,7 @@ class Json extends Field
 
         $fields = $this->resolveFields($request)
                     ->authorized($request, $model)
-                    ->mapToForm($request, $json)
-                    ->toArray();
+                    ->mapToForm($request, $json);
 
         return array_replace_recursive($data, [
             'fields' => $fields,

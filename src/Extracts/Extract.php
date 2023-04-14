@@ -224,12 +224,10 @@ abstract class Extract implements Arrayable, Routable
         return [
             'actions' => $this->resolveActions($request)
                             ->authorized($request)
-                            ->mapToForm($request, $this->resolveQuery($request)->getModel())
-                            ->toArray(),
+                            ->mapToForm($request, $this->resolveQuery($request)->getModel()),
             'filters' => $this->resolveFilters($request)
                             ->authorized($request)
-                            ->mapToForm($request)
-                            ->toArray(),
+                            ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
             'breadcrumbs' => [],

@@ -221,8 +221,7 @@ class Media extends MorphToMany
             [
                 'fields' => $this->resolveFields($request)
                                 ->authorized($request, $related)
-                                ->mapToForm($request, $pivot)
-                                ->toArray(),
+                                ->mapToForm($request, $pivot),
                 'formatted_created_at' => $related->created_at->format('Y-m-d H:i'),
             ],
         );
@@ -276,11 +275,10 @@ class Media extends MorphToMany
                 return [
                     $related->getKey() => $this->resolveFields($request)
                                             ->authorized($request, $related)
-                                            ->mapToForm($request, $related->getRelation($relation->getPivotAccessor()))
-                                            ->toArray(),
+                                            ->mapToForm($request, $related->getRelation($relation->getPivotAccessor())),
                 ];
             }),
-            'filters' => $this->resolveFilters($request)->authorized($request)->mapToForm($request)->toArray(),
+            'filters' => $this->resolveFilters($request)->authorized($request)->mapToForm($request),
             'multiple' => $this->multiple,
             'selection' => $models->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);

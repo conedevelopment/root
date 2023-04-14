@@ -42,9 +42,9 @@ class Actions extends Collection
     /**
      * Map the actions to form.
      */
-    public function mapToForm(Request $request, Model $model): Collection
+    public function mapToForm(Request $request, Model $model): array
     {
-        return $this->map->toForm($request, $model)->toBase();
+        return $this->map->toForm($request, $model)->toArray();
     }
 
     /**

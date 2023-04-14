@@ -59,17 +59,17 @@ class Fields extends Collection
     /**
      * Map the fields to display.
      */
-    public function mapToDisplay(Request $request, Model $model): Collection
+    public function mapToDisplay(Request $request, Model $model): array
     {
-        return $this->map->toDisplay($request, $model)->toBase();
+        return $this->map->toDisplay($request, $model)->toArray();
     }
 
     /**
      * Map the fields to form.
      */
-    public function mapToForm(Request $request, Model $model): Collection
+    public function mapToForm(Request $request, Model $model): array
     {
-        return $this->map->toInput($request, $model)->toBase();
+        return $this->map->toInput($request, $model)->toArray();
     }
 
     /**

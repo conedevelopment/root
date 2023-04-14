@@ -164,9 +164,9 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
-     * Get the index representation of the relation.
+     * Get the table representation of the relation.
      */
-    public function toIndex(Request $request): array
+    public function toTable(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
             'url' => $this->replaceRoutePlaceholders($request),

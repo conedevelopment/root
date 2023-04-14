@@ -125,9 +125,9 @@ class ActionTest extends TestCase
     {
         $model = new Post();
 
-        $fields = $this->action->resolveFields($this->app['request'])
-                            ->mapToForm($this->app['request'], $model)
-                            ->toArray();
+        $fields = $this->action
+                        ->resolveFields($this->app['request'])
+                        ->mapToForm($this->app['request'], $model);
 
         $this->assertSame(array_merge($this->action->toArray(), [
             'data' => array_column($fields, 'value', 'name'),
