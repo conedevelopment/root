@@ -12,6 +12,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,6 +30,7 @@ abstract class Relation implements Arrayable, Routable
     use ResolvesActions;
     use ResolvesFields;
     use ResolvesFilters;
+    use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
         RegistersRoutes::onRouteMatched as __onRouteMatched;
@@ -232,5 +234,27 @@ abstract class Relation implements Arrayable, Routable
                             })
                             ->toArray(),
         ]);
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toIndex(Request $request, Model $model): array
+    {
+        $relation = $this->getRelation($model);
+
+        return [
+            'actions' => $this->resolveActions($request)
+                            ->authorized($request)
+                            // ->visible(ResourceContext::Index->value)
+                            ->mapToForm($request, $relation->getRelated()),
+            'filters' => $this->resolveFilters($request)
+                            ->authorized($request)
+                            ->mapToForm($request),
+            'items' => $this->mapItems($request, $model),
+            'title' => $this->label,
+            'breadcrumbs' => [],
+            // 'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+        ];
     }
 }

@@ -4,15 +4,26 @@ namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RelationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, Model $model)
+    public function index(Request $request, Model $model): Response
     {
-        //
+        // $resource = $request->route('rootResource');
+
+        // if ($resource->getPolicy()) {
+        //     $this->authorize('viewAny', $resource->getModel());
+        // }
+
+        return Inertia::render(
+            'Resources/Index',
+            $request->route('rootRelation')->toIndex($request, $model)
+        );
     }
 
     /**

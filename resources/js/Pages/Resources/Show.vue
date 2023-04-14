@@ -63,6 +63,7 @@
             Actions,
             Link,
             Widget,
+            // Relation
         },
 
         props: {
