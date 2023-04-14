@@ -50,11 +50,19 @@ trait RegistersRoutes
 
         $router->matched(function (RouteMatched $event): void {
             if (str_starts_with(Str::start($event->route->uri(), '/'), $this->getUri())) {
-                $event->route->setParameter($this->getParameterName(), $this);
+                $this->onRouteMatched($event);
             }
         });
 
         $this->registerRouteConstraints($router);
+    }
+
+    /**
+     * Handle the route matched event.
+     */
+    public function onRouteMatched(RouteMatched $event): void
+    {
+        $event->route->setParameter($this->getParameterName(), $this);
     }
 
     /**

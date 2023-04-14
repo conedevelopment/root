@@ -13,6 +13,7 @@ use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -29,6 +30,7 @@ abstract class Relation implements Arrayable, Routable
     use ResolvesFilters;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
+        RegistersRoutes::onRouteMatched as __onRouteMatched;
     }
 
     /**
@@ -120,7 +122,15 @@ abstract class Relation implements Arrayable, Routable
         $router->bind($this->getRouteKeyName(), function (string $id, Route $route): Model {
             $relation = $this->getRelation($route->parentOfParameter($this->getRouteKeyName()));
 
-            return $id === 'create' ? $relation->getRelated() : $relation->findOrFail($id);
+            if ($relation instanceof BelongsToMany) {
+                return $id === 'create'
+                    ? $relation->newPivot()
+                    : $relation->findOrFail($id)->getRelation($relation->getPivotAccessor());
+            }
+
+            return $id === 'create'
+                ? $relation->getRelated()
+                : $relation->findOrFail($id);
         });
 
         $router->pattern(
@@ -129,12 +139,37 @@ abstract class Relation implements Arrayable, Routable
         );
     }
 
+    /**
+     * Replace the route placeholders with the route parameters.
+     */
+    protected function replaceRoutePlaceholders(Request $request): string
+    {
+        $uri = $this->getUri();
+
+        foreach ($request->route()->originalParameters() as $key => $value) {
+            $uri = str_replace("{{$key}}", $value, $uri);
+        }
+
+        return preg_replace('/\{.*?\}/', 'create', $uri);
+    }
 
     /**
      * Get the instance as an array.
      */
     public function toArray(): array
     {
-        return [];
+        return [
+            'label' => $this->label,
+        ];
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toIndex(Request $request): array
+    {
+        return array_merge($this->toArray(), [
+            'url' => $this->replaceRoutePlaceholders($request),
+        ]);
     }
 }
