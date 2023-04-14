@@ -5,6 +5,7 @@ namespace Cone\Root\Relations;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Resources\Item;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -44,6 +45,11 @@ abstract class Relation implements Arrayable, Routable
     protected string $label;
 
     /**
+     * The Vue component.
+     */
+    protected string $component = 'Relation';
+
+    /**
      * Create a new relation instance.
      */
     public function __construct(string $label, string $relation)
@@ -69,6 +75,14 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
+     * Get the component name.
+     */
+    public function getComponent(): string
+    {
+        return $this->component;
+    }
+
+    /**
      * Get the relation instance.
      */
     public function getRelation(Model $model): EloquentRelation
@@ -84,6 +98,42 @@ abstract class Relation implements Arrayable, Routable
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         });
+    }
+
+    /**
+     * Map the related models.
+     */
+    public function mapItems(Request $request, Model $model): array
+    {
+        $filters = $this->resolveFilters($request)->authorized($request);
+
+        $relation = $this->getRelation($model);
+
+        $query = $filters->apply($request, $relation->getQuery())->latest();
+
+        $items = $relation->paginate($request->input('per_page'))
+                        ->withQueryString()
+                        ->setPath($this->replaceRoutePlaceholders($request))
+                        ->through(function (Model $related) use ($request, $model): array {
+                            return $this->newItem($model, $related)->toDisplay(
+                                $request, $this->resolveFields($request)->authorized($request, $related)
+                            );
+                        })
+                        ->toArray();
+
+        return array_merge($items, [
+            'query' => $filters->mapToQuery($request, $query),
+        ]);
+    }
+
+    /**
+     * Make a new item instance.
+     */
+    public function newItem(Model $model, Model $related)
+    {
+        $related->setRelation('parent', $model);
+
+        return new Item($related);
     }
 
     /**
@@ -169,7 +219,18 @@ abstract class Relation implements Arrayable, Routable
     public function toTable(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'component' => $this->getComponent(),
             'url' => $this->replaceRoutePlaceholders($request),
+            'items' => $this->getRelation($model)
+                            ->getQuery()
+                            ->latest()
+                            ->paginate(5)
+                            ->through(function (Model $related) use ($request, $model): array {
+                                return $this->newItem($model, $related)->toDisplay(
+                                    $request, $this->resolveFields($request)->authorized($request, $related)
+                                );
+                            })
+                            ->toArray(),
         ]);
     }
 }
