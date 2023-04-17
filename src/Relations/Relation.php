@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Relations;
 
+use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
@@ -135,7 +136,11 @@ abstract class Relation implements Arrayable, Routable
     {
         $related->setRelation('parent', $model);
 
-        return new Item($related);
+        return (new Item($related))->url(function (Request $request) use ($related) {
+            return $related->exists
+                ? $this->replaceRoutePlaceholders($request)
+                : sprintf('%s/%s', $this->replaceRoutePlaceholders($request), $related->getRouteKey());
+        });
     }
 
     /**
@@ -206,12 +211,21 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
+     * Get the related model name.
+     */
+    public function getRelatedName(): string
+    {
+        return __(Str::of($this->relation)->singular()->headline()->value());
+    }
+
+    /**
      * Get the instance as an array.
      */
     public function toArray(): array
     {
         return [
             'label' => $this->label,
+            'related_name' => $this->getRelatedName(),
         ];
     }
 
@@ -246,7 +260,7 @@ abstract class Relation implements Arrayable, Routable
         return [
             'actions' => $this->resolveActions($request)
                             ->authorized($request)
-                            // ->visible(ResourceContext::Index->value)
+                            ->visible(ResourceContext::Index->value)
                             ->mapToForm($request, $relation->getRelated()),
             'filters' => $this->resolveFilters($request)
                             ->authorized($request)
@@ -254,7 +268,54 @@ abstract class Relation implements Arrayable, Routable
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
             'breadcrumbs' => [],
-            // 'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            'relation' => array_merge($this->toArray(), [
+                'url' => $this->replaceRoutePlaceholders($request),
+                'abilities' => [
+                    'create' => true,
+                ],
+            ]),
         ];
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toCreate(Request $request, Model $model): array
+    {
+        $related = $this->getRelation($model)->getRelated();
+
+        return [
+            'breadcrumbs' => [],
+            'model' => $this->newItem($model, $related)->toForm(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
+            ),
+            'title' => '',
+        ];
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toShow(Request $request, Model $model, Model $related): array
+    {
+        return [
+            'breadcrumbs' => [],
+            'model' => $this->newItem($model, $related)->toDisplay(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
+            ),
+            'resource' => $request->route('rootResource')->toArray(),
+            'title' => '',
+        ];
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toEdit(Request $request, Model $model, Model $related): array
+    {
+        return [];
     }
 }

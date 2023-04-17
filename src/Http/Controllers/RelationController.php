@@ -21,7 +21,7 @@ class RelationController extends Controller
         // }
 
         return Inertia::render(
-            'Resources/Index',
+            'Relations/Index',
             $request->route('rootRelation')->toIndex($request, $model)
         );
     }
@@ -31,7 +31,10 @@ class RelationController extends Controller
      */
     public function create(Request $request, Model $model)
     {
-        //
+        return Inertia::render(
+            'Relations/Form',
+            $request->route('rootRelation')->toCreate($request, $model)
+        );
     }
 
     /**
@@ -47,7 +50,10 @@ class RelationController extends Controller
      */
     public function show(Request $request, Model $model, Model $related)
     {
-        //
+        return Inertia::render(
+            'Relations/Show',
+            $request->route('rootRelation')->toShow($request, $model, $related)
+        );
     }
 
     /**
@@ -55,7 +61,10 @@ class RelationController extends Controller
      */
     public function edit(Request $request, Model $model, Model $related)
     {
-        //
+        return Inertia::render(
+            'Relations/Edit',
+            $request->route('rootRelation')->toEdit($request, $model, $related)
+        );
     }
 
     /**

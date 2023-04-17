@@ -18,24 +18,12 @@
                 type: Object,
                 required: true,
             },
-            resource: {
-                type: Object,
-                required: true,
-            },
-            parent: {
-                type: Object,
-                required: true,
-            },
-            field: {
-                type: Object,
-                required: true,
-            },
         },
 
         layout: function (h, page) {
             return h(this.resolveDefaultLayout(), () => h(Form, {
                 model: page.props.model,
-                model_name: page.props.model.exists ? page.props.field.related_name : page.props.field.name,
+                model_name: 'Model',
             }, () => page));
         },
     }
