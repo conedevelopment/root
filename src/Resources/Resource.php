@@ -404,7 +404,6 @@ class Resource implements Arrayable, Routable
                             ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
-            'breadcrumbs' => [],
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }
@@ -417,7 +416,6 @@ class Resource implements Arrayable, Routable
         $model = $this->getModelInstance();
 
         return [
-            'breadcrumbs' => [],
             'model' => $this->newItem($model)->toForm(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
@@ -437,7 +435,6 @@ class Resource implements Arrayable, Routable
                             ->visible(ResourceContext::Show->value)
                             ->authorized($request, $model)
                             ->mapToForm($request, $model),
-            'breadcrumbs' => [],
             'model' => $this->newItem($model)->toDisplay(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
@@ -456,7 +453,6 @@ class Resource implements Arrayable, Routable
     public function toEdit(Request $request, Model $model): array
     {
         return [
-            'breadcrumbs' => [],
             'model' => $this->newItem($model)->toForm(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
@@ -542,5 +538,20 @@ class Resource implements Arrayable, Routable
         if ($this->isSoftDeletable()) {
             $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
         }
+    }
+
+    /**
+     * Handle the routes registered event.
+     */
+    public function routesRegistered(Router $router): void
+    {
+        App::make(Root::class)->breadcrumbs->patterns([
+            $this->getUri() => $this->getName(),
+            sprintf('%s/create', $this->getUri()) => __('Create'),
+            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
+                return $request->route()->originalParameter($this->getRouteKeyName());
+            },
+            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+        ]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Http\Middleware;
 
+use Cone\Root\Root;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Inertia\Middleware;
 
@@ -29,6 +31,9 @@ class HandleRootRequests extends Middleware
                 return $request->session()->token();
             },
             'url' => Str::start($request->path(), '/'),
+            'breadcrumbs' => static function () use ($request): array {
+                return App::make(Root::class)->breadcrumbs->resolve($request);
+            },
         ]);
     }
 }

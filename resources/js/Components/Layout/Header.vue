@@ -22,8 +22,8 @@
                 required: true,
             },
             breadcrumbs: {
-                type: Object,
-                default: () => {},
+                type: Array,
+                default: () => [],
             },
         },
     }

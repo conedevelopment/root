@@ -11,6 +11,7 @@ use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -197,6 +198,14 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
+     * Handle the routes registered event.
+     */
+    public function routesRegistered(Router $router): void
+    {
+        App::make(Root::class)->breadcrumbs->pattern($this->getUri(), $this->getName());
+    }
+
+    /**
      * The routes that should be registered.
      */
     public function routes(Router $router): void
@@ -230,7 +239,6 @@ abstract class Extract implements Arrayable, Routable
                             ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
-            'breadcrumbs' => [],
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }

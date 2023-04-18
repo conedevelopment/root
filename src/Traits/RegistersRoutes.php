@@ -3,6 +3,7 @@
 namespace Cone\Root\Traits;
 
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -50,19 +51,29 @@ trait RegistersRoutes
 
         $router->matched(function (RouteMatched $event): void {
             if (str_starts_with(Str::start($event->route->uri(), '/'), $this->getUri())) {
-                $this->onRouteMatched($event);
+                $this->routeMatched($event);
             }
         });
 
         $this->registerRouteConstraints($router);
+
+        $this->routesRegistered($router);
     }
 
     /**
      * Handle the route matched event.
      */
-    public function onRouteMatched(RouteMatched $event): void
+    public function routeMatched(RouteMatched $event): void
     {
         $event->route->setParameter($this->getParameterName(), $this);
+    }
+
+    /**
+     * Handle the routes registered event.
+     */
+    public function routesRegistered(Router $router): void
+    {
+        //
     }
 
     /**
@@ -71,6 +82,20 @@ trait RegistersRoutes
     public function registerRouteConstraints(Router $router): void
     {
         //
+    }
+
+    /**
+     * Replace the route placeholders with the route parameters.
+     */
+    protected function replaceRoutePlaceholders(Route $route): string
+    {
+        $uri = $this->getUri();
+
+        foreach ($route->originalParameters() as $key => $value) {
+            $uri = str_replace("{{$key}}", $value, $uri);
+        }
+
+        return preg_replace('/\{.*?\}/', 'create', $uri);
     }
 
     /**

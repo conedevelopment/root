@@ -7,6 +7,7 @@ use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Root;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;

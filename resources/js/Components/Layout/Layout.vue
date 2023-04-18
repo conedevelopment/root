@@ -52,7 +52,7 @@
                 return this.$page.props.title || this.__('Dashboard');
             },
             breadcrumbs() {
-                return this.$page.props.breadcrumbs || [];
+                return this.$page.props.breadcrumbs;
             },
         },
     }

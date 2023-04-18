@@ -7,6 +7,7 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Resources\Item;
+use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -34,7 +35,6 @@ abstract class Relation implements Arrayable, Routable
     use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
-        RegistersRoutes::onRouteMatched as __onRouteMatched;
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class Relation implements Arrayable, Routable
 
         $items = $relation->paginate($request->input('per_page'))
                         ->withQueryString()
-                        ->setPath($this->replaceRoutePlaceholders($request))
+                        ->setPath($this->replaceRoutePlaceholders($request->route()))
                         ->through(function (Model $related) use ($request, $model): array {
                             return $this->newItem($model, $related)->toDisplay(
                                 $request, $this->resolveFields($request)->authorized($request, $related)
@@ -138,9 +138,22 @@ abstract class Relation implements Arrayable, Routable
 
         return (new Item($related))->url(function (Request $request) use ($related) {
             return $related->exists
-                ? $this->replaceRoutePlaceholders($request)
-                : sprintf('%s/%s', $this->replaceRoutePlaceholders($request), $related->getRouteKey());
+                ? $this->replaceRoutePlaceholders($request->route())
+                : sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey());
         });
+    }
+
+    /**
+     * Handle the resource registered event.
+     */
+    public function boot(Root $root): void
+    {
+        $request = $root->app->make('request');
+
+        $this->resolveFields($request)->each->boot($root);
+        $this->resolveFilters($request)->each->boot($root);
+        $this->resolveActions($request)->each->boot($root);
+        $this->resolveWidgets($request)->each->boot($root);
     }
 
     /**
@@ -154,6 +167,8 @@ abstract class Relation implements Arrayable, Routable
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($router);
+            $this->resolveActions($request)->registerRoutes($router);
+            $this->resolveWidgets($request)->registerRoutes($router);
         });
     }
 
@@ -197,20 +212,6 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
-     * Replace the route placeholders with the route parameters.
-     */
-    protected function replaceRoutePlaceholders(Request $request): string
-    {
-        $uri = $this->getUri();
-
-        foreach ($request->route()->originalParameters() as $key => $value) {
-            $uri = str_replace("{{$key}}", $value, $uri);
-        }
-
-        return preg_replace('/\{.*?\}/', 'create', $uri);
-    }
-
-    /**
      * Get the related model name.
      */
     public function getRelatedName(): string
@@ -236,7 +237,7 @@ abstract class Relation implements Arrayable, Routable
     {
         return array_merge($this->toArray(), [
             'component' => $this->getComponent(),
-            'url' => $this->replaceRoutePlaceholders($request),
+            'url' => $this->replaceRoutePlaceholders($request->route()),
             'items' => $this->getRelation($model)
                             ->getQuery()
                             ->latest()
@@ -267,10 +268,9 @@ abstract class Relation implements Arrayable, Routable
                             ->mapToForm($request),
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
-            'breadcrumbs' => [],
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
             'relation' => array_merge($this->toArray(), [
-                'url' => $this->replaceRoutePlaceholders($request),
+                'url' => $this->replaceRoutePlaceholders($request->route()),
                 'abilities' => [
                     'create' => true,
                 ],
@@ -286,7 +286,6 @@ abstract class Relation implements Arrayable, Routable
         $related = $this->getRelation($model)->getRelated();
 
         return [
-            'breadcrumbs' => [],
             'model' => $this->newItem($model, $related)->toForm(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
@@ -301,7 +300,6 @@ abstract class Relation implements Arrayable, Routable
     public function toShow(Request $request, Model $model, Model $related): array
     {
         return [
-            'breadcrumbs' => [],
             'model' => $this->newItem($model, $related)->toDisplay(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
