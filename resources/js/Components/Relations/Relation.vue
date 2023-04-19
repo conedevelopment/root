@@ -5,7 +5,7 @@
             <table v-if="items.data.length > 0" class="table">
                 <thead>
                     <tr>
-                        <td v-for="column in items.data[0]" :key="column.name">
+                        <td v-for="column in items.data[0].fields" :key="column.name">
                             {{ column.label }}
                         </td>
                     </tr>

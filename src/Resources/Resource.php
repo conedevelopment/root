@@ -376,10 +376,7 @@ class Resource implements Arrayable, Routable
             'icon' => $this->getIcon(),
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
-            'urls' => [
-                'index' => $this->getUri(),
-                'create' => sprintf('%s/create', $this->getUri()),
-            ],
+            'url' => $this->getUri(),
             'abilities' => [
                 'viewAny' => is_null($policy) || Gate::allows('viewAny', $this->getModel()),
                 'create' => is_null($policy) || Gate::allows('create', $this->getModel()),
@@ -418,7 +415,6 @@ class Resource implements Arrayable, Routable
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
             ),
-            'resource' => $this->toArray(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
     }
@@ -455,7 +451,6 @@ class Resource implements Arrayable, Routable
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
             ),
-            'resource' => $this->toArray(),
             'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];
     }

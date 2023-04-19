@@ -2,7 +2,7 @@
     <header class="app-header">
         <div class="app-header__heading">
             <h1 class="app-header__title">{{ title }}</h1>
-            <Breadcrumbs :items="breadcrumbs"></Breadcrumbs>
+            <Breadcrumbs :items="breadcrumbs"/>
         </div>
         <div class="app-header__actions"></div>
     </header>

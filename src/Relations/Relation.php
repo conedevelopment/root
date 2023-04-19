@@ -179,7 +179,7 @@ abstract class Relation implements Arrayable, Routable
      */
     public function registerRouteConstraints(Router $router): void
     {
-        $router->bind($this->getRouteKeyName(), function (string $id, $r) use ($router): Model {
+        $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
             return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
     }

@@ -23,13 +23,13 @@
                 <li
                     v-for="resource in $app.resources"
                     class="navigation-item"
-                    :class="{ 'is-open': isActive(resource.urls.index) }"
+                    :class="{ 'is-open': isActive(resource.url) }"
                     :key="resource.key"
                 >
                     <Link
                         class="navigation-item__link"
-                        :href="resource.urls.index"
-                        :class="{ 'is-active': isActive(resource.urls.index) }"
+                        :href="resource.url"
+                        :class="{ 'is-active': isActive(resource.url) }"
                     >
                         <Icon class="navigation-item__icon" :name="resource.icon"/>
                         <span class="navigation-item__caption">{{ resource.name }}</span>
@@ -37,16 +37,16 @@
                     <ul class="navigation-submenu">
                         <li v-if="resource.abilities.viewAny">
                             <Link
-                                :href="resource.urls.index"
-                                :aria-current="resource.urls.index === $page.props.url ? 'page' : ''"
+                                :href="resource.url"
+                                :aria-current="resource.url === $page.props.url ? 'page' : ''"
                             >
                                 {{ __('All :resource', { resource: resource.name }) }}
                             </Link>
                         </li>
                         <li v-if="resource.abilities.create">
                             <Link
-                                :href="resource.urls.create"
-                                :aria-current="resource.urls.create === $page.props.url ? 'page' : ''"
+                                :href="`${resource.url}/create`"
+                                :aria-current="`${resource.url}/create` === $page.props.url ? 'page' : ''"
                             >
                                 {{ __('Create :model', { model: resource.modelName }) }}
                             </Link>

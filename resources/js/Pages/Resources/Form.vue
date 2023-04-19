@@ -20,10 +20,6 @@
                 type: Object,
                 required: true,
             },
-            resource: {
-                type: Object,
-                required: true,
-            },
         },
 
         layout: function (h, page) {
@@ -34,7 +30,6 @@
             return h(this.resolveDefaultLayout(), () => h(Form, {
                 key: key,
                 model: page.props.model,
-                modelName: page.props.model.exists ? page.props.resource.modelName : page.props.resource.name,
             }, () => page));
         },
     }

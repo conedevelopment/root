@@ -30,7 +30,7 @@ class RelationController extends Controller
     public function create(Request $request, Model $model): Response
     {
         return Inertia::render(
-            'Relations/Form',
+            'Resources/Form',
             $request->route('rootRelation')->toCreate($request, $model)
         );
     }
@@ -64,7 +64,7 @@ class RelationController extends Controller
     public function show(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
-            'Relations/Show',
+            'Resources/Show',
             $request->route('rootRelation')->toShow($request, $model, $related)
         );
     }
@@ -75,7 +75,7 @@ class RelationController extends Controller
     public function edit(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
-            'Relations/Form',
+            'Resources/Form',
             $request->route('rootRelation')->toEdit($request, $model, $related)
         );
     }
