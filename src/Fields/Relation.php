@@ -111,7 +111,7 @@ abstract class Relation extends Field
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? sprintf('__root_%s', $this->name)
+            ? $this->name
             : $this->relation;
     }
 

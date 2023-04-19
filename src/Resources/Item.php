@@ -14,7 +14,7 @@ class Item
     /**
      * The model instance.
      */
-    protected Model $model;
+    public readonly Model $model;
 
     /**
      * The URL resolver callback.
@@ -51,7 +51,7 @@ class Item
     /**
      * Resolve the URL for the item.
      */
-    protected function resolveUrl(Request $request): string
+    public function resolveUrl(Request $request): string
     {
         return is_null($this->urlResolver)
             ? sprintf('%s/%s', $request->url(), $this->model->getRouteKey())

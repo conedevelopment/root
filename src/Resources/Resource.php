@@ -200,8 +200,6 @@ class Resource implements Arrayable, Routable
 
     /**
      * Resolve the resource model for a bound value.
-     *
-     * @param  \Cone\Root\Http\Requests\Request  $request
      */
     public function resolveRouteBinding(Request $request, string $id): Model
     {
@@ -516,9 +514,7 @@ class Resource implements Arrayable, Routable
     public function registerRouteConstraints(Router $router): void
     {
         $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
-            return $id === 'create'
-                ? $this->getModelInstance()
-                : $this->resolveRouteBinding($router->getCurrentRequest(), $id);
+            return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
     }
 

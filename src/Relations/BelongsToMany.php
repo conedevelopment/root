@@ -4,6 +4,7 @@ namespace Cone\Root\Relations;
 
 use Closure;
 use Cone\Root\Fields\BelongsTo;
+use Cone\Root\Resources\Item;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
@@ -35,6 +36,24 @@ class BelongsToMany extends Relation
         $relation = parent::getRelation($model);
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
+    }
+
+    /**
+     * Make a new item instance.
+     */
+    public function newItem(Model $model, Model $related): Item
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->relationLoaded($relation->getPivotAccessor())
+                ? $related->getRelation($relation->getPivotAccessor())
+                : $relation->newPivot();
+
+        $pivot->setRelation('related', $related)
+            ->setAttribute($pivot->getKeyName(), $pivot->getKey())
+            ->setAttribute($relation->getForeignPivotKeyName(), $model->getKey());
+
+        return parent::newItem($model, $pivot);
     }
 
     /**
@@ -70,5 +89,15 @@ class BelongsToMany extends Relation
         return array_merge(parent::fields($request), [
             $this->relatableField,
         ]);
+    }
+
+    /**
+     * Resolve the resource model for a bound value.
+     */
+    public function resolveRouteBinding(Request $request, string $id): Model
+    {
+        $relation = $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()));
+
+        return $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
     }
 }

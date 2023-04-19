@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Enums\ResourceContext;
+use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,19 +42,20 @@ class RelationController extends Controller
     {
         $relation = $request->route('rootRelation');
 
-        $related = $relation->newRelated($model);
+        $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
 
         $fields = $relation->resolveFields($request)
-                        ->authorized($request, $related)
-                        ->visible(ResourceContext::Update->value);
+                            ->authorized($request, $item->model)
+                            ->visible(ResourceContext::Create->value);
 
-        $request->validate($fields->mapToValidate($request, $related));
+        $request->validate($fields->mapToValidate($request, $item->model));
 
-        $fields->each->persist($request, $related);
+        $fields->each->persist($request, $item->model);
 
-        $related->save();
+        $item->model->save();
 
-        return Redirect::to();
+        return Redirect::to($item->resolveUrl($request))
+                    ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
     /**
@@ -73,7 +75,7 @@ class RelationController extends Controller
     public function edit(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
-            'Relations/Edit',
+            'Relations/Form',
             $request->route('rootRelation')->toEdit($request, $model, $related)
         );
     }
@@ -83,7 +85,22 @@ class RelationController extends Controller
      */
     public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
-        //
+        $relation = $request->route('rootRelation');
+
+        $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
+
+        $fields = $relation->resolveFields($request)
+                            ->authorized($request, $item->model)
+                            ->visible(ResourceContext::Update->value);
+
+        $request->validate($fields->mapToValidate($request, $item->model));
+
+        $fields->each->persist($request, $item->model);
+
+        $item->model->save();
+
+        return Redirect::to($item->resolveUrl($request))
+                    ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
     /**
@@ -91,6 +108,13 @@ class RelationController extends Controller
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
-        //
+        $relation = $request->route('rootRelation');
+
+        $item = $relation->newItem($model, $related);
+
+        $item->model->delete();
+
+        return Redirect::to($item->resolveUrl($request))
+                    ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }

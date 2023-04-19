@@ -17,10 +17,8 @@ use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -87,13 +85,7 @@ abstract class Relation implements Arrayable, Routable
     {
         $relation = $this->getRelation($model);
 
-        return $relation instanceof BelongsToMany
-            ? ($pivot = $relation->newPivot())
-                    ->setRelation('parent', $model)
-                    ->setRelation('related', $relation->getQuery()->newModelInstance())
-                    ->setAttribute($pivot->getKeyName(), $pivot->getKey())
-                    ->setAttribute($relation->getForeignPivotKeyName(), $model->getKey())
-            : $relation->getQuery()->newModelInstance()->setRelation('parent', $model);
+        return $relation->getQuery()->newModelInstance()->setRelation('parent', $model);
     }
 
     /**
@@ -137,26 +129,19 @@ abstract class Relation implements Arrayable, Routable
      */
     public function newItem(Model $model, Model $related)
     {
-        $related->setRelation('parent', $model);
-
         return (new Item($related))->url(function (Request $request) use ($related) {
             return $related->exists
-                ? $this->replaceRoutePlaceholders($request->route())
-                : sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey());
+                ? sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey())
+                : $this->replaceRoutePlaceholders($request->route());
         });
     }
 
     /**
-     * Handle the resource registered event.
+     * Resolve the resource model for a bound value.
      */
-    public function boot(Root $root): void
+    public function resolveRouteBinding(Request $request, string $id): Model
     {
-        $request = $root->app->make('request');
-
-        $this->resolveFields($request)->each->boot($root);
-        $this->resolveFilters($request)->each->boot($root);
-        $this->resolveActions($request)->each->boot($root);
-        $this->resolveWidgets($request)->each->boot($root);
+        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
     }
 
     /**
@@ -194,24 +179,9 @@ abstract class Relation implements Arrayable, Routable
      */
     public function registerRouteConstraints(Router $router): void
     {
-        $router->bind($this->getRouteKeyName(), function (string $id, Route $route): Model {
-            $relation = $this->getRelation($route->parentOfParameter($this->getRouteKeyName()));
-
-            if ($relation instanceof BelongsToMany) {
-                return $id === 'create'
-                    ? $relation->newPivot()
-                    : $relation->findOrFail($id)->getRelation($relation->getPivotAccessor());
-            }
-
-            return $id === 'create'
-                ? $relation->getRelated()
-                : $relation->findOrFail($id);
+        $router->bind($this->getRouteKeyName(), function (string $id, $r) use ($router): Model {
+            return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
-
-        $router->pattern(
-            $this->getRouteKeyName(),
-            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
-        );
     }
 
     /**
@@ -331,6 +301,12 @@ abstract class Relation implements Arrayable, Routable
      */
     public function toEdit(Request $request, Model $model, Model $related): array
     {
-        return [];
+        return [
+            'model' => $this->newItem($model, $related)->toForm(
+                $request,
+                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
+            ),
+            'title' => '',
+        ];
     }
 }
