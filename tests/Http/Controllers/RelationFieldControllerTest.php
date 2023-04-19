@@ -38,7 +38,7 @@ class RelationFieldControllerTest extends TestCase
         $model = new Post();
 
         $results = $this->field
-                        ->resolveQuery($this->app['request'], $model)
+                        ->resolveRelatableQuery($this->app['request'], $model)
                         ->paginate()
                         ->setPath('/root/posts/fields/author')
                         ->through(function ($related) use ($model): array {

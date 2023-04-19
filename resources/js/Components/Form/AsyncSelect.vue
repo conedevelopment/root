@@ -37,7 +37,7 @@
             <li
                 ref="option"
                 v-for="(item, index) in response.data"
-                v-html="item.formatted_value"
+                v-html="item.formattedValue"
                 tabindex="-1"
                 :aria-selected="index === active ? 'true' : 'false'"
                 :class="{ 'is-active': index === active, 'is-selected': selected(item.value) }"
@@ -103,7 +103,7 @@
                 type: [String, Number, Array, Object],
                 default: null,
             },
-            formatted_value: {
+            formattedValue: {
                 type: [String, Number, Array, Object],
                 default: null,
             },
@@ -116,9 +116,9 @@
         mounted() {
             this.$dispatcher.once('open', this.fetch);
 
-            this.formattedValue = this.formatted_value === null
+            this.formattedValue = this.formattedValue === null
                 ? {}
-                : Object.assign({}, this.multiple ? this.formatted_value : { [this.modelValue]: this.formatted_value });
+                : Object.assign({}, this.multiple ? this.formattedValue : { [this.modelValue]: this.formattedValue });
         },
 
         data() {
@@ -222,7 +222,7 @@
                     return Object.assign(fields, {
                         [key]: this.formattedValue.hasOwnProperty(key)
                             ? this.formattedValue[key]
-                            : this.response.data.find((option) => option.value === key).formatted_value,
+                            : this.response.data.find((option) => option.value === key).formattedValue,
                     });
                 }, {});
             },

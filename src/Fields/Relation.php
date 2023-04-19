@@ -288,7 +288,7 @@ abstract class Relation extends Field
     /**
      * Set the query resolver.
      */
-    public function withQuery(Closure $callback): static
+    public function withRelatableQuery(Closure $callback): static
     {
         $this->queryResolver = $callback;
 
@@ -298,7 +298,7 @@ abstract class Relation extends Field
     /**
      * Resolve the related model's eloquent query.
      */
-    public function resolveQuery(Request $request, Model $model): Builder
+    public function resolveRelatableQuery(Request $request, Model $model): Builder
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
@@ -328,7 +328,7 @@ abstract class Relation extends Field
      */
     public function resolveOptions(Request $request, Model $model): array
     {
-        return $this->resolveQuery($request, $model)
+        return $this->resolveRelatableQuery($request, $model)
                     ->get()
                     ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
                         return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
@@ -353,7 +353,7 @@ abstract class Relation extends Field
     {
         return [
             'value' => $related->getKey(),
-            'formatted_value' => $this->resolveDisplay($request, $related),
+            'formattedValue' => $this->resolveDisplay($request, $related),
         ];
     }
 

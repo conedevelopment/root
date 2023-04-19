@@ -190,7 +190,7 @@ class FieldTest extends TestCase
     }
 
     /** @test */
-    public function a_field_has_formatted_value()
+    public function a_field_has_formattedValue()
     {
         $model = new Post(['title' => 'Test Post']);
 
@@ -275,7 +275,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
-                'formatted_value' => $model->title,
+                'formattedValue' => $model->title,
                 'searchable' => $this->field->isSearchable($this->app['request']),
                 'sortable' => $this->field->isSortable($this->app['request']),
                 'value' => $model->title,
@@ -294,7 +294,7 @@ class FieldTest extends TestCase
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
                 'component' => $this->field->getComponent(),
-                'formatted_value' => $model->title,
+                'formattedValue' => $model->title,
                 'help' => 'Note',
                 'value' => $model->title,
             ]),

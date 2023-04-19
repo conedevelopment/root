@@ -121,7 +121,7 @@ class Media extends MorphToMany
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
-                $results = $this->resolveQuery($request, $model)
+                $results = $this->resolveRelatableQuery($request, $model)
                                 ->findMany(array_keys($value))
                                 ->each(static function (Model $related) use ($relation, $value): void {
                                     $related->setRelation(
@@ -234,7 +234,7 @@ class Media extends MorphToMany
     {
         $filters = $this->resolveFilters($request)->authorized($request);
 
-        $query = $this->resolveQuery($request, $model);
+        $query = $this->resolveRelatableQuery($request, $model);
 
         $items = $filters->apply($request, $query)
                         ->latest()
@@ -247,7 +247,7 @@ class Media extends MorphToMany
                         ->toArray();
 
         return array_merge($items, [
-            'query' => $filters->mapToQuery($request, $this->resolveQuery($request, $model)),
+            'query' => $filters->mapToQuery($request, $this->resolveRelatableQuery($request, $model)),
         ]);
     }
 

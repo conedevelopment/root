@@ -53,7 +53,7 @@ class SelectTest extends TestCase
         $this->field->options(['key' => 'value']);
 
         $this->assertSame(
-            [['value' => 'key', 'formatted_value' => 'value']],
+            [['value' => 'key', 'formattedValue' => 'value']],
             $this->field->resolveOptions($this->app['request'], $model)
         );
     }

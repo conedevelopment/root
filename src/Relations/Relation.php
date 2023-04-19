@@ -48,11 +48,6 @@ abstract class Relation implements Arrayable, Routable
     protected string $label;
 
     /**
-     * The Vue component.
-     */
-    protected string $component = 'Relation';
-
-    /**
      * Create a new relation instance.
      */
     public function __construct(string $label, string $relation)
@@ -78,19 +73,27 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
-     * Get the component name.
-     */
-    public function getComponent(): string
-    {
-        return $this->component;
-    }
-
-    /**
      * Get the relation instance.
      */
     public function getRelation(Model $model): EloquentRelation
     {
         return call_user_func([$model, $this->relation]);
+    }
+
+    /**
+     * Make a new related instance.
+     */
+    public function newRelated(Model $model): Model
+    {
+        $relation = $this->getRelation($model);
+
+        return $relation instanceof BelongsToMany
+            ? ($pivot = $relation->newPivot())
+                    ->setRelation('parent', $model)
+                    ->setRelation('related', $relation->getQuery()->newModelInstance())
+                    ->setAttribute($pivot->getKeyName(), $pivot->getKey())
+                    ->setAttribute($relation->getForeignPivotKeyName(), $model->getKey())
+            : $relation->getQuery()->newModelInstance()->setRelation('parent', $model);
     }
 
     /**
@@ -212,6 +215,21 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
+     * Handle the routes registered event.
+     */
+    public function routesRegistered(Router $router): void
+    {
+        App::make(Root::class)->breadcrumbs->patterns([
+            $this->getUri() => $this->label,
+            sprintf('%s/create', $this->getUri()) => __('Create'),
+            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
+                return $request->route()->originalParameter($this->getRouteKeyName());
+            },
+            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+        ]);
+    }
+
+    /**
      * Get the related model name.
      */
     public function getRelatedName(): string
@@ -226,7 +244,7 @@ abstract class Relation implements Arrayable, Routable
     {
         return [
             'label' => $this->label,
-            'related_name' => $this->getRelatedName(),
+            'relatedName' => $this->getRelatedName(),
         ];
     }
 
@@ -236,7 +254,6 @@ abstract class Relation implements Arrayable, Routable
     public function toTable(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'component' => $this->getComponent(),
             'url' => $this->replaceRoutePlaceholders($request->route()),
             'items' => $this->getRelation($model)
                             ->getQuery()
@@ -283,7 +300,7 @@ abstract class Relation implements Arrayable, Routable
      */
     public function toCreate(Request $request, Model $model): array
     {
-        $related = $this->getRelation($model)->getRelated();
+        $related = $this->newRelated($model);
 
         return [
             'model' => $this->newItem($model, $related)->toForm(

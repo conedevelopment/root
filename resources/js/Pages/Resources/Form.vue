@@ -34,7 +34,7 @@
             return h(this.resolveDefaultLayout(), () => h(Form, {
                 key: key,
                 model: page.props.model,
-                model_name: page.props.model.exists ? page.props.resource.model_name : page.props.resource.name,
+                modelName: page.props.model.exists ? page.props.resource.modelName : page.props.resource.name,
             }, () => page));
         },
     }

@@ -376,7 +376,7 @@ class Resource implements Arrayable, Routable
         return [
             'key' => $this->getKey(),
             'icon' => $this->getIcon(),
-            'model_name' => $this->getModelName(),
+            'modelName' => $this->getModelName(),
             'name' => $this->getName(),
             'urls' => [
                 'index' => $this->getUri(),

@@ -23,7 +23,7 @@
         layout: function (h, page) {
             return h(this.resolveDefaultLayout(), () => h(Form, {
                 model: page.props.model,
-                model_name: 'Model',
+                modelName: 'Model',
             }, () => page));
         },
     }

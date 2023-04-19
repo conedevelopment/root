@@ -17,7 +17,7 @@ class RelationFieldController extends Controller
 
         $model ??= $request->route('rootResource')->getModelInstance();
 
-        $models = $field->resolveQuery($request, $model)
+        $models = $field->resolveRelatableQuery($request, $model)
                         ->paginate()
                         ->setPath($field->getUri())
                         ->through(static function (Model $related) use ($request, $model, $field): array {

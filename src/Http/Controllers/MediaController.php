@@ -60,7 +60,7 @@ class MediaController extends Controller
     {
         $field = $request->route('rootRelation');
 
-        $field->resolveQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
+        $field->resolveRelatableQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
               ->find($request->input('models', []))
               ->each
               ->delete();

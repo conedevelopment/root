@@ -50,7 +50,7 @@
                 type: [String, Number],
                 default: null,
             },
-            formatted_value: {
+            formattedValue: {
                 type: [String, Number],
                 default: null,
             },

@@ -41,7 +41,7 @@ class BelongsToMany extends Relation
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
-                $results = $this->resolveQuery($request, $model)->findMany((array) $value);
+                $results = $this->resolveRelatableQuery($request, $model)->findMany((array) $value);
 
                 $model->setRelation($relation->getRelationName(), $results);
             };
@@ -57,7 +57,7 @@ class BelongsToMany extends Relation
     {
         return array_merge(parent::toInput($request, $model), [
             'multiple' => true,
-            'related_name' => $this->getRelatedName(),
+            'relatedName' => $this->getRelatedName(),
         ]);
     }
 }

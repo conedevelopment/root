@@ -2,8 +2,11 @@
 
 namespace Cone\Root\Http\Controllers;
 
+use Cone\Root\Enums\ResourceContext;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,12 +17,6 @@ class RelationController extends Controller
      */
     public function index(Request $request, Model $model): Response
     {
-        // $resource = $request->route('rootResource');
-
-        // if ($resource->getPolicy()) {
-        //     $this->authorize('viewAny', $resource->getModel());
-        // }
-
         return Inertia::render(
             'Relations/Index',
             $request->route('rootRelation')->toIndex($request, $model)
@@ -29,7 +26,7 @@ class RelationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, Model $model)
+    public function create(Request $request, Model $model): Response
     {
         return Inertia::render(
             'Relations/Form',
@@ -40,15 +37,29 @@ class RelationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Model $model)
+    public function store(Request $request, Model $model): RedirectResponse
     {
-        //
+        $relation = $request->route('rootRelation');
+
+        $related = $relation->newRelated($model);
+
+        $fields = $relation->resolveFields($request)
+                        ->authorized($request, $related)
+                        ->visible(ResourceContext::Update->value);
+
+        $request->validate($fields->mapToValidate($request, $related));
+
+        $fields->each->persist($request, $related);
+
+        $related->save();
+
+        return Redirect::to();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Model $model, Model $related)
+    public function show(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
             'Relations/Show',
@@ -59,7 +70,7 @@ class RelationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, Model $model, Model $related)
+    public function edit(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
             'Relations/Edit',
@@ -70,7 +81,7 @@ class RelationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Model $model, Model $related)
+    public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
         //
     }
@@ -78,7 +89,7 @@ class RelationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Model $model, Model $related)
+    public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
         //
     }

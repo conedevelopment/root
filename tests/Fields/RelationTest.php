@@ -108,7 +108,7 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) {
-                return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
+                return ['value' => $model->getKey(), 'formattedValue' => $model->getKey()];
             })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
@@ -123,7 +123,7 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) {
-                return ['value' => $model->getKey(), 'formatted_value' => $model->name];
+                return ['value' => $model->getKey(), 'formattedValue' => $model->name];
             })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
@@ -136,7 +136,7 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) use ($closure) {
-                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->app['request'], $model)];
+                return ['value' => $model->getKey(), 'formattedValue' => $closure($this->app['request'], $model)];
             })->toArray(),
             $this->field->resolveOptions($this->app['request'], $post)
         );
@@ -149,14 +149,14 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             'select * from "authors"',
-            $this->field->resolveQuery($this->app['request'], $post)->getQuery()->toSql()
+            $this->field->resolveRelatableQuery($this->app['request'], $post)->getQuery()->toSql()
         );
 
-        $this->field->withQuery(function ($request, $query) {
+        $this->field->withRelatableQuery(function ($request, $query) {
             return $query->where('authors.name', 'Foo');
         });
 
-        $query = $this->field->resolveQuery($this->app['request'], $post)->getQuery();
+        $query = $this->field->resolveRelatableQuery($this->app['request'], $post)->getQuery();
 
         $this->assertSame('select * from "authors" where "authors"."name" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());

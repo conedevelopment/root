@@ -3,7 +3,7 @@
         <div class="app-operation">
             <div class="app-operation__edit">
                 <Link v-if="relation.abilities.create" class="btn btn--sm btn--tertiary" :href="`${relation.url}/create`">
-                    {{ __('Add :model', { model: relation.related_name }) }}
+                    {{ __('Add :model', { model: relation.relatedName }) }}
                 </Link>
             </div>
         </div>

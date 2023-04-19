@@ -88,7 +88,7 @@ class Select extends Field
         return array_map(static function (mixed $formattedValue, int|string $value): array {
             return $formattedValue instanceof Option
                 ? $formattedValue->toArray()
-                : ['value' => $value, 'formatted_value' => $formattedValue];
+                : ['value' => $value, 'formattedValue' => $formattedValue];
         }, $options, array_keys($options));
     }
 
@@ -100,7 +100,7 @@ class Select extends Field
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): mixed {
                 $options = array_column(
-                    $this->resolveOptions($request, $model), 'formatted_value', 'value'
+                    $this->resolveOptions($request, $model), 'formattedValue', 'value'
                 );
 
                 $value = array_map(static function (mixed $value) use ($options): mixed {

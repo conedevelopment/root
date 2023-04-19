@@ -30,7 +30,7 @@
                         <tr v-for="field in model.fields" :key="field.name">
                             <th style="width: 10rem; text-align: end;">{{ field.label }}</th>
                             <td>
-                                <div v-html="field.formatted_value"></div>
+                                <div v-html="field.formattedValue"></div>
                             </td>
                         </tr>
                     </tbody>

@@ -42,7 +42,7 @@
                 type: Object,
                 required: true,
             },
-            model_name: {
+            modelName: {
                 type: String,
                 required: true,
             },

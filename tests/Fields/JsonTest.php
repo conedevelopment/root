@@ -65,7 +65,7 @@ class JsonTest extends TestCase
             'name' => 'inventory',
             'id' => 'inventory',
             'component' => 'Fieldset',
-            'formatted_value' => $data,
+            'formattedValue' => $data,
             'help' => null,
             'value' => $data,
             'fields' => [$field->toInput($this->app['request'], FieldsetModel::make()->forceFill($data))],

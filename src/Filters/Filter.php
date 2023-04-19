@@ -125,7 +125,7 @@ abstract class Filter implements Arrayable
             'options' => array_map(static function (mixed $value, mixed $key): array {
                 return [
                     'value' => $key,
-                    'formatted_value' => $value,
+                    'formattedValue' => $value,
                 ];
             }, $options, array_keys($options)),
         ]);

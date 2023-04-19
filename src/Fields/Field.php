@@ -382,7 +382,7 @@ abstract class Field implements Arrayable
     public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->resolveAttributes($request, $model), [
-            'formatted_value' => $this->resolveFormat($request, $model),
+            'formattedValue' => $this->resolveFormat($request, $model),
             'searchable' => $this->isSearchable($request),
             'sortable' => $this->isSortable($request),
             'value' => $this->resolveValue($request, $model),
@@ -396,7 +396,7 @@ abstract class Field implements Arrayable
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
-            'formatted_value' => $this->resolveFormat($request, $model),
+            'formattedValue' => $this->resolveFormat($request, $model),
             'help' => $this->help,
             'value' => $this->resolveValue($request, $model),
         ]);

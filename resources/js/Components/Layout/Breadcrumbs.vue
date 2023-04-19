@@ -1,7 +1,7 @@
 <template>
     <nav class="app-header__breadcrumbs" :aria-label="__('Breadcrumbs')">
         <ol class="breadcrumbs">
-            <li v-for="(item, index) in items" :key="uri" class="breadcrumb-item">
+            <li v-for="(item, index) in items" :key="item.uri" class="breadcrumb-item">
                 <Link v-if="index < items.length - 1" :href="item.uri">
                     {{ item.label }}
                 </Link>

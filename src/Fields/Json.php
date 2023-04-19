@@ -66,7 +66,7 @@ class Json extends Field
 
         return array_replace_recursive($data, [
             'fields' => $fields,
-            'formatted_value' => array_column($fields, 'formatted_value', 'name'),
+            'formattedValue' => array_column($fields, 'formattedValue', 'name'),
             'value' => array_column($fields, 'value', 'name'),
         ]);
     }
