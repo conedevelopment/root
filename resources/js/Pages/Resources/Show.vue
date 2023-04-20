@@ -12,7 +12,6 @@
                 v-if="actions.length > 0"
                 :selection="[model.id]"
                 :actions="actions"
-                @success="clearSelection"
             ></Actions>
             <div class="app-operation__edit">
                 <Link v-if="model.abilities.update" class="btn btn--sm btn--tertiary" :href="`${model.url}/edit`">
@@ -43,26 +42,29 @@
                         <tr v-for="field in model.fields" :key="field.name">
                             <th style="width: 10rem; text-align: end;">{{ field.label }}</th>
                             <td>
-                                <div v-html="field.formatted_value"></div>
+                                <div v-html="field.formattedValue"></div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <Relation v-for="relation in relations" :key="relation.url" v-bind="relation"/>
     </div>
 </template>
 
 <script>
     import { Link } from '@inertiajs/vue3';
     import Actions from './../../Components/Actions/Actions.vue';
-    import Widget from './../../Components/Widgets/Handler';
+    import Widget from './../../Components/Widgets/Handler.js';
+    import Relation from './../../Components/Relations/Relation.vue';
 
     export default {
         components: {
             Actions,
             Link,
             Widget,
+            Relation
         },
 
         props: {
@@ -78,9 +80,9 @@
                 type: Array,
                 default: () => [],
             },
-            resource: {
-                type: Object,
-                required: true,
+            relations: {
+                type: Array,
+                default: () => [],
             },
         },
 

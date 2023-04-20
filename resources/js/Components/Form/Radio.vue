@@ -10,7 +10,7 @@
                 class="form-check__control"
                 v-model="_value"
             >
-            <span class="form-check__label" v-html="option.formatted_value"></span>
+            <span class="form-check__label" v-html="option.formattedValue"></span>
             <span
                 class="field-feedback"
                 :class="{ 'field-feedback--invalid': error !== null }"
@@ -38,7 +38,7 @@
             value: {
                 default: null,
             },
-            formatted_value: {
+            formattedValue: {
                 default: null,
             },
             label: {

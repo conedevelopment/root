@@ -2,30 +2,50 @@
 
 namespace Cone\Root\Support\Collections;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Widgets\Widget;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Widgets extends Collection
 {
     /**
-     * Filter the widgets that are visible for the given request.
+     * Register the given widgets.
      */
-    public function available(RootRequest $request): static
+    public function register(array|Widget $widgets): static
     {
-        return $this->filter(static function (Widget $widget) use ($request): bool {
-            return $widget->authorized($request) && $widget->visible($request);
-        })->values();
+        foreach (Arr::wrap($widgets) as $widget) {
+            $this->push($widget);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Filter the widgets that are available for the current request and model.
+     */
+    public function authorized(Request $request, ?Model $model = null): static
+    {
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the widgets that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
     }
 
     /**
      * Register the widget routes.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $router->prefix('widgets')->group(function (Router $router) use ($request): void {
-            $this->each->registerRoutes($request, $router);
+        $router->prefix('widgets')->group(function (Router $router): void {
+            $this->each->registerRoutes($router);
         });
     }
 }

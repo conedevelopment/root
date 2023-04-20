@@ -48,7 +48,7 @@ class EditorTest extends TestCase
         $this->field->withMedia();
 
         $this->app['router']->prefix('posts/fields')->group(function ($router) {
-            $this->field->registerRoutes($this->request, $router);
+            $this->field->registerRoutes($router);
         });
 
         $this->assertSame('/posts/fields/content', $this->field->getUri());

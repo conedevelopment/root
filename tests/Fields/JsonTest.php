@@ -34,8 +34,8 @@ class JsonTest extends TestCase
         ]);
 
         $this->assertSame(
-            Fields::make(array_merge($this->field->fields($this->request), [Number::make('Quantity')]))->toArray(),
-            $this->field->resolveFields($this->request)->toArray()
+            Fields::make(array_merge($this->field->fields($this->app['request']), [Number::make('Quantity')]))->toArray(),
+            $this->field->resolveFields($this->app['request'])->toArray()
         );
     }
 
@@ -43,7 +43,7 @@ class JsonTest extends TestCase
     public function a_json_field_registers_routes()
     {
         $this->app['router']->prefix('posts/fields')->group(function ($router) {
-            $this->field->registerRoutes($this->request, $router);
+            $this->field->registerRoutes($router);
         });
 
         $this->assertSame('/posts/fields/inventory', $this->field->getUri());
@@ -65,11 +65,11 @@ class JsonTest extends TestCase
             'name' => 'inventory',
             'id' => 'inventory',
             'component' => 'Fieldset',
-            'formatted_value' => $data,
+            'formattedValue' => $data,
             'help' => null,
             'value' => $data,
-            'fields' => [$field->toInput($this->request, FieldsetModel::make()->forceFill($data))],
-        ], $this->field->toInput($this->request, $model));
+            'fields' => [$field->toInput($this->app['request'], FieldsetModel::make()->forceFill($data))],
+        ], $this->field->toInput($this->app['request'], $model));
     }
 
     /** @test */
@@ -83,7 +83,7 @@ class JsonTest extends TestCase
 
         $this->assertSame(
             ['inventory' => [], 'inventory.quantity' => ['required']],
-            $this->field->toValidate($this->request, $model)
+            $this->field->toValidate($this->app['request'], $model)
         );
     }
 }

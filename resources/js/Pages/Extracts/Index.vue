@@ -22,29 +22,21 @@
         },
 
         props: {
-            items: {
-                type: Object,
-                required: true,
+            actions: {
+                type: Array,
+                default: () => [],
             },
             filters: {
                 type: Array,
                 default: () => [],
             },
-            actions: {
-                type: Array,
-                default: () => [],
+            items: {
+                type: Object,
+                required: true,
             },
             widgets: {
                 type: Array,
                 default: () => [],
-            },
-            resource: {
-                type: Object,
-                required: true,
-            },
-            extract: {
-                type: Object,
-                required: true,
             },
         },
 

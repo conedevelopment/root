@@ -89,7 +89,7 @@
                 type: String,
                 default: '',
             },
-            formatted_value: {
+            formattedValue: {
                 type: String,
                 default: '',
             },

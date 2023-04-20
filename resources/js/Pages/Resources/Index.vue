@@ -7,12 +7,7 @@
                 :key="widget.key"
             ></Widget>
         </div>
-        <Table
-            :actions="actions"
-            :extracts="extracts"
-            :filters="filters"
-            :items="items"
-        ></Table>
+        <Table :actions="actions" :filters="filters" :items="items"></Table>
     </div>
 </template>
 
@@ -27,21 +22,17 @@
         },
 
         props: {
-            items: {
-                type: Object,
-                required: true,
+            actions: {
+                type: Array,
+                default: () => [],
             },
             filters: {
                 type: Array,
                 default: () => [],
             },
-            actions: {
-                type: Array,
-                default: () => [],
-            },
-            extracts: {
-                type: Array,
-                default: () => [],
+            items: {
+                type: Object,
+                required: true,
             },
             widgets: {
                 type: Array,

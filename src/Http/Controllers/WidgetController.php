@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\WidgetRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class WidgetController extends Controller
@@ -10,8 +10,8 @@ class WidgetController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(WidgetRequest $request): Response
+    public function __invoke(Request $request): Response
     {
-        return new Response($request->widget()->render());
+        return new Response($request->route('rootWidget')->render());
     }
 }

@@ -90,7 +90,7 @@ class RelationTest extends TestCase
         $this->field->async();
 
         $this->app['router']->prefix('posts/fields')->group(function ($router) {
-            $this->field->registerRoutes($this->request, $router);
+            $this->field->registerRoutes($router);
         });
 
         $this->assertSame('/posts/fields/author', $this->field->getUri());
@@ -108,9 +108,9 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) {
-                return ['value' => $model->getKey(), 'formatted_value' => $model->getKey()];
+                return ['value' => $model->getKey(), 'formattedValue' => $model->getKey()];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $post)
+            $this->field->resolveOptions($this->app['request'], $post)
         );
     }
 
@@ -123,9 +123,9 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) {
-                return ['value' => $model->getKey(), 'formatted_value' => $model->name];
+                return ['value' => $model->getKey(), 'formattedValue' => $model->name];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $post)
+            $this->field->resolveOptions($this->app['request'], $post)
         );
 
         $closure = function ($request, $model) {
@@ -136,9 +136,9 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             Author::query()->get()->map(function ($model) use ($closure) {
-                return ['value' => $model->getKey(), 'formatted_value' => $closure($this->request, $model)];
+                return ['value' => $model->getKey(), 'formattedValue' => $closure($this->app['request'], $model)];
             })->toArray(),
-            $this->field->resolveOptions($this->request, $post)
+            $this->field->resolveOptions($this->app['request'], $post)
         );
     }
 
@@ -149,14 +149,14 @@ class RelationTest extends TestCase
 
         $this->assertSame(
             'select * from "authors"',
-            $this->field->resolveQuery($this->request, $post)->getQuery()->toSql()
+            $this->field->resolveRelatableQuery($this->app['request'], $post)->getQuery()->toSql()
         );
 
-        $this->field->withQuery(function ($request, $query) {
+        $this->field->withRelatableQuery(function ($request, $query) {
             return $query->where('authors.name', 'Foo');
         });
 
-        $query = $this->field->resolveQuery($this->request, $post)->getQuery();
+        $query = $this->field->resolveRelatableQuery($this->app['request'], $post)->getQuery();
 
         $this->assertSame('select * from "authors" where "authors"."name" = ?', $query->toSql());
         $this->assertSame(['Foo'], $query->getBindings());

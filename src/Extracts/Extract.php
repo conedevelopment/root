@@ -10,14 +10,12 @@ use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ExtractController;
-use Cone\Root\Http\Requests\ExtractRequest;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Resources\Item;
+use Cone\Root\Interfaces\Routable;
+use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesBreadcrumbs;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
@@ -25,20 +23,21 @@ use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Extract implements Arrayable
+abstract class Extract implements Arrayable, Routable
 {
     use Authorizable;
     use Makeable;
     use ResolvesActions;
-    use ResolvesBreadcrumbs;
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
+        RegistersRoutes::registerRoutes as __registerRoutes;
     }
 
     /**
@@ -52,6 +51,14 @@ abstract class Extract implements Arrayable
     public function getKey(): string
     {
         return Str::of(static::class)->classBasename()->kebab()->value();
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
     }
 
     /**
@@ -75,7 +82,7 @@ abstract class Extract implements Arrayable
     /**
      * Resolve the query for the extract.
      */
-    public function resolveQuery(RootRequest $request): Builder
+    public function resolveQuery(Request $request): Builder
     {
         if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
@@ -87,9 +94,9 @@ abstract class Extract implements Arrayable
     /**
      * Define the filters for the extract.
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
-        $fields = $this->resolveFields($request)->available($request);
+        $fields = $this->resolveFields($request)->authorized($request);
 
         $searchables = $fields->searchable($request);
 
@@ -104,7 +111,7 @@ abstract class Extract implements Arrayable
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -114,7 +121,7 @@ abstract class Extract implements Arrayable
     /**
      * Handle the resolving event on the filter instance.
      */
-    protected function resolveFilter(RootRequest $request, Filter $filter): void
+    protected function resolveFilter(Request $request, Filter $filter): void
     {
         $filter->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -124,13 +131,13 @@ abstract class Extract implements Arrayable
     /**
      * Handle the resolving event on the action instance.
      */
-    protected function resolveAction(RootRequest $request, Action $action): void
+    protected function resolveAction(Request $request, Action $action): void
     {
         $action->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (RootRequest $request): Builder {
+        })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
-                        ->available($request)
+                        ->authorized($request)
                         ->apply($request, $this->resolveQuery($request));
         });
     }
@@ -138,7 +145,7 @@ abstract class Extract implements Arrayable
     /**
      * Handle the resolving event on the widget instance.
      */
-    protected function resolveWidget(RootRequest $request, Widget $widget): void
+    protected function resolveWidget(Request $request, Widget $widget): void
     {
         $widget->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -148,11 +155,11 @@ abstract class Extract implements Arrayable
     /**
      * Map the items.
      */
-    public function mapItems(ExtractRequest $request): array
+    public function mapItems(Request $request): array
     {
         $query = $this->resolveQuery($request);
 
-        $filters = $this->resolveFilters($request)->available($request);
+        $filters = $this->resolveFilters($request)->authorized($request);
 
         $items = $filters->apply($request, $query)
                     ->latest()
@@ -160,9 +167,12 @@ abstract class Extract implements Arrayable
                     ->withQueryString()
                     ->setPath($this->getUri())
                     ->through(function (Model $model) use ($request): array {
-                        return (new Item($model))->toDisplay(
-                            $request, $this->resolveFields($request)->available($request, $model)
-                        );
+                        return $request->route('rootResource')
+                                        ->newItem($model)
+                                        ->toDisplay(
+                                            $request,
+                                            $this->resolveFields($request)->authorized($request, $model)
+                                        );
                     })
                     ->toArray();
 
@@ -174,15 +184,25 @@ abstract class Extract implements Arrayable
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->defaultRegisterRoutes($request, $router);
+        $this->__registerRoutes($router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-            $this->resolveActions($request)->registerRoutes($request, $router);
-            $this->resolveWidgets($request)->registerRoutes($request, $router);
+        $request = App::make('request');
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($router);
+            $this->resolveActions($request)->registerRoutes($router);
+            $this->resolveWidgets($request)->registerRoutes($router);
         });
+    }
+
+    /**
+     * Handle the routes registered event.
+     */
+    public function routesRegistered(Router $router): void
+    {
+        App::make(Root::class)->breadcrumbs->pattern($this->getUri(), $this->getName());
     }
 
     /**
@@ -191,17 +211,6 @@ abstract class Extract implements Arrayable
     public function routes(Router $router): void
     {
         $router->get('/', ExtractController::class);
-    }
-
-    /**
-     * Resolve the breadcrumbs for the given request.
-     */
-    public function resolveBreadcrumbs(RootRequest $request): array
-    {
-        return array_merge(
-            $request->resource()->resolveBreadcrumbs($request),
-            [$this->getUri() => $this->getName()]
-        );
     }
 
     /**
@@ -219,20 +228,18 @@ abstract class Extract implements Arrayable
     /**
      * Get the index representation of the extract.
      */
-    public function toIndex(ExtractRequest $request): array
+    public function toIndex(Request $request): array
     {
         return [
             'actions' => $this->resolveActions($request)
-                            ->available($request)
-                            ->mapToForm($request, $this->resolveQuery($request)->getModel())
-                            ->toArray(),
-            'breadcrumbs' => $this->resolveBreadcrumbs($request),
-            'extract' => $this->toArray(),
-            'filters' => $this->resolveFilters($request)->available($request)->mapToForm($request)->toArray(),
+                            ->authorized($request)
+                            ->mapToForm($request, $this->resolveQuery($request)->getModel()),
+            'filters' => $this->resolveFilters($request)
+                            ->authorized($request)
+                            ->mapToForm($request),
             'items' => $this->mapItems($request),
-            'resource' => $request->resource()->toArray(),
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->available($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
         ];
     }
 }

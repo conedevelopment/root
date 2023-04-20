@@ -3,9 +3,8 @@
 namespace {{ namespace }};
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Http\Requests\ActionRequest;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 
 class {{ class }} extends Action
 {
@@ -20,7 +19,7 @@ class {{ class }} extends Action
     /**
      * Handle the action.
      */
-    public function handle(ActionRequest $request, Collection $models): void
+    public function handle(Request $request, Collection $models): void
     {
         //
     }
@@ -28,7 +27,7 @@ class {{ class }} extends Action
     /**
      * Define the fields for the action.
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return array_merge(parent::fields($request), [
             //

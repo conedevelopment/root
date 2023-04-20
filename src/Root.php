@@ -3,7 +3,7 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Support\Breadcrumbs;
 use Cone\Root\Support\Collections\Assets;
 use Cone\Root\Support\Collections\Resources;
 use Cone\Root\Support\Collections\Widgets;
@@ -20,7 +20,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '1.2.0';
+    public const VERSION = '2.0.0';
 
     /**
      * The registered booting callbacks.
@@ -52,6 +52,8 @@ class Root
      */
     public readonly Assets $assets;
 
+    public readonly Breadcrumbs $breadcrumbs;
+
     /**
      * Create a new Root instance.
      */
@@ -61,6 +63,7 @@ class Root
         $this->resources = new Resources();
         $this->widgets = new Widgets();
         $this->assets = new Assets();
+        $this->breadcrumbs = new Breadcrumbs();
     }
 
     /**
@@ -70,6 +73,10 @@ class Root
     {
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
+        }
+
+        if ($this->getPath() !== '/' && $this->app['request']->path() !== trim($this->getPath(), '/')) {
+            $this->breadcrumbs->pattern($this->getPath(), __('Dashboard'));
         }
 
         $this->resources->each->boot($this);
@@ -85,18 +92,6 @@ class Root
     public function booting(Closure $callback): void
     {
         $this->booting[] = $callback;
-    }
-
-    /**
-     * Get the Root Request instance.
-     */
-    public function request(): RootRequest
-    {
-        static $request;
-
-        $request = RootRequest::createFrom($this->app['request']);
-
-        return $request;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Cone\Root\Tests;
 
 use Cone\Root\Fields\Text;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Root;
@@ -47,9 +46,7 @@ abstract class TestCase extends BaseTestCase
         Gate::policy(Post::class, ModelPolicy::class);
         Gate::policy(Author::class, ModelPolicy::class);
 
-        $this->request = RootRequest::createFrom($this->app['request']);
-
-        $this->request->setUserResolver(function () {
+        $this->app['request']->setUserResolver(function () {
             return $this->admin;
         });
     }

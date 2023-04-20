@@ -25,7 +25,7 @@ class BelongsToTest extends TestCase
 
         $value = Author::query()->get()->first();
 
-        $this->field->resolveHydrate($this->request, $model, $value);
+        $this->field->resolveHydrate($this->app['request'], $model, $value);
 
         $this->assertSame($value, $model->getRelation('author'));
     }

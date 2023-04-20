@@ -9,7 +9,7 @@
         <td
             v-for="field in item.fields"
             :key="`${item.id}-${field.name}`"
-            v-html="field.formatted_value"
+            v-html="field.formattedValue"
         ></td>
         <td>
             <div class="table__actions">

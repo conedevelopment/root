@@ -61,7 +61,7 @@
                 type: String,
                 default: null,
             },
-            formatted_value: {
+            formattedValue: {
                 type: String,
                 default: null,
             },

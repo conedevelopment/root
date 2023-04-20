@@ -3,10 +3,10 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
+use Illuminate\Http\Request;
 
 class Meta extends MorphOne
 {
@@ -183,7 +183,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(RootRequest $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         return [];
     }
@@ -191,7 +191,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function getValue(RootRequest $request, Model $model): mixed
+    public function getValue(Request $request, Model $model): mixed
     {
         $name = $this->getRelationName();
 
@@ -208,10 +208,10 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(RootRequest $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
+            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
                 return $value?->value;
             };
         }
@@ -222,7 +222,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function () use ($request, $model, $value): void {
@@ -240,7 +240,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         $this->field->value(fn (): mixed => $this->resolveValue($request, $model));
 
@@ -250,7 +250,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function toDisplay(RootRequest $request, Model $model): array
+    public function toDisplay(Request $request, Model $model): array
     {
         $this->field->format(fn (): mixed => $this->resolveFormat($request, $model));
 
@@ -260,7 +260,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
         return $this->field->toValidate($request, $model);
     }

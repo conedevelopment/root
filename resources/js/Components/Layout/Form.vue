@@ -42,10 +42,6 @@
                 type: Object,
                 required: true,
             },
-            model_name: {
-                type: String,
-                required: true,
-            },
         },
 
         mounted() {

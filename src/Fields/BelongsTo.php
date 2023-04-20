@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentRelation;
+use Illuminate\Http\Request;
 
 class BelongsTo extends Relation
 {
@@ -19,10 +19,10 @@ class BelongsTo extends Relation
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function (RootRequest $request, Model $model, mixed $value): void {
+            $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $this->getRelation($model)->associate($value);
             };
         }

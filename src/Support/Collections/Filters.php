@@ -3,16 +3,29 @@
 namespace Cone\Root\Support\Collections;
 
 use Cone\Root\Filters\Filter;
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Filters extends Collection
 {
     /**
+     * Register the given filters.
+     */
+    public function register(array|Filter $filters): static
+    {
+        foreach (Arr::wrap($filters) as $filter) {
+            $this->push($filter);
+        }
+
+        return $this;
+    }
+
+    /**
      * Filter the filters that are available for the given request.
      */
-    public function available(RootRequest $request): static
+    public function authorized(Request $request): static
     {
         return $this->filter->authorized($request)->values();
     }
@@ -20,7 +33,7 @@ class Filters extends Collection
     /**
      * Apply the filters on the query.
      */
-    public function apply(RootRequest $request, Builder $query): Builder
+    public function apply(Request $request, Builder $query): Builder
     {
         $this->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());
@@ -34,15 +47,15 @@ class Filters extends Collection
     /**
      * Map the filters to form.
      */
-    public function mapToForm(RootRequest $request): Collection
+    public function mapToForm(Request $request): array
     {
-        return $this->reject->functional()->map->toInput($request)->values()->toBase();
+        return $this->reject->functional()->map->toInput($request)->values()->toArray();
     }
 
     /**
      * Map the filters into their query representation.
      */
-    public function mapToQuery(RootRequest $request, Builder $query): array
+    public function mapToQuery(Request $request, Builder $query): array
     {
         return $this->reduce(static function (array $values, Filter $filter) use ($request): array {
             return array_replace($values, [$filter->getKey() => $filter->default($request)]);

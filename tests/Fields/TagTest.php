@@ -32,7 +32,7 @@ class TagTest extends TestCase
 
         $this->assertSame(
             'Root, Bazar',
-            $this->field->resolveFormat($this->request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
     }
 }

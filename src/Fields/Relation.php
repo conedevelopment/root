@@ -3,18 +3,14 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Controllers\RelationController;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
+use Cone\Root\Http\Controllers\RelationFieldController;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use Illuminate\Routing\Route;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -115,7 +111,7 @@ abstract class Relation extends Field
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? sprintf('__root_%s', $this->name)
+            ? $this->name
             : $this->relation;
     }
 
@@ -124,7 +120,7 @@ abstract class Relation extends Field
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('relation_')->value();
+        return Str::of($this->getKey())->singular()->prepend('field_')->value();
     }
 
     /**
@@ -187,7 +183,7 @@ abstract class Relation extends Field
     public function display(Closure|string $callback): static
     {
         if (is_string($callback)) {
-            $callback = static function (RootRequest $request, Model $model) use ($callback) {
+            $callback = static function (Request $request, Model $model) use ($callback) {
                 return $model->getAttribute($callback);
             };
         }
@@ -200,7 +196,7 @@ abstract class Relation extends Field
     /**
      * Resolve the display format or the query result.
      */
-    public function resolveDisplay(RootRequest $request, Model $related): mixed
+    public function resolveDisplay(Request $request, Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
             $this->display($related->getKeyName());
@@ -230,26 +226,12 @@ abstract class Relation extends Field
     }
 
     /**
-     * Resolve the URI.
-     */
-    public function resolveUri(ResourceRequest $request): string
-    {
-        $uri = $this->getUri();
-
-        foreach ($request->route()->originalParameters() as $key => $value) {
-            $uri = str_replace("{{$key}}", $value, $uri);
-        }
-
-        return preg_replace('/\{.*?\}/', 'create', $uri);
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function resolveValue(RootRequest $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (RootRequest $request, Model $model, mixed $value): mixed {
+            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
                 if ($value instanceof Model) {
                     return $value->getKey();
                 } elseif ($value instanceof Collection) {
@@ -266,7 +248,7 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function getValue(RootRequest $request, Model $model): mixed
+    public function getValue(Request $request, Model $model): mixed
     {
         $name = $this->getRelationName();
 
@@ -280,10 +262,10 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(RootRequest $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): mixed
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (RootRequest $request, Model $model): mixed {
+            $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($request, $model);
 
                 if ($default instanceof Model) {
@@ -293,9 +275,7 @@ abstract class Relation extends Field
                         return $this->resolveDisplay($request, $related);
                     });
 
-                    return $this->isAsync() && $request instanceof UpdateRequest
-                        ? $value->toArray()
-                        : $value->join(', ');
+                    return $this->isAsync() ? $value->toArray() : $value->join(', ');
                 }
 
                 return $default;
@@ -308,7 +288,7 @@ abstract class Relation extends Field
     /**
      * Set the query resolver.
      */
-    public function withQuery(Closure $callback): static
+    public function withRelatableQuery(Closure $callback): static
     {
         $this->queryResolver = $callback;
 
@@ -318,7 +298,7 @@ abstract class Relation extends Field
     /**
      * Resolve the related model's eloquent query.
      */
-    public function resolveQuery(RootRequest $request, Model $model): Builder
+    public function resolveRelatableQuery(Request $request, Model $model): Builder
     {
         $query = $this->getRelation($model)->getRelated()->newQuery();
 
@@ -346,9 +326,9 @@ abstract class Relation extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(RootRequest $request, Model $model): array
+    public function resolveOptions(Request $request, Model $model): array
     {
-        return $this->resolveQuery($request, $model)
+        return $this->resolveRelatableQuery($request, $model)
                     ->get()
                     ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
                         return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
@@ -369,43 +349,12 @@ abstract class Relation extends Field
     /**
      * Map the given option.
      */
-    public function mapOption(RootRequest $request, Model $model, Model $related): array
+    public function mapOption(Request $request, Model $model, Model $related): array
     {
         return [
             'value' => $related->getKey(),
-            'formatted_value' => $this->resolveDisplay($request, $related),
+            'formattedValue' => $this->resolveDisplay($request, $related),
         ];
-    }
-
-    /**
-     * Resolve the resource model for a bound value.
-     */
-    public function resolveRouteBinding(ResourceRequest $request, string $id): Model
-    {
-        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
-    }
-
-    /**
-     * Register the router constrains.
-     */
-    public function registerRouterConstrains(RootRequest $request, Router $router): void
-    {
-        $router->bind($this->getRouteKeyName(), function (string $id, Route $route): Model {
-            $request = App::make(ResourceRequest::class);
-
-            $request->setRouteResolver(static function () use ($route): Route {
-                return $route;
-            });
-
-            return $id === 'create'
-                ? $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->getRelated()
-                : $this->resolveRouteBinding($request, $id);
-        });
-
-        $router->pattern(
-            $this->getRouteKeyName(),
-            '[0-9]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|create'
-        );
     }
 
     /**
@@ -414,19 +363,20 @@ abstract class Relation extends Field
     public function routes(Router $router): void
     {
         if ($this->async) {
-            $router->get('/', RelationController::class);
+            $router->get('/', RelationFieldController::class);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
+            'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? $this->resolveUri($request) : null,
+            'url' => $this->isAsync() ? $this->getUri($request) : null,
         ]);
     }
 }

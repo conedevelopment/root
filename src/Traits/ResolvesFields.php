@@ -4,8 +4,8 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Cone\Root\Fields\Field;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Fields;
+use Illuminate\Http\Request;
 
 trait ResolvesFields
 {
@@ -17,12 +17,12 @@ trait ResolvesFields
     /**
      * The resolved fields.
      */
-    protected ?Fields $resolvedFields = null;
+    protected ?Fields $fields = null;
 
     /**
      * Define the fields for the object.
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
         return [];
     }
@@ -32,13 +32,7 @@ trait ResolvesFields
      */
     public function withFields(array|Closure $fields): static
     {
-        if (is_array($fields)) {
-            $fields = static function (RootRequest $request, Fields $collection) use ($fields): Fields {
-                return $collection->merge($fields);
-            };
-        }
-
-        $this->fieldsResolver = $fields;
+        $this->fieldsResolver = is_array($fields) ? fn (): array => $fields : $fields;
 
         return $this;
     }
@@ -46,27 +40,27 @@ trait ResolvesFields
     /**
      * Resolve the fields.
      */
-    public function resolveFields(RootRequest $request): Fields
+    public function resolveFields(Request $request): Fields
     {
-        if (is_null($this->resolvedFields)) {
-            $fields = Fields::make($this->fields($request));
+        if (is_null($this->fields)) {
+            $this->fields = Fields::make()->register($this->fields($request));
 
             if (! is_null($this->fieldsResolver)) {
-                $fields = call_user_func_array($this->fieldsResolver, [$request, $fields]);
+                $this->fields->register(call_user_func_array($this->fieldsResolver, [$request]));
             }
 
-            $this->resolvedFields = $fields->each(function (Field $field) use ($request): void {
+            $this->fields->each(function (Field $field) use ($request): void {
                 $this->resolveField($request, $field);
             });
         }
 
-        return $this->resolvedFields;
+        return $this->fields;
     }
 
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         //
     }

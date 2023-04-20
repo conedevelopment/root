@@ -2,23 +2,27 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Http\Requests\ResourceRequest;
+use Closure;
 use Cone\Root\Support\Collections\Fields;
-use Cone\Root\Traits\MapsAbilities;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
-class Item implements Arrayable
+class Item
 {
-    use MapsAbilities;
-
     /**
      * The model instance.
      */
-    protected Model $model;
+    public readonly Model $model;
 
     /**
-     * Create a new item instance.
+     * The URL resolver callback.
+     */
+    protected ?Closure $urlResolver = null;
+
+    /**
+     * Create a new row instance.
      */
     public function __construct(Model $model)
     {
@@ -26,71 +30,95 @@ class Item implements Arrayable
     }
 
     /**
-     * Get the model instance.
+     * Determine if the model is trashed.
      */
-    public function getModel(): Model
+    public function isTrashed(): bool
     {
-        return $this->model;
+        return in_array(SoftDeletes::class, class_uses_recursive($this->model))
+            && $this->model->trashed();
     }
 
     /**
-     * Get the mappable abilities.
+     * Set the URL resolver callback.
      */
-    public function getAbilities(): array
+    public function url(Closure $callback): static
     {
-        return ['view', 'update', 'delete', 'restore', 'forceDelete'];
+        $this->urlResolver = $callback;
+
+        return $this;
     }
 
     /**
-     * Map the URL for the model.
+     * Resolve the URL for the item.
      */
-    protected function mapUrl(ResourceRequest $request): string
+    public function resolveUrl(Request $request): string
     {
-        return $this->model->exists
-            ? sprintf('%s/%s', $request->resource()->getUri(), $this->model->getKey())
-            : $request->resource()->getUri();
+        return is_null($this->urlResolver)
+            ? sprintf('%s/%s', $request->url(), $this->model->getRouteKey())
+            : call_user_func_array($this->urlResolver, [$request, $this->model]);
     }
 
     /**
-     * Get the instance as an array.
-     *
-     * @return array<TKey, TValue>
+     * Get the policy for the model.
      */
-    public function toArray(): array
+    public function getPolicy(): mixed
     {
+        return Gate::getPolicyFor($this->model);
+    }
+
+    /**
+     * Resolve the abilities.
+     */
+    protected function resolveAbilities(): array
+    {
+        $policy = $this->getPolicy();
+
         return [
-            'exists' => $this->model->exists,
-            'id' => $this->model->getKey(),
-            'trashed' => in_array(SoftDeletes::class, class_uses_recursive($this->model)) && $this->model->trashed(),
+            'view' => is_null($policy) || Gate::allows('view', $this->model),
+            'update' => is_null($policy) || Gate::allows('update', $this->model),
+            'delete' => is_null($policy) || Gate::allows('delete', $this->model),
+            'restore' => is_null($policy) || Gate::allows('restore', $this->model),
+            'forceDelete' => is_null($policy) || Gate::allows('forceDelete', $this->model),
         ];
     }
 
     /**
-     * Get the resource display representation of the model.
+     * Get the array representation of the object.
      */
-    public function toDisplay(ResourceRequest $request, Fields $fields): array
+    public function toArray(): array
     {
-        return array_merge($this->toArray($request), [
-            'abilities' => $this->mapAbilities($request, $this->model),
-            'fields' => $fields->mapToDisplay($request, $this->model)->toArray(),
-            'url' => $this->mapUrl($request),
+        return [
+            'abilities' => $this->resolveAbilities(),
+            'exists' => $this->model->exists,
+            'id' => $this->model->getKey(),
+            'trashed' => $this->isTrashed(),
+        ];
+    }
+
+    /**
+     * Get the displayable format of the object.
+     */
+    public function toDisplay(Request $request, Fields $fields): array
+    {
+        return array_merge($this->toArray(), [
+            'fields' => $fields->mapToDisplay($request, $this->model),
+            'url' => $this->resolveUrl($request),
         ]);
     }
 
     /**
-     * Get the resource form representation of the model.
+     * Get the from schema of the object.
      */
-    public function toForm(ResourceRequest $request, Fields $fields): array
+    public function toForm(Request $request, Fields $fields): array
     {
-        $fields = $fields->mapToForm($request, $this->model)->toArray();
+        $fields = $fields->mapToForm($request, $this->model);
 
-        return array_merge($this->toArray($request), [
-            'abilities' => $this->mapAbilities($request, $this->model),
+        return array_merge($this->toArray(), [
             'data' => array_reduce($fields, static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);
             }, []),
             'fields' => $fields,
-            'url' => $this->mapUrl($request),
+            'url' => $this->resolveUrl($request),
         ]);
     }
 }

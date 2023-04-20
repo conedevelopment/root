@@ -64,7 +64,7 @@ class ActionTest extends TestCase
     {
         $this->expectException(QueryResolutionException::class);
 
-        $this->action->resolveQuery($this->request);
+        $this->action->resolveQuery($this->app['request']);
     }
 
     /** @test */
@@ -76,7 +76,7 @@ class ActionTest extends TestCase
 
         $this->assertSame(
             Post::query()->toSql(),
-            $this->action->resolveQuery($this->request)->toSql()
+            $this->action->resolveQuery($this->app['request'])->toSql()
         );
     }
 
@@ -84,7 +84,7 @@ class ActionTest extends TestCase
     public function an_action_registers_routes()
     {
         $this->app['router']->prefix('posts/actions')->group(function ($router) {
-            $this->action->registerRoutes($this->request, $router);
+            $this->action->registerRoutes($router);
         });
 
         $this->assertSame('/posts/actions/publish-posts', $this->action->getUri());
@@ -103,8 +103,8 @@ class ActionTest extends TestCase
         ]);
 
         $this->assertSame(
-            Fields::make(array_merge($this->action->fields($this->request), [Text::make(__('Name'))]))->toArray(),
-            $this->action->resolveFields($this->request)->toArray()
+            Fields::make(array_merge($this->action->fields($this->app['request']), [Text::make(__('Name'))]))->toArray(),
+            $this->action->resolveFields($this->app['request'])->toArray()
         );
     }
 
@@ -125,21 +125,20 @@ class ActionTest extends TestCase
     {
         $model = new Post();
 
-        $fields = $this->action->resolveFields($this->request)
-                            ->available($this->request, $model)
-                            ->mapToForm($this->request, $model)
-                            ->toArray();
+        $fields = $this->action
+                        ->resolveFields($this->app['request'])
+                        ->mapToForm($this->app['request'], $model);
 
         $this->assertSame(array_merge($this->action->toArray(), [
             'data' => array_column($fields, 'value', 'name'),
             'fields' => $fields,
-        ]), $this->action->toForm($this->request, $model));
+        ]), $this->action->toForm($this->app['request'], $model));
     }
 
     /** @test */
     public function an_action_has_response_representation()
     {
-        $response = $this->createTestResponse($this->action->toResponse($this->request));
+        $response = $this->createTestResponse($this->action->toResponse($this->app['request']));
 
         $response->assertRedirect()
                 ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));

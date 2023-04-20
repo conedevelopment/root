@@ -3,8 +3,6 @@
 namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Text;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
@@ -62,7 +60,7 @@ class FieldTest extends TestCase
             return false;
         });
 
-        $this->assertFalse($this->field->resolveAttribute($this->request, $model, 'disabled'));
+        $this->assertFalse($this->field->resolveAttribute($this->app['request'], $model, 'disabled'));
     }
 
     /** @test */
@@ -178,7 +176,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             $model->title,
-            $this->field->resolveValue($this->request, $model)
+            $this->field->resolveValue($this->app['request'], $model)
         );
 
         $this->field->value(function ($request, $model, $value) {
@@ -187,18 +185,18 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             '__fake__',
-            $this->field->resolveValue($this->request, $model)
+            $this->field->resolveValue($this->app['request'], $model)
         );
     }
 
     /** @test */
-    public function a_field_has_formatted_value()
+    public function a_field_has_formattedValue()
     {
         $model = new Post(['title' => 'Test Post']);
 
         $this->assertSame(
             'Test Post',
-            $this->field->resolveFormat($this->request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
 
         $this->field->format(function ($request, $model, $value) {
@@ -207,7 +205,7 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             'TEST POST',
-            $this->field->resolveFormat($this->request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
     }
 
@@ -216,11 +214,11 @@ class FieldTest extends TestCase
     {
         $model = new Post();
 
-        $this->request->merge(['title' => 'Test']);
+        $this->app['request']->merge(['title' => 'Test']);
 
         $this->assertNull($model->title);
 
-        $this->field->persist($this->request, $model);
+        $this->field->persist($this->app['request'], $model);
 
         $model->save();
 
@@ -232,7 +230,7 @@ class FieldTest extends TestCase
     {
         $model = new Post(['title' => 'Test Post']);
 
-        $this->field->resolveHydrate($this->request, $model, 'Test');
+        $this->field->resolveHydrate($this->app['request'], $model, 'Test');
 
         $this->assertSame('Test', $model->title);
 
@@ -240,7 +238,7 @@ class FieldTest extends TestCase
             $model->setAttribute($this->field->name, strtoupper($value));
         });
 
-        $this->field->resolveHydrate($this->request, $model, 'Test');
+        $this->field->resolveHydrate($this->app['request'], $model, 'Test');
 
         $this->assertSame('TEST', $model->title);
     }
@@ -250,23 +248,23 @@ class FieldTest extends TestCase
     {
         $model = new Post();
 
+        $this->assertFalse($model->exists);
+
         $this->field->rules(['required'])
                     ->createRules(['unique:users'])
                     ->updateRules(['unique:users,1']);
 
         $this->assertSame(
-            [$this->field->name => ['required']],
-            $this->field->toValidate($this->request, $model)
+            [$this->field->name => ['required', 'unique:users']],
+            $this->field->toValidate($this->app['request'], $model)
         );
 
-        $this->assertSame(
-            [$this->field->name => ['required', 'unique:users']],
-            $this->field->toValidate(new CreateRequest(), $model)
-        );
+        $model->exists = true;
+        $this->assertTrue($model->exists);
 
         $this->assertSame(
             [$this->field->name => ['required', 'unique:users,1']],
-            $this->field->toValidate(new UpdateRequest(), $model)
+            $this->field->toValidate($this->app['request'], $model)
         );
     }
 
@@ -277,12 +275,12 @@ class FieldTest extends TestCase
 
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
-                'formatted_value' => $model->title,
-                'searchable' => $this->field->isSearchable($this->request),
-                'sortable' => $this->field->isSortable($this->request),
+                'formattedValue' => $model->title,
+                'searchable' => $this->field->isSearchable($this->app['request']),
+                'sortable' => $this->field->isSortable($this->app['request']),
                 'value' => $model->title,
             ]),
-            $this->field->toDisplay($this->request, $model)
+            $this->field->toDisplay($this->app['request'], $model)
         );
     }
 
@@ -296,43 +294,43 @@ class FieldTest extends TestCase
         $this->assertSame(
             array_merge($this->field->getAttributes(), [
                 'component' => $this->field->getComponent(),
-                'formatted_value' => $model->title,
+                'formattedValue' => $model->title,
                 'help' => 'Note',
                 'value' => $model->title,
             ]),
-            $this->field->toInput($this->request, $model)
+            $this->field->toInput($this->app['request'], $model)
         );
     }
 
     /** @test */
     public function a_field_can_be_searchable()
     {
-        $this->assertFalse($this->field->isSearchable($this->request));
+        $this->assertFalse($this->field->isSearchable($this->app['request']));
 
         $this->field->searchable();
 
-        $this->assertTrue($this->field->isSearchable($this->request));
+        $this->assertTrue($this->field->isSearchable($this->app['request']));
 
         $this->field->searchable(function () {
             return false;
         });
 
-        $this->assertFalse($this->field->isSearchable($this->request));
+        $this->assertFalse($this->field->isSearchable($this->app['request']));
     }
 
     /** @test */
     public function a_field_can_be_sortable()
     {
-        $this->assertFalse($this->field->isSortable($this->request));
+        $this->assertFalse($this->field->isSortable($this->app['request']));
 
         $this->field->sortable();
 
-        $this->assertTrue($this->field->isSortable($this->request));
+        $this->assertTrue($this->field->isSortable($this->app['request']));
 
         $this->field->sortable(function () {
             return false;
         });
 
-        $this->assertFalse($this->field->isSortable($this->request));
+        $this->assertFalse($this->field->isSortable($this->app['request']));
     }
 }

@@ -9,7 +9,7 @@ window.Vue = Vue;
 
 createInertiaApp({
     resolve: (name) => {
-        return resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue'))
+        return resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue', { eager: true }))
             .catch(() => {
                 return new Promise((resolve, reject) => {
                     resolve(Vue.resolveComponent(name));

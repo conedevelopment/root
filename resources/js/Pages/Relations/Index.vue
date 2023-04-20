@@ -2,8 +2,8 @@
     <div>
         <div class="app-operation">
             <div class="app-operation__edit">
-                <Link v-if="field.abilities.create" class="btn btn--sm btn--tertiary" :href="`${field.url}/create`">
-                    {{ __('Add :model', { model: field.related_name }) }}
+                <Link v-if="relation.abilities.create" class="btn btn--sm btn--tertiary" :href="`${relation.url}/create`">
+                    {{ __('Add :model', { model: relation.relatedName }) }}
                 </Link>
             </div>
         </div>
@@ -22,6 +22,14 @@
         },
 
         props: {
+            actions: {
+                type: Array,
+                default: () => [],
+            },
+            widgets: {
+                type: Array,
+                default: () => [],
+            },
             items: {
                 type: Object,
                 required: true,
@@ -30,11 +38,7 @@
                 type: Array,
                 default: () => [],
             },
-            resource: {
-                type: Object,
-                required: true,
-            },
-            field: {
+            relation: {
                 type: Object,
                 required: true,
             },

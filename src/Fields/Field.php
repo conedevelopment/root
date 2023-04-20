@@ -3,15 +3,13 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\RootRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -82,6 +80,14 @@ abstract class Field implements Arrayable
     public function getKey(): string
     {
         return $this->name;
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return $this->getKey();
     }
 
     /**
@@ -169,7 +175,7 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is sortable.
      */
-    public function isSortable(RootRequest $request): bool
+    public function isSortable(Request $request): bool
     {
         if ($this->sortable instanceof Closure) {
             return call_user_func_array($this->sortable, [$request]);
@@ -191,7 +197,7 @@ abstract class Field implements Arrayable
     /**
      * Determine if the field is searchable.
      */
-    public function isSearchable(RootRequest $request): bool
+    public function isSearchable(Request $request): bool
     {
         if ($this->searchable instanceof Closure) {
             return call_user_func_array($this->searchable, [$request]);
@@ -223,7 +229,7 @@ abstract class Field implements Arrayable
     /**
      * Resolve the value.
      */
-    public function resolveValue(RootRequest $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         $value = $this->getValue($request, $model);
 
@@ -237,7 +243,7 @@ abstract class Field implements Arrayable
     /**
      * Get the default value from the model.
      */
-    public function getValue(RootRequest $request, Model $model): mixed
+    public function getValue(Request $request, Model $model): mixed
     {
         return $model->getAttribute($this->getKey());
     }
@@ -255,7 +261,7 @@ abstract class Field implements Arrayable
     /**
      * Format the value.
      */
-    public function resolveFormat(RootRequest $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): mixed
     {
         $value = $this->resolveValue($request, $model);
 
@@ -269,7 +275,7 @@ abstract class Field implements Arrayable
     /**
      * Persist the request value on the model.
      */
-    public function persist(RootRequest $request, Model $model): void
+    public function persist(Request $request, Model $model): void
     {
         $model->saving(function (Model $model) use ($request): void {
             $this->resolveHydrate(
@@ -281,7 +287,7 @@ abstract class Field implements Arrayable
     /**
      * Get the value for hydrating the model.
      */
-    public function getValueForHydrate(RootRequest $request, Model $model): mixed
+    public function getValueForHydrate(Request $request, Model $model): mixed
     {
         return $request->input([$this->getKey()]);
     }
@@ -299,7 +305,7 @@ abstract class Field implements Arrayable
     /**
      * Hydrate the model.
      */
-    public function resolveHydrate(RootRequest $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function () use ($model, $value): void {
@@ -339,7 +345,7 @@ abstract class Field implements Arrayable
     /**
      * Resolve the attributes.
      */
-    public function resolveAttributes(RootRequest $request, Model $model): array
+    public function resolveAttributes(Request $request, Model $model): array
     {
         return array_reduce(
             array_keys($this->attributes),
@@ -353,7 +359,7 @@ abstract class Field implements Arrayable
     /**
      * Resolve the given attribute.
      */
-    public function resolveAttribute(RootRequest $request, Model $model, string $key): mixed
+    public function resolveAttribute(Request $request, Model $model, string $key): mixed
     {
         $value = $this->getAttribute($key);
 
@@ -373,10 +379,10 @@ abstract class Field implements Arrayable
     /**
      * Get the display representation of the field.
      */
-    public function toDisplay(RootRequest $request, Model $model): array
+    public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->resolveAttributes($request, $model), [
-            'formatted_value' => $this->resolveFormat($request, $model),
+            'formattedValue' => $this->resolveFormat($request, $model),
             'searchable' => $this->isSearchable($request),
             'sortable' => $this->isSortable($request),
             'value' => $this->resolveValue($request, $model),
@@ -386,11 +392,11 @@ abstract class Field implements Arrayable
     /**
      * Get the input representation of the field.
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'component' => $this->getComponent(),
-            'formatted_value' => $this->resolveFormat($request, $model),
+            'formattedValue' => $this->resolveFormat($request, $model),
             'help' => $this->help,
             'value' => $this->resolveValue($request, $model),
         ]);
@@ -399,13 +405,9 @@ abstract class Field implements Arrayable
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
-        $key = match (get_class($request)) {
-            CreateRequest::class => 'create',
-            UpdateRequest::class => 'update',
-            default => '*',
-        };
+        $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(
             static function (array|Closure $rule) use ($request, $model): array {

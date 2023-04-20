@@ -4,8 +4,8 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Cone\Root\Filters\Filter;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Collections\Filters;
+use Illuminate\Http\Request;
 
 trait ResolvesFilters
 {
@@ -17,12 +17,12 @@ trait ResolvesFilters
     /**
      * The resolved filters.
      */
-    protected ?Filters $resolvedFilters = null;
+    protected ?Filters $filters = null;
 
     /**
      * Define the filters for the resource.
      */
-    public function filters(RootRequest $request): array
+    public function filters(Request $request): array
     {
         return [];
     }
@@ -32,13 +32,7 @@ trait ResolvesFilters
      */
     public function withFilters(array|Closure $filters): static
     {
-        if (is_array($filters)) {
-            $filters = static function (RootRequest $request, Filters $collection) use ($filters): Filters {
-                return $collection->merge($filters);
-            };
-        }
-
-        $this->filtersResolver = $filters;
+        $this->filtersResolver = is_array($filters) ? fn (): array => $filters : $filters;
 
         return $this;
     }
@@ -46,27 +40,27 @@ trait ResolvesFilters
     /**
      * Resolve the filters.
      */
-    public function resolveFilters(RootRequest $request): Filters
+    public function resolveFilters(Request $request): Filters
     {
-        if (is_null($this->resolvedFilters)) {
-            $filters = Filters::make($this->filters($request));
+        if (is_null($this->filters)) {
+            $this->filters = Filters::make()->register($this->filters($request));
 
             if (! is_null($this->filtersResolver)) {
-                $filters = call_user_func_array($this->filtersResolver, [$request, $filters]);
+                $this->filters->register(call_user_func_array($this->filtersResolver, [$request]));
             }
 
-            $this->resolvedFilters = $filters->each(function (Filter $filter) use ($request): void {
+            $this->filters->each(function (Filter $filter) use ($request): void {
                 $this->resolveFilter($request, $filter);
             });
         }
 
-        return $this->resolvedFilters;
+        return $this->filters;
     }
 
     /**
      * Handle the resolving event on the filter instance.
      */
-    protected function resolveFilter(RootRequest $request, Filter $filter): void
+    protected function resolveFilter(Request $request, Filter $filter): void
     {
         //
     }

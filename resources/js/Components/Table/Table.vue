@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="filters.length > 0 || actions.length > 0 || extracts.length > 0" class="app-operation">
+        <div v-if="filters.length > 0 || actions.length > 0" class="app-operation">
             <Filters
                 v-if="filters.length > 0"
                 :query="query"
@@ -14,10 +14,6 @@
                 :selection="selection"
                 @success="clearSelection"
             ></Actions>
-            <Extracts
-                v-if="extracts.length > 0"
-                :extracts="extracts"
-            ></Extracts>
         </div>
         <div class="app-list">
             <div class="card">
@@ -46,7 +42,6 @@
 
 <script>
     import Actions from './../Actions/Actions.vue';
-    import Extracts from './Extracts.vue';
     import Filters from './Filters.vue';
     import Head from './Head.vue';
     import Pagination from './Pagination.vue';
@@ -55,7 +50,6 @@
     export default {
         components: {
             Actions,
-            Extracts,
             Filters,
             Head,
             Pagination,
@@ -64,10 +58,6 @@
 
         props: {
             actions: {
-                type: Array,
-                default: () => [],
-            },
-            extracts: {
                 type: Array,
                 default: () => [],
             },

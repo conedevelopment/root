@@ -3,19 +3,19 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
 {
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRotues;
+        RegistersRoutes::registerRoutes as __registerRoutes;
     }
 
     /**
@@ -108,13 +108,13 @@ class Editor extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->defaultRegisterRotues($request, $router);
+        $this->__registerRoutes($router);
 
         if (! is_null($this->media)) {
-            $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-                $this->media->registerRoutes($request, $router);
+            $router->prefix($this->getUriKey())->group(function (Router $router): void {
+                $this->media->registerRoutes($router);
             });
         }
     }
@@ -122,7 +122,7 @@ class Editor extends Field
     /**
      * Get the input representation of the field.
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
             'config' => $this->config,

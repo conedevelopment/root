@@ -2,19 +2,20 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Models\FieldsetModel;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
 class Json extends Field
 {
     use ResolvesFields;
     use RegistersRoutes {
-        RegistersRoutes::registerRoutes as defaultRegisterRoutes;
+        RegistersRoutes::registerRoutes as __registerRoutes;
     }
 
     /**
@@ -25,7 +26,7 @@ class Json extends Field
     /**
      * Handle the resolving event on the field instance.
      */
-    protected function resolveField(RootRequest $request, Field $field): void
+    protected function resolveField(Request $request, Field $field): void
     {
         $field->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
@@ -35,19 +36,21 @@ class Json extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(RootRequest $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
-        $this->defaultRegisterRoutes($request, $router);
+        $this->__registerRoutes($router);
 
-        $router->prefix($this->getKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
+        $request = App::make('request');
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($router);
         });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toInput(RootRequest $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
         $data = parent::toInput($request, $model);
 
@@ -58,13 +61,12 @@ class Json extends Field
                     ->forceFill($data['value']);
 
         $fields = $this->resolveFields($request)
-                    ->available($request, $model)
-                    ->mapToForm($request, $json)
-                    ->toArray();
+                    ->authorized($request, $model)
+                    ->mapToForm($request, $json);
 
         return array_replace_recursive($data, [
             'fields' => $fields,
-            'formatted_value' => array_column($fields, 'formatted_value', 'name'),
+            'formattedValue' => array_column($fields, 'formattedValue', 'name'),
             'value' => array_column($fields, 'value', 'name'),
         ]);
     }
@@ -72,10 +74,10 @@ class Json extends Field
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(RootRequest $request, Model $model): array
+    public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
-                    ->available($request, $model)
+                    ->authorized($request, $model)
                     ->mapToValidate($request, $model);
 
         return array_merge(

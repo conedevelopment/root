@@ -66,7 +66,7 @@
                 type: Array,
                 default: () => [],
             },
-            formatted_value: {
+            formattedValue: {
                 type: String,
                 default: null,
             },

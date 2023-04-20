@@ -17,7 +17,7 @@ class Option implements Arrayable
     public function __construct(string $label, string $value)
     {
         $this->setAttributes([
-            'formatted_value' => $label,
+            'formattedValue' => $label,
             'value' => $value,
         ]);
     }

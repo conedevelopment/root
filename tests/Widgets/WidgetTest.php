@@ -54,7 +54,7 @@ class WidgetTest extends TestCase
     {
         $this->widget->with(['foo' => 'bar']);
 
-        $this->assertSame(['foo' => 'bar'], $this->widget->resolveData($this->request));
+        $this->assertSame(['foo' => 'bar'], $this->widget->resolveData($this->app['request']));
     }
 
     /** @test */
@@ -72,7 +72,7 @@ class WidgetTest extends TestCase
         $this->widget->async();
 
         $this->app['router']->prefix('posts/widgets')->group(function ($router) {
-            $this->widget->registerRoutes($this->request, $router);
+            $this->widget->registerRoutes($router);
         });
 
         $this->assertSame('/posts/widgets/posts-count', $this->widget->getUri());

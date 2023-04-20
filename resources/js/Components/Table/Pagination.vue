@@ -18,13 +18,18 @@
         </div>
         <ul class="list-footer__pagination">
             <li v-for="(link, index) in items.links" :key="index">
-                <Link
-                    class="btn btn--primary btn--sm"
+                <button
+                    v-if="link.url === null || link.active"
                     type="button"
-                    :as="link.url === null || link.active ? 'button' : 'a'"
-                    :disabled="link.url === null || link.active"
-                    :href="link.url"
+                    class="btn btn--primary btn--sm"
+                    disabled
                     :aria-current="link.active ? 'page' : ''"
+                    v-html="link.label"
+                ></button>
+                <Link
+                    v-else
+                    class="btn btn--primary btn--sm"
+                    :href="link.url"
                     v-html="link.label"
                 ></Link>
             </li>

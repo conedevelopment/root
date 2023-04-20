@@ -1,12 +1,12 @@
 <template>
     <div class="app">
-        <Sidebar ref="sidebar"></Sidebar>
+        <Sidebar ref="sidebar"/>
         <main class="app-body">
-            <Nav></Nav>
+            <Nav/>
             <div class="app-body__inner">
-                <Header :title="title" :breadcrumbs="breadcrumbs"></Header>
+                <Header :title="title" :breadcrumbs="breadcrumbs"/>
                 <div v-if="alerts.length > 0" class="app-alert">
-                    <Alert v-for="(alert, index) in alerts" :key="`${alert.timestamp}-${index}`" v-bind="alert"></Alert>
+                    <Alert v-for="(alert, index) in alerts" :key="`${alert.timestamp}-${index}`" v-bind="alert"/>
                 </div>
                 <slot></slot>
             </div>
@@ -52,7 +52,7 @@
                 return this.$page.props.title || this.__('Dashboard');
             },
             breadcrumbs() {
-                return this.$page.props.breadcrumbs || [];
+                return this.$page.props.breadcrumbs;
             },
         },
     }

@@ -16,11 +16,11 @@
             <template v-for="(option, index) in options" :key="index">
                 <optgroup v-if="option.options" :label="option.label" :disabled="option.disabled">
                     <option v-for="item in option.options" v-bind="item" :key="item.value">
-                        {{ item.formatted_value }}
+                        {{ item.formattedValue }}
                     </option>
                 </optgroup>
                 <option v-else v-bind="option" :key="option.value">
-                    {{ option.formatted_value }}
+                    {{ option.formattedValue }}
                 </option>
             </template>
         </select>
@@ -52,7 +52,7 @@
                 type: [String, Number, Array, Object],
                 default: null,
             },
-            formatted_value: {
+            formattedValue: {
                 type: [String, Number, Array, Object],
                 default: null,
             },
