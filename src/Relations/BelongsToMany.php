@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class BelongsToMany extends Relation
 {
@@ -35,6 +37,21 @@ class BelongsToMany extends Relation
         $relation = parent::getRelation($model);
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
+    }
+
+    /**
+     * Get the relation abilities.
+     */
+    public function getAbilities(Model $model): array
+    {
+        $name = Str::of($this->relation)->singular()->ucfirst()->value();
+
+        $policy = Gate::getPolicyFor($model);
+
+        return [
+            'viewAny' => is_null($policy) || Gate::allows('viewAny'.$name.'Pivot', $model),
+            'create' => is_null($policy) || Gate::allows('create'.$name.'Pivot', $model),
+        ];
     }
 
     /**

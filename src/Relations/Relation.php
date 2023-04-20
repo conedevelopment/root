@@ -243,6 +243,7 @@ abstract class Relation implements Arrayable, Routable
     {
         return array_merge($this->toArray(), [
             'url' => $this->replaceRoutePlaceholders($request->route()),
+            'abilities' => $this->getAbilities($model),
             'items' => $this->getRelation($model)
                             ->latest()
                             ->paginate(5)

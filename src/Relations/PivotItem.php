@@ -21,9 +21,9 @@ class PivotItem extends Item
         $relation = Str::of($this->model->rootRelation)->singular()->ucfirst()->value();
 
         return [
-            'view' => is_null($policy) || Gate::allows('view'.$relation, [$parent, $related]),
-            'update' => is_null($policy) || Gate::allows('update'.$relation, [$parent, $related]),
-            'delete' => is_null($policy) || Gate::allows('delete'.$relation, [$parent, $related]),
+            'view' => is_null($policy) || Gate::allows('view'.$relation.'Pivot', [$parent, $related]),
+            'update' => is_null($policy) || Gate::allows('update'.$relation.'Pivot', [$parent, $related]),
+            'delete' => is_null($policy) || Gate::allows('delete'.$relation.'Pivot', [$parent, $related]),
         ];
     }
 }

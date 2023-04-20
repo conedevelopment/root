@@ -1,6 +1,16 @@
 <template>
     <div>
-        <h4>{{ label }}</h4>
+        <div class="app-operation">
+            <h4>{{ label }}</h4>
+            <div class="app-operation__edit">
+                <Link v-if="abilities.viewAny" class="btn btn--sm btn--tertiary" :href="url">
+                    {{ __('All :resource', { resource: label }) }}
+                </Link>
+                <Link v-if="abilities.create" class="btn btn--sm btn--tertiary" :href="`${url}/create`">
+                    {{ __('Add :model', { model: relatedName }) }}
+                </Link>
+            </div>
+        </div>
         <div class="card app-card">
             <table v-if="items.data.length > 0" class="table">
                 <thead>
@@ -78,6 +88,10 @@
                 required: true,
             },
             items: {
+                type: Object,
+                required: true,
+            },
+            abilities: {
                 type: Object,
                 required: true,
             },
