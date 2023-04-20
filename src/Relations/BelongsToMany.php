@@ -4,7 +4,7 @@ namespace Cone\Root\Relations;
 
 use Closure;
 use Cone\Root\Fields\BelongsTo;
-use Cone\Root\Resources\Item;
+use Cone\Root\Relations\Item;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
@@ -41,7 +41,7 @@ class BelongsToMany extends Relation
     /**
      * Make a new item instance.
      */
-    public function newItem(Model $model, Model $related): Item
+    public function newItem(Model $model, Model $related): PivotItem
     {
         $relation = $this->getRelation($model);
 
@@ -52,6 +52,8 @@ class BelongsToMany extends Relation
         $pivot->setRelation('related', $related)
             ->setAttribute($pivot->getKeyName(), $pivot->getKey())
             ->setAttribute($relation->getForeignPivotKeyName(), $model->getKey());
+
+        // fix item resolution
 
         return parent::newItem($model, $pivot);
     }

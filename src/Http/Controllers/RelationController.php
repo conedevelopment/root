@@ -87,7 +87,7 @@ class RelationController extends Controller
     {
         $relation = $request->route('rootRelation');
 
-        $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
+        $item = $relation->newItem($model, $related);
 
         $fields = $relation->resolveFields($request)
                             ->authorized($request, $item->model)

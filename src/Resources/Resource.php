@@ -163,6 +163,19 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Get the resource abilities.
+     */
+    public function getAbilities(): array
+    {
+        $policy = $this->getPolicy();
+
+        return [
+            'viewAny' => is_null($policy) || Gate::check('viewAny', $this->getModel()),
+            'create' => is_null($policy) || Gate::check('create', $this->getModel()),
+        ];
+    }
+
+    /**
      * Set the relations to eagerload.
      */
     public function with(array $relations): static
@@ -369,18 +382,13 @@ class Resource implements Arrayable, Routable
      */
     public function toArray(): array
     {
-        $policy = $this->getPolicy();
-
         return [
-            'key' => $this->getKey(),
+            'abilities' => $this->getAbilities(),
             'icon' => $this->getIcon(),
+            'key' => $this->getKey(),
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
             'url' => $this->getUri(),
-            'abilities' => [
-                'viewAny' => is_null($policy) || Gate::allows('viewAny', $this->getModel()),
-                'create' => is_null($policy) || Gate::allows('create', $this->getModel()),
-            ],
         ];
     }
 

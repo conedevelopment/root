@@ -6,7 +6,7 @@ use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Resources\Item;
+use Cone\Root\Relations\Item;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 abstract class Relation implements Arrayable, Routable
@@ -89,6 +90,21 @@ abstract class Relation implements Arrayable, Routable
     }
 
     /**
+     * Get the relation abilities.
+     */
+    public function getAbilities(Model $model): array
+    {
+        $name = Str::of($this->relation)->singular()->ucfirst()->value();
+
+        $policy = Gate::getPolicyFor($model);
+
+        return [
+            'viewAny' => is_null($policy) || Gate::allows('viewAny'.$name, $model),
+            'create' => is_null($policy) || Gate::allows('add'.$name, $model),
+        ];
+    }
+
+    /**
      * Handle the resolving event on the field instance.
      */
     protected function resolveField(Request $request, Field $field): void
@@ -127,8 +143,11 @@ abstract class Relation implements Arrayable, Routable
     /**
      * Make a new item instance.
      */
-    public function newItem(Model $model, Model $related)
+    public function newItem(Model $model, Model $related): Item
     {
+        $related->setRelation('parent', $model)
+                ->setAttribute('rootRelation', $this->relation);
+
         return (new Item($related))->url(function (Request $request) use ($related) {
             return $related->exists
                 ? sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey())
@@ -226,7 +245,6 @@ abstract class Relation implements Arrayable, Routable
         return array_merge($this->toArray(), [
             'url' => $this->replaceRoutePlaceholders($request->route()),
             'items' => $this->getRelation($model)
-                            ->getQuery()
                             ->latest()
                             ->paginate(5)
                             ->through(function (Model $related) use ($request, $model): array {
@@ -258,9 +276,7 @@ abstract class Relation implements Arrayable, Routable
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
             'relation' => array_merge($this->toArray(), [
                 'url' => $this->replaceRoutePlaceholders($request->route()),
-                'abilities' => [
-                    'create' => true,
-                ],
+                'abilities' => $this->getAbilities($model),
             ]),
         ];
     }
@@ -277,7 +293,7 @@ abstract class Relation implements Arrayable, Routable
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
             ),
-            'title' => '',
+            'title' => __('Create :model', ['model' => $this->getRelatedName()]),
         ];
     }
 
@@ -287,12 +303,12 @@ abstract class Relation implements Arrayable, Routable
     public function toShow(Request $request, Model $model, Model $related): array
     {
         return [
-            'model' => $this->newItem($model, $related)->toDisplay(
+            'model' => ($item = $this->newItem($model, $related))->toDisplay(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
             ),
             'resource' => $request->route('rootResource')->toArray(),
-            'title' => '',
+            'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $item->model->getKey()]),
         ];
     }
 
@@ -302,11 +318,11 @@ abstract class Relation implements Arrayable, Routable
     public function toEdit(Request $request, Model $model, Model $related): array
     {
         return [
-            'model' => $this->newItem($model, $related)->toForm(
+            'model' => ($item = $this->newItem($model, $related))->toForm(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
             ),
-            'title' => '',
+            'title' => __('Edit :model: :id', ['model' => $this->getRelatedName(), 'id' => $item->model->getKey()]),
         ];
     }
 }

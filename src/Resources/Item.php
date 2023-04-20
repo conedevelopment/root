@@ -69,16 +69,16 @@ class Item
     /**
      * Resolve the abilities.
      */
-    protected function resolveAbilities(Request $request): array
+    protected function resolveAbilities(): array
     {
         $policy = $this->getPolicy();
 
         return [
-            'view' => is_null($policy) || $request->user()->can('view', $this->model),
-            'update' => is_null($policy) || $request->user()->can('update', $this->model),
-            'delete' => is_null($policy) || $request->user()->can('delete', $this->model),
-            'restore' => is_null($policy) || $request->user()->can('restore', $this->model),
-            'forceDelete' => is_null($policy) || $request->user()->can('forceDelete', $this->model),
+            'view' => is_null($policy) || Gate::allows('view', $this->model),
+            'update' => is_null($policy) || Gate::allows('update', $this->model),
+            'delete' => is_null($policy) || Gate::allows('delete', $this->model),
+            'restore' => is_null($policy) || Gate::allows('restore', $this->model),
+            'forceDelete' => is_null($policy) || Gate::allows('forceDelete', $this->model),
         ];
     }
 
@@ -88,6 +88,7 @@ class Item
     public function toArray(): array
     {
         return [
+            'abilities' => $this->resolveAbilities(),
             'exists' => $this->model->exists,
             'id' => $this->model->getKey(),
             'trashed' => $this->isTrashed(),
@@ -101,7 +102,6 @@ class Item
     {
         return array_merge($this->toArray(), [
             'fields' => $fields->mapToDisplay($request, $this->model),
-            'abilities' => $this->resolveAbilities($request),
             'url' => $this->resolveUrl($request),
         ]);
     }
@@ -114,7 +114,6 @@ class Item
         $fields = $fields->mapToForm($request, $this->model);
 
         return array_merge($this->toArray(), [
-            'abilities' => $this->resolveAbilities($request),
             'data' => array_reduce($fields, static function (array $data, array $field): array {
                 return array_replace_recursive($data, [$field['name'] => $field['value']]);
             }, []),
