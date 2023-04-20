@@ -6,7 +6,6 @@ use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Relations\Item;
 use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
@@ -148,7 +147,7 @@ abstract class Relation implements Arrayable, Routable
         $related->setRelation('parent', $model)
                 ->setAttribute('rootRelation', $this->relation);
 
-        return (new Item($related))->url(function (Request $request) use ($related) {
+        return (new Item($related))->url(function (Request $request) use ($related): string {
             return $related->exists
                 ? sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey())
                 : $this->replaceRoutePlaceholders($request->route());

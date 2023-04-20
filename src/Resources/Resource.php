@@ -331,9 +331,7 @@ class Resource implements Arrayable, Routable
     public function newItem(Model $model): Item
     {
         return (new Item($model))->url(function () use ($model): string {
-            return $model->exists
-                ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey())
-                : $this->getUri();
+            return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
         });
     }
 

@@ -87,7 +87,7 @@ trait RegistersRoutes
     /**
      * Replace the route placeholders with the route parameters.
      */
-    protected function replaceRoutePlaceholders(Route $route): string
+    public function replaceRoutePlaceholders(Route $route): string
     {
         $uri = $this->getUri();
 
