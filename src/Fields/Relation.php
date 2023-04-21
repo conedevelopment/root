@@ -358,6 +358,14 @@ abstract class Relation extends Field
     }
 
     /**
+     * Get the route parameter name.
+     */
+    public function getParameterName(): string
+    {
+        return 'rootField';
+    }
+
+    /**
      * The routes that should be registered.
      */
     public function routes(Router $router): void

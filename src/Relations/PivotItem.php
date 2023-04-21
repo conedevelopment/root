@@ -10,7 +10,7 @@ class PivotItem extends Item
     /**
      * Resolve the abilities.
      */
-    protected function resolveAbilities(): array
+    public function getAbilities(): array
     {
         $policy = $this->getPolicy();
 

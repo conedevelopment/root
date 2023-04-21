@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ActionController extends Controller
 {
@@ -12,6 +13,10 @@ class ActionController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        return $request->route('rootAction')->perform($request);
+        $action = $request->route('rootAction');
+
+        Gate::allowIf($action->authorized($request));
+
+        return $action->perform($request);
     }
 }

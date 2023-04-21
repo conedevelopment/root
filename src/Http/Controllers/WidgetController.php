@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class WidgetController extends Controller
 {
@@ -12,6 +13,10 @@ class WidgetController extends Controller
      */
     public function __invoke(Request $request): Response
     {
-        return new Response($request->route('rootWidget')->render());
+        $widget = $request->route('rootWidget');
+
+        Gate::allowIf($widget->authorized($request));
+
+        return new Response($widget->render());
     }
 }

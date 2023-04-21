@@ -7,6 +7,7 @@ use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,9 +19,13 @@ class RelationController extends Controller
      */
     public function index(Request $request, Model $model): Response
     {
+        $relation = $request->route('rootRelation');
+
+        Gate::allowIf($relation->getAbilities($model)['viewAny'] ?? false);
+
         return Inertia::render(
             'Relations/Index',
-            $request->route('rootRelation')->toIndex($request, $model)
+            $relation->toIndex($request, $model)
         );
     }
 
@@ -29,9 +34,13 @@ class RelationController extends Controller
      */
     public function create(Request $request, Model $model): Response
     {
+        $relation = $request->route('rootRelation');
+
+        Gate::allowIf($relation->getAbilities($model)['create'] ?? false);
+
         return Inertia::render(
             'Resources/Form',
-            $request->route('rootRelation')->toCreate($request, $model)
+            $relation->toCreate($request, $model)
         );
     }
 
@@ -41,6 +50,8 @@ class RelationController extends Controller
     public function store(Request $request, Model $model): RedirectResponse
     {
         $relation = $request->route('rootRelation');
+
+        Gate::allowIf($relation->getAbilities($model)['create'] ?? false);
 
         $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
 
@@ -63,9 +74,13 @@ class RelationController extends Controller
      */
     public function show(Request $request, Model $model, Model $related): Response
     {
+        $relation = $request->route('rootRelation');
+
+        Gate::allowIf($relation->newItem($model, $related)->getAbilities()['view'] ?? false);
+
         return Inertia::render(
             'Resources/Show',
-            $request->route('rootRelation')->toShow($request, $model, $related)
+            $relation->toShow($request, $model, $related)
         );
     }
 
@@ -74,9 +89,13 @@ class RelationController extends Controller
      */
     public function edit(Request $request, Model $model, Model $related): Response
     {
+        $relation = $request->route('rootRelation');
+
+        Gate::allowIf($relation->newItem($model, $related)->getAbilities()['update'] ?? false);
+
         return Inertia::render(
             'Resources/Form',
-            $request->route('rootRelation')->toEdit($request, $model, $related)
+            $related->toEdit($request, $model, $related)
         );
     }
 
@@ -88,6 +107,8 @@ class RelationController extends Controller
         $relation = $request->route('rootRelation');
 
         $item = $relation->newItem($model, $related);
+
+        Gate::allowIf($item->getAbilities()['update'] ?? false);
 
         $fields = $relation->resolveFields($request)
                             ->authorized($request, $item->model)
@@ -111,6 +132,8 @@ class RelationController extends Controller
         $relation = $request->route('rootRelation');
 
         $item = $relation->newItem($model, $related);
+
+        Gate::allowIf($item->getAbilities()['delete'] ?? false);
 
         $item->model->delete();
 

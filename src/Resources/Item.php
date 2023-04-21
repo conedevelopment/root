@@ -69,7 +69,7 @@ class Item
     /**
      * Resolve the abilities.
      */
-    protected function resolveAbilities(): array
+    public function getAbilities(): array
     {
         $policy = $this->getPolicy();
 
@@ -88,7 +88,7 @@ class Item
     public function toArray(): array
     {
         return [
-            'abilities' => $this->resolveAbilities(),
+            'abilities' => $this->getAbilities(),
             'exists' => $this->model->exists,
             'id' => $this->model->getKey(),
             'trashed' => $this->isTrashed(),

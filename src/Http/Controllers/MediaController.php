@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
@@ -17,7 +18,9 @@ class MediaController extends Controller
      */
     public function index(Request $request, Model $model = null): JsonResponse
     {
-        $field = $request->route('rootRelation');
+        $field = $request->route('rootField');
+
+        Gate::allowIf($field->authorized($request, $model));
 
         $model ??= $request->route('rootResource')->getModelInstance();
 
@@ -29,9 +32,11 @@ class MediaController extends Controller
      */
     public function store(Request $request, Model $model = null): JsonResponse
     {
-        $request->validate(['file' => ['required', 'file']]);
+        $field = $request->route('rootField');
 
-        $field = $request->route('rootRelation');
+        Gate::allowIf($field->authorized($request, $model));
+
+        $request->validate(['file' => ['required', 'file']]);
 
         $model ??= $request->route('rootResource')->getModelInstance();
 
@@ -58,7 +63,9 @@ class MediaController extends Controller
      */
     public function destroy(Request $request, Model $model = null): JsonResponse
     {
-        $field = $request->route('rootRelation');
+        $field = $request->route('rootField');
+
+        Gate::allowIf($field->authorized($request, $model));
 
         $field->resolveRelatableQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
               ->find($request->input('models', []))
