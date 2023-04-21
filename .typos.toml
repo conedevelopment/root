@@ -2,3 +2,4 @@
 extend-exclude = ["public/build/assets/*"]
 [default.extend-words]
 referer = "referer"
+responsable = "responsable"
