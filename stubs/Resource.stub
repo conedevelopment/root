@@ -19,6 +19,16 @@ class {{ class }} extends Resource
     }
 
     /**
+     * Define the relations for the resource.
+     */
+    public function relations(Request $request): array
+    {
+        return array_merge(parent::relations($request), [
+            //
+        ]);
+    }
+
+    /**
      * Define the filters for the resource.
      */
     public function filters(Request $request): array

@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class Resources extends Collection
 {
     /**
-     * Register the given resource into the colleciton.
+     * Register the given resource into the collection.
      */
     public function register(Resource $resource): void
     {

@@ -9,14 +9,6 @@ use Illuminate\Http\Request;
 class {{ class }} extends Relation
 {
     /**
-     * Get the query for the extract.
-     */
-    public function resolveQuery(Request $request): Builder
-    {
-        return parent::resolveQuery($request);
-    }
-
-    /**
      * Define the fields for the extract.
      */
     public function fields(Request $request): array
@@ -42,6 +34,16 @@ class {{ class }} extends Relation
     public function actions(Request $request): array
     {
         return array_merge(parent::actions($request), [
+            //
+        ]);
+    }
+
+    /**
+     * Define the widgets for the resource.
+     */
+    public function widgets(Request $request): array
+    {
+        return array_merge(parent::widgets($request), [
             //
         ]);
     }
