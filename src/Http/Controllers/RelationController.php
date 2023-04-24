@@ -95,7 +95,7 @@ class RelationController extends Controller
 
         return Inertia::render(
             'Resources/Form',
-            $related->toEdit($request, $model, $related)
+            $relation->toEdit($request, $model, $related)
         );
     }
 
