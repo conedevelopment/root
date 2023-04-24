@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use UnitEnum;
 
 class Select extends Field
 {
@@ -104,6 +105,8 @@ class Select extends Field
                 );
 
                 $value = array_map(static function (mixed $value) use ($options): mixed {
+                    $value = $value instanceof UnitEnum ? $value->value : $value;
+
                     return $options[$value] ?? $value;
                 }, Arr::wrap($value));
 
