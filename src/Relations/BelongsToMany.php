@@ -66,12 +66,11 @@ class BelongsToMany extends Relation
                 : $relation->newPivot();
 
         $pivot->setRelation('parent', $model)
-            ->setAttribute('rootRelation', $this->relation)
             ->setRelation('related', $related)
             ->setAttribute($pivot->getKeyName(), $pivot->getKey())
             ->setAttribute($relation->getForeignPivotKeyName(), $model->getKey());
 
-        return (new PivotItem($pivot))->url(function (Request $request) use ($pivot): string {
+        return (new PivotItem($pivot, $this->relation))->url(function (Request $request) use ($pivot): string {
             return $pivot->exists
                 ? sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $pivot->getRouteKey())
                 : $this->replaceRoutePlaceholders($request->route());

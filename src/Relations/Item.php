@@ -3,11 +3,27 @@
 namespace Cone\Root\Relations;
 
 use Cone\Root\Resources\Item as BaseItem;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class Item extends BaseItem
 {
+    /**
+     * The relation name.
+     */
+    protected string $relation;
+
+    /**
+     * Create a new item instance.
+     */
+    public function __construct(Model $model, string $relation)
+    {
+        parent::__construct($model);
+
+        $this->relation = $relation;
+    }
+
     /**
      * Get the policy for the model.
      */
@@ -25,7 +41,7 @@ class Item extends BaseItem
 
         $parent = $this->model->getRelation('parent');
 
-        $relation = Str::of($this->model->rootRelation)->singular()->ucfirst()->value();
+        $relation = Str::of($this->relation)->singular()->ucfirst()->value();
 
         return [
             'view' => is_null($policy) || Gate::allows('view'.$relation, [$parent, $this->model]),

@@ -144,10 +144,9 @@ abstract class Relation implements Arrayable, Routable
      */
     public function newItem(Model $model, Model $related): Item
     {
-        $related->setRelation('parent', $model)
-                ->setAttribute('rootRelation', $this->relation);
+        $related->setRelation('parent', $model);
 
-        return (new Item($related))->url(function (Request $request) use ($related): string {
+        return (new Item($related, $this->relation))->url(function (Request $request) use ($related): string {
             return $related->exists
                 ? sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey())
                 : $this->replaceRoutePlaceholders($request->route());
