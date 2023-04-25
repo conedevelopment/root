@@ -381,16 +381,14 @@ abstract class Relation extends Field implements Routable
      */
     public function toInput(Request $request, Model $model): array
     {
-        $models = $this->getValue($request, $model);
-
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
             'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
-            'selection' => $models->map(function (Model $related) use ($request, $model): array {
+            'selection' => $this->isAsync() ? $this->getValue($request, $model)->map(function (Model $related) use ($request, $model): array {
                 return $this->mapOption($request, $model, $related);
-            })->toArray(),
+            })->toArray() : [],
         ]);
     }
 }
