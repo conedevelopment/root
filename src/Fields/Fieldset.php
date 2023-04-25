@@ -77,7 +77,7 @@ class Fieldset extends Field implements Routable
     public function toInput(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
-            ->available($request, $model)
+            ->authorized($request, $model)
             ->mapToForm($request, $model);
 
         return array_replace_recursive(parent::toInput($request, $model), [
@@ -88,7 +88,7 @@ class Fieldset extends Field implements Routable
     }
 
     /**
-     * Get the validation representation of the field.
+     * {@inheritdoc}
      */
     public function toValidate(Request $request, Model $model): array
     {
