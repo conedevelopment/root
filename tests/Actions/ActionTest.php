@@ -126,8 +126,8 @@ class ActionTest extends TestCase
         $model = new Post();
 
         $fields = $this->action
-                        ->resolveFields($this->app['request'])
-                        ->mapToForm($this->app['request'], $model);
+            ->resolveFields($this->app['request'])
+            ->mapToForm($this->app['request'], $model);
 
         $this->assertSame(array_merge($this->action->toArray(), [
             'data' => array_column($fields, 'value', 'name'),
@@ -141,6 +141,6 @@ class ActionTest extends TestCase
         $response = $this->createTestResponse($this->action->toResponse($this->app['request']));
 
         $response->assertRedirect()
-                ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));
+            ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));
     }
 }

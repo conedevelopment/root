@@ -137,8 +137,8 @@ abstract class Extract implements Arrayable, Routable
             return $this->authorized(...$parameters);
         })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
-                        ->authorized($request)
-                        ->apply($request, $this->resolveQuery($request));
+                ->authorized($request)
+                ->apply($request, $this->resolveQuery($request));
         });
     }
 
@@ -162,19 +162,19 @@ abstract class Extract implements Arrayable, Routable
         $filters = $this->resolveFilters($request)->authorized($request);
 
         $items = $filters->apply($request, $query)
-                    ->latest()
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->setPath($this->getUri())
-                    ->through(function (Model $model) use ($request): array {
-                        return $request->route('rootResource')
-                                        ->newItem($model)
-                                        ->toDisplay(
-                                            $request,
-                                            $this->resolveFields($request)->authorized($request, $model)
-                                        );
-                    })
-                    ->toArray();
+            ->latest()
+            ->paginate($request->input('per_page'))
+            ->withQueryString()
+            ->setPath($this->getUri())
+            ->through(function (Model $model) use ($request): array {
+                return $request->route('rootResource')
+                    ->newItem($model)
+                    ->toDisplay(
+                        $request,
+                        $this->resolveFields($request)->authorized($request, $model)
+                    );
+            })
+            ->toArray();
 
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
@@ -232,11 +232,11 @@ abstract class Extract implements Arrayable, Routable
     {
         return [
             'actions' => $this->resolveActions($request)
-                            ->authorized($request)
-                            ->mapToForm($request, $this->resolveQuery($request)->getModel()),
+                ->authorized($request)
+                ->mapToForm($request, $this->resolveQuery($request)->getModel()),
             'filters' => $this->resolveFilters($request)
-                            ->authorized($request)
-                            ->mapToForm($request),
+                ->authorized($request)
+                ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),

@@ -122,13 +122,13 @@ class Media extends MorphToMany
                 $relation = $this->getRelation($model);
 
                 $results = $this->resolveRelatableQuery($request, $model)
-                                ->findMany(array_keys($value))
-                                ->each(static function (Model $related) use ($relation, $value): void {
-                                    $related->setRelation(
-                                        $relation->getPivotAccessor(),
-                                        $relation->newPivot($value[$related->getKey()])
-                                    );
-                                });
+                    ->findMany(array_keys($value))
+                    ->each(static function (Model $related) use ($relation, $value): void {
+                        $related->setRelation(
+                            $relation->getPivotAccessor(),
+                            $relation->newPivot($value[$related->getKey()])
+                        );
+                    });
 
                 $model->setRelation($relation->getRelationName(), $results);
             };
@@ -193,15 +193,15 @@ class Media extends MorphToMany
         $relation = $this->getRelation($model);
 
         return $this->resolveFields($request)
-                    ->authorized($request, $related)
-                    ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
-                        return [
-                            $field->name => $field->resolveValue(
-                                $request, $related->getRelation($relation->getPivotAccessor())
-                            ),
-                        ];
-                    })
-                    ->toArray();
+            ->authorized($request, $related)
+            ->mapWithKeys(static function (Field $field) use ($request, $related, $relation): array {
+                return [
+                    $field->name => $field->resolveValue(
+                        $request, $related->getRelation($relation->getPivotAccessor())
+                    ),
+                ];
+            })
+            ->toArray();
     }
 
     /**
@@ -220,8 +220,8 @@ class Media extends MorphToMany
             $related->append(['dimensions', 'formatted_size'])->toArray(),
             [
                 'fields' => $this->resolveFields($request)
-                                ->authorized($request, $related)
-                                ->mapToForm($request, $pivot),
+                    ->authorized($request, $related)
+                    ->mapToForm($request, $pivot),
                 'formatted_created_at' => $related->created_at->format('Y-m-d H:i'),
             ],
         );
@@ -237,14 +237,14 @@ class Media extends MorphToMany
         $query = $this->resolveRelatableQuery($request, $model);
 
         $items = $filters->apply($request, $query)
-                        ->latest()
-                        ->paginate($request->input('per_page'))
-                        ->withQueryString()
-                        ->setPath($this->getUri())
-                        ->through(function (Model $related) use ($request, $model): array {
-                            return $this->mapOption($request, $model, $related);
-                        })
-                        ->toArray();
+            ->latest()
+            ->paginate($request->input('per_page'))
+            ->withQueryString()
+            ->setPath($this->getUri())
+            ->through(function (Model $related) use ($request, $model): array {
+                return $this->mapOption($request, $model, $related);
+            })
+            ->toArray();
 
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $this->resolveRelatableQuery($request, $model)),
@@ -274,8 +274,8 @@ class Media extends MorphToMany
             'fields' => $models->mapWithKeys(function (Model $related) use ($request, $relation): array {
                 return [
                     $related->getKey() => $this->resolveFields($request)
-                                            ->authorized($request, $related)
-                                            ->mapToForm($request, $related->getRelation($relation->getPivotAccessor())),
+                        ->authorized($request, $related)
+                        ->mapToForm($request, $related->getRelation($relation->getPivotAccessor())),
                 ];
             }),
             'filters' => $this->resolveFilters($request)->authorized($request)->mapToForm($request),
@@ -289,16 +289,16 @@ class Media extends MorphToMany
     public function toValidate(Request $request, Model $model): array
     {
         $pivotRules = $this->resolveFields($request)
-                            ->authorized($request, $model)
-                            ->mapToValidate($request, $model);
+            ->authorized($request, $model)
+            ->mapToValidate($request, $model);
 
         return array_merge(
             parent::toValidate($request, $model),
             Collection::make($pivotRules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.*.%s', $this->name, $key) => $rules];
-                    })
-                    ->toArray(),
+                ->mapWithKeys(function (array $rules, string $key): array {
+                    return [sprintf('%s.*.%s', $this->name, $key) => $rules];
+                })
+                ->toArray(),
         );
     }
 }

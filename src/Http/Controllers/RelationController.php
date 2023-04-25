@@ -56,8 +56,8 @@ class RelationController extends Controller
         $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
 
         $fields = $relation->resolveFields($request)
-                            ->authorized($request, $item->model)
-                            ->visible(ResourceContext::Create->value);
+            ->authorized($request, $item->model)
+            ->visible(ResourceContext::Create->value);
 
         $request->validate($fields->mapToValidate($request, $item->model));
 
@@ -66,7 +66,7 @@ class RelationController extends Controller
         $item->model->save();
 
         return Redirect::to($item->resolveUrl($request))
-                    ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
+            ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
     /**
@@ -111,8 +111,8 @@ class RelationController extends Controller
         Gate::allowIf($item->getAbilities()['update'] ?? false);
 
         $fields = $relation->resolveFields($request)
-                            ->authorized($request, $item->model)
-                            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $item->model)
+            ->visible(ResourceContext::Update->value);
 
         $request->validate($fields->mapToValidate($request, $item->model));
 
@@ -121,7 +121,7 @@ class RelationController extends Controller
         $item->model->save();
 
         return Redirect::to($item->resolveUrl($request))
-                    ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
+            ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
     /**
@@ -138,6 +138,6 @@ class RelationController extends Controller
         $item->model->delete();
 
         return Redirect::to($item->resolveUrl($request))
-                    ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
+            ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }

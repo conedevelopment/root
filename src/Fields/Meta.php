@@ -24,13 +24,13 @@ class Meta extends MorphOne
             $related = $model->metaData()->getRelated();
 
             return $model->metaData()
-                        ->one()
-                        ->ofMany(
-                            [$related->getCreatedAtColumn() => 'MAX'],
-                            fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->name),
-                            'metaData'
-                        )
-                        ->withDefault(['key' => $this->name]);
+                ->one()
+                ->ofMany(
+                    [$related->getCreatedAtColumn() => 'MAX'],
+                    fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->name),
+                    'metaData'
+                )
+                ->withDefault(['key' => $this->name]);
         };
 
         $this->field = new Text($label, $name);

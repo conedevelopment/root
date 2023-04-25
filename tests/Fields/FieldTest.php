@@ -251,8 +251,8 @@ class FieldTest extends TestCase
         $this->assertFalse($model->exists);
 
         $this->field->rules(['required'])
-                    ->createRules(['unique:users'])
-                    ->updateRules(['unique:users,1']);
+            ->createRules(['unique:users'])
+            ->updateRules(['unique:users,1']);
 
         $this->assertSame(
             [$this->field->name => ['required', 'unique:users']],

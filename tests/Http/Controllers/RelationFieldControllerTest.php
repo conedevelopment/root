@@ -38,12 +38,12 @@ class RelationFieldControllerTest extends TestCase
         $model = new Post();
 
         $results = $this->field
-                        ->resolveRelatableQuery($this->app['request'], $model)
-                        ->paginate()
-                        ->setPath('/root/posts/fields/author')
-                        ->through(function ($related) use ($model): array {
-                            return $this->field->mapOption($this->app['request'], $model, $related);
-                        });
+            ->resolveRelatableQuery($this->app['request'], $model)
+            ->paginate()
+            ->setPath('/root/posts/fields/author')
+            ->through(function ($related) use ($model): array {
+                return $this->field->mapOption($this->app['request'], $model, $related);
+            });
 
         $this->actingAs($this->admin)
             ->get('/root/posts/fields/author')

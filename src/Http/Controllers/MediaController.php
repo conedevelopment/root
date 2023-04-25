@@ -53,7 +53,7 @@ class MediaController extends Controller
         $medium = $field->store($request, $path);
 
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
-                ->dispatch($medium, $path, false);
+            ->dispatch($medium, $path, false);
 
         return new JsonResponse($field->mapOption($request, $model, $medium), JsonResponse::HTTP_CREATED);
     }
@@ -68,9 +68,9 @@ class MediaController extends Controller
         Gate::allowIf($field->authorized($request, $model));
 
         $field->resolveRelatableQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
-              ->find($request->input('models', []))
-              ->each
-              ->delete();
+            ->find($request->input('models', []))
+            ->each
+            ->delete();
 
         return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
     }

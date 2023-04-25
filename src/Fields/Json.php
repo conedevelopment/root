@@ -57,12 +57,12 @@ class Json extends Field
         $data['value'] = (array) $data['value'];
 
         $json = FieldsetModel::make()
-                    ->setRelation('parent', $model)
-                    ->forceFill($data['value']);
+            ->setRelation('parent', $model)
+            ->forceFill($data['value']);
 
         $fields = $this->resolveFields($request)
-                    ->authorized($request, $model)
-                    ->mapToForm($request, $json);
+            ->authorized($request, $model)
+            ->mapToForm($request, $json);
 
         return array_replace_recursive($data, [
             'fields' => $fields,
@@ -77,16 +77,16 @@ class Json extends Field
     public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
-                    ->authorized($request, $model)
-                    ->mapToValidate($request, $model);
+            ->authorized($request, $model)
+            ->mapToValidate($request, $model);
 
         return array_merge(
             parent::toValidate($request, $model),
             Collection::make($rules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
-                    })
-                    ->toArray(),
+                ->mapWithKeys(function (array $rules, string $key): array {
+                    return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
+                })
+                ->toArray(),
         );
     }
 }

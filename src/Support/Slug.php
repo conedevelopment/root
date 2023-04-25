@@ -120,8 +120,8 @@ class Slug implements Stringable
         }
 
         $value = Str::of(implode($this->separator, $this->model->only($this->from)))
-                    ->slug($this->separator)
-                    ->value();
+            ->slug($this->separator)
+            ->value();
 
         if (! is_null($this->resolver)) {
             return call_user_func_array($this->resolver, [$this, $value]);
@@ -132,14 +132,14 @@ class Slug implements Stringable
         }
 
         $match = $this->model
-                    ->newQuery()
-                    ->when(in_array(SoftDeletes::class, class_uses_recursive($this->model)), static function (Builder $query): Builder {
-                        return $query->withTrashed();
-                    })
-                    ->whereRaw(sprintf("`%s` regexp '^%s(%s[\\\\d]+)?$'", $this->to, preg_quote($value), preg_quote($this->separator)))
-                    ->orderByDesc($this->to)
-                    ->limit(1)
-                    ->value($this->to);
+            ->newQuery()
+            ->when(in_array(SoftDeletes::class, class_uses_recursive($this->model)), static function (Builder $query): Builder {
+                return $query->withTrashed();
+            })
+            ->whereRaw(sprintf("`%s` regexp '^%s(%s[\\\\d]+)?$'", $this->to, preg_quote($value), preg_quote($this->separator)))
+            ->orderByDesc($this->to)
+            ->limit(1)
+            ->value($this->to);
 
         $value = is_null($match) ? $value : preg_replace_callback(
             sprintf('/%s([\d]+)?$/', preg_quote($this->separator)),

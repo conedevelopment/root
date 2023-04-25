@@ -125,14 +125,14 @@ abstract class Relation implements Arrayable, Routable
         $query = $filters->apply($request, $relation->getQuery())->latest();
 
         $items = $relation->paginate($request->input('per_page'))
-                        ->withQueryString()
-                        ->setPath($this->replaceRoutePlaceholders($request->route()))
-                        ->through(function (Model $related) use ($request, $model): array {
-                            return $this->newItem($model, $related)->toDisplay(
-                                $request, $this->resolveFields($request)->authorized($request, $related)
-                            );
-                        })
-                        ->toArray();
+            ->withQueryString()
+            ->setPath($this->replaceRoutePlaceholders($request->route()))
+            ->through(function (Model $related) use ($request, $model): array {
+                return $this->newItem($model, $related)->toDisplay(
+                    $request, $this->resolveFields($request)->authorized($request, $related)
+                );
+            })
+            ->toArray();
 
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
@@ -244,14 +244,14 @@ abstract class Relation implements Arrayable, Routable
             'url' => $this->replaceRoutePlaceholders($request->route()),
             'abilities' => $this->getAbilities($model),
             'items' => $this->getRelation($model)
-                            ->latest()
-                            ->paginate(5)
-                            ->through(function (Model $related) use ($request, $model): array {
-                                return $this->newItem($model, $related)->toDisplay(
-                                    $request, $this->resolveFields($request)->authorized($request, $related)
-                                );
-                            })
-                            ->toArray(),
+                ->latest()
+                ->paginate(5)
+                ->through(function (Model $related) use ($request, $model): array {
+                    return $this->newItem($model, $related)->toDisplay(
+                        $request, $this->resolveFields($request)->authorized($request, $related)
+                    );
+                })
+                ->toArray(),
         ]);
     }
 
@@ -264,12 +264,12 @@ abstract class Relation implements Arrayable, Routable
 
         return [
             'actions' => $this->resolveActions($request)
-                            ->authorized($request)
-                            ->visible(ResourceContext::Index->value)
-                            ->mapToForm($request, $relation->getRelated()),
+                ->authorized($request)
+                ->visible(ResourceContext::Index->value)
+                ->mapToForm($request, $relation->getRelated()),
             'filters' => $this->resolveFilters($request)
-                            ->authorized($request)
-                            ->mapToForm($request),
+                ->authorized($request)
+                ->mapToForm($request),
             'items' => $this->mapItems($request, $model),
             'title' => $this->label,
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),

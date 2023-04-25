@@ -217,10 +217,10 @@ class Resource implements Arrayable, Routable
     public function resolveRouteBinding(Request $request, string $id): Model
     {
         return $this->resolveQuery($request)
-                    ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
-                        return $query->withTrashed();
-                    })
-                    ->findOrFail($id);
+            ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
+                return $query->withTrashed();
+            })
+            ->findOrFail($id);
     }
 
     /**
@@ -229,8 +229,8 @@ class Resource implements Arrayable, Routable
     public function filters(Request $request): array
     {
         $fields = $this->resolveFields($request)
-                    ->visible(ResourceContext::Index->value)
-                    ->authorized($request, $this->getModelInstance());
+            ->visible(ResourceContext::Index->value)
+            ->authorized($request, $this->getModelInstance());
 
         $searchables = $fields->searchable($request);
 
@@ -271,8 +271,8 @@ class Resource implements Arrayable, Routable
             return $this->authorized(...$parameters);
         })->withQuery(function (Request $request): Builder {
             return $this->resolveFilters($request)
-                        ->authorized($request)
-                        ->apply($request, $this->resolveQuery($request));
+                ->authorized($request)
+                ->apply($request, $this->resolveQuery($request));
         });
     }
 
@@ -308,17 +308,17 @@ class Resource implements Arrayable, Routable
         $query = $this->resolveQuery($request);
 
         $items = $filters->apply($request, $query)
-                    ->latest()
-                    ->paginate($request->input('per_page'))
-                    ->withQueryString()
-                    ->setPath($this->getUri())
-                    ->through(function (Model $model) use ($request): array {
-                        return $this->newItem($model)->toDisplay(
-                            $request,
-                            $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Index->value)
-                        );
-                    })
-                    ->toArray();
+            ->latest()
+            ->paginate($request->input('per_page'))
+            ->withQueryString()
+            ->setPath($this->getUri())
+            ->through(function (Model $model) use ($request): array {
+                return $this->newItem($model)->toDisplay(
+                    $request,
+                    $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Index->value)
+                );
+            })
+            ->toArray();
 
         return array_merge($items, [
             'query' => $filters->mapToQuery($request, $query),
@@ -397,12 +397,12 @@ class Resource implements Arrayable, Routable
     {
         return [
             'actions' => $this->resolveActions($request)
-                            ->authorized($request)
-                            ->visible(ResourceContext::Index->value)
-                            ->mapToForm($request, $this->getModelInstance()),
+                ->authorized($request)
+                ->visible(ResourceContext::Index->value)
+                ->mapToForm($request, $this->getModelInstance()),
             'filters' => $this->resolveFilters($request)
-                            ->authorized($request)
-                            ->mapToForm($request),
+                ->authorized($request)
+                ->mapToForm($request),
             'items' => $this->mapItems($request),
             'title' => $this->getName(),
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
@@ -432,9 +432,9 @@ class Resource implements Arrayable, Routable
     {
         return [
             'actions' => $this->resolveActions($request)
-                            ->visible(ResourceContext::Show->value)
-                            ->authorized($request, $model)
-                            ->mapToForm($request, $model),
+                ->visible(ResourceContext::Show->value)
+                ->authorized($request, $model)
+                ->mapToForm($request, $model),
             'model' => $this->newItem($model)->toDisplay(
                 $request,
                 $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
@@ -442,8 +442,8 @@ class Resource implements Arrayable, Routable
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
             'relations' => $this->resolveRelations($request)
-                                ->authorized($request, $model)
-                                ->mapToTable($request, $model),
+                ->authorized($request, $model)
+                ->mapToTable($request, $model),
         ];
     }
 
@@ -468,14 +468,14 @@ class Resource implements Arrayable, Routable
     {
         return array_merge($this->toArray(), [
             'links' => $this->resolveExtracts($request)
-                            ->authorized($request)
-                            ->map(static function (Extract $extract): array {
-                                return [
-                                    'url' => $extract->getUri(),
-                                    'label' => $extract->getName(),
-                                ];
-                            })
-                            ->toArray(),
+                ->authorized($request)
+                ->map(static function (Extract $extract): array {
+                    return [
+                        'url' => $extract->getUri(),
+                        'label' => $extract->getName(),
+                    ];
+                })
+                ->toArray(),
         ]);
     }
 

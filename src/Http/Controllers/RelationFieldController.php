@@ -21,11 +21,11 @@ class RelationFieldController extends Controller
         $model ??= $request->route('rootResource')->getModelInstance();
 
         $models = $field->resolveRelatableQuery($request, $model)
-                        ->paginate()
-                        ->setPath($field->getUri())
-                        ->through(static function (Model $related) use ($request, $model, $field): array {
-                            return $field->mapOption($request, $model, $related);
-                        });
+            ->paginate()
+            ->setPath($field->getUri())
+            ->through(static function (Model $related) use ($request, $model, $field): array {
+                return $field->mapOption($request, $model, $related);
+            });
 
         return new JsonResponse($models);
     }

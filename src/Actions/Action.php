@@ -214,8 +214,8 @@ abstract class Action implements Arrayable, Responsable, Routable
     public function toForm(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
-                    ->authorized($request, $model)
-                    ->mapToForm($request, $model);
+            ->authorized($request, $model)
+            ->mapToForm($request, $model);
 
         return array_merge($this->toArray(), [
             'data' => array_reduce($fields, static function (array $data, array $field): array {

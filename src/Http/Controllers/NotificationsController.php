@@ -15,11 +15,11 @@ class NotificationsController extends Controller
     public function index(Request $request): JsonResponse
     {
         $notifications = (Notification::proxy())::rootQuery($request)
-                                ->filter($request)
-                                ->latest()
-                                ->paginate($request->input('per_page'))
-                                ->setPath(URL::route('root.api.notifications.index', [], false))
-                                ->withQueryString();
+            ->filter($request)
+            ->latest()
+            ->paginate($request->input('per_page'))
+            ->setPath(URL::route('root.api.notifications.index', [], false))
+            ->withQueryString();
 
         return new JsonResponse(array_merge($notifications->toArray(), [
             'total_unread' => $request->user()->notifications()->unread()->count(),

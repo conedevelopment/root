@@ -72,8 +72,8 @@ class ResourceController extends Controller
         $model = $resource->getModelInstance();
 
         $fields = $resource->resolveFields($request)
-                        ->authorized($request, $model)
-                        ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model)
+            ->visible(ResourceContext::Update->value);
 
         $request->validate($fields->mapToValidate($request, $model));
 
@@ -84,7 +84,7 @@ class ResourceController extends Controller
         $resource->created($request, $model);
 
         return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getRouteKey()))
-                    ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
+            ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
     /**
@@ -133,8 +133,8 @@ class ResourceController extends Controller
         }
 
         $fields = $resource->resolveFields($request)
-                        ->authorized($request, $model)
-                        ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model)
+            ->visible(ResourceContext::Update->value);
 
         $request->validate($fields->mapToValidate($request, $model));
 
@@ -145,7 +145,7 @@ class ResourceController extends Controller
         $resource->updated($request, $model);
 
         return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getRouteKey()))
-                    ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
+            ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
     /**
@@ -166,7 +166,7 @@ class ResourceController extends Controller
         $resource->deleted($request, $model);
 
         return Redirect::to(URL::previousPath() === $resource->getUri() ? URL::previous() : $resource->getUri())
-                    ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
+            ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
 
     /**
@@ -185,6 +185,6 @@ class ResourceController extends Controller
         $resource->restored($request, $model);
 
         return Redirect::back()
-                    ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
+            ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
     }
 }

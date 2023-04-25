@@ -330,21 +330,21 @@ abstract class Relation extends Field implements Routable
     public function resolveOptions(Request $request, Model $model): array
     {
         return $this->resolveRelatableQuery($request, $model)
-                    ->get()
-                    ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
-                        return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
-                            $options = $group->map(function (Model $related) use ($request, $model): array {
-                                return $this->mapOption($request, $model, $related);
-                            });
+            ->get()
+            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
+                return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
+                    $options = $group->map(function (Model $related) use ($request, $model): array {
+                        return $this->mapOption($request, $model, $related);
+                    });
 
-                            return (new OptGroup($key))->options($options->toArray());
-                        });
-                    }, function (Collection $collection) use ($request, $model): Collection {
-                        return $collection->map(function (Model $related) use ($request, $model): array {
-                            return $this->mapOption($request, $model, $related);
-                        });
-                    })
-                    ->toArray();
+                    return (new OptGroup($key))->options($options->toArray());
+                });
+            }, function (Collection $collection) use ($request, $model): Collection {
+                return $collection->map(function (Model $related) use ($request, $model): array {
+                    return $this->mapOption($request, $model, $related);
+                });
+            })
+            ->toArray();
     }
 
     /**

@@ -33,7 +33,7 @@ class Tag extends Model
         $builder->shouldReceive('getModels')->andReturn($builder->get()->all());
 
         return (new BelongsToMany($builder, $this, 'post_tag', 'post_id', 'tag_id', 'id', 'id', 'posts'))
-                    ->using(Pivot::class);
+            ->using(Pivot::class);
     }
 
     protected function results()

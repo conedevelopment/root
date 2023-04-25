@@ -55,7 +55,7 @@ class Post extends Model
         $builder->shouldReceive('getModels')->andReturn($builder->get()->all());
 
         return (new BelongsToMany($builder, $this, 'post_tag', 'tag_id', 'post_id', 'id', 'id', 'tags'))
-                    ->using(Pivot::class);
+            ->using(Pivot::class);
     }
 
     protected function results()

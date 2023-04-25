@@ -73,8 +73,8 @@ class Fieldset extends Field
     public function toInput(Request $request, Model $model): array
     {
         $fields = $this->resolveFields($request)
-                    ->available($request, $model)
-                    ->mapToForm($request, $model);
+            ->available($request, $model)
+            ->mapToForm($request, $model);
 
         return array_replace_recursive(parent::toInput($request, $model), [
             'fields' => $fields,
@@ -89,16 +89,16 @@ class Fieldset extends Field
     public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
-                    ->available($request, $model)
-                    ->mapToValidate($request, $model);
+            ->available($request, $model)
+            ->mapToValidate($request, $model);
 
         return array_merge(
             parent::toValidate($request, $model),
             Collection::make($rules)
-                    ->mapWithKeys(function (array $rules, string $key): array {
-                        return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
-                    })
-                    ->toArray(),
+                ->mapWithKeys(function (array $rules, string $key): array {
+                    return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
+                })
+                ->toArray(),
         );
     }
 }

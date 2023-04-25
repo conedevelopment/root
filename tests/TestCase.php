@@ -54,12 +54,12 @@ abstract class TestCase extends BaseTestCase
     protected function setUpResource()
     {
         $this->resource = (new Resource(Post::class))
-                            ->with(['author'])
-                            ->withFields([Text::make('Title')->sortable()->searchable()])
-                            ->withFilters([Published::make()])
-                            ->withActions([PublishPosts::make()])
-                            ->withExtracts([LongPosts::make()])
-                            ->withWidgets([PostsCount::make()]);
+            ->with(['author'])
+            ->withFields([Text::make('Title')->sortable()->searchable()])
+            ->withFilters([Published::make()])
+            ->withActions([PublishPosts::make()])
+            ->withExtracts([LongPosts::make()])
+            ->withWidgets([PostsCount::make()]);
 
         $this->app->make(Root::class)->resources->register($this->resource);
         $this->resource->boot($this->app->make(Root::class));
