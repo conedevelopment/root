@@ -268,6 +268,8 @@ class Media extends MorphToMany
     {
         $relation = $this->getRelation($model);
 
+        $models = $this->getValue($request, $model);
+
         return array_merge(parent::toInput($request, $model), [
             'fields' => $models->mapWithKeys(function (Model $related) use ($request, $relation): array {
                 return [
