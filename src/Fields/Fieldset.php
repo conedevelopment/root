@@ -2,14 +2,16 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
-class Fieldset extends Field
+class Fieldset extends Field implements Routable
 {
     use ResolvesFields;
     use RegistersRoutes {
@@ -34,10 +36,12 @@ class Fieldset extends Field
     /**
      * Register the routes using the given router.
      */
-    public function registerRoutes(Request $request, Router $router): void
+    public function registerRoutes(Router $router): void
     {
+        $request = App::make('request');
+
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($router);
         });
     }
 
@@ -49,7 +53,7 @@ class Fieldset extends Field
         $this->resolveHydrate($request, $model, $this->getValueForHydrate($request, $model));
 
         $this->resolveFields($request)
-            ->available($request, $model)
+            ->authorized($request, $model)
             ->each(static function (Field $field) use ($request, $model): void {
                 $field->persist($request, $model);
             });
@@ -61,7 +65,7 @@ class Fieldset extends Field
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         $this->resolveFields($request)
-            ->available($request, $model)
+            ->authorized($request, $model)
             ->each(static function (Field $field) use ($request, $model, $value): void {
                 $field->resolveHydrate($request, $model, $value[$field->getKey()] ?? null);
             });
@@ -89,7 +93,7 @@ class Fieldset extends Field
     public function toValidate(Request $request, Model $model): array
     {
         $rules = $this->resolveFields($request)
-            ->available($request, $model)
+            ->authorized($request, $model)
             ->mapToValidate($request, $model);
 
         return array_merge(
