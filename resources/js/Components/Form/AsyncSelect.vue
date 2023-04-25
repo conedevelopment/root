@@ -9,9 +9,9 @@
             :class="{ 'form-control--invalid': error !== null }"
             @click.self="$refs.input.focus"
         >
-            <span v-for="(item, key) in formattedValue" class="tag" :key="key">
-                <span class="tag__label">{{ item }}</span>
-                <button type="button" class="tag__remove" @click="remove(key)">
+            <span v-for="item in _selection" class="tag" :key="item.value">
+                <span class="tag__label">{{ item.formattedValue }}</span>
+                <button type="button" class="tag__remove" @click="remove(item)">
                     <Icon name="close"/>
                 </button>
             </span>
@@ -40,7 +40,7 @@
                 v-html="item.formattedValue"
                 tabindex="-1"
                 :aria-selected="index === active ? 'true' : 'false'"
-                :class="{ 'is-active': index === active, 'is-selected': selected(item.value) }"
+                :class="{ 'is-active': index === active, 'is-selected': selected(item) }"
                 :key="item.value"
                 @mousedown="select(index)"
             ></li>
@@ -107,6 +107,10 @@
                 type: [String, Number, Array, Object],
                 default: null,
             },
+            selection: {
+                type: Array,
+                default: () => [],
+            },
         },
 
         inheritAttrs: false,
@@ -115,10 +119,6 @@
 
         mounted() {
             this.$dispatcher.once('open', this.fetch);
-
-            this.formattedValue = this.formattedValue === null
-                ? {}
-                : Object.assign({}, this.multiple ? this.formattedValue : { [this.modelValue]: this.formattedValue });
         },
 
         data() {
@@ -127,7 +127,7 @@
                 processing: false,
                 response: { data: [] },
                 search: null,
-                formattedValue: null,
+                _selection: Array.from(this.selection),
             };
         },
 
@@ -135,16 +135,14 @@
             commit() {
                 this.close();
 
-                const item = this.response.data[this.active].value;
+                const item = this.response.data[this.active];
 
-                const value = this.multiple ? this.modelValue.concat([item]) : [item];
+                this.multiple ? this._selection.push(item) : [item];
 
                 this.$emit(
                     'update:modelValue',
-                    this.selectResolver(this.multiple ? value : value[0], JSON.parse(JSON.stringify(this.response.data)))
+                    this.multiple ? this._selection.map((v) => v.value) : value[0].value
                 );
-
-                this.updateFormattedValue(value);
 
                 this.search = null;
             },
@@ -180,7 +178,7 @@
             },
             clear() {
                 this.search = null;
-
+                this._selection = [];
                 this.$emit('update:modelValue', this.multiple ? [] : null);
             },
             fetch() {
@@ -196,35 +194,25 @@
                     this.processing = false;
                 });
             },
-            selected(value) {
+            selected(item) {
                 if (this.multiple) {
-                    return this.modelValue.includes(value);
+                    return this.modelValue.includes(item.value);
                 }
 
-                return value === this.modelValue;
+                return item.value === this.modelValue;
             },
-            remove(value) {
+            remove(item) {
                 if (! this.multiple) {
+                    this.$emit('update:selection', []);
                     this.$emit('update:modelValue', null);
-                    this.formattedValue = {};
                 } else {
-                    const values = Array.from(this.modelValue);
+                    this._selection.splice(this._selection.findIndex((selected) => selected.value === item.value), 1);
 
-                    values.splice(values.findIndex((item) => item === value), 1);
-
-                    this.updateFormattedValue(values);
-
-                    this.$emit('update:modelValue', values);
+                    this.$emit(
+                        'update:modelValue',
+                        this.multiple ? this._selection.map((v) => v.value) : (this._selection[0]?.value || null)
+                    );
                 }
-            },
-            updateFormattedValue(value) {
-                this.formattedValue = value.reduce((fields, key) => {
-                    return Object.assign(fields, {
-                        [key]: this.formattedValue.hasOwnProperty(key)
-                            ? this.formattedValue[key]
-                            : this.response.data.find((option) => option.value === key).formattedValue,
-                    });
-                }, {});
             },
         },
     }

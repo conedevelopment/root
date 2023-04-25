@@ -56,6 +56,10 @@
                 type: [String, Number, Array, Object],
                 default: null,
             },
+            selection: {
+                type: Array,
+                default: () => [],
+            },
             label: {
                 type: String,
                 required: true,

@@ -4,6 +4,7 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Http\Controllers\RelationFieldController;
+use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field
+abstract class Relation extends Field implements Routable
 {
     use RegistersRoutes;
 
@@ -370,7 +371,7 @@ abstract class Relation extends Field
      */
     public function routes(Router $router): void
     {
-        if ($this->async) {
+        if ($this->isAsync()) {
             $router->get('/', RelationFieldController::class);
         }
     }
@@ -380,11 +381,16 @@ abstract class Relation extends Field
      */
     public function toInput(Request $request, Model $model): array
     {
+        $models = $this->getValue($request, $model);
+
         return array_merge(parent::toInput($request, $model), [
             'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
             'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? $this->getUri($request) : null,
+            'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
+            'selection' => $models->map(function (Model $related) use ($request, $model): array {
+                return $this->mapOption($request, $model, $related);
+            })->toArray(),
         ]);
     }
 }

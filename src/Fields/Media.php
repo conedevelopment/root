@@ -266,8 +266,6 @@ class Media extends MorphToMany
      */
     public function toInput(Request $request, Model $model): array
     {
-        $models = $this->getValue($request, $model);
-
         $relation = $this->getRelation($model);
 
         return array_merge(parent::toInput($request, $model), [
@@ -280,9 +278,6 @@ class Media extends MorphToMany
             }),
             'filters' => $this->resolveFilters($request)->authorized($request)->mapToForm($request),
             'multiple' => $this->multiple,
-            'selection' => $models->map(function (Model $related) use ($request, $model): array {
-                return $this->mapOption($request, $model, $related);
-            }),
         ]);
     }
 
