@@ -39,6 +39,16 @@ class Meta extends MorphOne
     }
 
     /**
+     * Get the relation name.
+     */
+    public function getRelationName(): string
+    {
+        return $this->relation instanceof Closure
+            ? sprintf('__root_%s', $this->name)
+            : $this->relation;
+    }
+
+    /**
      * Set the field class.
      */
     public function as(string $field, Closure $callback = null): static
@@ -212,7 +222,7 @@ class Meta extends MorphOne
     {
         if (is_null($this->valueResolver)) {
             $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
-                return $value;
+                return $value?->value;
             };
         }
 
