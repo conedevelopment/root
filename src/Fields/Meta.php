@@ -212,7 +212,7 @@ class Meta extends MorphOne
     {
         if (is_null($this->valueResolver)) {
             $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
-                return $value?->value;
+                return $value;
             };
         }
 
