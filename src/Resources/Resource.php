@@ -101,7 +101,7 @@ class Resource implements Arrayable, Routable
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getKey())->singular()->prepend('resource_')->value();
+        return Str::of($this->getKey())->singular()->replace('-', '_')->prepend('resource_')->value();
     }
 
     /**
