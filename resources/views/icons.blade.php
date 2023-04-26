@@ -146,16 +146,16 @@
             <path d="M4 13v-2h16v2Z" style="fill:currentColor;"/>
         </symbol>
         <symbol id="icon-format-align-justify" viewBox="0 0 24 24">
-            <path d="M120 936v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Z" style="fill:currentColor;"/>
+            <path d="M0,24l24,0l0,-2.667l-24,0l0,2.667Zm0,-5.333l24,-0l0,-2.667l-24,0l0,2.667Zm0,-5.334l24,0l0,-2.666l-24,-0l0,2.666Zm0,-5.333l24,-0l0,-2.667l-24,0l0,2.667Zm0,-8l0,2.667l24,-0l0,-2.667l-24,-0Z" style="fill:currentColor;"/>
         </symbol>
         <symbol id="icon-format-align-center" viewBox="0 0 24 24">
-            <path d="M120 936v-80h720v80H120Zm160-160v-80h400v80H280ZM120 616v-80h720v80H120Zm160-160v-80h400v80H280ZM120 296v-80h720v80H120Z" style="fill:currentColor;"/>
+            <path d="M5.333,16l0,2.667l13.334,-0l-0,-2.667l-13.334,0Zm-5.333,8l24,0l0,-2.667l-24,0l0,2.667Zm0,-10.667l24,0l0,-2.666l-24,-0l0,2.666Zm5.333,-8l0,2.667l13.334,0l-0,-2.667l-13.334,0Zm-5.333,-5.333l-0,2.667l24,-0l0,-2.667l-24,0Z" style="fill:currentColor;"/>
         </symbol>
         <symbol id="icon-format-align-left" viewBox="0 0 24 24">
-            <path d="M120 936v-80h720v80H120Zm0-160v-80h480v80H120Zm0-160v-80h720v80H120Zm0-160v-80h480v80H120Zm0-160v-80h720v80H120Z" style="fill:currentColor;"/>
+            <path d="M16,16l-16,0l0,2.667l16,-0l0,-2.667Zm0,-10.667l-16,0l0,2.667l16,0l0,-2.667Zm-16,8l24,0l0,-2.666l-24,-0l0,2.666Zm0,10.667l24,0l0,-2.667l-24,0l0,2.667Zm0,-24l0,2.667l24,-0l0,-2.667l-24,0Z" style="fill:currentColor;"/>
         </symbol>
         <symbol id="icon-format-align-right" viewBox="0 0 24 24">
-            <path d="M120 936v-80h720v80H120Zm240-160v-80h480v80H360ZM120 616v-80h720v80H120Zm240-160v-80h480v80H360ZM120 296v-80h720v80H120Z" style="fill:currentColor;"/>
+            <path d="M0,24l24,0l0,-2.667l-24,0l0,2.667Zm8,-5.333l16,-0l0,-2.667l-16,0l0,2.667Zm-8,-5.334l24,0l0,-2.666l-24,-0l0,2.666Zm8,-5.333l16,-0l0,-2.667l-16,0l0,2.667Zm-8,-8l0,2.667l24,-0l0,-2.667l-24,-0Z" style="fill:currentColor;"/>
         </symbol>
         @foreach(App::make('root')->assets->icons() as $icon)
             <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
