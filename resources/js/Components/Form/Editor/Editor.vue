@@ -13,6 +13,7 @@
                     <Strike :editor="editor"/>
                     <Highlight :editor="editor"/>
                 </div>
+                <TextAlign :editor="editor"/>
                 <Link :editor="editor"/>
                 <div class="tiptap__group">
                     <OrderedList :editor="editor"/>
@@ -53,6 +54,8 @@
     import OrderedListHandler from './OrderedList.vue';
     import StarterKit from '@tiptap/starter-kit'
     import StrikeHandler from './Strike.vue';
+    import TextAlign from '@tiptap/extension-text-align';
+    import TextAlignHandler from './TextAlign.vue';
     import UnorderedListHandler from './UnorderedList.vue';
 
     export default {
@@ -69,6 +72,7 @@
             Media: MediaHandler,
             OrderedList: OrderedListHandler,
             Strike: StrikeHandler,
+            TextAlign: TextAlignHandler,
             UnorderedList: UnorderedListHandler,
         },
 
@@ -132,6 +136,7 @@
                     Link.configure({ ...(this.config.link || {}) }),
                     Highlight.configure({ ...(this.config.highlight || {}) }),
                     Image.configure({ ...(this.config.image || {}) }),
+                    TextAlign.configure({ ...(this.config.textAlign || {}) }),
                 ],
                 onUpdate: (value) => {
                     this.$emit('update:modelValue', this.editor.isEmpty ? '' : this.editor.getHTML());

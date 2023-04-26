@@ -105,6 +105,9 @@ return [
         'highlight' => [],
         'strike' => [],
         'image' => [],
+        'textAlign' => [
+            'types' => ['heading', 'paragraph', 'image'],
+        ],
     ],
 
 ];

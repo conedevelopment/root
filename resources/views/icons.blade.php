@@ -145,6 +145,18 @@
         <symbol id="icon-horizontal-rule" viewBox="0 0 24 24">
             <path d="M4 13v-2h16v2Z" style="fill:currentColor;"/>
         </symbol>
+        <symbol id="icon-format-align-justify" viewBox="0 0 24 24">
+            <path d="M120 936v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Zm0-160v-80h720v80H120Z" style="fill:currentColor;"/>
+        </symbol>
+        <symbol id="icon-format-align-center" viewBox="0 0 24 24">
+            <path d="M120 936v-80h720v80H120Zm160-160v-80h400v80H280ZM120 616v-80h720v80H120Zm160-160v-80h400v80H280ZM120 296v-80h720v80H120Z" style="fill:currentColor;"/>
+        </symbol>
+        <symbol id="icon-format-align-left" viewBox="0 0 24 24">
+            <path d="M120 936v-80h720v80H120Zm0-160v-80h480v80H120Zm0-160v-80h720v80H120Zm0-160v-80h480v80H120Zm0-160v-80h720v80H120Z" style="fill:currentColor;"/>
+        </symbol>
+        <symbol id="icon-format-align-right" viewBox="0 0 24 24">
+            <path d="M120 936v-80h720v80H120Zm240-160v-80h480v80H360ZM120 616v-80h720v80H120Zm240-160v-80h480v80H360ZM120 296v-80h720v80H120Z" style="fill:currentColor;"/>
+        </symbol>
         @foreach(App::make('root')->assets->icons() as $icon)
             <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
                 @include($icon->getPath())

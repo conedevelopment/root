@@ -13,6 +13,7 @@
         "@tiptap/extension-history": "^2.0.0-beta.209",
         "@tiptap/extension-image": "^2.0.0-beta.209",
         "@tiptap/extension-link": "^2.0.0-beta.209",
+        "@tiptap/extension-text-align": "^2.0.3",
         "@tiptap/pm": "^2.0.0-beta.220",
         "@tiptap/starter-kit": "^2.0.0-beta.207",
         "@tiptap/vue-3": "^2.0.0-beta.96",
@@ -30,7 +31,7 @@
         "sass": "^1.32.4",
         "sass-loader": "^8.0.0",
         "sprucecss": "^1.2.0",
-        "vite": "^4.0.4",
+        "vite": "^4.3.0",
         "vue": "^3.2.39",
         "vue-loader": "^16.1.0"
     },
