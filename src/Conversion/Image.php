@@ -129,7 +129,7 @@ class Image
             $originalWidth = $originalHeight;
         }
 
-        $resource = imagecreatetruecolor($width, $height);
+        $resource = imagecreatetruecolor((int) $width, (int) $height);
 
         if (in_array($this->type, [IMAGETYPE_PNG, IMAGETYPE_WEBP])) {
             imagealphablending($resource, false);
@@ -137,7 +137,7 @@ class Image
             imagefill($resource, 0, 0, imagecolorallocatealpha($resource, 0, 0, 0, 127));
         }
 
-        imagecopyresampled($resource, $this->resource, 0, 0, $x, $y, $width, $height, $originalWidth, $originalHeight);
+        imagecopyresampled($resource, $this->resource, 0, 0, (int) $x, (int) $y, (int) $width, (int) $height, $originalWidth, $originalHeight);
 
         imagedestroy($this->resource);
         $this->resource = $resource;
@@ -174,22 +174,22 @@ class Image
       */
      protected function create(): void
      {
-         switch ($this->type) {
-             case IMAGETYPE_GIF:
-                 $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
-                 break;
-             case IMAGETYPE_JPEG:
-                 $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
-                 break;
-             case IMAGETYPE_PNG:
-                 $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
-                 break;
-             case IMAGETYPE_WEBP:
-                 $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
-                 break;
-             default:
-                 throw new Exception("The file type [{$this->type}] is not supported.");
-         }
+        switch ($this->type) {
+            case IMAGETYPE_GIF:
+                $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
+                break;
+            case IMAGETYPE_JPEG:
+                $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
+                break;
+            case IMAGETYPE_PNG:
+                $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
+                break;
+            case IMAGETYPE_WEBP:
+                $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
+                break;
+            default:
+                throw new Exception("The file type [{$this->type}] is not supported.");
+        }
      }
 
     /**
