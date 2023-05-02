@@ -2,11 +2,9 @@
 
 namespace Cone\Root\Database\Seeders;
 
-use Cone\Root\Jobs\MoveFile;
-use Cone\Root\Jobs\PerformConversions;
-use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class RootTestDataSeeder extends Seeder
 {
@@ -16,7 +14,6 @@ class RootTestDataSeeder extends Seeder
     public function run(): void
     {
         $this->seedUsers();
-        $this->seedMedia();
     }
 
     /**
@@ -27,22 +24,7 @@ class RootTestDataSeeder extends Seeder
         User::factory()->create([
             'name' => 'Root Admin',
             'email' => 'admin@root.local',
+            'password' => Hash::make('password'),
         ]);
-    }
-
-    /**
-     * Seed the media models.
-     */
-    protected function seedMedia(): void
-    {
-        $path = __DIR__.'/../../stubs/placeholder.png';
-
-        foreach (range(1, 10) as $key) {
-            $medium = Medium::createFrom($path);
-
-            MoveFile::withChain([
-                new PerformConversions($medium),
-            ])->dispatch($medium, $path);
-        }
     }
 }
