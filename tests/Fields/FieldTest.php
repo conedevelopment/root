@@ -218,7 +218,11 @@ class FieldTest extends TestCase
 
         $this->assertNull($model->title);
 
-        $this->field->persist($this->app['request'], $model);
+        $this->field->persist(
+            $this->app['request'],
+            $model,
+            $this->field->getValueForHydrate($this->app['request'], $model)
+        );
 
         $model->save();
 

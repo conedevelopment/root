@@ -275,12 +275,10 @@ abstract class Field implements Arrayable
     /**
      * Persist the request value on the model.
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($request): void {
-            $this->resolveHydrate(
-                $request, $model, $this->getValueForHydrate($request, $model)
-            );
+        $model->saving(function (Model $model) use ($request, $value): void {
+            $this->resolveHydrate($request, $model, $value);
         });
     }
 

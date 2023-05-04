@@ -77,7 +77,7 @@ class ResourceController extends Controller
 
         $request->validate($fields->mapToValidate($request, $model));
 
-        $fields->each->persist($request, $model);
+        $fields->persist($request, $model);
 
         $model->save();
 
@@ -138,7 +138,7 @@ class ResourceController extends Controller
 
         $request->validate($fields->mapToValidate($request, $model));
 
-        $fields->each->persist($request, $model);
+        $fields->persist($request, $model);
 
         $model->save();
 

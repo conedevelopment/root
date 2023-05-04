@@ -48,14 +48,12 @@ class Fieldset extends Field implements Routable
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->resolveHydrate($request, $model, $this->getValueForHydrate($request, $model));
-
         $this->resolveFields($request)
             ->authorized($request, $model)
-            ->each(static function (Field $field) use ($request, $model): void {
-                $field->persist($request, $model);
+            ->each(static function (Field $field) use ($request, $model, $value): void {
+                $field->persist($request, $model, $value[$field->getKey()] ?? null);
             });
     }
 

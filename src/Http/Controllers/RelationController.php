@@ -61,7 +61,7 @@ class RelationController extends Controller
 
         $request->validate($fields->mapToValidate($request, $item->model));
 
-        $fields->each->persist($request, $item->model);
+        $fields->persist($request, $item->model);
 
         $item->model->save();
 
@@ -116,7 +116,7 @@ class RelationController extends Controller
 
         $request->validate($fields->mapToValidate($request, $item->model));
 
-        $fields->each->persist($request, $item->model);
+        $fields->persist($request, $item->model);
 
         $item->model->save();
 

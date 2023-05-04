@@ -38,7 +38,7 @@ class Computed extends Field
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
         //
     }

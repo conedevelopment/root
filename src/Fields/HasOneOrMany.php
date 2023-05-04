@@ -20,12 +20,10 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request): void {
+        $model->saved(function (Model $model) use ($request, $value): void {
             $relation = $this->getRelation($model);
-
-            $value = $this->getValueForHydrate($request, $model);
 
             $this->resolveHydrate($request, $model, $value);
 

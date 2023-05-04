@@ -101,11 +101,9 @@ class Media extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request): void {
-            $value = $this->getValueForHydrate($request, $model);
-
+        $model->saved(function (Model $model) use ($request, $value): void {
             $this->resolveHydrate($request, $model, $value);
 
             $this->getRelation($model)->sync($value);

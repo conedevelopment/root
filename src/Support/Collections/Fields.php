@@ -57,6 +57,18 @@ class Fields extends Collection
     }
 
     /**
+     * Persist the request value on the model.
+     */
+    public function persist(Request $request, Model $model): void
+    {
+        $this->each(static function (Field $field) use ($request, $model): void {
+            $field->persist(
+                $request, $model, $field->getValueForHydrate($request, $model)
+            );
+        });
+    }
+
+    /**
      * Map the fields to display.
      */
     public function mapToDisplay(Request $request, Model $model): array
