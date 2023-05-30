@@ -3,7 +3,6 @@
 namespace Cone\Root;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -59,7 +58,6 @@ class RootServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
-        $this->registerComposers();
         $this->registerRoutes();
     }
 
@@ -124,30 +122,5 @@ class RootServiceProvider extends ServiceProvider
             Console\Commands\ResourceMake::class,
             Console\Commands\WidgetMake::class,
         ]);
-    }
-
-    /**
-     * Register the view composers.
-     */
-    protected function registerComposers(): void
-    {
-        $this->app['view']->composer('root::app', static function (View $view): void {
-            $app = $view->getFactory()->getContainer();
-
-            $root = $app->make(Root::class);
-
-            $request = $app->make('request');
-
-            $view->with('root', [
-                'resources' => $root->resources->authorized($request)->mapToNavigation($request),
-                'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $request->user()->toRoot(),
-                'config' => [
-                    'name' => $app['config']->get('app.name'),
-                    'url' => $root->getPath(),
-                    'branding' => $app['config']->get('root.branding'),
-                ],
-            ]);
-        });
     }
 }

@@ -157,10 +157,5 @@
         <symbol id="icon-format-align-right" viewBox="0 0 24 24">
             <path d="M0,24l24,0l0,-2.667l-24,0l0,2.667Zm8,-5.333l16,-0l0,-2.667l-16,0l0,2.667Zm-8,-5.334l24,0l0,-2.666l-24,-0l0,2.666Zm8,-5.333l16,-0l0,-2.667l-16,0l0,2.667Zm-8,-8l0,2.667l24,-0l0,-2.667l-24,-0Z" style="fill:currentColor;"/>
         </symbol>
-        @foreach(App::make('root')->assets->icons() as $icon)
-            <symbol id="icon-{{ $icon->getKey() }}" viewBox="0 0 24 24">
-                @include($icon->getPath())
-            </symbol>
-        @endforeach
     </defs>
 </svg>

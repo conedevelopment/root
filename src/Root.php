@@ -4,7 +4,6 @@ namespace Cone\Root;
 
 use Closure;
 use Cone\Root\Support\Breadcrumbs;
-use Cone\Root\Support\Collections\Assets;
 use Cone\Root\Support\Collections\Resources;
 use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Foundation\Application;
@@ -20,7 +19,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '1.3.0';
+    public const VERSION = '2.0.0-alpha';
 
     /**
      * The registered booting callbacks.
@@ -48,10 +47,8 @@ class Root
     public readonly Widgets $widgets;
 
     /**
-     * The assets collection.
+     * The breadcrumbs.
      */
-    public readonly Assets $assets;
-
     public readonly Breadcrumbs $breadcrumbs;
 
     /**
@@ -62,7 +59,6 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
-        $this->assets = new Assets();
         $this->breadcrumbs = new Breadcrumbs();
     }
 

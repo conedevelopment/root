@@ -4,19 +4,16 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Root;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Support\Facades\View as ViewFactory;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Root $root): Response
+    public function __invoke(Request $request, Root $root): View
     {
-        return Inertia::render('Dashboard', [
-            'title' => __('Dashboard'),
-            'widgets' => $root->widgets->authorized($request)->toArray(),
-        ]);
+        return ViewFactory::make('root::dashboard');
     }
 }
