@@ -12,7 +12,8 @@ return new class() extends Migration
     public function up(): void
     {
         Schema::create('root_media', static function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->uuid();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name')->index();
             $table->string('file_name');
@@ -27,8 +28,10 @@ return new class() extends Migration
 
         Schema::create('root_mediables', static function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('medium_id')->constrained('root_media')->cascadeOnDelete();
+            $table->foreignId('medium_id')->constrained('root_media')->cascadeOnDelete();
             $table->morphs('mediable');
+            $table->string('collection')->nullable();
+            $table->json('meta')->nullable();
         });
     }
 

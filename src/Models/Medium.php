@@ -71,20 +71,6 @@ class Medium extends Model implements Contract
     ];
 
     /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
      * The table associated with the model.
      *
      * @var string
@@ -151,6 +137,14 @@ class Medium extends Model implements Contract
         $medium->save();
 
         return $medium;
+    }
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     */
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
     }
 
     /**
