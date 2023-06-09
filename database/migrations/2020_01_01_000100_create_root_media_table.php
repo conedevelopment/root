@@ -29,7 +29,7 @@ return new class() extends Migration
         Schema::create('root_mediables', static function (Blueprint $table): void {
             $table->id();
             $table->foreignId('medium_id')->constrained('root_media')->cascadeOnDelete();
-            $table->morphs('mediable');
+            $table->uuidMorphs('mediable');
             $table->string('collection')->nullable();
             $table->json('meta')->nullable();
         });

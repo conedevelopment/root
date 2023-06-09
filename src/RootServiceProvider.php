@@ -13,8 +13,6 @@ class RootServiceProvider extends ServiceProvider
     public array $bindings = [
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
-        Interfaces\Models\Notification::class => Models\Notification::class,
-        Interfaces\Models\Record::class => Models\Record::class,
         Interfaces\Models\User::class => Models\User::class,
     ];
 
@@ -71,7 +69,7 @@ class RootServiceProvider extends ServiceProvider
         ], 'root-config');
 
         $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/root'),
+            __DIR__.'/../public' => $this->app->publicPath('vendor/root'),
         ], 'root-compiled');
 
         $this->publishes([

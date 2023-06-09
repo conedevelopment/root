@@ -10,14 +10,4 @@ interface User
      * Get the uploads for the user.
      */
     public function uploads(): HasMany;
-
-    /**
-     * Get the records for the user.
-     */
-    public function records(): HasMany;
-
-    /**
-     * Get the Root representation of the model.
-     */
-    public function toRoot(): array;
 }
