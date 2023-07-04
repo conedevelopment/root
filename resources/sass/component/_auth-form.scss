@@ -1,0 +1,22 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.auth-form {
+  @include layout-stack('s');
+  margin-block: auto;
+
+  .or-separator {
+    margin-block-start: spacer('m');
+  }
+}
+
+.form-group-stacked,
+.social-logins {
+  @include layout-stack('s');
+}
+
+.form-label {
+  &--space-between {
+    display: flex;
+    justify-content: space-between;
+  }
+}

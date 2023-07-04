@@ -1,0 +1,5 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.form-group-wrapper {
+  @include layout-stack('s');
+}

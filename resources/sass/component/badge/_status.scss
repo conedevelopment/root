@@ -1,0 +1,27 @@
+@use 'sass:color';
+@use 'sass:map';
+@use 'sprucecss/scss/spruce' as *;
+
+.status {
+  align-items: center;
+  display: inline-flex;
+  gap: spacer('xs');
+  line-height: 1;
+  position: relative;
+  white-space: nowrap;
+
+  @each $name, $value in map.get($colors, 'alert') {
+    &--#{$name}::before {
+      background-color: color($name, 'alert');
+    }
+  }
+
+  &::before {
+    --dimension: 0.55em;
+    block-size: var(--dimension);
+    border-radius: 50%;
+    content: '';
+    flex-shrink: 0;
+    inline-size: var(--dimension);
+  }
+}

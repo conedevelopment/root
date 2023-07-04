@@ -1,0 +1,48 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.context-menu {
+  --inset-block-start: calc(100% + 1rem);
+  --width: 10rem;
+
+  @include clear-list;
+  @include transition;
+  background-color: color('background');
+  border: 1px solid color('border');
+  border-radius: config('border-radius-sm', $display);
+  box-shadow: 0 0 spacer('xxs') hsl(201.15deg 72.03% 32.71% / 5%);
+  inline-size: var(--width);
+  inset: var(--inset-block-start) 0 auto auto;
+  opacity: 0;
+  position: absolute;
+  scale: 0.85;
+  visibility: hidden;
+
+  &[data-state='open'] {
+    opacity: 1;
+    scale: 1;
+    visibility: visible;
+  }
+
+  > li + li {
+    border-block-start: 1px solid color('border');
+    margin-block-start: 0;
+  }
+
+  a {
+    border-radius: config('border-radius-sm', $display);
+    color: color('text');
+    display: flex;
+    margin: 0.15em;
+    padding-block: 0.2em;
+    padding-inline: 0.6em;
+    text-decoration: none;
+
+    &:hover:not([aria-current='page']) {
+      background-color: color('primary-lightest');
+    }
+
+    &[aria-current='page'] {
+      color: color('primary');
+    }
+  }
+}

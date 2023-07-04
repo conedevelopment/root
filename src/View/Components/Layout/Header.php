@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\View\Components\layout;
+namespace Cone\Root\View\Components\Layout;
 
 use Illuminate\View\Component;
 use Illuminate\View\View;

@@ -1,0 +1,85 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.l-auth {
+  &__inner {
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 100vh;
+    text-align: center;
+
+    @include breakpoint('md') {
+      align-items: center;
+      flex-direction: row;
+      text-align: start;
+    }
+  }
+
+  &__sidebar {
+    background-image: url('/img/auth-background.png');
+    background-position: center;
+    background-size: cover;
+    border-radius: 2rem;
+    margin-block-end: spacer-clamp('m', 'l');
+    margin-inline: spacer-clamp('m', 'l');
+    min-block-size: 10rem;
+
+    @include breakpoint('md') {
+      block-size: calc(100% - 2 * #{spacer('l')});
+      inline-size: calc(50% - #{spacer('l')});
+      inset-block: spacer('l');
+      inset-inline: 50% spacer('l');
+      margin: 0;
+      position: fixed;
+    }
+  }
+
+  &__form {
+    align-items: center;
+    block-size: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: spacer('l');
+    justify-content: center;
+    padding-block: spacer('l');
+    padding-inline: spacer-clamp('m', 'l');
+
+    @include breakpoint('md') {
+      inline-size: 50%;
+      margin-inline-start: 0;
+      min-block-size: 100vh;
+    }
+  }
+
+  &__logo {
+    align-self: center;
+    block-size: 1.5rem;
+    display: inline-flex;
+
+    @include breakpoint('md') {
+      align-self: flex-start;
+    }
+
+    img {
+      block-size: 100%;
+      inline-size: auto;
+    }
+  }
+
+  &__footer {
+    inline-size: 100%;
+
+    p {
+      margin-block: 0;
+    }
+  }
+
+  .auth-form {
+    inline-size: 100%;
+    max-inline-size: 25rem;
+
+    @include breakpoint('md') {
+      padding-block-end: spacer('m');
+    }
+  }
+}

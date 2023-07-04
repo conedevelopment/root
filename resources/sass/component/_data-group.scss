@@ -1,0 +1,13 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.data-group {
+  @include layout-stack('xxs');
+
+  &__content {
+    @include text-ellipsis(2);
+    color: color('heading');
+    font-family: config('font-family-heading', $typography);
+    font-weight: 600;
+    line-height: config('line-height-heading', $typography);
+  }
+}

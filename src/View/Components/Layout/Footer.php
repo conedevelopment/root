@@ -1,17 +1,17 @@
 <?php
 
-namespace Cone\Root\View\Components\layout;
+namespace Cone\Root\View\Components\Layout;
 
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
-class Nav extends Component
+class Footer extends Component
 {
     /**
      * Get the view / view contents that represent the component.
      */
     public function render(): View
     {
-        return $this->view('root::components.layout.nav');
+        return $this->view('root::components.layout.footer');
     }
 }

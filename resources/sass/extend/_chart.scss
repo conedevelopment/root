@@ -1,0 +1,39 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.apexcharts-legend-series {
+  align-items: center;
+  display: flex !important;
+  gap: spacer('xxs');
+}
+
+.apexcharts-legend {
+  display: flex;
+  gap: spacer('s');
+
+  > * {
+    margin: 0 !important;
+  }
+}
+
+.apexcharts-text,
+.apexcharts-legend-text {
+  color: color('text') !important;
+  fill: color('text');
+}
+
+.apexcharts-tooltip,
+.apexcharts-tooltip-title {
+  background: color('background') !important;
+  border-color: color('border') !important;
+}
+
+.apexcharts-tooltip-title {
+  line-height: 1;
+  padding-block: 0.75em !important;
+}
+
+.apexcharts-xaxis-tick,
+.apexcharts-gridline,
+.apexcharts-grid-borders line:last-child {
+  stroke: color('border');
+}

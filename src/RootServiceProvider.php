@@ -3,6 +3,7 @@
 namespace Cone\Root;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -55,6 +56,8 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+
+        Blade::componentNamespace('Cone\\Root\\View\\Components', 'root');
 
         $this->registerRoutes();
     }

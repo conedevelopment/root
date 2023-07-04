@@ -1,0 +1,27 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.form-group-stack {
+  @include layout-stack('s');
+
+  &--bordered {
+    > * + * {
+      border-block-start: 1px solid color('border');
+      padding-block-start: spacer('s');
+    }
+  }
+}
+
+.form-label,
+legend {
+  font-family: config('font-family-heading', $typography);
+}
+
+.form-check {
+  &__label {
+    font-weight: 400;
+  }
+}
+
+.form-control[type=color] {
+  --spruce-border-radius: 50%;
+}

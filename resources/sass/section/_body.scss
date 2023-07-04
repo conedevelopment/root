@@ -1,0 +1,7 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.app-body {
+  display: flex;
+  flex-direction: column;
+  gap: spacer('m');
+}

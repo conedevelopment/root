@@ -7,11 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     {{-- Styles --}}
-    <link href="{{ URL::asset('vendor/root/favicon.png') }}" rel="icon" sizes="32x32">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&amp;family=IBM+Plex+Sans:wght@400;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ URL::asset('vendor/root/favicon.png') }}" sizes="32x32">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=Open+Sans:wght@400;700&display=swap">
     {{
         Vite::withEntryPoints('resources/sass/app.scss')
             ->useBuildDirectory('vendor/root/build')
@@ -23,23 +22,37 @@
     <title>{{ Config::get('app.name') }}</title>
 </head>
 <body>
-    {{-- App --}}
-    <div class="app">
-        <main class="app-body">
-            <div class="app-body__inner">
-                {{-- @if($alerts->isNotEmpty())
-                    <div class="app-alert">
-                        @foreach($alerts as $alert)
-                            <x-root::alert :alert="$alert"/>
-                        @endforeach
+    <a class="btn btn--primary skip-link" href="#content">Skip to content</a>
+    <div class="l-main">
+        <x-root::layout.sidebar />
+        <main id="content" class="l-main__body" data-item="body">
+            <x-root::layout.header />
+            <div class="app-heading">
+                <div class="container">
+                    <div class="app-heading__inner">
+                        <div class="app-heading__caption">
+                            <h1 class="app-heading__title">@yield('title')</h1>
+                            @hasSection('subtitle')
+                                <div class="app-heading__description">
+                                    <p>@yield('subtitle')</p>
+                                </div>
+                            @endif
+                        </div>
+                       @hasSection('actions')
+                            <div class="app-heading__actions">
+                                @yield('actions')
+                            </div>
+                        @endif
                     </div>
-                @endif --}}
-                @yield('content')
+                </div>
             </div>
+            <div class="container">
+                <div class="app-body">
+                    @yield('content')
+                </div>
+            </div>
+            <x-root::layout.footer />
         </main>
-        <form id="logout-form" action="/logout" method="POST" style="display: none;">
-            @csrf
-        </form>
     </div>
 
     {{-- SVG Icons --}}

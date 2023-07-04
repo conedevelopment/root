@@ -1,0 +1,56 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.app-header {
+  backdrop-filter: saturate(180%) blur(.25rem);
+  background-color: color('background', 'header');
+  border-block-end: 1px solid color('border');
+  inset-block-start: 0;
+  inset-block-start: 0;
+  position: sticky;
+  position: sticky;
+  z-index: 15;
+
+  &__inner {
+    align-items: center;
+    block-size: get-css-variable(--header-block-size);
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer-clamp('s', 'l');
+    justify-content: space-between;
+    margin-inline: get-css-variable(--container-gap);
+  }
+
+  &__column {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    gap: spacer-clamp('s', 'm');
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    gap: spacer-clamp('s', 'm');
+
+    &--secondary {
+      gap: spacer('s');
+    }
+  }
+
+  &__logo {
+    block-size: 1.25rem;
+    display: inline-flex;
+
+    @include breakpoint('md') {
+      display: none;
+    }
+  }
+
+  &__breadcrumb {
+    display: none;
+
+    @include breakpoint('md') {
+      display: flex;
+    }
+  }
+}
