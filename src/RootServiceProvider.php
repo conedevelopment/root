@@ -2,8 +2,11 @@
 
 namespace Cone\Root;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -102,8 +105,23 @@ class RootServiceProvider extends ServiceProvider
             'root', $this->app['config']->get('root.middleware', [])
         );
 
+        $root = $this->app->make(Root::class);
+
+        $this->app['router']
+            ->middleware(['web'])
+            ->domain($root->getDomain())
+            ->prefix($root->getPath())
+            ->as('root.auth.')
+            ->group(function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
+            });
+
         $this->app->make(Root::class)->routes(function (): void {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+
+        RateLimiter::for('root.auth', static function (Request $request): Limit {
+            return Limit::perMinute(6)->by($request->user()?->id ?: $request->ip());
         });
     }
 

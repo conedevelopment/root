@@ -1,5 +1,6 @@
 <?php
 
+use Cone\Root\Http\Middleware\Authenticate;
 use Cone\Root\Http\Middleware\HandleRootRequests;
 
 return [
@@ -42,7 +43,7 @@ return [
 
     'middleware' => [
         'web',
-        'auth',
+        Authenticate::class,
         'verified',
         'can:viewRoot',
         HandleRootRequests::class,
