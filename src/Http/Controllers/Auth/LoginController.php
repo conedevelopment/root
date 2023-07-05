@@ -35,7 +35,12 @@ class LoginController extends Controller
      */
     public function login(Request $request): RedirectResponse
     {
-        if (! $this->attemptLogin($request)) {
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email', 'max:256'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Auth::guard()->attempt($validated, $request->filled('remember'))) {
             throw ValidationException::withMessages([
                 'email' => [__('auth.failed')],
             ]);
@@ -51,20 +56,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $this->clearLoginAttempts($request);
-
-        return Redirect::intended(URL::route('dashboard'));
-    }
-
-    /**
-     * Attempt to log the user into the application.
-     */
-    protected function attemptLogin(Request $request): bool
-    {
-        return Auth::guard()->attempt(
-            $request->only(['email', 'password']),
-            $request->filled('remember')
-        );
+        return Redirect::intended(URL::route('root.dashboard'));
     }
 
     /**
