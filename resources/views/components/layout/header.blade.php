@@ -36,25 +36,19 @@
         </div>
         <div class="app-header__actions">
             <div class="user-menu">
-                <img class="user-menu__avatar" src="https://s.gravatar.com/avatar/0e94d9d2f4c98aa745a1c33aa77446d7a3259a267418eddaaff3422affd5a7f2?s=80&r=g" alt="Adam Laki">
+                <img class="user-menu__avatar" src="{{ $user->avatar }}" alt="{{ $user->name }}">
                 <div class="user-menu__caption">
-                    <span class="user-menu__role">Administrator</span>
-                    <span class="user-menu__display-name">info@adamlaki.com</span>
+                    <span class="user-menu__role">{{ $user->name }}</span>
+                    <span class="user-menu__display-name">{{ $user->email }}</span>
                 </div>
-                <button class="user-menu__toggle" aria-expanded="false" data-action="context" data-context-target="user">
+                <button type="button" class="user-menu__toggle" aria-expanded="false" data-action="context" data-context-target="user">
                     <svg aria-hidden='true' fill='none' focusable='false' height='24' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' stroke='currentColor' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg' class='open-search__icon'>
                         <polyline points='6 9 12 15 18 9'></polyline>
                     </svg>
                 </button>
                 <ul class="context-menu" data-state="closed" data-context-id="user">
                     <li>
-                        <a href="/account/">Account</a>
-                    </li>
-                    <li>
-                        <a href="/settings/">Settings</a>
-                    </li>
-                    <li>
-                        <a href="/sign-in">Log Out</a>
+                        <a href="#">Logout</a>
                     </li>
                 </ul>
             </div>

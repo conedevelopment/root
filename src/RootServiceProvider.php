@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
@@ -58,9 +59,7 @@ class RootServiceProvider extends ServiceProvider
             $this->registerPublishes();
         }
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
-
-        Blade::componentNamespace('Cone\\Root\\View\\Components', 'root');
+        $this->registerViews();
 
         $this->registerRoutes();
     }
@@ -141,5 +140,23 @@ class RootServiceProvider extends ServiceProvider
             Console\Commands\ResourceMake::class,
             Console\Commands\WidgetMake::class,
         ]);
+    }
+
+    /**
+     * Register the views.
+     */
+    protected function registerViews(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
+
+        Blade::componentNamespace('Cone\\Root\\View\\Components', 'root');
+
+        $this->app['view']->composer('root::*', function (View $view): void {
+            $request = $this->app->make('request');
+
+            $view->with([
+                'user' => $request->user(),
+            ]);
+        });
     }
 }
