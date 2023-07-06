@@ -22,7 +22,7 @@
     <title>{{ Config::get('app.name') }}</title>
 </head>
 <body>
-    <a class="btn btn--primary skip-link" href="#content">Skip to content</a>
+    <a class="btn btn--primary skip-link" href="#content">{{ __('Skip to content') }}</a>
     <div class="l-main">
         <x-root::layout.sidebar />
         <main id="content" class="l-main__body" data-item="body">
@@ -54,9 +54,6 @@
             <x-root::layout.footer />
         </main>
     </div>
-
-    {{-- SVG Icons --}}
-    @include('root::icons')
 
     {{-- Scripts --}}
     {{

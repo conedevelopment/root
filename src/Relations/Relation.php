@@ -6,7 +6,6 @@ use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Root;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -199,21 +198,6 @@ abstract class Relation implements Arrayable, Routable
         $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
             return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
-    }
-
-    /**
-     * Handle the routes registered event.
-     */
-    public function routesRegistered(Router $router): void
-    {
-        App::make(Root::class)->breadcrumbs->patterns([
-            $this->getUri() => $this->label,
-            sprintf('%s/create', $this->getUri()) => __('Create'),
-            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
-                return $request->route()->originalParameter($this->getRouteKeyName());
-            },
-            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
-        ]);
     }
 
     /**

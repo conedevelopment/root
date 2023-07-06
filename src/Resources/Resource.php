@@ -480,7 +480,7 @@ class Resource implements Arrayable, Routable
             $this->registerRoutes($router);
         });
 
-        Navigation::locaiton('sidebar')->add($this->toNavigationItem($root->app['request']));
+        Navigation::location('sidebar')->add($this->toNavigationItem($root->app['request']));
     }
 
     /**

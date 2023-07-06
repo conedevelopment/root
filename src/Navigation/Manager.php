@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Navigation;
 
-class Manager
+use Cone\Root\Interfaces\Navigation\Manager as Contract;
+
+class Manager implements Contract
 {
     /**
      * The navigation locations.
@@ -14,7 +16,7 @@ class Manager
      */
     public function location(string $name): Location
     {
-        if (! array_key_exists($name, $this->locations[$name])) {
+        if (! array_key_exists($name, $this->locations)) {
             $this->locations[$name] = new Location($name);
         }
 
