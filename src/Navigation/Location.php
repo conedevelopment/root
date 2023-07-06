@@ -18,4 +18,14 @@ class Location
     {
         $this->name = $name;
     }
+
+    /**
+     * Get the items by their groups.
+     */
+    public function groups(): array
+    {
+        return array_reduce($this->items, static function (array $groups, Item $item): array {
+            return array_merge($groups, [$item->group => [$item]]);
+        }, []);
+    }
 }
