@@ -37,7 +37,8 @@ class ResourceController extends Controller
         }
 
         return ResponseFactory::view('root::resources.index', [
-            //
+            'resource' => $resource,
+            'table' => $resource->toTable($request),
         ]);
     }
 

@@ -26,7 +26,7 @@ class Item
      */
     public function url(string $url): static
     {
-        return $this->setAttribute('url', $url);
+        return $this->setAttribute('url', URL::to($url));
     }
 
     /**

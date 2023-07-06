@@ -25,7 +25,9 @@ class Location
     public function groups(): array
     {
         return array_reduce($this->items, static function (array $groups, Item $item): array {
-            return array_merge($groups, [$item->group => [$item]]);
+            $groups[$item->group][] = $item;
+
+            return $groups;
         }, []);
     }
 }

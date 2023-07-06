@@ -14,6 +14,7 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Navigation\Item as NavigationItem;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
+use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
@@ -395,21 +396,30 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Get the table instance for the resource.
+     */
+    public function toTable(Request $request): Table
+    {
+        $model = $this->getModelInstance();
+
+        return new Table(
+            $this->resolveQuery($request),
+            $this->resolveColumns($request)->authorized($request, $model),
+            $this->resolveFilters($request)->authorized($request, $model),
+            $this->resolveActions($request)->authorized($request, $model),
+        );
+    }
+
+    /**
      * Get the index representation of the resource.
      */
     public function toIndex(Request $request): array
     {
         return [
-            'actions' => $this->resolveActions($request)
-                ->authorized($request)
-                ->visible(ResourceContext::Index->value)
-                ->mapToForm($request, $this->getModelInstance()),
-            'filters' => $this->resolveFilters($request)
-                ->authorized($request)
-                ->mapToForm($request),
-            'items' => $this->mapItems($request),
+            // 'actions' => $this->resolveActions($request)->authorized($request),
+            // 'filters' => $this->resolveFilters($request)->authorized($request),
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            'widgets' => $this->resolveWidgets($request)->authorized($request),
         ];
     }
 
