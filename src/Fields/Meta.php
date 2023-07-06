@@ -201,7 +201,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function getValue(Request $request, Model $model): mixed
+    public function getValue(Model $model): mixed
     {
         $name = $this->getRelationName();
 
@@ -212,7 +212,7 @@ class Meta extends MorphOne
             $model->setRelation($name, $value);
         }
 
-        return parent::getValue($request, $model);
+        return parent::getValue($model);
     }
 
     /**

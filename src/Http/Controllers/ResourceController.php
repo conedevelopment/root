@@ -4,15 +4,16 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Http\Middleware\AuthorizeResource;
+use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 use Illuminate\Support\Facades\URL;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class ResourceController extends Controller
 {
@@ -27,18 +28,17 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(RootRequest $request): Response
     {
-        $resource = $request->route('rootResource');
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
         }
 
-        return Inertia::render(
-            'Resources/Index',
-            $resource->toIndex($request)
-        );
+        return ResponseFactory::view('root::resources.index', [
+            //
+        ]);
     }
 
     /**

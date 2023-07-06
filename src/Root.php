@@ -3,11 +3,11 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Support\Breadcrumbs;
 use Cone\Root\Support\Collections\Resources;
 use Cone\Root\Support\Collections\Widgets;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -54,6 +54,14 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
+    }
+
+    /**
+     * Resolve the Root instance from the container.
+     */
+    public static function instance(): static
+    {
+        return App::make(static::class);
     }
 
     /**

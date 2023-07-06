@@ -249,7 +249,7 @@ abstract class Relation extends Field implements Routable
     /**
      * {@inheritdoc}
      */
-    public function getValue(Request $request, Model $model): mixed
+    public function getValue(Model $model): mixed
     {
         $name = $this->getRelationName();
 

@@ -17,6 +17,7 @@ use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
@@ -37,6 +38,7 @@ class Resource implements Arrayable, Routable
 {
     use Authorizable;
     use ResolvesActions;
+    use ResolvesColumns;
     use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
@@ -64,7 +66,7 @@ class Resource implements Arrayable, Routable
     /**
      * The icon for the resource.
      */
-    protected string $icon = 'inventory-2';
+    protected string $icon = 'archive';
 
     /**
      * Create a new resource instance.
@@ -230,18 +232,18 @@ class Resource implements Arrayable, Routable
      */
     public function filters(Request $request): array
     {
-        $fields = $this->resolveFields($request)
-            ->visible(ResourceContext::Index->value)
-            ->authorized($request, $this->getModelInstance());
+        // $columns = $this->resolveColumns($request)->authorized($request, $this->getModelInstance());
 
-        $searchables = $fields->searchable($request);
+        // $searchables = $columns->searchable($request);
 
-        $sortables = $fields->sortable($request);
+        // $sortables = $columns->sortable($request);
 
-        return array_values(array_filter([
-            $searchables->isNotEmpty() ? Search::make($searchables) : null,
-            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
-        ]));
+        // return array_values(array_filter([
+        //     $searchables->isNotEmpty() ? Search::make($searchables) : null,
+        //     $sortables->isNotEmpty() ? Sort::make($sortables) : null,
+        // ]));
+
+        return [];
     }
 
     /**
@@ -488,17 +490,19 @@ class Resource implements Arrayable, Routable
      */
     public function registerRoutes(Router $router): void
     {
-        $this->__registerRoutes($router);
+        $router->group(['__resource__' => $this->getKey()], function (Router $router) {
+            $this->__registerRoutes($router);
 
-        $request = App::make('request');
+            $request = App::make('request');
 
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveWidgets($request)->registerRoutes($router);
-            $this->resolveExtracts($request)->registerRoutes($router);
-            $this->resolveActions($request)->registerRoutes($router);
-            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                $this->resolveFields($request)->registerRoutes($router);
-                $this->resolveRelations($request)->registerRoutes($router);
+            $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+                $this->resolveWidgets($request)->registerRoutes($router);
+                $this->resolveExtracts($request)->registerRoutes($router);
+                $this->resolveActions($request)->registerRoutes($router);
+                $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
+                    $this->resolveFields($request)->registerRoutes($router);
+                    $this->resolveRelations($request)->registerRoutes($router);
+                });
             });
         });
     }

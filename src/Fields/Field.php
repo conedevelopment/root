@@ -3,42 +3,16 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\HasAttributes;
-use Cone\Root\Traits\Makeable;
+use Cone\Root\Resources\ModelValueHandler;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
-abstract class Field implements Arrayable
+abstract class Field extends ModelValueHandler implements Arrayable
 {
-    use Authorizable;
-    use HasAttributes;
-    use Makeable;
     use ResolvesVisibility;
-
-    /**
-     * Indicates if the field is sortable.
-     */
-    protected bool|Closure $sortable = false;
-
-    /**
-     * Indicates if the field is searchable.
-     */
-    protected bool|Closure $searchable = false;
-
-    /**
-     * The format resolver callback.
-     */
-    protected ?Closure $formatResolver = null;
-
-    /**
-     * The value resolver callback.
-     */
-    protected ?Closure $valueResolver = null;
 
     /**
      * The hydrate resolver callback.
@@ -55,9 +29,9 @@ abstract class Field implements Arrayable
     ];
 
     /**
-     * The Vue component.
+     * The blade component.
      */
-    protected string $component = 'Input';
+    protected string $component = 'root::fields.text';
 
     /**
      * The help text for the field.
@@ -69,17 +43,9 @@ abstract class Field implements Arrayable
      */
     public function __construct(string $label, string $name = null)
     {
-        $this->label($label);
-        $this->name($name ??= Str::of($label)->lower()->snake()->value());
-        $this->id($name);
-    }
+        parent::__construct($label, $name);
 
-    /**
-     * Get the key.
-     */
-    public function getKey(): string
-    {
-        return $this->name;
+        $this->id($this->name);
     }
 
     /**
@@ -91,7 +57,7 @@ abstract class Field implements Arrayable
     }
 
     /**
-     * Get the Vue component.
+     * Get the blade component.
      */
     public function getComponent(): string
     {
@@ -163,50 +129,6 @@ abstract class Field implements Arrayable
     }
 
     /**
-     * Set the sortable attribute.
-     */
-    public function sortable(bool|Closure $value = true): static
-    {
-        $this->sortable = $value;
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is sortable.
-     */
-    public function isSortable(Request $request): bool
-    {
-        if ($this->sortable instanceof Closure) {
-            return call_user_func_array($this->sortable, [$request]);
-        }
-
-        return $this->sortable;
-    }
-
-    /**
-     * Set the searachable attribute.
-     */
-    public function searchable(bool|Closure $value = true): static
-    {
-        $this->searchable = $value;
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is searchable.
-     */
-    public function isSearchable(Request $request): bool
-    {
-        if ($this->searchable instanceof Closure) {
-            return call_user_func_array($this->searchable, [$request]);
-        }
-
-        return $this->searchable;
-    }
-
-    /**
      * Set the help attribute.
      */
     public function help(?string $value = null): static
@@ -214,62 +136,6 @@ abstract class Field implements Arrayable
         $this->help = $value;
 
         return $this;
-    }
-
-    /**
-     * Set the value resolver.
-     */
-    public function value(Closure $callback): static
-    {
-        $this->valueResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the value.
-     */
-    public function resolveValue(Request $request, Model $model): mixed
-    {
-        $value = $this->getValue($request, $model);
-
-        if (is_null($this->valueResolver)) {
-            return $value;
-        }
-
-        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
-    }
-
-    /**
-     * Get the default value from the model.
-     */
-    public function getValue(Request $request, Model $model): mixed
-    {
-        return $model->getAttribute($this->getKey());
-    }
-
-    /**
-     * Set the format resolver.
-     */
-    public function format(Closure $callback): static
-    {
-        $this->formatResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Format the value.
-     */
-    public function resolveFormat(Request $request, Model $model): mixed
-    {
-        $value = $this->resolveValue($request, $model);
-
-        if (is_null($this->formatResolver)) {
-            return $value;
-        }
-
-        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
 
     /**
@@ -381,8 +247,6 @@ abstract class Field implements Arrayable
     {
         return array_merge($this->resolveAttributes($request, $model), [
             'formattedValue' => $this->resolveFormat($request, $model),
-            'searchable' => $this->isSearchable($request),
-            'sortable' => $this->isSortable($request),
             'value' => $this->resolveValue($request, $model),
         ]);
     }

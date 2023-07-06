@@ -41,22 +41,6 @@ class Fields extends Collection
     }
 
     /**
-     * Filter the searchable fields.
-     */
-    public function searchable(Request $request): static
-    {
-        return $this->filter->isSearchable($request);
-    }
-
-    /**
-     * Filter the sortable fields.
-     */
-    public function sortable(Request $request): static
-    {
-        return $this->filter->isSortable($request);
-    }
-
-    /**
      * Persist the request value on the model.
      */
     public function persist(Request $request, Model $model): void
