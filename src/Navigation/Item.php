@@ -18,7 +18,7 @@ class Item
         $this->url($url);
         $this->label($label);
         $this->icon('archive');
-        $this->group(__('Default'));
+        $this->group(__('General'));
     }
 
     /**
