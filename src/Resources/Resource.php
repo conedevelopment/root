@@ -304,33 +304,6 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Map the items.
-     */
-    public function mapItems(Request $request): array
-    {
-        $filters = $this->resolveFilters($request)->authorized($request);
-
-        $query = $this->resolveQuery($request);
-
-        $items = $filters->apply($request, $query)
-            ->latest()
-            ->paginate($request->input('per_page'))
-            ->withQueryString()
-            ->setPath($this->getUri())
-            ->through(function (Model $model) use ($request): array {
-                return $this->newItem($model)->toDisplay(
-                    $request,
-                    $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Index->value)
-                );
-            })
-            ->toArray();
-
-        return array_merge($items, [
-            'query' => $filters->mapToQuery($request, $query),
-        ]);
-    }
-
-    /**
      * Make a new item instance.
      */
     public function newItem(Model $model): Item
@@ -402,12 +375,12 @@ class Resource implements Arrayable, Routable
     {
         $model = $this->getModelInstance();
 
-        return new Table(
+        return (new Table(
             $this->resolveQuery($request),
             $this->resolveColumns($request)->authorized($request, $model),
             $this->resolveFilters($request)->authorized($request, $model),
             $this->resolveActions($request)->authorized($request, $model),
-        );
+        ))->url($this->getUri());
     }
 
     /**
@@ -416,9 +389,9 @@ class Resource implements Arrayable, Routable
     public function toIndex(Request $request): array
     {
         return [
-            // 'actions' => $this->resolveActions($request)->authorized($request),
-            // 'filters' => $this->resolveFilters($request)->authorized($request),
+            'resource' => $this,
             'title' => $this->getName(),
+            'table' => $this->toTable($request)->build($request),
             'widgets' => $this->resolveWidgets($request)->authorized($request),
         ];
     }

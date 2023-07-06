@@ -9,15 +9,11 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Renderable, Routable
+abstract class Widget implements Routable
 {
     use Authorizable;
     use Makeable;
@@ -30,14 +26,9 @@ abstract class Widget implements Arrayable, Renderable, Routable
     protected bool $async = false;
 
     /**
-     * The Vue component.
+     * The blade component.
      */
-    protected string $component = 'Widget';
-
-    /**
-     * The Blade template.
-     */
-    protected string $template;
+    protected string $component = 'root::widgets.widget';
 
     /**
      * The data resolver callback.
@@ -138,17 +129,6 @@ abstract class Widget implements Arrayable, Renderable, Routable
     }
 
     /**
-     * Get the evaluated contents of the object.
-     */
-    public function render(): string
-    {
-        return View::make(
-            $this->getTemplate(),
-            App::call([$this, 'resolveData'])
-        )->render();
-    }
-
-    /**
      * The routes that should be registered.
      */
     public function routes(Router $router): void
@@ -156,20 +136,5 @@ abstract class Widget implements Arrayable, Renderable, Routable
         if ($this->async) {
             $router->get('/', WidgetController::class);
         }
-    }
-
-    /**
-     * Get the instance as an array.
-     */
-    public function toArray(): array
-    {
-        return [
-            'async' => $this->async,
-            'component' => $this->getComponent(),
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-            'template' => $this->async ? null : $this->render(),
-            'url' => $this->async ? $this->getUri() : null,
-        ];
     }
 }

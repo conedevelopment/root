@@ -1,0 +1,1 @@
+<td>In stock</td>

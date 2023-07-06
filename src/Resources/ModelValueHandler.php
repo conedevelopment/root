@@ -98,4 +98,36 @@ abstract class ModelValueHandler
 
         return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
+
+    /**
+     * Set the given attribute.
+     */
+    public function __set(string $key, mixed $value): void
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Get the given attribute.
+     */
+    public function __get(string $key): mixed
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
+     * Determine if the given attribute exists.
+     */
+    public function __isset(string $key): bool
+    {
+        return $this->hasAttribute($key);
+    }
+
+    /**
+     * Remove the given attribute.
+     */
+    public function __unset(string $key): void
+    {
+        $this->removeAttribute($key);
+    }
 }

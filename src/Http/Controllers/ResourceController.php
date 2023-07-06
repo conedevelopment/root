@@ -36,10 +36,10 @@ class ResourceController extends Controller
             $this->authorize('viewAny', $resource->getModel());
         }
 
-        return ResponseFactory::view('root::resources.index', [
-            'resource' => $resource,
-            'table' => $resource->toTable($request),
-        ]);
+        return ResponseFactory::view(
+            'root::resources.index',
+            $resource->toIndex($request)
+        );
     }
 
     /**
