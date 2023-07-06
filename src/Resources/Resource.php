@@ -11,7 +11,9 @@ use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Navigation\Item as NavigationItem;
 use Cone\Root\Root;
+use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
@@ -464,19 +466,9 @@ class Resource implements Arrayable, Routable
     /**
      * Get the navigation compatible format of the resource.
      */
-    public function toNavigation(Request $request): array
+    public function toNavigationItem(Request $request): NavigationItem
     {
-        return array_merge($this->toArray(), [
-            'links' => $this->resolveExtracts($request)
-                ->authorized($request)
-                ->map(static function (Extract $extract): array {
-                    return [
-                        'url' => $extract->getUri(),
-                        'label' => $extract->getName(),
-                    ];
-                })
-                ->toArray(),
-        ]);
+        return (new NavigationItem($this->getUri(), $this->getName()))->icon($this->icon);
     }
 
     /**
@@ -487,6 +479,8 @@ class Resource implements Arrayable, Routable
         $root->routes(function (Router $router): void {
             $this->registerRoutes($router);
         });
+
+        Navigation::locaiton('sidebar')->add($this->toNavigationItem($root->app['request']));
     }
 
     /**
@@ -542,13 +536,6 @@ class Resource implements Arrayable, Routable
      */
     public function routesRegistered(Router $router): void
     {
-        App::make(Root::class)->breadcrumbs->patterns([
-            $this->getUri() => $this->getName(),
-            sprintf('%s/create', $this->getUri()) => __('Create'),
-            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
-                return $request->route()->originalParameter($this->getRouteKeyName());
-            },
-            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
-        ]);
+        //
     }
 }

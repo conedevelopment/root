@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Support\Facades;
 
-use Closure;
 use Cone\Root\Interfaces\Navigation\Manager;
 use Illuminate\Support\Facades\Facade;
 
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  *
  * @see \Cone\Root\Interfaces\Navigation\Manager
  */
-class Conversion extends Facade
+class Navigation extends Facade
 {
     /**
      * Get the registered name of the component.

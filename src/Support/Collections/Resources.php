@@ -36,12 +36,4 @@ class Resources extends Collection
     {
         return $this->filter->authorized($request)->values();
     }
-
-    /**
-     * Map the resources into navigation compatible format.
-     */
-    public function mapToNavigation(Request $request): array
-    {
-        return $this->map->toNavigation($request)->toArray();
-    }
 }

@@ -47,11 +47,6 @@ class Root
     public readonly Widgets $widgets;
 
     /**
-     * The breadcrumbs.
-     */
-    public readonly Breadcrumbs $breadcrumbs;
-
-    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -59,7 +54,6 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
-        $this->breadcrumbs = new Breadcrumbs();
     }
 
     /**
@@ -69,10 +63,6 @@ class Root
     {
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
-        }
-
-        if ($this->getPath() !== '/' && $this->app['request']->path() !== trim($this->getPath(), '/')) {
-            $this->breadcrumbs->pattern($this->getPath(), __('Dashboard'));
         }
 
         $this->resources->each->boot($this);
