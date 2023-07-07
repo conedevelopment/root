@@ -1,27 +1,43 @@
-<nav class="pagination" aria-label="Posts">
-    <ul class="pagination__links">
-        <li>
-            <span class="btn btn--sm btn--outline-primary" aria-current="page">
-                1
-            </span>
-        </li>
-        <li>
-            <a class="btn btn--sm btn--outline-primary" href="#">2</a>
-        </li>
-        <li>
-            <a class="btn btn--sm btn--outline-primary" href="#">3</a>
-        </li>
-        <li>
-            <a class="btn btn--sm btn--outline-primary" href="#">4</a>
-        </li>
-        <li>
-            <span>...</span>
-        </li>
-        <li>
-            <a class="btn btn--sm btn--outline-primary" href="#">10</a>
-        </li>
-        <li>
-            <a class="btn btn--sm btn--outline-primary" href="#">Next</a>
-        </li>
-    </ul>
-</nav>
+@if ($paginator->hasPages())
+    <nav class="pagination" aria-label="">
+        <ul class="pagination__links">
+            @if(! $paginator->onFirstPage())
+                <li>
+                    <a href="{{ $paginator->previousPageUrl() }}" class="btn btn--sm btn--outline-primary" rel="prev">
+                        {{ __('Previous') }}
+                    </a>
+                </li>
+            @endif
+            @foreach($elements as $element)
+                @if(is_string($element))
+                    <li>
+                        <span class="btn btn--sm btn--outline-primary" aria-disabled="true">
+                            {{ $element }}
+                        </span>
+                    </li>
+                @elseif(is_array($element))
+                    @foreach ($element as $page => $url)
+                        <li>
+                            @if ($page === $paginator->currentPage())
+                                <span class="btn btn--sm btn--outline-primary" aria-disabled="true" aria-current="page">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="btn btn--sm btn--outline-primary"   >
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        </li>
+                    @endforeach
+                @endif
+            @endforeach
+            @if(! $paginator->onFirstPage())
+                <li>
+                    <a href="{{ $paginator->hasMorePages() }}" class="btn btn--sm btn--outline-primary" rel="next">
+                        {{ __('Next') }}
+                    </a>
+                </li>
+            @endif
+        </ul>
+    </nav>
+@endif

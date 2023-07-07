@@ -1,11 +1,11 @@
 <tr>
     <td>
         <label class="form-check" aria-label="Select LuminoTech LED Desk Lamp">
-            <input class="form-check__control" type="checkbox" value="1" name="1" />
+            <input class="form-check__control" type="checkbox" value="1" name="1">
         </label>
     </td>
     @foreach($columns as $column)
-        <x-root::table.column :model="$model" :column="$column" />
+        <x-dynamic-component :component="$column->getComponent()" :model="$model" :column="$column" />
     @endforeach
     <td>
         <div class="data-table__actions">
@@ -20,7 +20,7 @@
                 </a>
             @endcan
             @can('delete', $model)
-                <form action="" method="POST">
+                <form action="#" method="POST">
                     @csrf
                     @method('DELETE')
                     <a href="#" class="btn btn--light btn--sm btn--icon" aria-label="Delete">

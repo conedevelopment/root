@@ -37,6 +37,11 @@ class Table
     protected ?string $url = null;
 
     /**
+     * The table key.
+     */
+    protected ?string $key = null;
+
+    /**
      * Create a new table instance.
      */
     public function __construct(Builder $query, Columns $columns, Filters $filters, Actions $actions)
@@ -53,6 +58,16 @@ class Table
     public function url(string $url): static
     {
         $this->url = URL::to($url);
+
+        return $this;
+    }
+
+    /**
+     * Set the table key.
+     */
+    public function key(string $key): static
+    {
+        $this->key = $key;
 
         return $this;
     }

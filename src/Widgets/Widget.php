@@ -60,19 +60,11 @@ abstract class Widget implements Routable
     }
 
     /**
-     * Get the Vue component.
+     * Get the blade component.
      */
     public function getComponent(): string
     {
         return $this->component;
-    }
-
-    /**
-     * Get the Blade template.
-     */
-    public function getTemplate(): string
-    {
-        return $this->template;
     }
 
     /**

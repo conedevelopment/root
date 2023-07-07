@@ -1,1 +1,1 @@
-<td>In stock</td>
+<td>{!! $value !!}</td>
