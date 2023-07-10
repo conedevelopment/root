@@ -18,7 +18,6 @@ use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
@@ -39,7 +38,6 @@ class Resource implements Arrayable, Routable
 {
     use Authorizable;
     use ResolvesActions;
-    use ResolvesColumns;
     use ResolvesExtracts;
     use ResolvesFields;
     use ResolvesFilters;
@@ -373,14 +371,10 @@ class Resource implements Arrayable, Routable
      */
     public function toTable(Request $request): Table
     {
-        $model = $this->getModelInstance();
-
-        return (new Table(
+        return new Table(
             $this->resolveQuery($request),
-            $this->resolveColumns($request)->authorized($request, $model),
-            $this->resolveFilters($request)->authorized($request, $model),
-            $this->resolveActions($request)->authorized($request, $model),
-        ))->url($this->getUri());
+            $this->getUri()
+        );
     }
 
     /**
@@ -391,7 +385,7 @@ class Resource implements Arrayable, Routable
         return [
             'resource' => $this,
             'title' => $this->getName(),
-            'table' => $this->toTable($request)->build($request),
+            'table' => $this->toTable($request),
             'widgets' => $this->resolveWidgets($request)->authorized($request),
         ];
     }

@@ -42,8 +42,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($items as $model)
-                            <x-root::table.row :model="$model" :columns="$columns" />
+                        @foreach($items as $cells)
+                            <tr>
+                                @foreach($cells as $cell)
+                                    {!! $cell->render() !!}
+                                @endforeach
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -62,7 +66,7 @@
                     <p>{{ __('Showing :from to :to of :total results', ['from' => $items->firstItem(), 'to' => $items->lastItem(), 'total' => $items->total()]) }}</p>
                 </div>
 
-                {!! $items->links('root::components.table.pagination') !!}
+                {!! $items->links('root::table.pagination') !!}
             </div>
         </div>
     </div>

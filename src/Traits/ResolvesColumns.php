@@ -46,7 +46,7 @@ trait ResolvesColumns
             $this->columns = Columns::make()->register($this->columns($request));
 
             if (! is_null($this->columnsResolver)) {
-                $this->columns->register(call_user_func_array($this->columnsResolver, [$request]));
+                $this->columns->register(call_user_func_array($this->columnsResolver, [$request, $this]));
             }
 
             $this->columns->each(function (Column $column) use ($request): void {
@@ -63,5 +63,13 @@ trait ResolvesColumns
     protected function resolveColumn(Request $request, Column $column): void
     {
         //
+    }
+
+    /**
+     * Make a new table column.
+     */
+    public function column(string $label, ?string $name = null): Column
+    {
+        return new Column($label, $name);
     }
 }

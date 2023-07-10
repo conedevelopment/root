@@ -13,5 +13,5 @@
     </div>
 @endif
 
-<x-root::table.table :items="$table['items']" :columns="$table['columns']" />
+{!! $table->render() !!}
 @endsection

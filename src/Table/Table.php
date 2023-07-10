@@ -2,34 +2,28 @@
 
 namespace Cone\Root\Table;
 
-use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Support\Collections\Filters;
+use Cone\Root\Interfaces\Renderable;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesColumns;
+use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
-class Table
+class Table implements Renderable
 {
+    use ResolvesColumns;
+    use ResolvesActions;
+    use ResolvesFilters;
+
     /**
      * The query instance.
      */
     protected Builder $query;
-
-    /**
-     * The columns.
-     */
-    protected Columns $columns;
-
-    /**
-     * The filters.
-     */
-    protected Filters $filters;
-
-    /**
-     * The actions.
-     */
-    protected Actions $actions;
 
     /**
      * The base url.
@@ -42,14 +36,17 @@ class Table
     protected ?string $key = null;
 
     /**
+     * The blade tempalte.
+     */
+    protected string $template = 'root::table.table';
+
+    /**
      * Create a new table instance.
      */
-    public function __construct(Builder $query, Columns $columns, Filters $filters, Actions $actions)
+    public function __construct(Builder $query, string $url = null)
     {
         $this->query = $query;
-        $this->columns = $columns;
-        $this->filters = $filters;
-        $this->actions = $actions;
+        $this->url($url);
     }
 
     /**
@@ -82,19 +79,47 @@ class Table
             ->latest()
             ->paginate($request->input('per_page'))
             ->setPath($this->url ?: $request->path())
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function (Model $model) use ($request): array {
+                return $this->resolveColumns($request)
+                    ->map(static function (Column $column) use ($model): Cell {
+                        return $column->toCell($model);
+                    })
+                    ->prepend(new SelectCell($model, new Column('')))
+                    ->push(new ActionsCell($model, new Column('')))
+                    ->all();
+            });
     }
 
     /**
-     * Build the table data.
+     * Get the blade template.
      */
-    public function build(Request $request): array
+    public function template(): string
+    {
+        return $this->template;
+    }
+
+    /**
+     * Get the view data.
+     */
+    public function data(Request $request): array
     {
         return [
+            'columns' => $this->resolveColumns($request),
+            'actions' => $this->resolveActions($request),
+            'filters' => $this->resolveFilters($request),
             'items' => $this->paginate($request),
-            'columns' => $this->columns,
-            'actions' => $this->actions,
-            'filters' => $this->filters,
         ];
+    }
+
+    /**
+     * Render the table.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make(
+            $this->template(),
+            App::call([$this, 'data'])
+        );
     }
 }

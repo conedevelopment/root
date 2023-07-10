@@ -4,14 +4,10 @@ namespace Cone\Root\Table;
 
 use Closure;
 use Cone\Root\Resources\ModelValueHandler;
+use Illuminate\Database\Eloquent\Model;
 
 class Column extends ModelValueHandler
 {
-    /**
-     * The blade component.
-     */
-    protected string $component = 'root::table.column';
-
     /**
      * Indicates if the field is sortable.
      */
@@ -21,14 +17,6 @@ class Column extends ModelValueHandler
      * Indicates if the field is searchable.
      */
     protected bool|Closure $searchable = false;
-
-    /**
-     * Get the blade component.
-     */
-    public function getComponent(): string
-    {
-        return $this->component;
-    }
 
     /**
      * Set the sortable attribute.
@@ -72,5 +60,13 @@ class Column extends ModelValueHandler
         }
 
         return $this->searchable;
+    }
+
+    /**
+     * Convert the column to a cell.
+     */
+    public function toCell(Model $model): Cell
+    {
+        return new Cell($model, $this);
     }
 }
