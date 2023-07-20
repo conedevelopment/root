@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Actions;
 
-use Closure;
-use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Routable;
@@ -12,10 +10,10 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesQuery;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -30,15 +28,11 @@ abstract class Action implements Arrayable, Responsable, Routable
     use Authorizable;
     use Makeable;
     use ResolvesFields;
+    use ResolvesQuery;
     use ResolvesVisibility;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
-
-    /**
-     * The query resolver callback.
-     */
-    protected ?Closure $queryResolver = null;
 
     /**
      * Indicates if the action is descrtuctive.
@@ -136,30 +130,6 @@ abstract class Action implements Arrayable, Responsable, Routable
         );
 
         return $this->toResponse($request);
-    }
-
-    /**
-     * Set the query resolver.
-     *
-     * @return $this
-     */
-    public function withQuery(Closure $callback): static
-    {
-        $this->queryResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the query for the extract.
-     */
-    public function resolveQuery(Request $request): Builder
-    {
-        if (is_null($this->queryResolver)) {
-            throw new QueryResolutionException();
-        }
-
-        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**

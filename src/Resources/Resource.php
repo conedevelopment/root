@@ -2,13 +2,9 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Actions\Action;
 use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Extracts\Extract;
-use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
-use Cone\Root\Filters\Search;
-use Cone\Root\Filters\Sort;
+use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Navigation\Item as NavigationItem;
@@ -17,14 +13,10 @@ use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesExtracts;
-use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
 use Cone\Root\Widgets\Widget;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,13 +26,10 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Routable
+class Resource implements Routable
 {
     use Authorizable;
-    use ResolvesActions;
     use ResolvesExtracts;
-    use ResolvesFields;
-    use ResolvesFilters;
     use ResolvesRelations;
     use ResolvesWidgets;
     use RegistersRoutes {
@@ -66,6 +55,16 @@ class Resource implements Arrayable, Routable
      * The icon for the resource.
      */
     protected string $icon = 'archive';
+
+    /**
+     * The form instance.
+     */
+    protected ?Form $form = null;
+
+    /**
+     * The table instance.
+     */
+    protected ?Table $table = null;
 
     /**
      * Create a new resource instance.
@@ -166,19 +165,6 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Get the resource abilities.
-     */
-    public function getAbilities(): array
-    {
-        $policy = $this->getPolicy();
-
-        return [
-            'viewAny' => is_null($policy) || Gate::check('viewAny', $this->getModel()),
-            'create' => is_null($policy) || Gate::check('create', $this->getModel()),
-        ];
-    }
-
-    /**
      * Set the relations to eagerload.
      */
     public function with(array $relations): static
@@ -227,59 +213,6 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Define the filters for the resource.
-     */
-    public function filters(Request $request): array
-    {
-        // $columns = $this->resolveColumns($request)->authorized($request, $this->getModelInstance());
-
-        // $searchables = $columns->searchable($request);
-
-        // $sortables = $columns->sortable($request);
-
-        // return array_values(array_filter([
-        //     $searchables->isNotEmpty() ? Search::make($searchables) : null,
-        //     $sortables->isNotEmpty() ? Sort::make($sortables) : null,
-        // ]));
-
-        return [];
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the filter instance.
-     */
-    protected function resolveFilter(Request $request, Filter $filter): void
-    {
-        $filter->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the action instance.
-     */
-    protected function resolveAction(Request $request, Action $action): void
-    {
-        $action->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->resolveFilters($request)
-                ->authorized($request)
-                ->apply($request, $this->resolveQuery($request));
-        });
-    }
-
-    /**
      * Handle the resolving event on the extract instance.
      */
     protected function resolveExtract(Request $request, Extract $extract): void
@@ -287,7 +220,7 @@ class Resource implements Arrayable, Routable
         $extract->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
         })->withQuery(function (Request $request): Builder {
-            return $this->resolveQuery($request);
+            return $this->query($request);
         });
     }
 
@@ -298,16 +231,6 @@ class Resource implements Arrayable, Routable
     {
         $widget->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Make a new item instance.
-     */
-    public function newItem(Model $model): Item
-    {
-        return (new Item($model))->url(function () use ($model): string {
-            return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
         });
     }
 
@@ -352,29 +275,31 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Get the instance as an array.
-     */
-    public function toArray(): array
-    {
-        return [
-            'abilities' => $this->getAbilities(),
-            'icon' => $this->getIcon(),
-            'key' => $this->getKey(),
-            'modelName' => $this->getModelName(),
-            'name' => $this->getName(),
-            'url' => $this->getUri(),
-        ];
-    }
-
-    /**
      * Get the table instance for the resource.
      */
     public function toTable(Request $request): Table
     {
-        return new Table(
-            $this->resolveQuery($request),
-            $this->getUri()
-        );
+        if (is_null($this->table)) {
+            $this->table = Table::make()->query(function () use ($request): Builder {
+                return $this->resolveQuery($request);
+            });
+        }
+
+        return $this->table;
+    }
+
+    /**
+     * Get the form instance for the resource.
+     */
+    public function toForm(Request $request): Form
+    {
+        if (is_null($this->form)) {
+            $this->form = Form::make()->model(function () use ($request): Model {
+                return $request->route($this->getRouteKeyName(), $this->getModelInstance());
+            });
+        }
+
+        return $this->form;
     }
 
     /**
@@ -475,9 +400,10 @@ class Resource implements Arrayable, Routable
             $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
                 $this->resolveWidgets($request)->registerRoutes($router);
                 $this->resolveExtracts($request)->registerRoutes($router);
-                $this->resolveActions($request)->registerRoutes($router);
+                $this->toTable($request)->registerRoutes($router);
+
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                    $this->resolveFields($request)->registerRoutes($router);
+                    $this->toForm($request)->registerRoutes($router);
                     $this->resolveRelations($request)->registerRoutes($router);
                 });
             });

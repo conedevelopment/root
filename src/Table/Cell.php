@@ -48,7 +48,7 @@ class Cell implements Renderable
     public function data(Request $request): array
     {
         return [
-            'formattedValue' => $this->column->resolveFormat($request, $this->model),
+            'formattedValue' => $this->column->resolveFormat($this->model),
         ];
     }
 

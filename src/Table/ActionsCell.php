@@ -18,6 +18,7 @@ class ActionsCell extends Cell
     {
         return [
             'model' => $this->model,
+            'url' => $this->column->resolveValue($this->model),
         ];
     }
 }

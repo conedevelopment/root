@@ -3,16 +3,20 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Resources\ModelValueHandler;
-use Cone\Root\Traits\ResolvesVisibility;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 
-abstract class Field extends ModelValueHandler implements Arrayable
+abstract class Field extends ModelValueHandler implements Renderable
 {
-    use ResolvesVisibility;
+    /**
+     * The blade template.
+     */
+    protected string $template = 'root::form.fields.text';
 
     /**
      * The hydrate resolver callback.
@@ -27,11 +31,6 @@ abstract class Field extends ModelValueHandler implements Arrayable
         'create' => [],
         'update' => [],
     ];
-
-    /**
-     * The blade component.
-     */
-    protected string $component = 'root::fields.text';
 
     /**
      * The help text for the field.
@@ -54,14 +53,6 @@ abstract class Field extends ModelValueHandler implements Arrayable
     public function getUriKey(): string
     {
         return $this->getKey();
-    }
-
-    /**
-     * Get the blade component.
-     */
-    public function getComponent(): string
-    {
-        return $this->component;
     }
 
     /**
@@ -207,61 +198,30 @@ abstract class Field extends ModelValueHandler implements Arrayable
     }
 
     /**
-     * Resolve the attributes.
+     * Get the blade template.
      */
-    public function resolveAttributes(Request $request, Model $model): array
+    public function template(): string
     {
-        return array_reduce(
-            array_keys($this->attributes),
-            function (array $attributes, string $key) use ($request, $model): mixed {
-                return array_merge($attributes, [$key => $this->resolveAttribute($request, $model, $key)]);
-            },
-            []
+        return $this->template;
+    }
+
+    /**
+     * Get the data for the view.
+     */
+    public function data(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Render the field.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make(
+            $this->template(),
+            App::call([$this, 'data'])
         );
-    }
-
-    /**
-     * Resolve the given attribute.
-     */
-    public function resolveAttribute(Request $request, Model $model, string $key): mixed
-    {
-        $value = $this->getAttribute($key);
-
-        return $value instanceof Closure
-                ? call_user_func_array($value, [$request, $model])
-                : $value;
-    }
-
-    /**
-     * Get the instance as an array.
-     */
-    public function toArray(): array
-    {
-        return $this->getAttributes();
-    }
-
-    /**
-     * Get the display representation of the field.
-     */
-    public function toDisplay(Request $request, Model $model): array
-    {
-        return array_merge($this->resolveAttributes($request, $model), [
-            'formattedValue' => $this->resolveFormat($request, $model),
-            'value' => $this->resolveValue($request, $model),
-        ]);
-    }
-
-    /**
-     * Get the input representation of the field.
-     */
-    public function toInput(Request $request, Model $model): array
-    {
-        return array_merge($this->resolveAttributes($request, $model), [
-            'component' => $this->getComponent(),
-            'formattedValue' => $this->resolveFormat($request, $model),
-            'help' => $this->help,
-            'value' => $this->resolveValue($request, $model),
-        ]);
     }
 
     /**

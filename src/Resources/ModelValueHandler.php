@@ -7,7 +7,6 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 abstract class ModelValueHandler
@@ -56,7 +55,7 @@ abstract class ModelValueHandler
     /**
      * Resolve the value.
      */
-    public function resolveValue(Request $request, Model $model): mixed
+    public function resolveValue(Model $model): mixed
     {
         $value = $this->getValue($model);
 
@@ -64,7 +63,7 @@ abstract class ModelValueHandler
             return $value;
         }
 
-        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
+        return call_user_func_array($this->valueResolver, [$model, $value]);
     }
 
     /**
@@ -88,15 +87,41 @@ abstract class ModelValueHandler
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Model $model): mixed
     {
-        $value = $this->resolveValue($request, $model);
+        $value = $this->resolveValue($model);
 
         if (is_null($this->formatResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
+        return call_user_func_array($this->formatResolver, [$model, $value]);
+    }
+
+    /**
+     * Resolve the attributes.
+     */
+    public function resolveAttributes(Model $model): array
+    {
+        return array_reduce(
+            array_keys($this->attributes),
+            function (array $attributes, string $key) use ($model): mixed {
+                return array_merge($attributes, [$key => $this->resolveAttribute($model, $key)]);
+            },
+            []
+        );
+    }
+
+    /**
+     * Resolve the given attribute.
+     */
+    public function resolveAttribute(Model $model, string $key): mixed
+    {
+        $value = $this->getAttribute($key);
+
+        return $value instanceof Closure
+                ? call_user_func_array($value, [$model])
+                : $value;
     }
 
     /**

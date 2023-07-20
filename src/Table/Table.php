@@ -2,38 +2,34 @@
 
 namespace Cone\Root\Table;
 
+use Cone\Root\Actions\Action;
 use Cone\Root\Interfaces\Renderable;
+use Cone\Root\Interfaces\Routable;
+use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\URL;
 
-class Table implements Renderable
+class Table implements Renderable, Routable
 {
-    use ResolvesColumns;
+    use Makeable;
     use ResolvesActions;
+    use ResolvesColumns;
     use ResolvesFilters;
-
-    /**
-     * The query instance.
-     */
-    protected Builder $query;
-
-    /**
-     * The base url.
-     */
-    protected ?string $url = null;
-
-    /**
-     * The table key.
-     */
-    protected ?string $key = null;
+    use ResolvesQuery;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
 
     /**
      * The blade tempalte.
@@ -41,32 +37,15 @@ class Table implements Renderable
     protected string $template = 'root::table.table';
 
     /**
-     * Create a new table instance.
+     * Handle the resolving event on the action instance.
      */
-    public function __construct(Builder $query, string $url = null)
+    protected function resolveAction(Request $request, Action $action): void
     {
-        $this->query = $query;
-        $this->url($url);
-    }
-
-    /**
-     * Set the table URL.
-     */
-    public function url(string $url): static
-    {
-        $this->url = URL::to($url);
-
-        return $this;
-    }
-
-    /**
-     * Set the table key.
-     */
-    public function key(string $key): static
-    {
-        $this->key = $key;
-
-        return $this;
+        $action->query(function (Request $request): Builder {
+            return $this->resolveFilters($request)
+                ->authorized($request)
+                ->apply($request, $this->resolveQuery());
+        });
     }
 
     /**
@@ -74,19 +53,23 @@ class Table implements Renderable
      */
     public function paginate(Request $request): LengthAwarePaginator
     {
-        return $this->filters
-            ->apply($request, $this->query)
+        $url = $this->replaceRoutePlaceholders($request->route());
+
+        return $this->resolveFilters($request)
+            ->apply($request, $this->resolveQuery())
             ->latest()
             ->paginate($request->input('per_page'))
-            ->setPath($this->url ?: $request->path())
+            ->setPath($url)
             ->withQueryString()
-            ->through(function (Model $model) use ($request): array {
+            ->through(function (Model $model) use ($request, $url): array {
                 return $this->resolveColumns($request)
                     ->map(static function (Column $column) use ($model): Cell {
                         return $column->toCell($model);
                     })
-                    ->prepend(new SelectCell($model, new Column('')))
-                    ->push(new ActionsCell($model, new Column('')))
+                    ->when($this->resolveActions($request)->isNotEmpty(), static function (Actions $actions) use ($model): void {
+                        $actions->prepend(new SelectCell($model, new Column('')));
+                    })
+                    ->push(new ActionsCell($model, Column::make('')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey()))))
                     ->all();
             });
     }
@@ -121,5 +104,23 @@ class Table implements Renderable
             $this->template(),
             App::call([$this, 'data'])
         );
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return '';
+    }
+
+    /**
+     * Register the routes.
+     */
+    public function registerRoutes(Router $router): void
+    {
+        $this->__registerRoutes($router);
+
+        $this->resolveActions(App::make('request'))->registerRoutes($router);
     }
 }

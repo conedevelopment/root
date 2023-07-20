@@ -2,9 +2,7 @@
 
 namespace Cone\Root\Extracts;
 
-use Closure;
 use Cone\Root\Actions\Action;
-use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
@@ -17,6 +15,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
+use Cone\Root\Traits\ResolvesQuery;
 use Cone\Root\Traits\ResolvesWidgets;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
@@ -35,14 +34,10 @@ abstract class Extract implements Arrayable, Routable
     use ResolvesFields;
     use ResolvesFilters;
     use ResolvesWidgets;
+    use ResolvesQuery;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
-
-    /**
-     * The query resolver callback.
-     */
-    protected ?Closure $queryResolver = null;
 
     /**
      * Get the key.
@@ -66,28 +61,6 @@ abstract class Extract implements Arrayable, Routable
     public function getName(): string
     {
         return __(Str::of(static::class)->classBasename()->headline()->value());
-    }
-
-    /**
-     * Set the query resolver.
-     */
-    public function withQuery(Closure $callback): static
-    {
-        $this->queryResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the query for the extract.
-     */
-    public function resolveQuery(Request $request): Builder
-    {
-        if (is_null($this->queryResolver)) {
-            throw new QueryResolutionException();
-        }
-
-        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**

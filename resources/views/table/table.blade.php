@@ -16,12 +16,14 @@
                 <table class="table table--hover">
                     <thead>
                         <tr>
-                            <th style="width: 3.25rem;">
-                                <span class="sr-only">Select</span>
-                                <label class="form-check" aria-label="Select all item">
-                                    <input class="form-check__control" type="checkbox" value="1" name="select-all" />
-                                </label>
-                            </th>
+                            @if($actions->isNotEmpty())
+                                <th style="width: 3.25rem;">
+                                    <span class="sr-only">{{ __('Select') }}</span>
+                                    <label class="form-check" aria-label="{{ __('Select all items') }}">
+                                        <input class="form-check__control" type="checkbox">
+                                    </label>
+                                </th>
+                            @endif
                             @foreach($columns as $column)
                                 <th scope="col">
                                     @if($column->isSortable())
