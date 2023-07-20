@@ -5,15 +5,25 @@ namespace Cone\Root\Form\Fields;
 use Closure;
 use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Renderable;
-use Cone\Root\Resources\ModelValueHandler;
+use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasAttributes;
+use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\ResolvesModelValue;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 
-abstract class Field extends ModelValueHandler implements Renderable
+abstract class Field implements Renderable
 {
+    use Authorizable;
+    use HasAttributes;
+    use Makeable;
+    use ResolvesModelValue;
+
     /**
      * The blade template.
      */
@@ -24,6 +34,9 @@ abstract class Field extends ModelValueHandler implements Renderable
      */
     protected ?Closure $hydrateResolver = null;
 
+    /**
+     * The form instance.
+     */
     protected Form $form;
 
     /**
@@ -36,7 +49,12 @@ abstract class Field extends ModelValueHandler implements Renderable
     ];
 
     /**
-     * The help text for the field.
+     * The label.
+     */
+    protected string $label;
+
+    /**
+     * The help text.
      */
     protected ?string $help = null;
 
@@ -45,11 +63,19 @@ abstract class Field extends ModelValueHandler implements Renderable
      */
     public function __construct(Form $form, string $label, string $name = null)
     {
-        parent::__construct($label, $name);
-
-        $this->id($this->name);
+        $this->label = $label;
+        $this->name($name ??= Str::of($label)->lower()->snake()->value());
+        $this->id($name);
 
         $this->form = $form;
+    }
+
+    /**
+     * Get the key.
+     */
+    public function getKey(): string
+    {
+        return $this->getAttribute('name');
     }
 
     /**
@@ -135,11 +161,19 @@ abstract class Field extends ModelValueHandler implements Renderable
     }
 
     /**
+     * Resolve the model.
+     */
+    public function resolveModel(): Model
+    {
+        return $this->form->resolveModel();
+    }
+
+    /**
      * Persist the request value on the model.
      */
-    public function persist(Request $request, Model $model, mixed $value): void
+    public function persist(Request $request, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($request, $value): void {
+        $this->resolveModel()->saving(function (Model $model) use ($request, $value): void {
             $this->resolveHydrate($request, $model, $value);
         });
     }
@@ -147,7 +181,7 @@ abstract class Field extends ModelValueHandler implements Renderable
     /**
      * Get the value for hydrating the model.
      */
-    public function getValueForHydrate(Request $request, Model $model): mixed
+    public function getValueForHydrate(Request $request): mixed
     {
         return $request->input([$this->getKey()]);
     }
@@ -165,15 +199,15 @@ abstract class Field extends ModelValueHandler implements Renderable
     /**
      * Hydrate the model.
      */
-    public function resolveHydrate(Request $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function () use ($model, $value): void {
-                $model->setAttribute($this->getKey(), $value);
+            $this->hydrateResolver = function () use ($value): void {
+                $this->resolveModel()->setAttribute($this->getKey(), $value);
             };
         }
 
-        call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
+        call_user_func_array($this->hydrateResolver, [$request, $this->resolveModel(), $value]);
     }
 
     /**
@@ -203,19 +237,16 @@ abstract class Field extends ModelValueHandler implements Renderable
     }
 
     /**
-     * Get the blade template.
-     */
-    public function template(): string
-    {
-        return $this->template;
-    }
-
-    /**
      * Get the data for the view.
      */
     public function data(Request $request): array
     {
-        return [];
+        return [
+            'label' => $this->label,
+            'help' => $this->help,
+            'attributes' => new ComponentAttributeBag($this->resolveAttributes()),
+            'value' => $this->resolveValue(),
+        ];
     }
 
     /**
@@ -224,7 +255,7 @@ abstract class Field extends ModelValueHandler implements Renderable
     public function render(): View
     {
         return App::make('view')->make(
-            $this->template(),
+            $this->template,
             App::call([$this, 'data'])
         );
     }
@@ -232,8 +263,10 @@ abstract class Field extends ModelValueHandler implements Renderable
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(Request $request, Model $model): array
+    public function toValidate(Request $request): array
     {
+        $model = $this->resolveModel();
+
         $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(

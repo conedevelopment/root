@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Traits;
 
+use Closure;
 use Illuminate\Support\Arr;
 
 trait HasAttributes
@@ -85,5 +86,31 @@ trait HasAttributes
         $this->attributes = [];
 
         return $this;
+    }
+
+    /**
+     * Resolve the attributes.
+     */
+    public function resolveAttributes(): array
+    {
+        return array_reduce(
+            array_keys($this->attributes),
+            function (array $attributes, string $key): mixed {
+                return array_merge($attributes, [$key => $this->resolveAttribute($key)]);
+            },
+            []
+        );
+    }
+
+    /**
+     * Resolve the given attribute.
+     */
+    public function resolveAttribute(string $key): mixed
+    {
+        $value = $this->getAttribute($key);
+
+        return $value instanceof Closure
+                ? call_user_func($value)
+                : $value;
     }
 }

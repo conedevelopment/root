@@ -333,19 +333,14 @@ class Resource implements Routable
     public function toShow(Request $request, Model $model): array
     {
         return [
-            'actions' => $this->resolveActions($request)
-                ->visible(ResourceContext::Show->value)
-                ->authorized($request, $model)
-                ->mapToForm($request, $model),
-            'model' => $this->newItem($model)->toDisplay(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
-            ),
+            // 'actions' => $this->resolveActions($request),
+            'resource' => $this,
+            'form' => $this->toForm($request)->model(fn (): Model => $model),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-            'relations' => $this->resolveRelations($request)
-                ->authorized($request, $model)
-                ->mapToTable($request, $model),
+            // 'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            // 'relations' => $this->resolveRelations($request)
+            //     ->authorized($request, $model)
+            //     ->mapToTable($request, $model),
         ];
     }
 
@@ -425,7 +420,7 @@ class Resource implements Routable
         $router->get('/create', [ResourceController::class, 'create']);
         $router->post('/', [ResourceController::class, 'store']);
         $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
-        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
+        // $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
         $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
         $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
 

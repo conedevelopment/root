@@ -17,7 +17,7 @@ class Select extends Cell
     public function data(Request $request): array
     {
         return [
-            'model' => $this->model,
+            'model' => $this->resolveModel(),
         ];
     }
 }

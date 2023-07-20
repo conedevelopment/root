@@ -3,7 +3,6 @@
 namespace Cone\Root\Form;
 
 use Closure;
-use Cone\Root\Form\Fields\Text;
 use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Makeable;
@@ -60,9 +59,17 @@ class Form implements Renderable, Routable
     /**
      * Make a new text field.
      */
-    public function textField(string $label, ?string $name = null): Text
+    public function textField(string $label, ?string $name = null): Fields\Text
     {
-        return new Text($this, $label, $name);
+        return new Fields\Text($this, $label, $name);
+    }
+
+    /**
+     * Make a new email field.
+     */
+    public function emailField(string $label, ?string $name = null): Fields\Email
+    {
+        return new Fields\Email($this, $label, $name);
     }
 
     /**
@@ -92,14 +99,6 @@ class Form implements Renderable, Routable
     }
 
     /**
-     * Get the blade template.
-     */
-    public function template(): string
-    {
-        return $this->template;
-    }
-
-    /**
      * Get the view data.
      */
     public function data(Request $request): array
@@ -125,7 +124,7 @@ class Form implements Renderable, Routable
     public function render(): View
     {
         return App::make('view')->make(
-            $this->template(),
+            $this->template,
             App::call([$this, 'data'])
         );
     }

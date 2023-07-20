@@ -69,22 +69,18 @@ class Table implements Renderable, Routable
             ->through(function (Model $model) use ($request, $url): array {
                 return $this->resolveColumns($request)
                     ->map(static function (Column $column) use ($model): Cell {
-                        return $column->toCell($model);
+                        return $column->toCell($model)
+                            ->value($column->getValueResolver())
+                            ->format($column->getFormatResolver());
                     })
                     ->when($this->resolveActions($request)->isNotEmpty(), function (Collection $cells) use ($model): void {
-                        $cells->prepend(new Select(Text::make($this, ''), $model));
+                        $cells->prepend(Select::make(Text::make($this, ''), $model));
                     })
-                    ->push(new Actions(Text::make($this, '')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey())), $model))
+                    ->push(Actions::make(Text::make($this, ''), $model)->value(static function (Model $model) use ($url): string {
+                        return sprintf('%s%s', $url, $model->getRouteKey());
+                    }))
                     ->all();
             });
-    }
-
-    /**
-     * Get the blade template.
-     */
-    public function template(): string
-    {
-        return $this->template;
     }
 
     /**
@@ -106,7 +102,7 @@ class Table implements Renderable, Routable
     public function render(): View
     {
         return App::make('view')->make(
-            $this->template(),
+            $this->template,
             App::call([$this, 'data'])
         );
     }

@@ -25,18 +25,7 @@
                                 </th>
                             @endif
                             @foreach($columns as $column)
-                                <th scope="col">
-                                    @if($column->isSortable())
-                                        <div class="data-table-sort">
-                                            {{ $column->label }}
-                                            <button class="data-table-sort__control" type="button" aria-label="Sort ascending">
-                                                <x-root::icon name="chevron-up-down" class="data-table-sort__icon" />
-                                            </button>
-                                        </div>
-                                    @else
-                                        {{ $column->label }}
-                                    @endif
-                                </th>
+                                {!! $column->render() !!}
                             @endforeach
                             <th scope="col">
                                 <span class="sr-only">{{ __('Actions') }}</span>

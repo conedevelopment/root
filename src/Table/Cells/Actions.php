@@ -17,8 +17,8 @@ class Actions extends Cell
     public function data(Request $request): array
     {
         return [
-            'model' => $this->model,
-            'url' => $this->column->resolveValue($this->model),
+            'model' => $this->resolveModel(),
+            'url' => $this->resolveValue(),
         ];
     }
 }

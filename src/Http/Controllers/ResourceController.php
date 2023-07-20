@@ -91,16 +91,16 @@ class ResourceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Model $model): Response
+    public function show(RootRequest $request, Model $model): Response
     {
-        $resource = $request->route('rootResource');
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('view', $model);
         }
 
-        return Inertia::render(
-            'Resources/Show',
+        return ResponseFactory::view(
+            'root::resources.edit',
             $resource->toShow($request, $model)
         );
     }
@@ -116,9 +116,9 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        return Inertia::render(
-            'Resources/Form',
-            $resource->toEdit($request, $model)
+        return ResponseFactory::view(
+            'root::resources.create',
+            $resource->toShow($request, $model)
         );
     }
 

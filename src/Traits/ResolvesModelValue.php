@@ -1,20 +1,12 @@
 <?php
 
-namespace Cone\Root\Resources;
+namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Traits\HasAttributes;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class ModelValueHandler
+trait ResolvesModelValue
 {
-    use HasAttributes;
-
-    /**
-     * The label.
-     */
-    protected string $label;
-
     /**
      * The format resolver callback.
      */
@@ -26,12 +18,9 @@ abstract class ModelValueHandler
     protected ?Closure $valueResolver = null;
 
     /**
-     * Get the key.
+     * Resolve the model.
      */
-    public function getKey(): string
-    {
-        return $this->getAttribute('name');
-    }
+    abstract public function resolveModel(): Model;
 
     /**
      * Set the value resolver.
@@ -46,23 +35,23 @@ abstract class ModelValueHandler
     /**
      * Resolve the value.
      */
-    public function resolveValue(Model $model): mixed
+    public function resolveValue(): mixed
     {
-        $value = $this->getValue($model);
+        $value = $this->getValue();
 
         if (is_null($this->valueResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->valueResolver, [$model, $value]);
+        return call_user_func_array($this->valueResolver, [$this->resolveModel(), $value]);
     }
 
     /**
      * Get the default value from the model.
      */
-    public function getValue(Model $model): mixed
+    public function getValue(): mixed
     {
-        return $model->getAttribute($this->getKey());
+        return $this->resolveModel()->getAttribute($this->getKey());
     }
 
     /**
@@ -78,14 +67,14 @@ abstract class ModelValueHandler
     /**
      * Format the value.
      */
-    public function resolveFormat(Model $model): mixed
+    public function resolveFormat(): mixed
     {
-        $value = $this->resolveValue($model);
+        $value = $this->resolveValue();
 
         if (is_null($this->formatResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->formatResolver, [$model, $value]);
+        return call_user_func_array($this->formatResolver, [$this->resolveModel(), $value]);
     }
 }

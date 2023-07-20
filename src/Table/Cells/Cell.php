@@ -4,6 +4,8 @@ namespace Cone\Root\Table\Cells;
 
 use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Table\Columns\Column;
+use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\ResolvesModelValue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -11,6 +13,9 @@ use Illuminate\View\View;
 
 abstract class Cell implements Renderable
 {
+    use Makeable;
+    use ResolvesModelValue;
+
     /**
      * The blade template.
      */
@@ -31,16 +36,24 @@ abstract class Cell implements Renderable
      */
     public function __construct(Column $column, Model $model)
     {
-        $this->model = $model;
         $this->column = $column;
+        $this->model = $model;
     }
 
     /**
-     * Get the blade template.
+     * Resolve the model.
      */
-    public function template(): string
+    public function resolveModel(): Model
     {
-        return $this->template;
+        return $this->model;
+    }
+
+    /**
+     * Get the key.
+     */
+    public function getKey(): string
+    {
+        return $this->column->getKey();
     }
 
     /**
@@ -49,7 +62,7 @@ abstract class Cell implements Renderable
     public function data(Request $request): array
     {
         return [
-            'formattedValue' => $this->column->resolveFormat($this->model),
+            'formattedValue' => $this->resolveFormat(),
         ];
     }
 
@@ -59,7 +72,7 @@ abstract class Cell implements Renderable
     public function render(): View
     {
         return App::make('view')->make(
-            $this->template(),
+            $this->template,
             App::call([$this, 'data'])
         );
     }
