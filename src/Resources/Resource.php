@@ -419,8 +419,7 @@ class Resource implements Routable
         $router->get('/', [ResourceController::class, 'index']);
         $router->get('/create', [ResourceController::class, 'create']);
         $router->post('/', [ResourceController::class, 'store']);
-        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
-        // $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
+        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'edit']);
         $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
         $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
 

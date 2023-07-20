@@ -1,10 +1,5 @@
 <td>
     <div class="data-table__actions">
-        @can('view', $model)
-            <a href="{{ $url }}" class="btn btn--light btn--sm btn--icon" aria-label="View">
-                <x-root::icon name="eye" class="btn__icon" />
-            </a>
-        @endcan
         @can('update', $model)
             <a href="{{ $url }}" class="btn btn--light btn--sm btn--icon" aria-label="Edit">
                 <x-root::icon name="edit" class="btn__icon" />

@@ -54,7 +54,7 @@ class ResourceController extends Controller
         }
 
         return ResponseFactory::view(
-            'root::resources.create',
+            'root::resources.form',
             $resource->toCreate($request)
         );
     }
@@ -89,35 +89,18 @@ class ResourceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for ediging the specified resource.
      */
-    public function show(RootRequest $request, Model $model): Response
+    public function edit(RootRequest $request, Model $model): Response
     {
         $resource = $request->resource();
-
-        if ($resource->getPolicy()) {
-            $this->authorize('view', $model);
-        }
-
-        return ResponseFactory::view(
-            'root::resources.edit',
-            $resource->toShow($request, $model)
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Request $request, Model $model): Response
-    {
-        $resource = $request->route('rootResource');
 
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
         return ResponseFactory::view(
-            'root::resources.create',
+            'root::resources.form',
             $resource->toShow($request, $model)
         );
     }
