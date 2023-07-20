@@ -1,0 +1,53 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.repeater-container {
+  @include layout-stack('s');
+}
+
+.repeater {
+  @include generate-variables($form-control, $include: ('border-width', 'border-radius'));
+  border: config('border-width', $form-control) solid color('border', 'form');
+  border-radius: config('border-radius', $form-control);
+  padding: spacer('s');
+
+  &__heading {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('s');
+    justify-content: space-between;
+  }
+
+  &__body {
+    border-block-start: 1px solid color('border');
+    margin-block-start: spacer('s');
+    padding-block-start: spacer('s');
+  }
+
+  &__column {
+    align-items: center;
+    display: flex;
+    gap: spacer('s');
+  }
+
+  &__title {
+    @include text-ellipsis(1);
+    font-size: config('font-size-base', $typography);
+    margin-block: 0;
+    max-inline-size: 20ch;
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    gap: spacer('xxs');
+  }
+
+  &__toggle {
+    &[aria-expanded='true'] {
+      .vertical-line {
+        display: none;
+      }
+    }
+  }
+}

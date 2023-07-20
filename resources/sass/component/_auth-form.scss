@@ -4,6 +4,10 @@
   @include layout-stack('s');
   margin-block: auto;
 
+  &__title {
+    font-weight: 700;
+  }
+
   .or-separator {
     margin-block-start: spacer('m');
   }

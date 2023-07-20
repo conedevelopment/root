@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\View\View;
 
-class Cell implements Renderable
+abstract class Cell implements Renderable
 {
     /**
      * The blade template.
      */
-    protected string $template = 'root::table.cell';
+    protected string $template;
 
     /**
      * The model instance.
@@ -28,7 +28,7 @@ class Cell implements Renderable
     /**
      * Create a new cell instance.
      */
-    public function __construct(Model $model, Column $column)
+    public function __construct(Column $column, Model $model)
     {
         $this->model = $model;
         $this->column = $column;

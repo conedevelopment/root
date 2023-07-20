@@ -1,0 +1,25 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.combobox {
+  @include generate-variables($form-control, $include: ('border-width', 'border-radius'));
+
+  &__selected-items {
+
+  }
+
+  &__dropdown {
+    border: config('border-width', $form-control) solid color('border', 'form');
+    border-radius: config('border-radius', $form-control);
+    display: flex;
+    flex-direction: column;
+    gap: spacer('s');
+    padding: spacer('s');
+
+    [role="listbox"] {
+      @include clear-list;
+      @include scrollbar;
+      max-block-size: 10rem;
+      overflow-y: auto;
+    }
+  }
+}

@@ -5,6 +5,7 @@ namespace Cone\Root\Traits;
 use Closure;
 use Cone\Root\Table\Column;
 use Cone\Root\Table\Columns;
+use Cone\Root\Table\TextColumn;
 use Illuminate\Http\Request;
 
 trait ResolvesColumns
@@ -46,7 +47,7 @@ trait ResolvesColumns
             $this->columns = Columns::make()->register($this->columns($request));
 
             if (! is_null($this->columnsResolver)) {
-                $this->columns->register(call_user_func_array($this->columnsResolver, [$request, $this]));
+                $this->columns->register(call_user_func_array($this->columnsResolver, [$this, $request]));
             }
 
             $this->columns->each(function (Column $column) use ($request): void {
@@ -66,10 +67,10 @@ trait ResolvesColumns
     }
 
     /**
-     * Make a new table column.
+     * Make a new table text column.
      */
-    public function column(string $label, ?string $name = null): Column
+    public function textColumn(string $label, ?string $name = null): TextColumn
     {
-        return new Column($label, $name);
+        return new TextColumn($this, $label, $name);
     }
 }

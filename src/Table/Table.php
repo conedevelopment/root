@@ -66,10 +66,10 @@ class Table implements Renderable, Routable
                     ->map(static function (Column $column) use ($model): Cell {
                         return $column->toCell($model);
                     })
-                    ->when($this->resolveActions($request)->isNotEmpty(), static function (Actions $actions) use ($model): void {
-                        $actions->prepend(new SelectCell($model, new Column('')));
+                    ->when($this->resolveActions($request)->isNotEmpty(), function (Actions $actions) use ($model): void {
+                        $actions->prepend(new SelectCell($model, TextColumn::make($this, '')));
                     })
-                    ->push(new ActionsCell($model, Column::make('')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey()))))
+                    ->push(new ActionsCell($model, TextColumn::make($this, '')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey()))))
                     ->all();
             });
     }

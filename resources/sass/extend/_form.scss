@@ -11,15 +11,8 @@
   }
 }
 
-.form-label,
 legend {
   font-family: config('font-family-heading', $typography);
-}
-
-.form-check {
-  &__label {
-    font-weight: 400;
-  }
 }
 
 .form-control[type=color] {

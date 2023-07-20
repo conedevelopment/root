@@ -69,6 +69,8 @@ $colors: (
     'border': $dark-color-gray-dark,
     'check-background': $dark-color-primary,
     'check-foreground': $dark-color-black,
+    'group-label-background': color.scale($dark-color-black, $lightness: 2.5%),
+    'group-label-foreground': $dark-color-gray,
     'invalid': $dark-color-danger,
     'invalid-shadow': color.adjust($dark-color-danger, $alpha: -0.75),
     'label': $dark-color-white,

@@ -37,6 +37,7 @@ pre[class*='language-'] code {
 
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
+  @include scrollbar;
   background: color('background', 'prism');
   overflow-x: auto;
 }

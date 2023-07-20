@@ -4,6 +4,7 @@
 $color-primary: hsl(214deg 98% 49%);
 $color-secondary: hsl(160 89% 46%);
 $color-primary-lightest: hsl(210deg 60% 98%);
+$color-danger: hsl(0deg 71% 51%);
 
 @use 'sprucecss/scss/spruce' with (
   $btn: (
@@ -15,6 +16,7 @@ $color-primary-lightest: hsl(210deg 60% 98%);
   ),
   $colors: (
     'base': (
+      'border': hsl(215deg 100% 96%),
       'primary-lightest': $color-primary-lightest,
     ),
     'btn': (
@@ -31,6 +33,11 @@ $color-primary-lightest: hsl(210deg 60% 98%);
       'light-focus-ring': $color-primary,
       'light-foreground': $color-primary,
       'light-foreground-hover': hsl(0deg 0% 100%),
+      'delete-background': color.adjust($color-danger, $lightness: 45%),
+      'delete-background-hover': $color-danger,
+      'delete-focus-ring': $color-danger,
+      'delete-foreground': $color-danger,
+      'delete-foreground-hover': hsl(0deg 0% 100%),
       'primary-outline-foreground': $color-primary,
     ),
     'breadcrumb': (
@@ -38,6 +45,9 @@ $color-primary-lightest: hsl(210deg 60% 98%);
     ),
     'data-table': (
       'icon': hsl(0deg 0% 80%),
+    ),
+    'form': (
+      'border': hsl(260deg 4% 75%),
     ),
     'header': (
       'background': hsl(0deg 0% 100% / 95%),
@@ -77,6 +87,9 @@ $color-primary-lightest: hsl(210deg 60% 98%);
   $dark-colors: dark.$colors,
   $display: (
     'border-radius-sm': 0.45rem,
+  ),
+  $form-check: (
+    'font-weight': 400,
   ),
   $form-control-sm: (
     'padding': 0.1em 0.45em,

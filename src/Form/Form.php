@@ -80,7 +80,16 @@ class Form implements Renderable, Routable
         return [
             'fields' => $this->resolveFields($request),
             'url' => $this->replaceRoutePlaceholders($request->route()),
+            'method' => $this->method(),
         ];
+    }
+
+    /**
+     * Get the form method.
+     */
+    public function method(): string
+    {
+        return $this->resolveModel()->exists ? 'PATCH' : 'POST';
     }
 
     /**

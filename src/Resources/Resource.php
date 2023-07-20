@@ -320,13 +320,9 @@ class Resource implements Routable
      */
     public function toCreate(Request $request): array
     {
-        $model = $this->getModelInstance();
-
         return [
-            'model' => $this->newItem($model)->toForm(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
-            ),
+            'resource' => $this,
+            'form' => $this->toForm($request),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
     }

@@ -4,7 +4,7 @@
   @include a11y-card-link('.user-menu__toggle', true);
   align-items: center;
   display: flex;
-  gap: spacer-clamp('xs', 's');
+  gap: spacer-clamp('xs', 's', '1vw');
   position: relative;
 
   &__avatar {

@@ -6,7 +6,7 @@ use Closure;
 use Cone\Root\Resources\ModelValueHandler;
 use Illuminate\Database\Eloquent\Model;
 
-class Column extends ModelValueHandler
+abstract class Column extends ModelValueHandler
 {
     /**
      * Indicates if the field is sortable.
@@ -17,6 +17,21 @@ class Column extends ModelValueHandler
      * Indicates if the field is searchable.
      */
     protected bool|Closure $searchable = false;
+
+    /**
+     * The table instance.
+     */
+    protected Table $table;
+
+    /**
+     * Create a new column instance.
+     */
+    public function __construct(Table $table, string $label, string $name = null)
+    {
+        parent::__construct($label, $name);
+
+        $this->table = $table;
+    }
 
     /**
      * Set the sortable attribute.
@@ -65,8 +80,5 @@ class Column extends ModelValueHandler
     /**
      * Convert the column to a cell.
      */
-    public function toCell(Model $model): Cell
-    {
-        return new Cell($model, $this);
-    }
+    abstract public function toCell(Model $model): Cell;
 }

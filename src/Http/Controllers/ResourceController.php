@@ -45,16 +45,16 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Response
+    public function create(RootRequest $request): Response
     {
-        $resource = $request->route('rootResource');
+        $resource = $request->resource();
 
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
 
-        return Inertia::render(
-            'Resources/Form',
+        return ResponseFactory::view(
+            'root::resources.create',
             $resource->toCreate($request)
         );
     }

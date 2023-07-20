@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Resources\ModelValueHandler;
 use Illuminate\Contracts\View\View;
@@ -23,6 +24,8 @@ abstract class Field extends ModelValueHandler implements Renderable
      */
     protected ?Closure $hydrateResolver = null;
 
+    protected Form $form;
+
     /**
      * The validation rules.
      */
@@ -40,11 +43,13 @@ abstract class Field extends ModelValueHandler implements Renderable
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, string $name = null)
+    public function __construct(Form $form, string $label, string $name = null)
     {
         parent::__construct($label, $name);
 
         $this->id($this->name);
+
+        $this->form = $form;
     }
 
     /**

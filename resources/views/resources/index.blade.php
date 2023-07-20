@@ -1,7 +1,7 @@
 @extends('root::app')
 
 {{-- Title --}}
-@section('title', $resource->getName())
+@section('title', $title)
 
 {{-- Content --}}
 @section('content')

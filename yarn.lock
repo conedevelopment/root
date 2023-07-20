@@ -2778,10 +2778,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-sprucecss@^2.2.0:
-  version "2.2.0-beta.6"
-  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-2.2.0-beta.6.tgz#6cd1e6bcc0c5d99cacb310a1f560170b56b0515e"
-  integrity sha512-jNcF0SyfhecRtlkfehdknK85b0R1Sz1LS7MN41kpRkhDadxoIhId5OakIVV+t/n9gu/2rrnNjIttV1aQ16w1zQ==
+sprucecss@^2.2.0-beta.6:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-2.2.0.tgz#9a931c5a13f81e12cf1c73156e989ce6100bf297"
+  integrity sha512-lTsF0dcX4+0tA5d5/6cigw7BgGoF7ODs/3m+WNNyqinvlOAQMMJ7p9rH6lueOc8VwYJcswxs+Nb9wEcZ9kUuKw==
 
 string-width@^4.2.3:
   version "4.2.3"

@@ -1,0 +1,30 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.range-group {
+  display: flex;
+  flex-direction: column;
+  gap: spacer('xxs');
+
+  .form-label {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: spacer('xs');
+  }
+
+  &__inner {
+    align-items: center;
+    display: flex;
+    gap: spacer('xs');
+
+    .form-range {
+      flex-grow: 1;
+      margin-block-start: 0;
+    }
+
+    .form-range-control {
+      flex-shrink: 0;
+    }
+  }
+}
