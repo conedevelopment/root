@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Relations;
 
-use Cone\Root\Fields\MorphTo;
+use Cone\Root\Form\Fields\MorphTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToRelation;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as EloquentRelation;

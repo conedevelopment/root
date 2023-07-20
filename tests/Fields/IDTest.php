@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\ID;
+use Cone\Root\Form\Fields\ID;
 use Cone\Root\Tests\TestCase;
 
 class IDTest extends TestCase

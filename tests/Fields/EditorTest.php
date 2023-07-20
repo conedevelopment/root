@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Editor;
+use Cone\Root\Form\Fields\Editor;
 use Cone\Root\Tests\TestCase;
 
 class EditorTest extends TestCase

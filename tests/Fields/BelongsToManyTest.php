@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\BelongsToMany;
+use Cone\Root\Form\Fields\BelongsToMany;
 use Cone\Root\Tests\TestCase;
 
 class BelongsToManyTest extends TestCase

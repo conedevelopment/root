@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Tag;
+use Cone\Root\Form\Fields\Tag;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 

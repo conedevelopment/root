@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Fields\ID;
+use Cone\Root\Form\Fields\ID;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 

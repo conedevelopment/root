@@ -3,7 +3,7 @@
 namespace Cone\Root\Relations;
 
 use Closure;
-use Cone\Root\Fields\BelongsTo;
+use Cone\Root\Form\Fields\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;

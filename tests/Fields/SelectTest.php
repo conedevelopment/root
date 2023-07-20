@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Select;
+use Cone\Root\Form\Fields\Select;
 use Cone\Root\Tests\Author;
 use Cone\Root\Tests\TestCase;
 

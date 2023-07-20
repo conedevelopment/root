@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\HasMany;
+use Cone\Root\Form\Fields\HasMany;
 use Cone\Root\Tests\Author;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;

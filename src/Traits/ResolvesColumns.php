@@ -3,9 +3,9 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Table\Column;
 use Cone\Root\Table\Columns;
-use Cone\Root\Table\TextColumn;
+use Cone\Root\Table\Columns\Column;
+use Cone\Root\Table\Columns\Text;
 use Illuminate\Http\Request;
 
 trait ResolvesColumns
@@ -69,8 +69,8 @@ trait ResolvesColumns
     /**
      * Make a new table text column.
      */
-    public function textColumn(string $label, ?string $name = null): TextColumn
+    public function textColumn(string $label, ?string $name = null): Text
     {
-        return new TextColumn($this, $label, $name);
+        return new Text($this, $label, $name);
     }
 }

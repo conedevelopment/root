@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Http\Controllers;
 
-use Cone\Root\Fields\Media;
+use Cone\Root\Form\Fields\Media;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;

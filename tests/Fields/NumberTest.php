@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Number;
+use Cone\Root\Form\Fields\Number;
 use Cone\Root\Tests\TestCase;
 
 class NumberTest extends TestCase

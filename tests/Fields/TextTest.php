@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Text;
+use Cone\Root\Form\Fields\Text;
 use Cone\Root\Tests\TestCase;
 
 class TextTest extends TestCase

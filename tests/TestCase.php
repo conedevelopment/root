@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests;
 
-use Cone\Root\Fields\Text;
+use Cone\Root\Form\Fields\Text;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Root;

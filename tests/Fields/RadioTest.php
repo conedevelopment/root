@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Radio;
+use Cone\Root\Form\Fields\Radio;
 use Cone\Root\Tests\TestCase;
 
 class RadioTest extends TestCase

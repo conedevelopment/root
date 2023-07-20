@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Actions;
 
-use Cone\Root\Fields\Field;
+use Cone\Root\Form\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Alert;

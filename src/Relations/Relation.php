@@ -3,7 +3,7 @@
 namespace Cone\Root\Relations;
 
 use Cone\Root\Enums\ResourceContext;
-use Cone\Root\Fields\Field;
+use Cone\Root\Form\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;

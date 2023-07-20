@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Date;
+use Cone\Root\Form\Fields\Date;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Support\Facades\Date as DateFactory;

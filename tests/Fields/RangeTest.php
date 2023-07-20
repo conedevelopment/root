@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Range;
+use Cone\Root\Form\Fields\Range;
 use Cone\Root\Tests\TestCase;
 
 class RangeTest extends TestCase

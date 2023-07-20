@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Boolean;
+use Cone\Root\Form\Fields\Boolean;
 use Cone\Root\Tests\TestCase;
 
 class BooleanTest extends TestCase

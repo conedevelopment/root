@@ -2,8 +2,8 @@
 
 namespace App\Root\Resources;
 
-use Cone\Root\Fields\ID;
-use Cone\Root\Fields\Text;
+use Cone\Root\Form\Fields\ID;
+use Cone\Root\Form\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

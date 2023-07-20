@@ -5,7 +5,11 @@ namespace Cone\Root\Table;
 use Cone\Root\Actions\Action;
 use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Table\Cells\Actions;
+use Cone\Root\Table\Cells\Cell;
+use Cone\Root\Table\Cells\Select;
+use Cone\Root\Table\Columns\Column;
+use Cone\Root\Table\Columns\Text;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
@@ -18,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 
 class Table implements Renderable, Routable
@@ -66,10 +71,10 @@ class Table implements Renderable, Routable
                     ->map(static function (Column $column) use ($model): Cell {
                         return $column->toCell($model);
                     })
-                    ->when($this->resolveActions($request)->isNotEmpty(), function (Actions $actions) use ($model): void {
-                        $actions->prepend(new SelectCell($model, TextColumn::make($this, '')));
+                    ->when($this->resolveActions($request)->isNotEmpty(), function (Collection $cells) use ($model): void {
+                        $cells->prepend(new Select(Text::make($this, ''), $model));
                     })
-                    ->push(new ActionsCell($model, TextColumn::make($this, '')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey()))))
+                    ->push(new Actions(Text::make($this, '')->value(fn (Model $model): string => sprintf('%s%s', $url, $model->getRouteKey())), $model))
                     ->all();
             });
     }

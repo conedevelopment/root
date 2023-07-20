@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Fields\Field;
+use Cone\Root\Form\Fields\Field;
 
 class {{ class }} extends Field
 {

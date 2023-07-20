@@ -3,6 +3,7 @@
 namespace Cone\Root\Form;
 
 use Closure;
+use Cone\Root\Form\Fields\Text;
 use Cone\Root\Interfaces\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Makeable;
@@ -18,7 +19,9 @@ use Illuminate\Support\Facades\App;
 class Form implements Renderable, Routable
 {
     use Makeable;
-    use ResolvesFields;
+    use ResolvesFields {
+        ResolvesFields::resolveFields as __resolveFields;
+    }
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -37,6 +40,30 @@ class Form implements Renderable, Routable
      * The model resolver.
      */
     protected ?Closure $modelResolver = null;
+
+    /**
+     * Resolve the fields.
+     */
+    public function resolveFields(Request $request): Fields
+    {
+        if (is_null($this->fields) && ! is_null($this->fieldsResolver)) {
+            $callback = $this->fieldsResolver;
+
+            $this->fieldsResolver = function () use ($request, $callback) {
+                return call_user_func_array($callback, [$this, $request]);
+            };
+        }
+
+        return $this->__resolveFields($request);
+    }
+
+    /**
+     * Make a new text field.
+     */
+    public function textField(string $label, ?string $name = null): Text
+    {
+        return new Text($this, $label, $name);
+    }
 
     /**
      * Set the model resolver callback.

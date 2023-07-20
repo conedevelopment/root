@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Tests\Fields;
 
-use Cone\Root\Fields\Checkbox;
+use Cone\Root\Form\Fields\Checkbox;
 use Cone\Root\Tests\TestCase;
 
 class CheckboxTest extends TestCase

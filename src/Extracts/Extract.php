@@ -3,7 +3,7 @@
 namespace Cone\Root\Extracts;
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Fields\Field;
+use Cone\Root\Form\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
