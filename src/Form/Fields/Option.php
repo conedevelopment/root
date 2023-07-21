@@ -25,17 +25,12 @@ class Option implements Renderable
     protected string $label;
 
     /**
-     * The option value.
-     */
-    protected ?string $value = null;
-
-    /**
      * Create a new option instance.
      */
-    public function __construct(string $label, ?string $value = null)
+    public function __construct(string $label, mixed $value = null)
     {
         $this->label = $label;
-        $this->value = $value;
+        $this->setAttribute('value', $value);
     }
 
     /**
@@ -62,7 +57,6 @@ class Option implements Renderable
         return App::make('view')->make($this->template, [
             'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
             'label' => $this->label,
-            'value' => $this->value,
         ]);
     }
 }

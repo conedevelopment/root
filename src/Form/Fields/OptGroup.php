@@ -4,12 +4,20 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\App;
+use Illuminate\View\ComponentAttributeBag;
 
-class OptGroup implements Arrayable
+class OptGroup implements Renderable
 {
     use HasAttributes;
     use Makeable;
+
+    /**
+     * The blade template.
+     */
+    protected string $template = 'root::form.fields.optgroup';
 
     /**
      * The options.
@@ -19,12 +27,14 @@ class OptGroup implements Arrayable
     /**
      * Create a new option group instance.
      */
-    public function __construct(string $label)
+    public function __construct(string $label, array $options = [])
     {
         $this->setAttributes([
             'label' => $label,
             'disabled' => false,
         ]);
+
+        $this->options = $options;
     }
 
     /**
@@ -38,7 +48,7 @@ class OptGroup implements Arrayable
     }
 
     /**
-     * Set the label attribute.
+     * Set the "label" HTML attribute.
      */
     public function label(string $value): static
     {
@@ -46,7 +56,7 @@ class OptGroup implements Arrayable
     }
 
     /**
-     * Set the disabled attribute.
+     * Set the "disabled" HTML attribute.
      */
     public function disabled(bool $value = true): static
     {
@@ -54,11 +64,12 @@ class OptGroup implements Arrayable
     }
 
     /**
-     * Get the instance as an array.
+     * Render the option group.
      */
-    public function toArray(): array
+    public function render(): View
     {
-        return array_merge($this->getAttributes(), [
+        return App::make('view')->make($this->template, [
+            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
             'options' => $this->options,
         ]);
     }

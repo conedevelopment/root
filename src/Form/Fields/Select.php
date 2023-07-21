@@ -4,6 +4,7 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class Select extends Field
 {
@@ -83,12 +84,12 @@ class Select extends Field
 
         $options = call_user_func_array($this->optionsResolver, [$this->resolveModel()]);
 
-        return array_map(static function (mixed $formattedValue, mixed $value): Option {
-            $option = $formattedValue instanceof Option
-                ? $formattedValue
-                : new Option($formattedValue, $value);
+        $value = Arr::wrap($this->resolveValue());
 
-            // determine if selected
+        return array_map(static function (mixed $label, mixed $option) use  ($value): Option {
+            $option = $label instanceof Option ? $label : new Option($label, $option);
+
+            $option->selected(in_array($option->getAttribute('value'), $value));
 
             return $option;
         }, $options, array_keys($options));

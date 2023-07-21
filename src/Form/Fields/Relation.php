@@ -337,7 +337,7 @@ abstract class Relation extends Field implements Routable
                         return $this->mapOption($request, $model, $related);
                     });
 
-                    return (new OptGroup($key))->options($options->toArray());
+                    return new OptGroup($key, $options->all());
                 });
             }, function (Collection $collection) use ($request, $model): Collection {
                 return $collection->map(function (Model $related) use ($request, $model): array {

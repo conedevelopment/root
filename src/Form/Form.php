@@ -3,13 +3,13 @@
 namespace Cone\Root\Form;
 
 use Closure;
-use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Exception;
 use Illuminate\Contracts\Support\MessageBag;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -106,6 +106,14 @@ class Form implements Renderable, Routable
     public function rangeField(string $label, string $name = null): Fields\Range
     {
         return new Fields\Range($this, $label, $name);
+    }
+
+    /**
+     * Make a new select field.
+     */
+    public function selectField(string $label, string $name = null): Fields\Select
+    {
+        return new Fields\Select($this, $label, $name);
     }
 
     /**

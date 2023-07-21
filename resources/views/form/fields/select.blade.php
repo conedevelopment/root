@@ -6,8 +6,11 @@
         @endif
     </label>
     <select {{ $attrs->class(['form-control', 'form-control--invalid' => $invalid]) }}>
-        <option value="shoes">Shoes</option>
-        <option value="caps">Caps</option>
-        <option value="jacket">Jacket</option>
+        @if($nullable)
+            <option value="">--- {{ $label }} ---</option>
+        @endif
+        @foreach($options as $option)
+            {!! $option->render() !!}
+        @endforeach
     </select>
 </div>
