@@ -43,38 +43,22 @@ class Fields extends Collection
     /**
      * Persist the request value on the model.
      */
-    public function persist(Request $request, Model $model): void
+    public function persist(Request $request): void
     {
-        $this->each(static function (Field $field) use ($request, $model): void {
+        $this->each(static function (Field $field) use ($request): void {
             $field->persist(
-                $request, $model, $field->getValueForHydrate($request, $model)
+                $request, $field->getValueForHydrate($request)
             );
         });
     }
 
     /**
-     * Map the fields to display.
-     */
-    public function mapToDisplay(Request $request, Model $model): array
-    {
-        return $this->map->toDisplay($request, $model)->toArray();
-    }
-
-    /**
-     * Map the fields to form.
-     */
-    public function mapToForm(Request $request, Model $model): array
-    {
-        return $this->map->toInput($request, $model)->toArray();
-    }
-
-    /**
      * Map the fields to validate.
      */
-    public function mapToValidate(Request $request, Model $model): array
+    public function mapToValidate(Request $request): array
     {
-        return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
-            return array_merge_recursive($rules, $field->toValidate($request, $model));
+        return $this->reduce(static function (array $rules, Field $field) use ($request): array {
+            return array_merge_recursive($rules, $field->toValidate($request));
         }, []);
     }
 

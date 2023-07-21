@@ -7,9 +7,9 @@ use Closure;
 class Textarea extends Field
 {
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'Textarea';
+    protected string $template = 'root::form.fields.textarea';
 
     /**
      * Set the rows attribute.

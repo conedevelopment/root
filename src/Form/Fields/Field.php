@@ -246,6 +246,8 @@ abstract class Field implements Renderable
             'help' => $this->help,
             'attributes' => new ComponentAttributeBag($this->resolveAttributes()),
             'value' => $this->resolveValue(),
+            'error' => $this->form->errors($request)->first($this->getKey()),
+            'invalid' => $this->form->errors($request)->has($this->getKey()),
         ];
     }
 

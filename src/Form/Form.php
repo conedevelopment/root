@@ -9,11 +9,13 @@ use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Exception;
+use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\ViewErrorBag;
 
 class Form implements Renderable, Routable
 {
@@ -39,6 +41,16 @@ class Form implements Renderable, Routable
      * The model resolver.
      */
     protected ?Closure $modelResolver = null;
+
+    /**
+     * The error bag.
+     */
+    protected string $errorBag = 'default';
+
+    /**
+     * The form errors.
+     */
+    protected ?MessageBag $errors = null;
 
     /**
      * Resolve the fields.
@@ -134,11 +146,22 @@ class Form implements Renderable, Routable
      */
     public function validate(Request $request): array
     {
-        $model = $this->resolveModel();
+        return $request->validateWithBag(
+            $this->errorBag,
+            $this->resolveFields($request)->mapToValidate($request)
+        );
+    }
 
-        //
+    /**
+     * Get the errors for the form.
+     */
+    public function errors(Request $request): MessageBag
+    {
+        if (is_null($this->errors)) {
+            $this->errors = $request->session()->get('errors', new ViewErrorBag())->getBag($this->errorBag);
+        }
 
-        return [];
+        return $this->errors;
     }
 
     /**
