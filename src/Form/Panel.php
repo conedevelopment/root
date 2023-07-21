@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Form\Panel;
 
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

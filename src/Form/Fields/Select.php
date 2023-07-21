@@ -3,17 +3,14 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use UnitEnum;
 
 class Select extends Field
 {
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'Select';
+    protected string $template = 'root::form.fields.select';
 
     /**
      * The options resolver callback.
@@ -44,7 +41,7 @@ class Select extends Field
     }
 
     /**
-     * Set the multiple attribute.
+     * Set the "multiple" HTML attribute.
      */
     public function multiple(bool $value = true): static
     {
@@ -52,7 +49,7 @@ class Select extends Field
     }
 
     /**
-     * Set the size attribute.
+     * Set the "size" HTML attribute.
      */
     public function size(int $value): static
     {
@@ -78,53 +75,33 @@ class Select extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(): array
     {
         if (is_null($this->optionsResolver)) {
             return [];
         }
 
-        $options = call_user_func_array($this->optionsResolver, [$request, $model]);
+        $options = call_user_func_array($this->optionsResolver, [$this->resolveModel()]);
 
-        return array_map(static function (mixed $formattedValue, int|string $value): array {
-            return $formattedValue instanceof Option
-                ? $formattedValue->toArray()
-                : ['value' => $value, 'formattedValue' => $formattedValue];
+        return array_map(static function (mixed $formattedValue, mixed $value): Option {
+            $option = $formattedValue instanceof Option
+                ? $formattedValue
+                : new Option($formattedValue, $value);
+
+            // determine if selected
+
+            return $option;
         }, $options, array_keys($options));
-    }
-
-    /**
-     * Format the value.
-     */
-    public function resolveFormat(Request $request, Model $model): mixed
-    {
-        if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, mixed $value): mixed {
-                $options = array_column(
-                    $this->resolveOptions($request, $model), 'formattedValue', 'value'
-                );
-
-                $value = array_map(static function (mixed $value) use ($options): mixed {
-                    $value = $value instanceof UnitEnum ? $value->value : $value;
-
-                    return $options[$value] ?? $value;
-                }, Arr::wrap($value));
-
-                return implode(', ', $value);
-            };
-        }
-
-        return parent::resolveFormat($request, $model);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function data(Request $request): array
     {
-        return array_merge(parent::toInput($request, $model), [
+        return array_merge(parent::data($request), [
             'nullable' => $this->isNullable(),
-            'options' => $this->resolveOptions($request, $model),
+            'options' => $this->resolveOptions(),
         ]);
     }
 }

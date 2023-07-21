@@ -4,34 +4,42 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\App;
+use Illuminate\View\ComponentAttributeBag;
 
-class Option implements Arrayable
+class Option implements Renderable
 {
     use HasAttributes;
     use Makeable;
 
     /**
+     * The blade template.
+     */
+    protected string $template = 'root::form.fields.option';
+
+    /**
+     * The option label.
+     */
+    protected string $label;
+
+    /**
+     * The option value.
+     */
+    protected ?string $value = null;
+
+    /**
      * Create a new option instance.
      */
-    public function __construct(string $label, string $value)
+    public function __construct(string $label, ?string $value = null)
     {
-        $this->setAttributes([
-            'formattedValue' => $label,
-            'value' => $value,
-        ]);
+        $this->label = $label;
+        $this->value = $value;
     }
 
     /**
-     * Set the label attribute.
-     */
-    public function label(string $value): static
-    {
-        return $this->setAttribute('label', $value);
-    }
-
-    /**
-     * Set the disabled attribute.
+     * Set the "disabled" HTML attribute.
      */
     public function disabled(bool $value = true): static
     {
@@ -39,10 +47,22 @@ class Option implements Arrayable
     }
 
     /**
-     * Get the instance as an array.
+     * Set the "selected" HTML attribute.
      */
-    public function toArray(): array
+    public function selected(bool $value = true): static
     {
-        return $this->getAttributes();
+        return $this->setAttribute('selected', $value);
+    }
+
+    /**
+     * Render the field.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make($this->template, [
+            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
+            'label' => $this->label,
+            'value' => $this->value,
+        ]);
     }
 }

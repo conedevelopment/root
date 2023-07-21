@@ -3,7 +3,7 @@
 namespace Cone\Root\Table;
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Cells\Actions;
 use Cone\Root\Table\Cells\Cell;

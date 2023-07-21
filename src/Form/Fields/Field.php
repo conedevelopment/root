@@ -4,7 +4,7 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;

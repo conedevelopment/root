@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Table\Cells;
 
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;

@@ -3,7 +3,7 @@
 namespace Cone\Root\Form;
 
 use Closure;
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;

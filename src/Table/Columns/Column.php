@@ -3,7 +3,7 @@
 namespace Cone\Root\Table\Columns;
 
 use Closure;
-use Cone\Root\Interfaces\Renderable;
+use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
