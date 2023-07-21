@@ -2,19 +2,21 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Cone\Root\Form\Form;
+
 class Radio extends Select
 {
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'Radio';
+    protected string $template = 'root::form.fields.radio';
 
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, ?string $name = null)
+    public function __construct(Form $form, string $label, string $name = null)
     {
-        parent::__construct($label, $name);
+        parent::__construct($form, $label, $name);
 
         $this->type('radio');
     }

@@ -3,6 +3,7 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Form;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
 use Cone\Root\Traits\RegistersRoutes;
@@ -36,16 +37,16 @@ class Editor extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, ?string $name = null)
+    public function __construct(Form $form, string $label, string $name = null)
     {
-        parent::__construct($label, $name);
+        parent::__construct($form, $label, $name);
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');
     }
 
     /**
-     * Set the height style attribute.
+     * Set the height style HTML attribute.
      */
     public function height(string $value): static
     {

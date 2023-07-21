@@ -2,10 +2,9 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Cone\Root\Form\Form;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date as BaseDate;
 
 class Date extends Field
 {
@@ -25,22 +24,22 @@ class Date extends Field
     protected bool $withTime = false;
 
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'DateTime';
+    protected string $template = 'root::form.fields.date';
 
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, ?string $name = null)
+    public function __construct(Form $form, string $label, string $name = null)
     {
-        parent::__construct($label, $name);
+        parent::__construct($form, $label, $name);
 
         $this->type('date');
     }
 
     /**
-     * Set the "min" attribute.
+     * Set the "min" HTML attribute.
      */
     public function min(string|DateTimeInterface $value): static
     {
@@ -48,7 +47,7 @@ class Date extends Field
     }
 
     /**
-     * Set the "max" attribute.
+     * Set the "max" HTML attribute.
      */
     public function max(string|DateTimeInterface $value): static
     {
@@ -78,26 +77,12 @@ class Date extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Get the data for the view.
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function data(Request $request): array
     {
-        if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
-                return is_null($value) ? $value : BaseDate::parse($value)->tz($this->timezone)->format($this->format);
-            };
-        }
-
-        return parent::resolveFormat($request, $model);
-    }
-
-    /**
-     * Get the input representation of the field.
-     */
-    public function toInput(Request $request, Model $model): array
-    {
-        return array_merge(parent::toInput($request, $model), [
-            'with_time' => $this->withTime,
+        return array_merge(parent::data($request), [
+            'withTime' => $this->withTime,
         ]);
     }
 }
