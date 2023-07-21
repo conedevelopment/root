@@ -3,21 +3,22 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Form;
 
 class Number extends Field
 {
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, ?string $name = null)
+    public function __construct(Form $form, string $label, string $name = null)
     {
-        parent::__construct($label, $name);
+        parent::__construct($form, $label, $name);
 
         $this->type('number');
     }
 
     /**
-     * Set the "min" attribute.
+     * Set the "min" HTML attribute.
      */
     public function min(int|float|Closure $value): static
     {
@@ -25,7 +26,7 @@ class Number extends Field
     }
 
     /**
-     * Set the "max" attribute.
+     * Set the "max" HTML attribute.
      */
     public function max(int|float|Closure $value): static
     {
@@ -33,7 +34,7 @@ class Number extends Field
     }
 
     /**
-     * Set the "step" attribute.
+     * Set the "step" HTML attribute.
      */
     public function step(int|float|Closure $value): static
     {

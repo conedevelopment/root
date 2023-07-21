@@ -27,7 +27,7 @@ abstract class Field implements Renderable
     /**
      * The blade template.
      */
-    protected string $template = 'root::form.fields.text';
+    protected string $template = 'root::form.fields.input';
 
     /**
      * The hydrate resolver callback.
@@ -57,6 +57,16 @@ abstract class Field implements Renderable
      * The help text.
      */
     protected ?string $help = null;
+
+    /**
+     * The field prefix.
+     */
+    protected ?string $prefix = null;
+
+    /**
+     * The field suffix.
+     */
+    protected ?string $suffix = null;
 
     /**
      * Create a new field instance.
@@ -161,6 +171,26 @@ abstract class Field implements Renderable
     }
 
     /**
+     * Set the prefix attribute.
+     */
+    public function prefix(string $value): static
+    {
+        $this->prefix = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the suffix attribute.
+     */
+    public function suffix(string $value): static
+    {
+        $this->suffix = $value;
+
+        return $this;
+    }
+
+    /**
      * Resolve the model.
      */
     public function resolveModel(): Model
@@ -242,12 +272,14 @@ abstract class Field implements Renderable
     public function data(Request $request): array
     {
         return [
-            'label' => $this->label,
-            'help' => $this->help,
-            'attributes' => new ComponentAttributeBag($this->resolveAttributes()),
-            'value' => $this->resolveValue(),
+            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
             'error' => $this->form->errors($request)->first($this->getKey()),
+            'help' => $this->help,
             'invalid' => $this->form->errors($request)->has($this->getKey()),
+            'label' => $this->label,
+            'prefix' => $this->prefix,
+            'suffix' => $this->suffix,
+            'value' => $this->resolveValue(),
         ];
     }
 

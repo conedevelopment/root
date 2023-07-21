@@ -18,9 +18,7 @@ class Text extends Field
     }
 
     /**
-     * Set the size attribute.
-     *
-     * @return $this
+     * Set the "size" HTML attribute.
      */
     public function size(int|Closure $value): static
     {
@@ -28,9 +26,7 @@ class Text extends Field
     }
 
     /**
-     * Set the minlength attribute.
-     *
-     * @return $this
+     * Set the "minlength" HTML attribute.
      */
     public function minlength(int|Closure $value): static
     {
@@ -38,9 +34,7 @@ class Text extends Field
     }
 
     /**
-     * Set the maxlength attribute.
-     *
-     * @return $this
+     * Set the "maxlength" HTML attribute.
      */
     public function maxlength(int|Closure $value): static
     {

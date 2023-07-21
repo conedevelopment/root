@@ -71,7 +71,7 @@ class Form implements Renderable, Routable
     /**
      * Make a new text field.
      */
-    public function textField(string $label, ?string $name = null): Fields\Text
+    public function textField(string $label, string $name = null): Fields\Text
     {
         return new Fields\Text($this, $label, $name);
     }
@@ -79,9 +79,33 @@ class Form implements Renderable, Routable
     /**
      * Make a new email field.
      */
-    public function emailField(string $label, ?string $name = null): Fields\Email
+    public function emailField(string $label, string $name = null): Fields\Email
     {
         return new Fields\Email($this, $label, $name);
+    }
+
+    /**
+     * Make a new textarea field.
+     */
+    public function textareaField(string $label, string $name = null): Fields\Textarea
+    {
+        return new Fields\Textarea($this, $label, $name);
+    }
+
+    /**
+     * Make a new number field.
+     */
+    public function numberField(string $label, string $name = null): Fields\Number
+    {
+        return new Fields\Number($this, $label, $name);
+    }
+
+    /**
+     * Make a new range field.
+     */
+    public function rangeField(string $label, string $name = null): Fields\Range
+    {
+        return new Fields\Range($this, $label, $name);
     }
 
     /**
