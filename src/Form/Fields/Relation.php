@@ -3,6 +3,7 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\RelationFieldController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -24,16 +25,6 @@ abstract class Relation extends Field implements Routable
     protected Closure|string $relation;
 
     /**
-     * The searchable columns.
-     */
-    protected array $searchableColumns = ['id'];
-
-    /**
-     * The sortable column.
-     */
-    protected string $sortableColumn = 'id';
-
-    /**
      * Indicates if the field should be nullable.
      */
     protected bool $nullable = false;
@@ -44,9 +35,9 @@ abstract class Relation extends Field implements Routable
     protected bool $async = false;
 
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'Select';
+    protected string $template = 'root::form.fields.select';
 
     /**
      * The display resolver callback.
@@ -71,11 +62,11 @@ abstract class Relation extends Field implements Routable
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
     {
-        parent::__construct($label, $name);
+        parent::__construct($form, $label, $name);
 
-        $this->relation = $relation ?: $this->name;
+        $this->relation = $relation ?: $this->getAttribute('name');
     }
 
     /**
@@ -89,13 +80,13 @@ abstract class Relation extends Field implements Routable
     /**
      * Get the relation instance.
      */
-    public function getRelation(Model $model): EloquentRelation
+    public function getRelation(): EloquentRelation
     {
         if ($this->relation instanceof Closure) {
-            return call_user_func_array($this->relation, [$model]);
+            return call_user_func_array($this->relation, [$this->resolveModel()]);
         }
 
-        return call_user_func([$model, $this->relation]);
+        return call_user_func([$this->resolveModel(), $this->relation]);
     }
 
     /**
@@ -103,7 +94,7 @@ abstract class Relation extends Field implements Routable
      */
     public function getRelatedName(): string
     {
-        return __(Str::of($this->name)->singular()->headline()->value());
+        return __(Str::of($this->getAttribute('name'))->singular()->headline()->value());
     }
 
     /**
@@ -112,7 +103,7 @@ abstract class Relation extends Field implements Routable
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $this->name
+            ? $$this->getAttribute('name')
             : $this->relation;
     }
 
@@ -143,48 +134,12 @@ abstract class Relation extends Field implements Routable
     }
 
     /**
-     * Set the searachable attribute.
-     */
-    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
-    {
-        $this->searchableColumns = $columns;
-
-        return parent::searchable($value);
-    }
-
-    /**
-     * Get the searchable columns.
-     */
-    public function getSearchableColumns(): array
-    {
-        return $this->searchableColumns;
-    }
-
-    /**
-     * Set the sortable attribute.
-     */
-    public function sortable(bool|Closure $value = true, string $column = 'id'): static
-    {
-        $this->sortableColumn = $column;
-
-        return parent::sortable($value);
-    }
-
-    /**
-     * Get the sortable columns.
-     */
-    public function getSortableColumn(): string
-    {
-        return $this->sortableColumn;
-    }
-
-    /**
      * Set the display resolver.
      */
     public function display(Closure|string $callback): static
     {
         if (is_string($callback)) {
-            $callback = static function (Request $request, Model $model) use ($callback) {
+            $callback = static function (Model $model) use ($callback) {
                 return $model->getAttribute($callback);
             };
         }
@@ -197,13 +152,13 @@ abstract class Relation extends Field implements Routable
     /**
      * Resolve the display format or the query result.
      */
-    public function resolveDisplay(Request $request, Model $related): mixed
+    public function resolveDisplay(Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
             $this->display($related->getKeyName());
         }
 
-        return call_user_func_array($this->displayResolver, [$request, $related]);
+        return call_user_func_array($this->displayResolver, [$related]);
     }
 
     /**
@@ -213,7 +168,7 @@ abstract class Relation extends Field implements Routable
     {
         $this->async = $value;
 
-        $this->component = $value ? 'AsyncSelect' : 'Select';
+        // $this->template = $value ? 'root::form.fields.dropdown' : 'root::form.fields.select';
 
         return $this;
     }
@@ -229,10 +184,10 @@ abstract class Relation extends Field implements Routable
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(Request $request, Model $model): mixed
+    public function resolveValue(): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
+            $this->valueResolver = static function (Model $model, mixed $value): mixed {
                 if ($value instanceof Model) {
                     return $value->getKey();
                 } elseif ($value instanceof Collection) {
@@ -243,14 +198,16 @@ abstract class Relation extends Field implements Routable
             };
         }
 
-        return parent::resolveValue($request, $model);
+        return parent::resolveValue();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getValue(Model $model): mixed
+    public function getValue(): mixed
     {
+        $model = $this->resolveModel();
+
         $name = $this->getRelationName();
 
         if ($this->relation instanceof Closure && ! $model->relationLoaded($name)) {
@@ -258,32 +215,6 @@ abstract class Relation extends Field implements Routable
         }
 
         return $model->getAttribute($name);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveFormat(Request $request, Model $model): mixed
-    {
-        if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model): mixed {
-                $default = $this->getValue($request, $model);
-
-                if ($default instanceof Model) {
-                    return $this->resolveDisplay($request, $default);
-                } elseif ($default instanceof Collection) {
-                    $value = $default->map(function (Model $related) use ($request): mixed {
-                        return $this->resolveDisplay($request, $related);
-                    });
-
-                    return $this->isAsync() ? $value->toArray() : $value->join(', ');
-                }
-
-                return $default;
-            };
-        }
-
-        return parent::resolveFormat($request, $model);
     }
 
     /**
@@ -299,16 +230,18 @@ abstract class Relation extends Field implements Routable
     /**
      * Resolve the related model's eloquent query.
      */
-    public function resolveRelatableQuery(Request $request, Model $model): Builder
+    public function resolveRelatableQuery(): Builder
     {
-        $query = $this->getRelation($model)->getRelated()->newQuery();
+        $model = $this->resolveModel();
+
+        $query = $this->getRelation()->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            $query = call_user_func_array($scope, [$request, $query, $model]);
+            $query = call_user_func_array($scope, [$query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
+            $query = call_user_func_array($this->queryResolver, [$query, $model]);
         }
 
         return $query;
@@ -327,35 +260,36 @@ abstract class Relation extends Field implements Routable
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(): array
     {
-        return $this->resolveRelatableQuery($request, $model)
+        $value = $this->resolveValue();
+
+        return $this->resolveRelatableQuery()
             ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
-                return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($request, $model): OptGroup {
-                    $options = $group->map(function (Model $related) use ($request, $model): array {
-                        return $this->mapOption($request, $model, $related);
+            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($value): Collection {
+                return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($value): OptGroup {
+                    $options = $group->map(function (Model $related) use ($value): Option {
+                        return $this->newOption($this->resolveDisplay($related), $related->getKey())
+                            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
                     });
 
                     return new OptGroup($key, $options->all());
                 });
-            }, function (Collection $collection) use ($request, $model): Collection {
-                return $collection->map(function (Model $related) use ($request, $model): array {
-                    return $this->mapOption($request, $model, $related);
+            }, function (Collection $collection) use ($value): Collection {
+                return $collection->map(function (Model $related) use ($value): Option {
+                    return $this->newOption($this->resolveDisplay($related), $related->getKey())
+                        ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
                 });
             })
             ->toArray();
     }
 
     /**
-     * Map the given option.
+     * Make a new option instance.
      */
-    public function mapOption(Request $request, Model $model, Model $related): array
+    public function newOption(string $label, mixed $value = null): Option
     {
-        return [
-            'value' => $related->getKey(),
-            'formattedValue' => $this->resolveDisplay($request, $related),
-        ];
+        return new Option($label, $value);
     }
 
     /**
@@ -379,16 +313,13 @@ abstract class Relation extends Field implements Routable
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function data(Request $request): array
     {
-        return array_merge(parent::toInput($request, $model), [
+        return array_merge(parent::data($request), [
             'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
-            'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
+            'options' => $this->isAsync() ? [] : $this->resolveOptions(),
             'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
-            'selection' => $this->isAsync() ? $this->getValue($request, $model)->map(function (Model $related) use ($request, $model): array {
-                return $this->mapOption($request, $model, $related);
-            })->toArray() : [],
         ]);
     }
 }

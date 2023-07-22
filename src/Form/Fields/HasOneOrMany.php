@@ -12,20 +12,20 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function getRelation(Model $model): EloquentRelation
+    public function getRelation(): EloquentRelation
     {
-        return parent::getRelation($model);
+        return parent::getRelation();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model, mixed $value): void
+    public function persist(Request $request, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request, $value): void {
-            $relation = $this->getRelation($model);
+        $this->resolveModel()->saved(function (Model $model) use ($request, $value): void {
+            $relation = $this->getRelation();
 
-            $this->resolveHydrate($request, $model, $value);
+            $this->resolveHydrate($request, $value);
 
             $models = $model->getRelation($this->getRelationName());
 
@@ -40,16 +40,16 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $related = $this->resolveRelatableQuery($request, $model)->find($value);
+                $related = $this->resolveRelatableQuery()->find($value);
 
                 $model->setRelation($this->getRelationName(), $related);
             };
         }
 
-        parent::resolveHydrate($request, $model, $value);
+        parent::resolveHydrate($request, $value);
     }
 }

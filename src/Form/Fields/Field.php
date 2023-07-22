@@ -269,12 +269,20 @@ abstract class Field implements Renderable
     }
 
     /**
+     * Make a new attribute bag.
+     */
+    public function newAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->resolveAttributes());
+    }
+
+    /**
      * Get the data for the view.
      */
     public function data(Request $request): array
     {
         return [
-            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
+            'attrs' => $this->newAttributeBag(),
             'error' => $this->form->errors($request)->first($this->getKey()),
             'help' => $this->help,
             'invalid' => $this->form->errors($request)->has($this->getKey()),

@@ -2,35 +2,27 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Illuminate\Database\Eloquent\Model;
+use Closure;
+use Cone\Root\Form\Form;
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentRelation;
-use Illuminate\Http\Request;
 
 class HasMany extends HasOneOrMany
 {
     /**
-     * {@inheritdoc}
+     * Create a new relation field instance.
      */
-    public function getRelation(Model $model): EloquentRelation
+    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
     {
-        return parent::getRelation($model);
+        parent::__construct($form, $label, $name, $relation);
+
+        $this->setAttribute('multiple', true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isSortable(Request $request): bool
+    public function getRelation(): EloquentRelation
     {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toInput(Request $request, Model $model): array
-    {
-        return array_merge(parent::toInput($request, $model), [
-            'multiple' => true,
-        ]);
+        return parent::getRelation();
     }
 }

@@ -157,6 +157,14 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new has many field.
+     */
+    public function hasManyField(string $label, string $name = null, Closure|string $relation = null): Fields\HasMany
+    {
+        return new Fields\HasMany($this, $label, $name, $relation);
+    }
+
+    /**
      * Set the model resolver callback.
      */
     public function model(Closure $callback): static

@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne as EloquentRelation;
 
 class HasOne extends HasOneOrMany
@@ -10,8 +9,8 @@ class HasOne extends HasOneOrMany
     /**
      * {@inheritdoc}
      */
-    public function getRelation(Model $model): EloquentRelation
+    public function getRelation(): EloquentRelation
     {
-        return parent::getRelation($model);
+        return parent::getRelation();
     }
 }

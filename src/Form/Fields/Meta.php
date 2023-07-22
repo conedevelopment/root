@@ -3,6 +3,8 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Form;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
@@ -18,7 +20,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
@@ -27,15 +29,15 @@ class Meta extends MorphOne
                 ->one()
                 ->ofMany(
                     [$related->getCreatedAtColumn() => 'MAX'],
-                    fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->name),
+                    fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->getAttribute('name')),
                     'metaData'
                 )
-                ->withDefault(['key' => $this->name]);
+                ->withDefault(['key' => $this->getAttribute('name')]);
         };
 
-        $this->field = new Text($label, $name);
+        $this->asText();
 
-        parent::__construct($label, $name, $relation);
+        parent::__construct($form, $label, $name, $relation);
     }
 
     /**
@@ -44,7 +46,7 @@ class Meta extends MorphOne
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? sprintf('__root_%s', $this->name)
+            ? sprintf('__root_%s', $this->getAttribute('name'))
             : $this->relation;
     }
 
@@ -53,11 +55,13 @@ class Meta extends MorphOne
      */
     public function as(string $field, Closure $callback = null): static
     {
-        $this->field = new $field($this->label, $this->name);
+        $this->field = new $field($this->label, $this->getAttribute('name'));
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
         }
+
+        $this->field->value(fn (): mixed => $this->resolveValue());
 
         return $this;
     }
@@ -177,14 +181,6 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function asSubResource(bool $value = true): static
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function async(bool $value = true): static
     {
         return $this;
@@ -193,7 +189,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(Request $request, Model $model): array
+    public function resolveOptions(): array
     {
         return [];
     }
@@ -201,14 +197,16 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function getValue(Model $model): mixed
+    public function getValue(): mixed
     {
+        $model = $this->resolveModel();
+
         $name = $this->getRelationName();
 
         if ($this->relation instanceof Closure
             && $model->relationLoaded('metaData')
             && ! $model->relationLoaded($name)
-            && ! is_null($value = $model->getRelation('metaData')->sortByDesc('created_at')->firstWhere('key', $this->name))) {
+            && ! is_null($value = $model->getRelation('metaData')->sortByDesc('created_at')->firstWhere('key', $this->getAttribute('name')))) {
             $model->setRelation($name, $value);
         }
 
@@ -218,25 +216,25 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(Request $request, Model $model): mixed
+    public function resolveValue(): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
+            $this->valueResolver = static function (Model $model, mixed $value): mixed {
                 return $value?->value;
             };
         }
 
-        return parent::resolveValue($request, $model);
+        return parent::resolveValue();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function () use ($request, $model, $value): void {
-                $related = $this->getValue($request, $model);
+            $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
+                $related = $this->getValue();
 
                 $related->setAttribute('value', $value);
 
@@ -244,34 +242,22 @@ class Meta extends MorphOne
             };
         }
 
-        parent::resolveHydrate($request, $model, $value);
+        parent::resolveHydrate($request, $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function render(): View
     {
-        $this->field->value(fn (): mixed => $this->resolveValue($request, $model));
-
-        return $this->field->toInput($request, $model);
+        return $this->field->render();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toDisplay(Request $request, Model $model): array
+    public function toValidate(Request $request): array
     {
-        $this->field->format(fn (): mixed => $this->resolveFormat($request, $model));
-
-        return $this->field->toDisplay($request, $model);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toValidate(Request $request, Model $model): array
-    {
-        return $this->field->toValidate($request, $model);
+        return $this->field->toValidate($request);
     }
 }

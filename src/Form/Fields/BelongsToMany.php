@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Closure;
+use Cone\Root\Form\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
@@ -9,11 +11,21 @@ use Illuminate\Http\Request;
 class BelongsToMany extends Relation
 {
     /**
+     * Create a new relation field instance.
+     */
+    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
+    {
+        parent::__construct($form, $label, $name, $relation);
+
+        $this->setAttribute('multiple', true);
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getRelation(Model $model): EloquentRelation
+    public function getRelation(): EloquentRelation
     {
-        $relation = parent::getRelation($model);
+        $relation = parent::getRelation();
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
     }
@@ -21,19 +33,19 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model, mixed $value): void
+    public function persist(Request $request, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request, $value): void {
-            $this->resolveHydrate($request, $model, $value);
+        $this->resolveModel()->saved(function (Model $model) use ($request, $value): void {
+            $this->resolveHydrate($request, $value);
 
-            $this->getRelation($model)->sync($value);
+            $this->getRelation()->sync($value);
         });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, Model $model, mixed $value): void
+    public function resolveHydrate(Request $request, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
@@ -45,16 +57,15 @@ class BelongsToMany extends Relation
             };
         }
 
-        parent::resolveHydrate($request, $model, $value);
+        parent::resolveHydrate($request, $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function data(Request $request): array
     {
-        return array_merge(parent::toInput($request, $model), [
-            'multiple' => true,
+        return array_merge(parent::data($request), [
             'relatedName' => $this->getRelatedName(),
         ]);
     }
