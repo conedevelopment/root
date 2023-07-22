@@ -125,6 +125,22 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new checkbox field.
+     */
+    public function checkboxField(string $label, string $name = null): Fields\Checkbox
+    {
+        return new Fields\Checkbox($this, $label, $name);
+    }
+
+    /**
+     * Make a new radio field.
+     */
+    public function radioField(string $label, string $name = null): Fields\Radio
+    {
+        return new Fields\Radio($this, $label, $name);
+    }
+
+    /**
      * Set the model resolver callback.
      */
     public function model(Closure $callback): static

@@ -2,22 +2,19 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Cone\Root\Form\Form;
-
 class Checkbox extends Select
 {
     /**
      * The blade template.
      */
-    protected string $template = 'root::form.fields.select';
+    protected string $template = 'root::form.fields.checkbox';
 
     /**
-     * Create a new field instance.
+     * Make a new option instance.
      */
-    public function __construct(Form $form, string $label, string $name = null)
+    public function newOption(string $label, mixed $value = null): CheckboxOption
     {
-        parent::__construct($form, $label, $name);
-
-        $this->type('checkbox');
+        return CheckboxOption::make($label, $value)
+            ->name(sprintf('%s[]', $this->getAttribute('name')));
     }
 }

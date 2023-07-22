@@ -4,11 +4,11 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
-use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -73,7 +73,7 @@ abstract class Field implements Renderable
      */
     public function __construct(Form $form, string $label, string $name = null)
     {
-        $this->label = $label;
+        $this->label($label);
         $this->name($name ??= Str::of($label)->lower()->snake()->value());
         $this->id($name);
 
@@ -99,13 +99,15 @@ abstract class Field implements Renderable
     /**
      * Set the label attribute.
      */
-    public function label(string|Closure $value): static
+    public function label(string $value): static
     {
-        return $this->setAttribute('label', $value);
+        $this->label = $value;
+
+        return $this;
     }
 
     /**
-     * Set the name attribute.
+     * Set the "name" HTML attribute.
      */
     public function name(string|Closure $value): static
     {
@@ -113,7 +115,7 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the id attribute.
+     * Set the "id" HTML attribute.
      */
     public function id(string|Closure $value): static
     {
@@ -129,7 +131,7 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the disabled attribute.
+     * Set the "disabled" HTML attribute.
      */
     public function disabled(bool|Closure $value = true): static
     {
@@ -137,7 +139,7 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the required attribute.
+     * Set the "required" HTML attribute.
      */
     public function required(bool|Closure $value = true): static
     {
@@ -145,7 +147,7 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the type attribute.
+     * Set the "type" HTML attribute.
      */
     public function type(string|Closure $value): static
     {
@@ -153,7 +155,7 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the placeholder attribute.
+     * Set the "placeholder" HTML attribute.
      */
     public function placeholder(string|Closure $value): static
     {
@@ -203,8 +205,8 @@ abstract class Field implements Renderable
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saving(function (Model $model) use ($request, $value): void {
-            $this->resolveHydrate($request, $model, $value);
+        $this->resolveModel()->saving(function () use ($request, $value): void {
+            $this->resolveHydrate($request, $value);
         });
     }
 
