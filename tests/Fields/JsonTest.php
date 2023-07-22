@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Tests\Fields;
 
+use Cone\Root\Form\Fields;
 use Cone\Root\Form\Fields\Json;
 use Cone\Root\Form\Fields\Number;
 use Cone\Root\Models\FieldsetModel;
-use Cone\Root\Form\Fields;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 

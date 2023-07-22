@@ -3,8 +3,8 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Form\Fields\Field;
 use Cone\Root\Form\Fields;
+use Cone\Root\Form\Fields\Field;
 use Illuminate\Http\Request;
 
 trait ResolvesFields

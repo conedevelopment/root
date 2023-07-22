@@ -3,7 +3,6 @@
 namespace Cone\Root\Table;
 
 use Cone\Root\Actions\Action;
-use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Cells\Actions;
 use Cone\Root\Table\Cells\Cell;
@@ -17,6 +16,7 @@ use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

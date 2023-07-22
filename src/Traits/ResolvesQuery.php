@@ -16,7 +16,7 @@ trait ResolvesQuery
     /**
      * The query resolver.
      */
-    protected ?Closure $queryResolver  = null;
+    protected ?Closure $queryResolver = null;
 
     /**
      * Set the query resolver.

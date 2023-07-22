@@ -7,17 +7,17 @@ interface Assets
     /**
      * Register a new script.
      */
-    public function script(string $key, string $path, ?string $url = null): void;
+    public function script(string $key, string $path, string $url = null): void;
 
     /**
      * Register a new style.
      */
-    public function style(string $key, string $path, ?string $url = null): void;
+    public function style(string $key, string $path, string $url = null): void;
 
     /**
      * Register a new icon.
      */
-    public function icon(string $key, string $path, ?string $url = null): void;
+    public function icon(string $key, string $path, string $url = null): void;
 
     /**
      * Get the registered scripts.

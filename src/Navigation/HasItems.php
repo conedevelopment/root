@@ -14,7 +14,7 @@ trait HasItems
     /**
      * Make a new item.
      */
-    public function new(string $url, string $label, ?Closure $callback = null): static
+    public function new(string $url, string $label, Closure $callback = null): static
     {
         $item = new Item($url, $label);
 

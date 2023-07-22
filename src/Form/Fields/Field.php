@@ -165,7 +165,7 @@ abstract class Field implements Renderable
     /**
      * Set the help attribute.
      */
-    public function help(?string $value = null): static
+    public function help(string $value = null): static
     {
         $this->help = $value;
 

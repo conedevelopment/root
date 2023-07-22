@@ -2,10 +2,10 @@
 
 namespace Cone\Root\Table\Cells;
 
-use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

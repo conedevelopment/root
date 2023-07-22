@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Filters;
 
+use Cone\Root\Form\Fields;
 use Cone\Root\Form\Fields\Field;
 use Cone\Root\Form\Fields\Relation;
-use Cone\Root\Form\Fields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 

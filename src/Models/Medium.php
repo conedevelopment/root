@@ -244,7 +244,7 @@ class Medium extends Model implements Contract
     /**
      * Get the path to the conversion.
      */
-    public function getPath(?string $conversion = null, bool $absolute = false): string
+    public function getPath(string $conversion = null, bool $absolute = false): string
     {
         $path = sprintf('%s/%s', $this->id, $this->file_name);
 
@@ -260,7 +260,7 @@ class Medium extends Model implements Contract
     /**
      * Get the full path to the conversion.
      */
-    public function getAbsolutePath(?string $conversion = null): string
+    public function getAbsolutePath(string $conversion = null): string
     {
         return $this->getPath($conversion, true);
     }
@@ -268,7 +268,7 @@ class Medium extends Model implements Contract
     /**
      * Get the url to the conversion.
      */
-    public function getUrl(?string $conversion = null): string
+    public function getUrl(string $conversion = null): string
     {
         return URL::to(Storage::disk($this->disk)->url($this->getPath($conversion)));
     }
@@ -276,7 +276,7 @@ class Medium extends Model implements Contract
     /**
      * Scope the query only to the given search term.
      */
-    public function scopeSearch(Builder $query, ?string $value = null): Builder
+    public function scopeSearch(Builder $query, string $value = null): Builder
     {
         if (is_null($value)) {
             return $query;

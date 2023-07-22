@@ -73,7 +73,7 @@ class Editor extends Field
     /**
      * Configure the media field.
      */
-    public function withMedia(?Closure $callback = null): static
+    public function withMedia(Closure $callback = null): static
     {
         if (is_null($this->media)) {
             $this->media = Media::make(__('Media'), 'media', static function (): MorphToMany {

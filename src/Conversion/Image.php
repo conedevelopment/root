@@ -96,7 +96,7 @@ class Image
      *
      * @return $this
      */
-    public function crop(?int $width = null, ?int $height = null): static
+    public function crop(int $width = null, int $height = null): static
     {
         $this->resize($width, $height, true);
 
@@ -106,7 +106,7 @@ class Image
     /**
      * Resize the image.
      */
-    public function resize(?int $width = null, ?int $height = null, bool $crop = false): static
+    public function resize(int $width = null, int $height = null, bool $crop = false): static
     {
         $x = $y = 0;
         [$originalWidth, $originalHeight] = getimagesize($this->medium->getAbsolutePath());
@@ -169,11 +169,11 @@ class Image
         }
     }
 
-     /**
-      * Create the resource.
-      */
-     protected function create(): void
-     {
+    /**
+     * Create the resource.
+     */
+    protected function create(): void
+    {
         switch ($this->type) {
             case IMAGETYPE_GIF:
                 $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
@@ -190,7 +190,7 @@ class Image
             default:
                 throw new Exception("The file type [{$this->type}] is not supported.");
         }
-     }
+    }
 
     /**
      * Destroy the resource.

@@ -4,9 +4,9 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Filters\Search;
+use Cone\Root\Form\Fields;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
-use Cone\Root\Form\Fields;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;

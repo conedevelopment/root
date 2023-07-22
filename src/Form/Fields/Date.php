@@ -4,7 +4,6 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Form\Form;
 use DateTimeInterface;
-use Illuminate\Http\Request;
 
 class Date extends Field
 {
@@ -22,11 +21,6 @@ class Date extends Field
      * Indicates if the field should include time.
      */
     protected bool $withTime = false;
-
-    /**
-     * The blade template.
-     */
-    protected string $template = 'root::form.fields.date';
 
     /**
      * Create a new field instance.
@@ -63,26 +57,18 @@ class Date extends Field
 
         $this->withTime = $value;
 
+        $this->type($value ? 'datetime-local' : 'date');
+
         return $this;
     }
 
     /**
      * Set the timezone.
      */
-    public function timezone(?string $value = null): static
+    public function timezone(string $value = null): static
     {
         $this->timezone = $value;
 
         return $this;
-    }
-
-    /**
-     * Get the data for the view.
-     */
-    public function data(Request $request): array
-    {
-        return array_merge(parent::data($request), [
-            'withTime' => $this->withTime,
-        ]);
     }
 }

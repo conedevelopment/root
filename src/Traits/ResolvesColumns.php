@@ -69,7 +69,7 @@ trait ResolvesColumns
     /**
      * Make a new table text column.
      */
-    public function textColumn(string $label, ?string $name = null): Text
+    public function textColumn(string $label, string $name = null): Text
     {
         return new Text($this, $label, $name);
     }

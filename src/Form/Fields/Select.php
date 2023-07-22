@@ -86,7 +86,7 @@ class Select extends Field
 
         $value = Arr::wrap($this->resolveValue());
 
-        return array_map(function (mixed $label, mixed $option) use  ($value): Option {
+        return array_map(function (mixed $label, mixed $option) use ($value): Option {
             $option = $label instanceof Option ? $label : $this->newOption($label, $option);
 
             $option->selected(in_array($option->getAttribute('value'), $value));

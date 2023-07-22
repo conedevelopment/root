@@ -133,6 +133,14 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new date field.
+     */
+    public function dateField(string $label, string $name = null): Fields\Date
+    {
+        return new Fields\Date($this, $label, $name);
+    }
+
+    /**
      * Make a new radio field.
      */
     public function radioField(string $label, string $name = null): Fields\Radio

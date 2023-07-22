@@ -3,11 +3,11 @@
 namespace Cone\Root\Table\Columns;
 
 use Closure;
-use Illuminate\Contracts\Support\Renderable;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

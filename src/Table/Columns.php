@@ -24,7 +24,7 @@ class Columns extends Collection
     /**
      * Filter the columns that are available for the current request and model.
      */
-    public function authorized(Request $request, ?Model $model = null): static
+    public function authorized(Request $request, Model $model = null): static
     {
         return $this->filter->authorized($request, $model)->values();
     }

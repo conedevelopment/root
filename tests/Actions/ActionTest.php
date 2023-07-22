@@ -3,8 +3,8 @@
 namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Exceptions\QueryResolutionException;
-use Cone\Root\Form\Fields\Text;
 use Cone\Root\Form\Fields;
+use Cone\Root\Form\Fields\Text;
 use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 
