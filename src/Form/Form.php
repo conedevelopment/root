@@ -117,6 +117,14 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new boolean field.
+     */
+    public function booleanField(string $label, string $name = null): Fields\Boolean
+    {
+        return new Fields\Boolean($this, $label, $name);
+    }
+
+    /**
      * Set the model resolver callback.
      */
     public function model(Closure $callback): static

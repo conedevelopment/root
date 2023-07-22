@@ -7,7 +7,6 @@ use Cone\Root\Form\Form;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
 use Cone\Root\Traits\RegistersRoutes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -20,9 +19,9 @@ class Editor extends Field
     }
 
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected string $component = 'Editor';
+    protected string $template = 'root::form.fields.editor';
 
     /**
      * The media field instance.
@@ -121,13 +120,13 @@ class Editor extends Field
     }
 
     /**
-     * Get the input representation of the field.
+     * {@inheritdoc}
      */
-    public function toInput(Request $request, Model $model): array
+    public function data(Request $request): array
     {
-        return array_merge(parent::toInput($request, $model), [
+        return array_merge(parent::data($request), [
             'config' => $this->config,
-            'media' => is_null($this->media) ? null : $this->media->toInput($request, $model),
+            'media' => $this->media,
         ]);
     }
 }
