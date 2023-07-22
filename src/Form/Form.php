@@ -149,6 +149,14 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new hidden field.
+     */
+    public function hiddenField(string $label, string $name = null): Fields\Hidden
+    {
+        return new Fields\Hidden($this, $label, $name);
+    }
+
+    /**
      * Set the model resolver callback.
      */
     public function model(Closure $callback): static

@@ -1,0 +1,1 @@
+<input {{ $attrs }} value="{{ $value }}">
