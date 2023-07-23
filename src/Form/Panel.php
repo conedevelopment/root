@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Form\Panel;
+namespace Cone\Root\Form;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
