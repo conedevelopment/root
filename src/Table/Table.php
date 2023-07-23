@@ -37,7 +37,7 @@ class Table implements Renderable, Routable
     }
 
     /**
-     * The blade tempalte.
+     * The blade template.
      */
     protected string $template = 'root::table.table';
 

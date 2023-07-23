@@ -26,7 +26,7 @@
 
                     @if($errors->isNotEmpty())
                         <x-root::alert type="danger">
-                            {{ __('Some error occured when submitting the form!') }}
+                            {{ __('Some error occurred when submitting the form!') }}
                         </x-root::alert>
                     @endif
 

@@ -8,10 +8,10 @@
   position: relative;
 
   &__avatar {
-    --dimenion: 2.1rem;
-    block-size: var(--dimenion);
+    --dimension: 2.1rem;
+    block-size: var(--dimension);
     border-radius: 50%;
-    inline-size: var(--dimenion);
+    inline-size: var(--dimension);
   }
 
   &__caption {

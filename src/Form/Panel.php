@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Form\Panel;
+namespace Cone\Root\Form;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 class Panel implements Renderable
 {
     /**
-     * The blade tempalte.
+     * The blade template.
      */
     protected string $template = 'root::form.panel';
 
