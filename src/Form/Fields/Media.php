@@ -87,7 +87,7 @@ class Media extends MorphToMany
      */
     public function store(Request $request, string $path): Medium
     {
-        $medium = (Medium::proxy())::makeFrom($path);
+        $medium = (Medium::proxy())::makeFromPath($path);
 
         if (! is_null($this->storingResolver)) {
             call_user_func_array($this->storingResolver, [$request, $medium, $path]);

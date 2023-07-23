@@ -32,7 +32,7 @@ class ClearChunks extends Command
 
         $expiration = Config::get('root.media.chunk_expiration', 1440) * 60;
 
-        foreach (Storage::disk('local')->allFiles('root-chunks') as $file) {
+        foreach (Storage::disk('local')->allFiles('root-uploads') as $file) {
             $info = new SplFileInfo(Storage::disk('local')->path($file));
 
             if ($now - $info->getMTime() >= $expiration) {

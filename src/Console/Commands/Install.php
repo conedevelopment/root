@@ -31,7 +31,7 @@ class Install extends Command
     {
         $status = $this->call('migrate');
 
-        File::ensureDirectoryExists(Storage::disk('local')->path('root-chunks'));
+        File::ensureDirectoryExists(Storage::disk('local')->path('root-uploads'));
 
         if ($this->option('seed')) {
             $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);

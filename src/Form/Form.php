@@ -165,6 +165,14 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Make a new file field.
+     */
+    public function fileField(string $label, string $name = null, Closure|string $relation = null): Fields\File
+    {
+        return new Fields\File($this, $label, $name, $relation);
+    }
+
+    /**
      * Set the model resolver callback.
      */
     public function model(Closure $callback): static
@@ -219,6 +227,14 @@ class Form implements Renderable, Routable
             $this->template,
             App::call([$this, 'data'])
         );
+    }
+
+    /**
+     * Handle the incoming form request.
+     */
+    public function handle(Request $request): void
+    {
+        $this->validate($request);
     }
 
     /**
