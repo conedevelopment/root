@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 class Panel implements Renderable
 {
     /**
-     * The blade tempalte.
+     * The blade template.
      */
     protected string $template = 'root::form.panel';
 

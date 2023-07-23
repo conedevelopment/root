@@ -28,7 +28,7 @@ class Form implements Renderable, Routable
     }
 
     /**
-     * The blade tempalte.
+     * The blade template.
      */
     protected string $template = 'root::form.form';
 

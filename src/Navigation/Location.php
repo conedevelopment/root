@@ -7,7 +7,7 @@ class Location
     use HasItems;
 
     /**
-     * The locaiton name.
+     * The location name.
      */
     protected string $name;
 
