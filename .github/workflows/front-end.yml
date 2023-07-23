@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Front-end"
+
+# ECMAScript version: TODO ES5 (2009), ES6 (2015), ECMAScript 2016, 2017, 2018 ...
+# Node.js version: 18.12
+# Yarn version: 1
+
+on:
+    pull_request: null
+    push:
+        branches:
+        - "master"
+# Add [skip ci] to commit message to skip CI.
+
+permissions:
+    contents: "read"
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
+
+jobs:
+    js_syntax_errors:
+        name: "𝟏 JavaScript Syntax Errors"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Set up Node.js"
+            uses: "actions/setup-node@v3"
+            with:
+                node-version: "18"
+                check-latest: true
+                cache: "yarn"
+        -
+            name: "Configure yarn"
+            run: "yarn config set engine-strict true"
+        -
+            name: "Install all dependencies"
+            run: "yarn install --non-interactive --pure-lockfile"
+        -
+            name: "Check JavaScript files for syntax errors"
+            run: |
+                git ls-files --cached -z -- 'resources/js/*.js' \
+                    | xargs --null -- yarn run acorn --ecma2018 --module --silent
+
+    js_coding_standards:
+        name: "𝟐 JavaScript Coding Standards"
+        permissions:
+            checks: "write"
+            contents: "read"
+            pull-requests: "read"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Set up Node.js"
+            uses: "actions/setup-node@v3"
+            with:
+                node-version: "18"
+                cache: "yarn"
+        -
+            name: "Configure yarn"
+            run: "yarn config set engine-strict true"
+        -
+            name: "Install all dependencies"
+            run: "yarn install --non-interactive --pure-lockfile"
+        -
+            name: "Run ESLint"
+            run: "yarn run js:eslint -- --format json --output-file '${{ runner.temp }}/eslint-report.json'"
+            continue-on-error: true
+        -
+            name: "Annotate ESLint Results"
+            uses: "ataylorme/eslint-annotate-action@v2"
+            with:
+                check-name: "𝕩 ESLint Annotations"
+                repo-token: "${{ secrets.GITHUB_TOKEN }}"
+                report-json: "${{ runner.temp }}/eslint-report.json"
+
+    scss_coding_standards:
+        name: "𝟑 Sassy CSS Coding Standards"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Set up Node.js"
+            uses: "actions/setup-node@v3"
+            with:
+                node-version: "18"
+                cache: "yarn"
+        -
+            name: "Configure yarn"
+            run: "yarn config set engine-strict true"
+        -
+            name: "Install all dependencies"
+            run: "yarn install --non-interactive --pure-lockfile"
+        -
+            name: "Install stylelint-formatter-github-annotate"
+            run: "yarn install --no-save stylelint-formatter-github-annotate"
+        -
+            name: "Detect coding standards violations"
+            run: "yarn run scss:cs -- --custom-formatter=node_modules/stylelint-formatter-github-annotate"
+
+    build:
+        name: "𝟒 Build"
+        needs:
+        - "js_syntax_errors"
+        - "js_coding_standards"
+        - "scss_coding_standards"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Set up Node.js"
+            uses: "actions/setup-node@v3"
+            with:
+                node-version: "18"
+                cache: "yarn"
+        -
+            name: "Configure yarn"
+            run: "yarn config set engine-strict true"
+        -
+            name: "Install production dependencies"
+            run: "yarn install --non-interactive --pure-lockfile"
+        -
+            name: "Build front-end"
+            run: "yarn run prod:build"
+        -
+            name: "Check differences to repository"
+            run: "git diff --exit-code"
+
+    svg:
+        name: "𝟓 SVG files"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Validate SVG files"
+            uses: "szepeviktor/svg-validator@1.0.0"
+            with:
+                svg_path: "public/**/*.svg"
+        -
+            name: "Validate GitHub files"
+            uses: "szepeviktor/svg-validator@1.0.0"
+            with:
+                svg_path: ".github/**/*.svg"
