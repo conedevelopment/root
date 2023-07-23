@@ -1,5 +1,7 @@
 [files]
-extend-exclude = ["public/build/assets/*"]
+extend-exclude = [
+    "public/build/assets/*",
+    "resources/views/form/fields/editor.blade.php"
+]
 [default.extend-words]
-referer = "referer"
 responsable = "responsable"
