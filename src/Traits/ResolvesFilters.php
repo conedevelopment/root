@@ -3,8 +3,8 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Filters\Filter;
-use Cone\Root\Support\Collections\Filters;
+use Cone\Root\Table\Filters\Filter;
+use Cone\Root\Table\Filters\Filters;
 use Illuminate\Http\Request;
 
 trait ResolvesFilters

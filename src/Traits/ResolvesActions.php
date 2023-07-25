@@ -3,8 +3,8 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Actions\Action;
-use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Table\Actions\Action;
+use Cone\Root\Table\Actions\Actions;
 use Illuminate\Http\Request;
 
 trait ResolvesActions
