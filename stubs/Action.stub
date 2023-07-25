@@ -2,35 +2,17 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Actions\Action;
+use Cone\Root\Table\Actions\Action;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Action
 {
     /**
-     * Create a new action instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Handle the action.
      */
     public function handle(Request $request, Collection $models): void
     {
         //
-    }
-
-    /**
-     * Define the fields for the action.
-     */
-    public function fields(Request $request): array
-    {
-        return array_merge(parent::fields($request), [
-            //
-        ]);
     }
 }

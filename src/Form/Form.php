@@ -15,10 +15,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\ViewErrorBag;
 
 class Form implements Renderable, Routable
 {
+    use Macroable;
     use Makeable;
     use ResolvesFields {
         ResolvesFields::resolveFields as __resolveFields;
@@ -235,6 +237,8 @@ class Form implements Renderable, Routable
     public function handle(Request $request): void
     {
         $this->validate($request);
+
+        $this->resolveFields($request)->persist($request);
     }
 
     /**

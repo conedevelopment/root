@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Table;
 
-use Cone\Root\Actions\Action;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Cells\Actions;
 use Cone\Root\Table\Cells\Cell;
@@ -24,9 +23,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Traits\Macroable;
 
 class Table implements Renderable, Routable
 {
+    use Macroable;
     use Makeable;
     use ResolvesActions;
     use ResolvesColumns;
@@ -42,15 +43,11 @@ class Table implements Renderable, Routable
     protected string $template = 'root::table.table';
 
     /**
-     * Handle the resolving event on the action instance.
+     * Resolve the filtered query.
      */
-    protected function resolveAction(Request $request, Action $action): void
+    public function resolveFilteredQuery(Request $request): Builder
     {
-        $action->query(function (Request $request): Builder {
-            return $this->resolveFilters($request)
-                ->authorized($request)
-                ->apply($request, $this->resolveQuery());
-        });
+        return $this->resolveFilters($request)->apply($request, $this->resolveQuery());
     }
 
     /**
@@ -60,8 +57,7 @@ class Table implements Renderable, Routable
     {
         $url = $this->replaceRoutePlaceholders($request->route());
 
-        return $this->resolveFilters($request)
-            ->apply($request, $this->resolveQuery())
+        return $this->resolveFilteredQuery($request)
             ->latest()
             ->paginate($request->input('per_page'))
             ->setPath($url)

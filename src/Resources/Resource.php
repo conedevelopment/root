@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
@@ -11,6 +10,8 @@ use Cone\Root\Navigation\Item as NavigationItem;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
+use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
@@ -28,6 +29,8 @@ use Illuminate\Support\Str;
 
 class Resource implements Routable
 {
+    use AsForm;
+    use AsTable;
     use Authorizable;
     use ResolvesExtracts;
     use ResolvesRelations;
@@ -55,16 +58,6 @@ class Resource implements Routable
      * The icon for the resource.
      */
     protected string $icon = 'archive';
-
-    /**
-     * The form instance.
-     */
-    protected ?Form $form = null;
-
-    /**
-     * The table instance.
-     */
-    protected ?Table $table = null;
 
     /**
      * Create a new resource instance.
@@ -219,18 +212,8 @@ class Resource implements Routable
     {
         $extract->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->query($request);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the widget instance.
-     */
-    protected function resolveWidget(Request $request, Widget $widget): void
-    {
-        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
+        })->query(function () use ($request): Builder {
+            return $this->resolveQuery($request);
         });
     }
 
@@ -341,20 +324,6 @@ class Resource implements Routable
             // 'relations' => $this->resolveRelations($request)
             //     ->authorized($request, $model)
             //     ->mapToTable($request, $model),
-        ];
-    }
-
-    /**
-     * Get the edit representation of the resource.
-     */
-    public function toEdit(Request $request, Model $model): array
-    {
-        return [
-            'model' => $this->newItem($model)->toForm(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
-            ),
-            'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
         ];
     }
 

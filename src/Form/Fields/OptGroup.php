@@ -7,7 +7,6 @@ use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
-use Illuminate\View\ComponentAttributeBag;
 
 class OptGroup implements Renderable
 {
@@ -69,7 +68,7 @@ class OptGroup implements Renderable
     public function render(): View
     {
         return App::make('view')->make($this->template, [
-            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
+            'attrs' => $this->newAttributeBag(),
             'options' => $this->options,
         ]);
     }

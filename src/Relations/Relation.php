@@ -249,7 +249,6 @@ abstract class Relation implements Arrayable, Routable
         return [
             'actions' => $this->resolveActions($request)
                 ->authorized($request)
-                ->visible(ResourceContext::Index->value)
                 ->mapToForm($request, $relation->getRelated()),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
@@ -274,7 +273,7 @@ abstract class Relation implements Arrayable, Routable
         return [
             'model' => $this->newItem($model, $related)->toForm(
                 $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
+                $this->resolveFields($request)->authorized($request, $model)
             ),
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
         ];
@@ -288,7 +287,7 @@ abstract class Relation implements Arrayable, Routable
         return [
             'model' => ($item = $this->newItem($model, $related))->toDisplay(
                 $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
+                $this->resolveFields($request)->authorized($request, $model)
             ),
             'resource' => $request->route('rootResource')->toArray(),
             'title' => __(':model: :id', ['model' => $this->getRelatedName(), 'id' => $item->model->getKey()]),
@@ -303,7 +302,7 @@ abstract class Relation implements Arrayable, Routable
         return [
             'model' => ($item = $this->newItem($model, $related))->toForm(
                 $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
+                $this->resolveFields($request)->authorized($request, $model)
             ),
             'title' => __('Edit :model: :id', ['model' => $this->getRelatedName(), 'id' => $item->model->getKey()]),
         ];

@@ -87,7 +87,7 @@ class Select extends Field
         $value = Arr::wrap($this->resolveValue());
 
         return array_map(function (mixed $label, mixed $option) use ($value): Option {
-            $option = $label instanceof Option ? $label : $this->newOption($label, $option);
+            $option = $label instanceof Option ? $label : $this->newOption($option, $label);
 
             $option->selected(in_array($option->getAttribute('value'), $value));
 
@@ -98,9 +98,9 @@ class Select extends Field
     /**
      * Make a new option instance.
      */
-    public function newOption(string $label, mixed $value = null): Option
+    public function newOption(mixed $value, string $label): Option
     {
-        return new Option($label, $value);
+        return new Option($value, $label);
     }
 
     /**

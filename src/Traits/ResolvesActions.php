@@ -20,6 +20,14 @@ trait ResolvesActions
     protected ?Actions $actions = null;
 
     /**
+     * Make a new action instance.
+     */
+    public function action(string $action, array ...$params): Action
+    {
+        return new $action($this, ...$params);
+    }
+
+    /**
      * Define the actions for the resource.
      */
     public function actions(Request $request): array
@@ -46,7 +54,7 @@ trait ResolvesActions
             $this->actions = Actions::make()->register($this->actions($request));
 
             if (! is_null($this->actionsResolver)) {
-                $this->actions->register(call_user_func_array($this->actionsResolver, [$request]));
+                $this->actions->register(call_user_func_array($this->actionsResolver, [$this, $request]));
             }
 
             $this->actions->each(function (Action $action) use ($request): void {

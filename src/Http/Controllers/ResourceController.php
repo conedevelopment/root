@@ -73,8 +73,7 @@ class ResourceController extends Controller
         $model = $resource->getModelInstance();
 
         $fields = $resource->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model);
 
         $request->validate($fields->mapToValidate($request, $model));
 
@@ -117,8 +116,7 @@ class ResourceController extends Controller
         }
 
         $fields = $resource->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model);
 
         $request->validate($fields->mapToValidate($request, $model));
 

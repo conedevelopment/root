@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Support\Collections;
 
-use Cone\Root\Actions\Action;
+use Cone\Root\Table\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -29,22 +29,6 @@ class Actions extends Collection
     public function authorized(Request $request, Model $model = null): static
     {
         return $this->filter->authorized($request, $model)->values();
-    }
-
-    /**
-     * Filter the actions that are visible in the given context.
-     */
-    public function visible(string|array $context): static
-    {
-        return $this->filter->visible($context)->values();
-    }
-
-    /**
-     * Map the actions to form.
-     */
-    public function mapToForm(Request $request, Model $model): array
-    {
-        return $this->map->toForm($request, $model)->toArray();
     }
 
     /**

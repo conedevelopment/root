@@ -56,8 +56,7 @@ class RelationController extends Controller
         $item = $relation->newItem($model, $relation->getRelation($model)->getRelated());
 
         $fields = $relation->resolveFields($request)
-            ->authorized($request, $item->model)
-            ->visible(ResourceContext::Create->value);
+            ->authorized($request, $item->model);
 
         $request->validate($fields->mapToValidate($request, $item->model));
 
@@ -111,8 +110,7 @@ class RelationController extends Controller
         Gate::allowIf($item->getAbilities()['update'] ?? false);
 
         $fields = $relation->resolveFields($request)
-            ->authorized($request, $item->model)
-            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $item->model);
 
         $request->validate($fields->mapToValidate($request, $item->model));
 

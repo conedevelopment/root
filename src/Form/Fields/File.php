@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Config;
 
 class File extends MorphToMany
 {
+    // use ResolvesFields;
+
     /**
      * The blade template.
      */
@@ -130,9 +132,9 @@ class File extends MorphToMany
                 return $this->store($request, $file)->getKey();
             }, $files);
 
-            $this->resolveHydrate($request, $value);
-
             $value = array_merge((array) $value, $ids);
+
+            $this->resolveHydrate($request, $value);
 
             $this->getRelation()->sync($value);
         });

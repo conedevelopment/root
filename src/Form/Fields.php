@@ -33,14 +33,6 @@ class Fields extends Collection
     }
 
     /**
-     * Filter the fields that are visible in the given context.
-     */
-    public function visible(string|array $context): static
-    {
-        return $this->filter->visible($context)->values();
-    }
-
-    /**
      * Persist the request value on the model.
      */
     public function persist(Request $request): void

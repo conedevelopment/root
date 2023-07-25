@@ -4,6 +4,7 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 
 trait HasAttributes
 {
@@ -112,5 +113,13 @@ trait HasAttributes
         return $value instanceof Closure
                 ? call_user_func($value)
                 : $value;
+    }
+
+    /**
+     * Make a new attribute bag instance.
+     */
+    public function newAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->resolveAttributes());
     }
 }

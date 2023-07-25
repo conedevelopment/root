@@ -46,14 +46,20 @@
                 </nav>
             </div>
             @foreach($groups as $group => $items)
-                <div class="block-navigation" data-item="navigation-block">
+                <div class="block-navigation" x-data="{ open: true }">
                     <h3 class="block-navigation__title">
                         {{ $group }}
-                        <button class="btn btn--light btn--sm btn--icon block-navigation__toggle" aria-expanded="true" aria-label="Toggle shop navigation" data-action="block-navigation-toggle">
+                        <button
+                            type="button"
+                            class="btn btn--light btn--sm btn--icon block-navigation__toggle"
+                            aria-label="{{ __('Toggle navigation') }}"
+                            x-bind:aria-expanded="open"
+                            @click="open = ! open"
+                        >
                             <x-root::icon name="chevron-down" class='btn__icon'/>
                         </button>
                     </h3>
-                    <nav class="block-navigation__menu block-navigation__menu--breakout" data-state="open">
+                    <nav class="block-navigation__menu block-navigation__menu--breakout" x-bind:data-state="open ? 'open' : 'closed'">
                         <ul>
                             @foreach($items as $item)
                                 <li>

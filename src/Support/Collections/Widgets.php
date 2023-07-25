@@ -32,14 +32,6 @@ class Widgets extends Collection
     }
 
     /**
-     * Filter the widgets that are visible in the given context.
-     */
-    public function visible(string|array $context): static
-    {
-        return $this->filter->visible($context)->values();
-    }
-
-    /**
      * Register the widget routes.
      */
     public function registerRoutes(Router $router): void
