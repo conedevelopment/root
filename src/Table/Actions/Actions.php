@@ -14,7 +14,7 @@ class Actions
     /**
      * The parent table instance.
      */
-    protected Table $table;
+    public readonly Table $table;
 
     /**
      * The actions collection.
@@ -33,9 +33,9 @@ class Actions
     /**
      * Make a new action instance.
      */
-    public function action(string $action, array ...$params): Action
+    public function action(string $action, ...$params): Action
     {
-        $instance = new $action($this, ...$params);
+        $instance = new $action($this->table, ...$params);
 
         $this->push($instance);
 

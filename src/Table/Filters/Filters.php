@@ -15,7 +15,7 @@ class Filters
     /**
      * The parent table instance.
      */
-    protected Table $table;
+    public readonly Table $table;
 
     /**
      * The filters collection.
@@ -29,6 +29,18 @@ class Filters
     {
         $this->table = $table;
         $this->filters = new Collection($filters);
+    }
+
+    /**
+     * Make a new filter instance.
+     */
+    public function filter(string $filter, ...$params): Filter
+    {
+        $instance = new $filter($this->table, ...$params);
+
+        $this->push($instance);
+
+        return $instance;
     }
 
     /**

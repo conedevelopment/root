@@ -13,7 +13,7 @@ class Columns
     /**
      * The parent table instance.
      */
-    protected Table $table;
+    public readonly Table $table;
 
     /**
      * The columns collection.

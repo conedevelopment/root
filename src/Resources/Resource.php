@@ -271,13 +271,9 @@ class Resource implements Routable
      */
     public function toForm(Request $request): Form
     {
-        if (is_null($this->form)) {
-            $this->form = Form::make()->model(function () use ($request): Model {
-                return $request->route($this->getRouteKeyName(), $this->getModelInstance());
-            });
-        }
-
-        return $this->form;
+        return Form::make()->model(function () use ($request): Model {
+            return $request->route($this->getRouteKeyName(), $this->getModelInstance());
+        });
     }
 
     /**
@@ -300,7 +296,7 @@ class Resource implements Routable
     {
         return [
             'resource' => $this,
-            'form' => $this->toForm($request),
+            'form' => $this->form($request),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
     }
@@ -312,7 +308,7 @@ class Resource implements Routable
     {
         return [
             'resource' => $this,
-            'form' => $this->toForm($request)->model(fn (): Model => $model),
+            'form' => $this->form($request)->model(fn (): Model => $model),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             // 'widgets' => $this->resolveWidgets($request),
             // 'relations' => $this->resolveRelations($request),
@@ -355,8 +351,8 @@ class Resource implements Routable
                 $this->table($request)->registerRoutes($router);
 
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                    $this->toForm($request)->registerRoutes($router);
-                    $this->resolveRelations($request)->registerRoutes($router);
+                    $this->form($request)->registerRoutes($router);
+                    // $this->resolveRelations($request)->registerRoutes($router);
                 });
             });
         });

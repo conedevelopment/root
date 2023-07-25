@@ -9,6 +9,6 @@ class Radio extends Checkbox
      */
     public function newOption(mixed $value, string $label): RadioOption
     {
-        return RadioOption::make($label, $value)->name($this->getAttribute('name'));
+        return RadioOption::make($value, $label)->name($this->getAttribute('name'));
     }
 }

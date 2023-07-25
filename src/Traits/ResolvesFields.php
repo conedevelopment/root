@@ -3,65 +3,30 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Form\Fields;
-use Cone\Root\Form\Fields\Field;
-use Illuminate\Http\Request;
+use Cone\Root\Form\Fields\Fields;
 
 trait ResolvesFields
 {
     /**
-     * The fields resolver callback.
+     * The fields instance.
      */
-    protected ?Closure $fieldsResolver = null;
-
-    /**
-     * The resolved fields.
-     */
-    protected ?Fields $fields = null;
+    public readonly Fields $fields;
 
     /**
      * Define the fields for the object.
      */
-    public function fields(Request $request): array
+    public function fields(): array
     {
         return [];
     }
 
     /**
-     * Set the fields resolver.
+     * Apply the callback on the fields.
      */
-    public function withFields(array|Closure $fields): static
+    public function withFields(Closure $callback): static
     {
-        $this->fieldsResolver = is_array($fields) ? fn (): array => $fields : $fields;
+        call_user_func_array($callback, [$this->fields]);
 
         return $this;
-    }
-
-    /**
-     * Resolve the fields.
-     */
-    public function resolveFields(Request $request): Fields
-    {
-        if (is_null($this->fields)) {
-            $this->fields = Fields::make()->register($this->fields($request));
-
-            if (! is_null($this->fieldsResolver)) {
-                $this->fields->register(call_user_func_array($this->fieldsResolver, [$request]));
-            }
-
-            $this->fields->each(function (Field $field) use ($request): void {
-                $this->resolveField($request, $field);
-            });
-        }
-
-        return $this->fields;
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        //
     }
 }
