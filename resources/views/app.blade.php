@@ -23,7 +23,7 @@
 </head>
 <body>
     <a class="btn btn--primary skip-link" href="#content">{{ __('Skip to content') }}</a>
-    <div class="l-main">
+    <div class="l-main" x-data="{ sidebarOpen: false }">
         <x-root::layout.sidebar />
         <main id="content" class="l-main__body" data-item="body">
             <x-root::layout.header />
