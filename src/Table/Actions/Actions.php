@@ -2,32 +2,44 @@
 
 namespace Cone\Root\Table\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Cone\Root\Table\Table;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\ForwardsCalls;
 
-class Actions extends Collection
+class Actions
 {
-    /**
-     * Register the given actions.
-     */
-    public function register(array|Action $actions): static
-    {
-        foreach (Arr::wrap($actions) as $action) {
-            $this->push($action);
-        }
+    use ForwardsCalls;
 
-        return $this;
+    /**
+     * The parent table instance.
+     */
+    protected Table $table;
+
+    /**
+     * The actions collection.
+     */
+    protected Collection $actions;
+
+    /**
+     * Create a new actions instance.
+     */
+    public function __construct(Table $table, array $actions = [])
+    {
+        $this->table = $table;
+        $this->actions = new Collection($actions);
     }
 
     /**
-     * Filter the actions that are available for the current request and model.
+     * Make a new action instance.
      */
-    public function authorized(Request $request, Model $model = null): static
+    public function action(string $action, array ...$params): Action
     {
-        return $this->filter->authorized($request, $model)->values();
+        $instance = new $action($this, ...$params);
+
+        $this->push($instance);
+
+        return $instance;
     }
 
     /**
@@ -36,7 +48,15 @@ class Actions extends Collection
     public function registerRoutes(Router $router): void
     {
         $router->prefix('actions')->group(function (Router $router): void {
-            $this->each->registerRoutes($router);
+            $this->actions->each->registerRoutes($router);
         });
+    }
+
+    /**
+     * Handle the dynamic method call.
+     */
+    public function __call($method, $parameters): mixed
+    {
+        return $this->forwardCallTo($this->actions, $method, $parameters);
     }
 }

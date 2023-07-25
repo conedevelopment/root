@@ -2,46 +2,66 @@
 
 namespace Cone\Root\Table\Columns;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use Cone\Root\Table\Table;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\ForwardsCalls;
 
-class Columns extends Collection
+class Columns
 {
-    /**
-     * Register the given columns.
-     */
-    public function register(array|Column $columns): static
-    {
-        foreach (Arr::wrap($columns) as $column) {
-            $this->push($column);
-        }
+    use ForwardsCalls;
 
-        return $this;
+    /**
+     * The parent table instance.
+     */
+    protected Table $table;
+
+    /**
+     * The columns collection.
+     */
+    protected Collection $columns;
+
+    /**
+     * Create a new table instance.
+     */
+    public function __construct(Table $table, array $columns = [])
+    {
+        $this->table = $table;
+        $this->columns = new Collection($columns);
     }
 
     /**
-     * Filter the columns that are available for the current request and model.
+     * Make a new text column.
      */
-    public function authorized(Request $request, Model $model = null): static
+    public function text(string $label, string $key): Text
     {
-        return $this->filter->authorized($request, $model)->values();
+        $column = new Text($this->table, $label, $key);
+
+        $this->columns->push($column);
+
+        return $column;
     }
 
     /**
      * Filter the searchable columns.
      */
-    public function searchable(Request $request): static
+    public function searchable(): static
     {
-        return $this->filter->isSearchable($request);
+        return $this->columns->filter->isSearchable();
     }
 
     /**
      * Filter the sortable columns.
      */
-    public function sortable(Request $request): static
+    public function sortable(): static
     {
-        return $this->filter->isSortable($request);
+        return $this->columns->filter->isSortable();
+    }
+
+    /**
+     * Handle the dynamic method call.
+     */
+    public function __call($method, $parameters): mixed
+    {
+        return $this->forwardCallTo($this->columns, $method, $parameters);
     }
 }

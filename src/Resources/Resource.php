@@ -261,13 +261,9 @@ class Resource implements Routable
      */
     public function toTable(Request $request): Table
     {
-        if (is_null($this->table)) {
-            $this->table = Table::make()->query(function () use ($request): Builder {
-                return $this->resolveQuery($request);
-            });
-        }
-
-        return $this->table;
+        return Table::make()->query(function () use ($request): Builder {
+            return $this->resolveQuery($request);
+        });
     }
 
     /**
@@ -292,7 +288,7 @@ class Resource implements Routable
         return [
             'resource' => $this,
             'title' => $this->getName(),
-            'table' => $this->toTable($request),
+            'table' => $this->table($request),
             'widgets' => $this->resolveWidgets($request)->authorized($request),
         ];
     }
@@ -356,7 +352,7 @@ class Resource implements Routable
             $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
                 $this->resolveWidgets($request)->registerRoutes($router);
                 $this->resolveExtracts($request)->registerRoutes($router);
-                $this->toTable($request)->registerRoutes($router);
+                $this->table($request)->registerRoutes($router);
 
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                     $this->toForm($request)->registerRoutes($router);

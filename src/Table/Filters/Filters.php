@@ -2,39 +2,43 @@
 
 namespace Cone\Root\Table\Filters;
 
+use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\ForwardsCalls;
 
-class Filters extends Collection
+class Filters
 {
-    /**
-     * Register the given filters.
-     */
-    public function register(array|Filter $filters): static
-    {
-        foreach (Arr::wrap($filters) as $filter) {
-            $this->push($filter);
-        }
-
-        return $this;
-    }
+    use ForwardsCalls;
 
     /**
-     * Filter the filters that are available for the given request.
+     * The parent table instance.
      */
-    public function authorized(Request $request): static
+    protected Table $table;
+
+    /**
+     * The filters collection.
+     */
+    protected Collection $filters;
+
+    /**
+     * Create a new filters instance.
+     */
+    public function __construct(Table $table, array $filters = [])
     {
-        return $this->filter->authorized($request)->values();
+        $this->table = $table;
+        $this->filters = new Collection($filters);
     }
 
     /**
      * Apply the filters on the query.
      */
-    public function apply(Request $request, Builder $query): Builder
+    public function apply(Request $request): Builder
     {
-        $this->filter(static function (Filter $filter) use ($request): bool {
+        $query = $this->table->resolveQuery();
+
+        $this->filters->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());
         })->each(static function (Filter $filter) use ($query, $request): void {
             $filter->apply($request, $query, $request->input($filter->getKey()));
@@ -44,23 +48,10 @@ class Filters extends Collection
     }
 
     /**
-     * Map the filters to form.
+     * Handle the dynamic method call.
      */
-    public function mapToForm(Request $request): array
+    public function __call($method, $parameters): mixed
     {
-        return $this->reject->functional()->map->toInput($request)->values()->toArray();
-    }
-
-    /**
-     * Map the filters into their query representation.
-     */
-    public function mapToQuery(Request $request, Builder $query): array
-    {
-        return $this->reduce(static function (array $values, Filter $filter) use ($request): array {
-            return array_replace($values, [$filter->getKey() => $filter->default($request)]);
-        }, [
-            'page' => (int) $request->query('page', 1),
-            'per_page' => (int) $request->query('per_page', $query->getModel()->getPerPage()),
-        ]);
+        return $this->forwardCallTo($this->filters, $method, $parameters);
     }
 }
