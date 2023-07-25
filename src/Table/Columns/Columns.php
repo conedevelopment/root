@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Table;
+namespace Cone\Root\Table\Columns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

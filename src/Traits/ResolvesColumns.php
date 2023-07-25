@@ -3,8 +3,8 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Table\Columns;
 use Cone\Root\Table\Columns\Column;
+use Cone\Root\Table\Columns\Columns;
 use Cone\Root\Table\Columns\Text;
 use Illuminate\Http\Request;
 

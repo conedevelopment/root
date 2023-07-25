@@ -1,29 +1,43 @@
 <?php
 
-namespace Cone\Root\Filters;
+namespace Cone\Root\Table\Filters;
 
+use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-abstract class Filter implements Arrayable
+abstract class Filter implements Renderable
 {
     use Authorizable;
     use Makeable;
 
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected ?string $component = 'Select';
+    protected ?string $template = 'root::table.filters.select';
 
     /**
      * Indicates if multiple options can be selected.
      */
     protected bool $multiple = false;
+
+    /**
+     * The table insance.
+     */
+    protected Table $table;
+
+    /**
+     * Create a new filter instance.
+     */
+    public function __construct(Table $table)
+    {
+        $this->table = $table;
+    }
 
     /**
      * Apply the filter on the query.
@@ -44,14 +58,6 @@ abstract class Filter implements Arrayable
     public function getName(): string
     {
         return __(Str::of(static::class)->classBasename()->headline()->value());
-    }
-
-    /**
-     * Get the Vue component.
-     */
-    public function getComponent(): ?string
-    {
-        return $this->component;
     }
 
     /**
@@ -77,7 +83,7 @@ abstract class Filter implements Arrayable
      */
     public function functional(): bool
     {
-        return is_null($this->getComponent());
+        return is_null($this->template);
     }
 
     /**
@@ -96,38 +102,5 @@ abstract class Filter implements Arrayable
         $this->multiple = $value;
 
         return $this;
-    }
-
-    /**
-     * Get the instance as an array.
-     */
-    public function toArray(): array
-    {
-        return [
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-            'component' => $this->getComponent(),
-        ];
-    }
-
-    /**
-     * Get the input representation of the filter.
-     */
-    public function toInput(Request $request): array
-    {
-        $options = $this->options($request);
-
-        return array_merge($this->toArray(), [
-            'active' => $this->active($request),
-            'default' => $this->default($request),
-            'nullable' => true,
-            'multiple' => $this->multiple,
-            'options' => array_map(static function (mixed $value, mixed $key): array {
-                return [
-                    'value' => $key,
-                    'formattedValue' => $value,
-                ];
-            }, $options, array_keys($options)),
-        ]);
     }
 }

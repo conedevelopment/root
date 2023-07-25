@@ -1,8 +1,7 @@
 <?php
 
-namespace Cone\Root\Support\Collections;
+namespace Cone\Root\Table\Filters;
 
-use Cone\Root\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;

@@ -1,8 +1,7 @@
 <?php
 
-namespace Cone\Root\Support\Collections;
+namespace Cone\Root\Table\Actions;
 
-use Cone\Root\Table\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;

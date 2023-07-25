@@ -8,7 +8,6 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
@@ -18,7 +17,6 @@ abstract class Widget implements Routable
     use Authorizable;
     use Makeable;
     use RegistersRoutes;
-    use ResolvesVisibility;
 
     /**
      * Indicates if the component is async.

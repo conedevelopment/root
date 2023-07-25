@@ -6,7 +6,7 @@ use Cone\Root\Extracts\Extract;
 use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Navigation\Item as NavigationItem;
+use Cone\Root\Navigation\Item;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
@@ -17,7 +17,6 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -316,23 +315,20 @@ class Resource implements Routable
     public function toShow(Request $request, Model $model): array
     {
         return [
-            // 'actions' => $this->resolveActions($request),
             'resource' => $this,
             'form' => $this->toForm($request)->model(fn (): Model => $model),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            // 'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-            // 'relations' => $this->resolveRelations($request)
-            //     ->authorized($request, $model)
-            //     ->mapToTable($request, $model),
+            // 'widgets' => $this->resolveWidgets($request),
+            // 'relations' => $this->resolveRelations($request),
         ];
     }
 
     /**
      * Get the navigation compatible format of the resource.
      */
-    public function toNavigationItem(Request $request): NavigationItem
+    public function toNavigationItem(Request $request): Item
     {
-        return (new NavigationItem($this->getUri(), $this->getName()))->icon($this->icon);
+        return Item::make($this->getUri(), $this->getName())->icon($this->icon);
     }
 
     /**

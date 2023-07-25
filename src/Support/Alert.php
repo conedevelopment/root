@@ -2,22 +2,24 @@
 
 namespace Cone\Root\Support;
 
-use Cone\Root\Enums\AlertType;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Stringable;
 
 class Alert implements Arrayable, Jsonable, Stringable
 {
+    public const INFO = 'info';
+
+    public const SUCCESS = 'success';
+
+    public const ERROR = 'error';
+
+    public const WARNING = 'warning';
+
     /**
      * The alert message.
      */
     protected string $message;
-
-    /**
-     * The alert type.
-     */
-    protected AlertType $type;
 
     /**
      * The alert timestamp.
@@ -25,9 +27,14 @@ class Alert implements Arrayable, Jsonable, Stringable
     protected string $timestamp;
 
     /**
+     * The alert type.
+     */
+    protected string $type;
+
+    /**
      * Create a new alert instance.
      */
-    public function __construct(string $message, AlertType $type)
+    public function __construct(string $message, string $type = self::INFO)
     {
         $this->message = $message;
         $this->type = $type;
@@ -39,7 +46,7 @@ class Alert implements Arrayable, Jsonable, Stringable
      */
     public static function info(string $message): static
     {
-        return new static($message, AlertType::Info);
+        return new static($message, static::INFO);
     }
 
     /**
@@ -47,7 +54,7 @@ class Alert implements Arrayable, Jsonable, Stringable
      */
     public static function success(string $message): static
     {
-        return new static($message, AlertType::Success);
+        return new static($message, static::SUCCESS);
     }
 
     /**
@@ -55,7 +62,7 @@ class Alert implements Arrayable, Jsonable, Stringable
      */
     public static function error(string $message): static
     {
-        return new static($message, AlertType::Error);
+        return new static($message, static::ERROR);
     }
 
     /**
@@ -63,7 +70,7 @@ class Alert implements Arrayable, Jsonable, Stringable
      */
     public static function warning(string $message): static
     {
-        return new static($message, AlertType::Warning);
+        return new static($message, static::WARNING);
     }
 
     /**
