@@ -38,7 +38,7 @@
                                 </div>
                             @endif
                         </div>
-                       @hasSection('actions')
+                        @hasSection('actions')
                             <div class="app-heading__actions">
                                 @yield('actions')
                             </div>
