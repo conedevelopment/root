@@ -3,9 +3,8 @@
 namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 
 class ExtractController extends Controller
 {
@@ -16,10 +15,10 @@ class ExtractController extends Controller
     {
         $extract = $request->route('rootExtract');
 
-        Gate::allowIf($extract->authorized($request));
+        // Gate::allowIf($extract->authorized($request));
 
-        return Inertia::render(
-            'Extracts/Index',
+        return ResponseFactory::view(
+            'root::extracts.index',
             $extract->toIndex($request)
         );
     }

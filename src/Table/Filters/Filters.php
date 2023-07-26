@@ -48,7 +48,7 @@ class Filters
      */
     public function apply(Request $request): Builder
     {
-        $query = $this->table->resolveQuery();
+        $query = $this->table->resolveQuery($request);
 
         $this->filters->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());

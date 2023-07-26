@@ -151,7 +151,7 @@ abstract class Action implements Renderable, Responsable, Routable
         $request = App::make('request');
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->toForm($request)->registerRoutes($router);
+            $this->form($request)->registerRoutes($router);
         });
     }
 
@@ -193,11 +193,9 @@ abstract class Action implements Renderable, Responsable, Routable
      */
     public function toForm(Request $request): ActionForm
     {
-        if (is_null($this->form)) {
-            $this->form = ActionForm::make()->model(fn (): Model => $this->resolveQuery()->getModel());
-        }
-
-        return $this->form;
+        return ActionForm::make()->model(function (Request $request): Model {
+            return $this->table->resolveQuery($request)->getModel();
+        });
     }
 
     /**

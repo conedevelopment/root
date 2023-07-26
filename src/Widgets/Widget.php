@@ -8,11 +8,14 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Routable
+abstract class Widget implements Renderable, Routable
 {
     use Authorizable;
     use Makeable;
@@ -26,7 +29,7 @@ abstract class Widget implements Routable
     /**
      * The blade component.
      */
-    protected string $component = 'root::widgets.widget';
+    protected string $template = 'root::widgets.widget';
 
     /**
      * The data resolver callback.
@@ -55,14 +58,6 @@ abstract class Widget implements Routable
     public function getName(): string
     {
         return __(Str::of(static::class)->classBasename()->headline()->value());
-    }
-
-    /**
-     * Get the blade component.
-     */
-    public function getComponent(): string
-    {
-        return $this->component;
     }
 
     /**
@@ -96,13 +91,9 @@ abstract class Widget implements Routable
      */
     public function with(array|Closure $data): static
     {
-        if (is_array($data)) {
-            $data = static function () use ($data): array {
-                return $data;
-            };
-        }
-
-        $this->dataResolver = $data;
+        $this->dataResolver = is_array($data)
+            ? fn (): array => $data
+            : $data;
 
         return $this;
     }
@@ -126,5 +117,16 @@ abstract class Widget implements Routable
         if ($this->async) {
             $router->get('/', WidgetController::class);
         }
+    }
+
+    /**
+     * Render the field.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make(
+            $this->template,
+            App::call([$this, 'resolveData'])
+        );
     }
 }
