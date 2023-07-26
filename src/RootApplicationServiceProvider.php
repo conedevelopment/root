@@ -23,7 +23,7 @@ class RootApplicationServiceProvider extends ServiceProvider
     {
         $this->gate();
 
-        $this->app->make('root')->booting(function (Root $root): void {
+        $this->app->make(Root::class)->booting(function (Root $root): void {
             $this->registerResources($root);
             $this->registerWidgets($root);
             $this->registerRoutes($root);
@@ -35,9 +35,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     protected function registerResources(Root $root): void
     {
-        foreach ($this->resources() as $resource) {
-            $root->resources->register($resource);
-        }
+        $root->resources->register($this->resources());
     }
 
     /**
@@ -45,9 +43,7 @@ class RootApplicationServiceProvider extends ServiceProvider
      */
     protected function registerWidgets(Root $root): void
     {
-        foreach ($this->widgets() as $widget) {
-            $root->widgets->push($widget);
-        }
+        $root->widgets->register($this->widgets());
     }
 
     /**

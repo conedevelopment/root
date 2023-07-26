@@ -4,6 +4,7 @@ namespace Cone\Root\Extracts;
 
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
@@ -11,6 +12,7 @@ use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesQuery;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Widgets\Widgets;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -26,6 +28,28 @@ abstract class Extract implements Routable
     use ResolvesQuery;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
+    }
+
+    /**
+     * The parent resource instance.
+     */
+    protected Resource $resource;
+
+    /**
+     * Create a new extract instance.
+     */
+    public function __construct(Resource $resource)
+    {
+        $this->resource = $resource;
+        $this->widgets = new Widgets($this->widgets());
+    }
+
+    /**
+     * Resolve the query for the table.
+     */
+    public function resolveQuery(Request $request): Builder
+    {
+        return $this->resource->resolveQuery($request);
     }
 
     /**

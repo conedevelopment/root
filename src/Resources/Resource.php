@@ -2,11 +2,12 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Extracts\Extract;
+use Cone\Root\Extracts\Extracts;
 use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Navigation\Item;
+use Cone\Root\Relations\Relations;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
@@ -17,6 +18,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Widgets\Widgets;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,6 +66,9 @@ class Resource implements Routable
     public function __construct(string $model)
     {
         $this->model = $model;
+        $this->extracts = new Extracts($this, $this->extracts());
+        $this->widgets = new Widgets($this->widgets());
+        $this->relations = new Relations($this->relations());
     }
 
     /**
@@ -205,18 +210,6 @@ class Resource implements Routable
     }
 
     /**
-     * Handle the resolving event on the extract instance.
-     */
-    protected function resolveExtract(Request $request, Extract $extract): void
-    {
-        $extract->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        })->query(function () use ($request): Builder {
-            return $this->resolveQuery($request);
-        });
-    }
-
-    /**
      * Handle the created event.
      */
     public function created(Request $request, Model $model): void
@@ -285,7 +278,7 @@ class Resource implements Routable
             'resource' => $this,
             'title' => $this->getName(),
             'table' => $this->table($request),
-            'widgets' => $this->resolveWidgets($request)->authorized($request),
+            'widgets' => $this->widgets,
         ];
     }
 
@@ -310,8 +303,8 @@ class Resource implements Routable
             'resource' => $this,
             'form' => $this->form($request)->model(fn (): Model => $model),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            // 'widgets' => $this->resolveWidgets($request),
-            // 'relations' => $this->resolveRelations($request),
+            // 'widgets' => $this->widgets,
+            // 'relations' => $this->relations,
         ];
     }
 
@@ -346,13 +339,13 @@ class Resource implements Routable
             $request = App::make('request');
 
             $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-                $this->resolveWidgets($request)->registerRoutes($router);
-                $this->resolveExtracts($request)->registerRoutes($router);
+                $this->widgets->registerRoutes($router);
+                $this->extracts->registerRoutes($router);
                 $this->table($request)->registerRoutes($router);
 
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                     $this->form($request)->registerRoutes($router);
-                    // $this->resolveRelations($request)->registerRoutes($router);
+                    // $this->relations->registerRoutes($router);
                 });
             });
         });

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Support\Collections;
+namespace Cone\Root\Relations;
 
 use Cone\Root\Relations\Relation;
 use Illuminate\Database\Eloquent\Model;
@@ -9,34 +9,50 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class Relations extends Collection
+class Relations
 {
+    /**
+     * The relations collection.
+     */
+    protected Collection $relations;
+
+    /**
+     * Create a new relations instance.
+     */
+    public function __construct(array $relations = [])
+    {
+        $this->relations = new Collection($relations);
+    }
+
     /**
      * Register the given relations.
      */
     public function register(array|Relation $relations): static
     {
         foreach (Arr::wrap($relations) as $relation) {
-            $this->push($relation);
+            $this->relations->push($relation);
         }
 
         return $this;
     }
+
+    // hasOne()
+    // hasMany()
+    // belongsTo()
+    // belongsToMany()
+    // hasOneThrough()
+    // hasManyThrough()
+    // morphOne()
+    // morphTo()
+    // morphMany()
+    // morphToMany()
 
     /**
      * Filter the relations that are available for the current request and model.
      */
     public function authorized(Request $request, Model $model = null): static
     {
-        return $this->filter->authorized($request, $model)->values();
-    }
-
-    /**
-     * Map the relations to table.
-     */
-    public function mapToTable(Request $request, Model $model): array
-    {
-        return $this->map->toTable($request, $model)->toArray();
+        return $this->relations->filter->authorized($request, $model)->values();
     }
 
     /**
@@ -45,7 +61,7 @@ class Relations extends Collection
     public function registerRoutes(Router $router): void
     {
         $router->prefix('relations')->group(function (Router $router): void {
-            $this->each->registerRoutes($router);
+            $this->relations->each->registerRoutes($router);
         });
     }
 }

@@ -3,8 +3,9 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Support\Collections\Resources;
-use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Resources\Resources;
+use Cone\Root\Widgets\Widgets;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -73,7 +74,7 @@ class Root
             call_user_func_array($callback, [$this]);
         }
 
-        $this->resources->each->boot($this);
+        $this->resources->each(fn (Resource $resource) => $resource->boot($this));
 
         foreach ($this->booted as $callback) {
             call_user_func_array($callback, [$this]);
