@@ -69,11 +69,8 @@ jobs:
             name: "Install all dependencies"
             run: "yarn install --non-interactive --pure-lockfile"
         -
-            name: "Install stylelint-formatter-github-annotate"
-            run: "yarn install --no-save stylelint-formatter-github-annotate"
-        -
             name: "Detect coding standards violations"
-            run: "yarn run sass:lint --custom-formatter=node_modules/stylelint-formatter-github-annotate"
+            run: "yarn run sass:lint --formatter github"
 
     build:
         name: "𝟑 Build"
