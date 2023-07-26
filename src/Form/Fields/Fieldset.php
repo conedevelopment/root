@@ -24,16 +24,6 @@ class Fieldset extends Field implements Routable
     protected string $component = 'Fieldset';
 
     /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Router $router): void

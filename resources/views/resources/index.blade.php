@@ -7,7 +7,7 @@
 @section('content')
 @if($widgets->isNotEmpty())
     <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
-        @foreach($widgets as $widtet)
+        @foreach($widgets->all() as $widget)
             {!! $widget->render() !!}
         @endforeach
     </div>

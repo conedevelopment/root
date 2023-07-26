@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
-class Widgets extends Collection
+class Widgets
 {
     use ForwardsCalls;
 

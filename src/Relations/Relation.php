@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Relations;
 
-use Cone\Root\Form\Fields\Field;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
@@ -99,16 +98,6 @@ abstract class Relation implements Arrayable, Routable
             'viewAny' => is_null($policy) || Gate::allows('viewAny'.$name, $model),
             'create' => is_null($policy) || Gate::allows('add'.$name, $model),
         ];
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
     }
 
     /**
