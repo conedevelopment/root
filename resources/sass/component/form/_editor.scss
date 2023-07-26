@@ -48,9 +48,9 @@
     @include scrollbar;
     flex: 1 1 auto;
     margin: spacer('xxs');
-    padding: spacer('s');
     overflow-x: hidden;
     overflow-y: auto;
+    padding: spacer('s');
 
     > [contenteditable='true'] {
       @include layout-stack('xs');

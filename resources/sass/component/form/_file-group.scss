@@ -12,8 +12,8 @@
   border-radius: config('border-radius', $form-control);
   display: flex;
   gap: spacer('m');
-  padding: spacer('s');
   overflow: hidden;
+  padding: spacer('s');
 
   @container file-group-container (inline-size < 30rem) {
     flex-direction: column;

@@ -1,8 +1,8 @@
 @use 'sass:color';
 
-$dark-color-black: hsl(245deg 38% 11%);
+$dark-color-black: hsl(240deg 19% 14%);
 $dark-color-danger: hsl(0deg 71% 51%);
-$dark-color-gray-dark: hsl(0deg 0% 100% / 8%);
+$dark-color-gray-dark: hsl(0deg 0% 100% / 4%);
 $dark-color-gray: hsl(0deg 0% 97%);
 $dark-color-primary: hsl(211deg 99% 46%);
 $dark-color-secondary: hsl(160 89% 46%);
@@ -25,15 +25,12 @@ $colors: (
     'mark-foreground': $dark-color-black,
     'marker': $dark-color-primary,
     'primary': $dark-color-primary,
-    'primary-lightest': hsl(245deg 38% 15%),
+    'primary-lightest': hsl(240deg 19% 16%),
     'secondary': $dark-color-secondary,
     'text': $dark-color-gray,
   ),
   'breadcrumb': (
-    'arrow': hsl(0deg 0% 100% / 0.1),
-  ),
-  'data-table': (
-    'icon': hsl(0deg 0% 100% / 0.1),
+    'arrow': hsl(0deg 0% 100% / 10%),
   ),
   'btn': (
     'dark-background': hsl(0deg 0% 100%),
@@ -44,7 +41,7 @@ $colors: (
     'dark-outline-foreground-hover': hsl(205deg 100% 2%),
     'dark-outline-background-hover': hsl(0deg 0% 100%),
     'dark-outline-focus-ring': hsl(0deg 0% 100%),
-    'light-background': hsl(246deg 31% 13%),
+    'light-background': hsl(240deg 19% 12%),
     'light-background-hover': $dark-color-primary,
     'light-focus-ring': $dark-color-primary,
     'light-foreground': $dark-color-primary,
@@ -60,6 +57,13 @@ $colors: (
   ),
   'card': (
     'background': $dark-color-black,
+  ),
+  'combobox': (
+    'item-background': hsl(240deg 19% 12%),
+    'item-foreground': $dark-color-primary,
+  ),
+  'data-table': (
+    'icon': hsl(0deg 0% 100% / 0.1),
   ),
   'form': (
     'background': color.scale($dark-color-black, $lightness: 5%),
@@ -83,7 +87,7 @@ $colors: (
     'valid-shadow': color.adjust($dark-color-success, $alpha: -0.75),
   ),
   'header': (
-    'background': hsl(245deg 38% 11% / 95%),
+    'background': hsl(240deg 19% 12% / 95%),
   ),
   'navigation': (
     'arrow': hsl(0deg 0% 100% / 15%),
@@ -93,7 +97,10 @@ $colors: (
     'icon-foreground-hover': hsl(186deg 100% 5%),
   ),
   'main': (
-    'background': $dark-color-black,
+    'background': hsl(240deg 19% 13%),
+  ),
+  'modal': (
+    'background': hsla(240, 3%, 7%, 0.9),
   ),
   'prism': (
     'color': hsl(217deg 34% 88%),

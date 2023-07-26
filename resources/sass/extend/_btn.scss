@@ -9,9 +9,9 @@
   @include btn-variant('light');
 
   &.btn--active {
-    color: color('light-foreground-hover', 'btn');
     background-color: color('light-background-hover', 'btn');
     border-color: color('light-background-hover', 'btn');
+    color: color('light-foreground-hover', 'btn');
   }
 }
 

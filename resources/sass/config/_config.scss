@@ -43,6 +43,10 @@ $color-danger: hsl(0deg 71% 51%);
     'breadcrumb': (
       'separator': hsl(0deg 0% 80%),
     ),
+    'combobox': (
+      'item-background': $color-primary-lightest,
+      'item-foreground': $color-primary,
+    ),
     'data-table': (
       'icon': hsl(0deg 0% 80%),
     ),
@@ -57,6 +61,9 @@ $color-danger: hsl(0deg 71% 51%);
     ),
     'main': (
       'background': $color-primary-lightest,
+    ),
+    'modal': (
+      'background': hsl(210deg 60% 98% / 90%),
     ),
     'search': (
       'icon': hsl(229deg 26% 48% / 25%),
@@ -114,5 +121,6 @@ $color-danger: hsl(0deg 71% 51%);
   ),
   $settings: (
     'css-custom-properties': true,
+    'prefix': 'root',
   )
 );

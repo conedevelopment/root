@@ -7,6 +7,10 @@
   border-radius: config('border-radius-sm', $display);
   box-shadow: 0 0 spacer('xxs') hsl(201.15deg 72.03% 32.71% / 5%);
 
+  &:focus-within {
+    z-index: 5;
+  }
+
   &--edit {
     #{$this}__header {
       padding-inline: spacer('m');

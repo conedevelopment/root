@@ -1,0 +1,60 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.modal-backdrop {
+  align-items: start;
+  background-color: color('background', 'modal');
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow-y: auto;
+  position: fixed;
+  z-index: 25;
+}
+
+.modal {
+  @include set-css-variable((
+    --inline-size: 34rem
+  ));
+  background-color: color('background');
+  border: 1px solid color('border');
+  border-radius: config('border-radius-sm', $display);
+  box-shadow: 0 0 spacer('xxs') hsl(201.15deg 72.03% 32.71% / 5%);
+  inline-size: get-css-variable(--inline-size);
+  margin: spacer('m');
+  max-inline-size: 100%;
+
+  &__header {
+    align-items: center;
+    border-block-end: 1px solid color('border');
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('s');
+    justify-content: space-between;
+    padding: spacer-clamp('s', 'm');
+
+    &-caption {
+      @include layout-stack(0);
+    }
+  }
+
+  &__title {
+    font-size: font-size('h3');
+    font-weight: 600;
+    margin-block: 0;
+  }
+
+  &__body {
+    @include layout-stack('s');
+    padding: spacer-clamp('s', 'm');
+  }
+
+  &__footer {
+    align-items: center;
+    border-block-start: 1px solid color('border');
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('s');
+    justify-content: end;
+    padding: spacer-clamp('s', 'm');
+  }
+}

@@ -8,10 +8,13 @@
 [data-theme-mode='dark'] {
   color-scheme: dark;
 
-  select.form-control:not([multiple]):not([size]) {
+  /* stylelint-disable */
+  select.form-control:not([multiple]):not([size]),
+  .combobox__control {
     @include field-icon(
       config('select', $form-icon, false),
       color('select-foreground', 'form', true, $dark-colors)
     );
   }
+  /* stylelint-enable */
 }

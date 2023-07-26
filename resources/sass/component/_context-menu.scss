@@ -41,9 +41,9 @@
   }
 
   &__item {
+    background: none;
     border: 0;
     border-radius: config('border-radius-sm', $display);
-    background: none;
     color: color('text');
     cursor: pointer;
     display: flex;
