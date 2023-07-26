@@ -5,7 +5,7 @@ namespace Cone\Root\Form\Fields;
 class CheckboxOption extends Option
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.checkbox-option';
 

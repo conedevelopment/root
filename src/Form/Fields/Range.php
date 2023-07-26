@@ -7,7 +7,7 @@ use Cone\Root\Form\Form;
 class Range extends Number
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.range';
 

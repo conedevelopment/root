@@ -7,7 +7,7 @@ use Cone\Root\Form\Form;
 class ActionForm extends Form
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::table.actions.action-form';
 }

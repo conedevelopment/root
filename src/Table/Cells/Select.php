@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class Select extends Cell
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::table.cells.row-select';
 

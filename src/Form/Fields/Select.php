@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 class Select extends Field
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.select';
 

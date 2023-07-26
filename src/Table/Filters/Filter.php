@@ -17,7 +17,7 @@ abstract class Filter implements Renderable
     use Makeable;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected ?string $template = 'root::table.filters.select';
 

@@ -5,7 +5,7 @@ namespace Cone\Root\Table\Cells;
 class Text extends Cell
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::table.cells.text';
 }

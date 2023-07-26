@@ -80,7 +80,7 @@ class FieldMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['template', null, InputOption::VALUE_OPTIONAL, 'The blade template'],
+            ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
         ];
     }
 }

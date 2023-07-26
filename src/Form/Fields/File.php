@@ -17,7 +17,7 @@ class File extends MorphToMany
     // use ResolvesFields;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.file';
 

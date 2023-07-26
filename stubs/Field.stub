@@ -8,7 +8,7 @@ class {{ class }} extends Field
 {
 %%template%%
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = '{{ template }}';
 %%/template%%

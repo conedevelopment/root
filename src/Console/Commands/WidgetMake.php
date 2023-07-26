@@ -58,9 +58,11 @@ class WidgetMake extends GeneratorCommand
 
         $class = $this->replaceAsync($class);
 
-        $class = $this->replaceComponent($class);
+        $class = $this->replaceTemplate($class);
 
-        return $this->replaceTemplate($class);
+        $this->makeView();
+
+        return $class;
     }
 
     /**
@@ -76,29 +78,45 @@ class WidgetMake extends GeneratorCommand
     }
 
     /**
-     * Replace the component related code.
-     */
-    protected function replaceComponent(string $class): string
-    {
-        if ($component = $this->option('component')) {
-            return str_replace(
-                [PHP_EOL.'%%component%%', '%%/component%%', '{{ component }}'],
-                ['', '', $component],
-                $class
-            );
-        }
-
-        return preg_replace('/\n%%component%%.*%%\/component%%/s', '', $class);
-    }
-
-    /**
      * Replace the template related code.
      */
     protected function replaceTemplate(string $class): string
     {
-        $template = $this->option('template') ?: 'widgets.'.Str::kebab($this->getNameInput());
+        return str_replace('{{ template }}', $this->getView(), $class);
+    }
 
-        return str_replace('{{ template }}', $template, $class);
+    /**
+     * Make the view for the component.
+     */
+    protected function makeView(): void
+    {
+        $path = $this->viewPath(str_replace('.', '/', $this->getView()).'.blade.php');
+
+        if (! $this->files->isDirectory(dirname($path))) {
+            $this->files->makeDirectory(dirname($path), 0777, true, true);
+        }
+
+        if ($this->files->exists($path) && ! $this->option('force')) {
+            $this->components->error('View already exists.');
+
+            return;
+        }
+
+        file_put_contents($path, '<div></div>');
+    }
+
+    /**
+     * Get the view name relative to the components directory.
+     */
+    protected function getView(): string
+    {
+        if ($this->option('template')) {
+            return $this->option('template');
+        }
+
+        $name = str_replace('\\', '/', $this->getNameInput());
+
+        return 'widgets.'.implode('.', array_map([Str::class, 'kebab'], explode('/', $name)));
     }
 
     /**
@@ -108,7 +126,7 @@ class WidgetMake extends GeneratorCommand
     {
         return [
             ['async', null, InputOption::VALUE_NONE, 'Mark the widget as async'],
-            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the component already exists'],
             ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
         ];
     }

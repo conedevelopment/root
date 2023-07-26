@@ -23,7 +23,7 @@ class {{ class }} extends Extract
     public function toTable(Request $request): Table
     {
         return parent::toTable($request)->withColumns(static function (Columns $columns): void {
-            //
+            $columns->id();
         });
     }
 }

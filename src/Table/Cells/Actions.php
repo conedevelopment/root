@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class Actions extends Cell
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::table.cells.row-actions';
 

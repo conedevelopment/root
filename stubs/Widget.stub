@@ -9,28 +9,14 @@ class {{ class }} extends Widget
 {
 %%async%%
     /**
-     * Indicates if the widget is async.
+     * Indicates whether the widget is async.
      */
     protected bool $async = true;
 %%/async%%
-%%component%%
-    /**
-     * The Vue component.
-     */
-    protected string $component = '{{ component }}';
-%%/component%%
     /**
      * The Blade template.
      */
     protected string $template = '{{ template }}';
-
-    /**
-     * Create a new widget instance.
-     */
-    public function __construct()
-    {
-        //
-    }
 
     /**
      * Get the data.

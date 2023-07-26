@@ -14,7 +14,7 @@ class Option implements Renderable
     use Makeable;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.option';
 

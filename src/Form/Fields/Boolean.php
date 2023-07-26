@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class Boolean extends Field
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.boolean';
 

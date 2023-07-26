@@ -17,7 +17,7 @@ abstract class Cell implements Renderable
     use ResolvesModelValue;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template;
 

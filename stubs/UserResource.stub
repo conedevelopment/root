@@ -2,9 +2,11 @@
 
 namespace App\Root\Resources;
 
-use Cone\Root\Form\Fields\ID;
-use Cone\Root\Form\Fields\Text;
+use Cone\Root\Form\Fields\Fields;
+use Cone\Root\Form\Form;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Table\Columns\Columns;
+use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,26 +16,35 @@ class UserResource extends Resource
     /**
      * The icon for the resource.
      */
-    protected string $icon = 'person';
+    protected string $icon = 'users';
 
     /**
      * {@inheritdoc}
      */
-    public function fields(Request $request): array
+    public function toTable(Request $request): Table
     {
-        return array_merge(parent::fields($request), [
-            ID::make(),
+        return parent::toTable($request)->withColumns(static function (Columns $columns): void {
+            $columns->id();
+            $columns->text(__('Name'), 'name);
+            $columns->text(__('Email'), 'email);
+        });
+    }
 
-            Text::make(__('Name'), 'name')
+    /**
+     * {@inheritdoc}
+     */
+    public function toForm(Request $request): Form
+    {
+        return parent::toForm($request)->withFields(static function (Fields $fields): void {
+            $fields->text(__('Name'), 'name')
                 ->rules(['required', 'string', 'max:256']),
 
-            Text::make(__('Email'), 'email')
-                ->type('email')
+            $fields->email(__('Email'), 'email')
                 ->rules(['required', 'string', 'email', 'max:256'])
                 ->createRules(['unique:users'])
                 ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
-        ]);
+        });
     }
 }

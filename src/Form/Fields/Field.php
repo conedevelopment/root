@@ -24,7 +24,7 @@ abstract class Field implements Renderable
     use ResolvesModelValue;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.input';
 

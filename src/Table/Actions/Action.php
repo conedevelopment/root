@@ -35,7 +35,7 @@ abstract class Action implements Renderable, Responsable, Routable
     }
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.form';
 

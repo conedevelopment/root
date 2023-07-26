@@ -13,7 +13,7 @@ class Media extends File
     protected bool $async = true;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.media';
 

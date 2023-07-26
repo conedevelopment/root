@@ -28,7 +28,7 @@ abstract class Column implements Renderable
     protected string $name;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::table.column';
 

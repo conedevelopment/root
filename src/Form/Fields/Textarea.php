@@ -7,7 +7,7 @@ use Closure;
 class Textarea extends Field
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.textarea';
 

@@ -7,7 +7,7 @@ use Cone\Root\Form\Form;
 class Hidden extends Field
 {
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.hidden';
 

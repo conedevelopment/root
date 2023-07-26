@@ -35,7 +35,7 @@ abstract class Relation extends Field implements Routable
     protected bool $async = false;
 
     /**
-     * The blade template.
+     * The Blade template.
      */
     protected string $template = 'root::form.fields.select';
 
