@@ -3,7 +3,6 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
-use Cone\Root\Form\Fields\Field;
 use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Routable;
 use Illuminate\Http\Request;

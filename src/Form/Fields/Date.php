@@ -29,7 +29,7 @@ class Date extends Field
     {
         parent::__construct($form, $label, $name);
 
-        $this->type('date');
+        $this->type('date')->step(1);
     }
 
     /**
@@ -46,6 +46,14 @@ class Date extends Field
     public function max(string|DateTimeInterface $value): static
     {
         return $this->setAttribute('max', (string) $value);
+    }
+
+    /**
+     * Set the "step" HTML attribute.
+     */
+    public function step(int $value): static
+    {
+        return $this->setAttribute('step', $value);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Relations;
 
-use Cone\Root\Relations\Relation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;

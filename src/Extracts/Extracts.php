@@ -70,4 +70,12 @@ class Extracts
             $this->extracts->each->registerRoutes($router);
         });
     }
+
+    /**
+     * Map the items to navigation.
+     */
+    public function mapToNavigation(Request $request): array
+    {
+        return $this->extracts->each->toNavigationItem($request)->all();
+    }
 }

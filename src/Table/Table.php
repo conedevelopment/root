@@ -77,10 +77,10 @@ class Table implements Renderable, Routable
             ->withQueryString()
             ->through(function (Model $model) use ($url): array {
                 return $this->columns->map(static function (Column $column) use ($model): Cell {
-                        return $column->toCell($model)
-                            ->value($column->getValueResolver())
-                            ->format($column->getFormatResolver());
-                    })
+                    return $column->toCell($model)
+                        ->value($column->getValueResolver())
+                        ->format($column->getFormatResolver());
+                })
                     ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
                         $cells->prepend(Select::make(Text::make($this, ''), $model));
                     })

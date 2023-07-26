@@ -4,6 +4,7 @@ namespace Cone\Root\Extracts;
 
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Navigation\Item;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\AsTable;
@@ -117,7 +118,15 @@ abstract class Extract implements Routable
         return [
             'title' => $this->getName(),
             'table' => $this->table($request),
-            // 'widgets' => $this->resolveWidgets($request),
+            // 'widgets' => $this->widgets($request),
         ];
+    }
+
+    /**
+     * Get the navigation compatible format of the extract.
+     */
+    public function toNavigationItem(Request $request): Item
+    {
+        return Item::make($this->getUri(), $this->getName());
     }
 }

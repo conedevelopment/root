@@ -3,6 +3,7 @@
 namespace Cone\Root\Navigation;
 
 use Closure;
+use Illuminate\Support\Arr;
 
 trait HasItems
 {
@@ -26,11 +27,13 @@ trait HasItems
     }
 
     /**
-     * Add a new item.
+     * Add new items.
      */
-    public function add(Item $item): static
+    public function add(array|Item $items): static
     {
-        $this->items[$item->url] = $item;
+        foreach (Arr::wrap($items) as $item) {
+            $this->items[$item->url] = $item;
+        }
 
         return $this;
     }

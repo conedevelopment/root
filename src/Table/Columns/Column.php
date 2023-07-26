@@ -5,7 +5,6 @@ namespace Cone\Root\Table\Columns;
 use Closure;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
-use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;

@@ -3,7 +3,6 @@
 namespace Cone\Root\Resources;
 
 use Cone\Root\Exceptions\ResourceResolutionException;
-use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

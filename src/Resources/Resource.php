@@ -313,7 +313,9 @@ class Resource implements Routable
      */
     public function toNavigationItem(Request $request): Item
     {
-        return Item::make($this->getUri(), $this->getName())->icon($this->icon);
+        return Item::make($this->getUri(), $this->getName())
+            ->icon($this->icon)
+            ->add($this->extracts->mapToNavigation($request));
     }
 
     /**
@@ -376,13 +378,5 @@ class Resource implements Routable
         if ($this->isSoftDeletable()) {
             $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
         }
-    }
-
-    /**
-     * Handle the routes registered event.
-     */
-    public function routesRegistered(Router $router): void
-    {
-        //
     }
 }

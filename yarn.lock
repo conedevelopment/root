@@ -1566,10 +1566,10 @@ spdx-license-ids@^3.0.0:
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.13.tgz#7189a474c46f8d47c7b0da4b987bb45e908bd2d5"
   integrity sha512-XkD+zwiqXHikFZm4AX/7JSCXA98U5Db4AFd5XUg/+9UNtnH75+Z9KxtpYiJZx36mUDVOwH83pl7yvCer6ewM3w==
 
-sprucecss@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-2.2.0.tgz#9a931c5a13f81e12cf1c73156e989ce6100bf297"
-  integrity sha512-lTsF0dcX4+0tA5d5/6cigw7BgGoF7ODs/3m+WNNyqinvlOAQMMJ7p9rH6lueOc8VwYJcswxs+Nb9wEcZ9kUuKw==
+sprucecss@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/sprucecss/-/sprucecss-2.2.1.tgz#dddd6ec0a20cbee046763188930a34f42977fbeb"
+  integrity sha512-5g2IaMo5UGflku8Pkd+uCpLLyITwg3L+UrjzhDukbSiuhTa1TUsJgye3pNIPGrVVwrjdQhY9EwHwdK7KPHPncQ==
 
 string-width@^4.2.3:
   version "4.2.3"

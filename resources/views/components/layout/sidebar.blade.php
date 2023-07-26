@@ -22,7 +22,7 @@
                 data-action="sidebar-close"
                 aria-label="{{ __('Close navigation') }}"
                 x-bind:aria-expanded="sidebarOpen"
-                @click="sidebarOpen = false"
+                x-on:click="sidebarOpen = false"
             >
                 <x-root::icon name="close" class='btn__icon'/>
             </button>
@@ -34,7 +34,7 @@
                         <li>
                             <a
                                 href="{{ URL::route('root.dashboard') }}"
-                                aria-current="{{ Route::currentRouteName() === 'root.dashboard' ? 'page' : '' }}"
+                                @if(Route::currentRouteName() === 'root.dashboard') aria-current="page" @endif
                             >
                                 <x-root::icon name="home" />
                                 {{ __('Dashboard') }}
@@ -44,34 +44,7 @@
                 </nav>
             </div>
             @foreach($groups as $group => $items)
-                <div class="block-navigation" x-data="{ open: true }">
-                    <h3 class="block-navigation__title">
-                        {{ $group }}
-                        <button
-                            type="button"
-                            class="btn btn--light btn--sm btn--icon block-navigation__toggle"
-                            aria-label="{{ __('Toggle navigation') }}"
-                            x-bind:aria-expanded="open"
-                            @click="open = ! open"
-                        >
-                            <x-root::icon name="chevron-down" class='btn__icon'/>
-                        </button>
-                    </h3>
-                    <nav class="block-navigation__menu block-navigation__menu--breakout" x-bind:data-state="open ? 'open' : 'closed'">
-                        <ul>
-                            @foreach($items as $item)
-                                <li>
-                                    <a href="{{ $item->url }}" aria-current="{{ $item->matched() ? 'page' : '' }}">
-                                        @if($item->icon)
-                                            <x-root::icon :name="$item->icon" class='icon'/>
-                                        @endif
-                                        {{ $item->label }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </nav>
-                </div>
+                <x-root::layout.sidebar-group :title="$group" :items="$items" />
             @endforeach
         </div>
     </aside>
