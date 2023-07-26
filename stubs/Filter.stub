@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 
 class {{ class }} extends Filter
 {
-%%component%%
+%%template%%
     /**
-     * The Vue component.
+     * The blade template.
      */
-    protected ?string $component = '{{ component }}';
-%%/component%%
+    protected ?string $template = '{{ template }}';
+%%/template%%
 %%multiple%%
     /**
      * Indicates if multiple options can be selected.

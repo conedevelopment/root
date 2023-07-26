@@ -10,9 +10,11 @@ use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -27,6 +29,7 @@ abstract class Action implements Renderable, Responsable, Routable
     use AsForm;
     use Authorizable;
     use Makeable;
+    use ResolvesQuery;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -125,11 +128,19 @@ abstract class Action implements Renderable, Responsable, Routable
     }
 
     /**
+     * Resolve the query.
+     */
+    public function resolveQuery(Request $request): Builder
+    {
+        return $this->table->resolveFilteredQuery($request);
+    }
+
+    /**
      * Perform the action.
      */
     public function perform(Request $request): Response
     {
-        $query = $this->table->resolveFilteredQuery($request);
+        $query = $this->resolveQuery($request);
 
         $this->toForm($request)->validate($request);
 

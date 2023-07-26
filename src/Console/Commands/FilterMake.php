@@ -55,25 +55,25 @@ class FilterMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        $class = $this->replaceComponent($class);
+        $class = $this->replaceTemplate($class);
 
         return $this->replaceMultiple($class);
     }
 
     /**
-     * Replace the component related code.
+     * Replace the template related code.
      */
-    protected function replaceComponent(string $class): string
+    protected function replaceTemplate(string $class): string
     {
-        if ($component = $this->option('component')) {
+        if ($template = $this->option('template')) {
             return str_replace(
-                [PHP_EOL.'%%component%%', '%%/component%%', '{{ component }}'],
-                ['', '', $component],
+                [PHP_EOL.'%%template%%', '%%/template%%', '{{ template }}'],
+                ['', '', $template],
                 $class
             );
         }
 
-        return preg_replace('/\s%%component%%.*%%\/component%%/s', '', $class);
+        return preg_replace('/\s%%template%%.*%%\/template%%/s', '', $class);
     }
 
     /**
@@ -94,7 +94,7 @@ class FilterMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+            ['template', null, InputOption::VALUE_OPTIONAL, 'The blade template'],
             ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
         ];
     }

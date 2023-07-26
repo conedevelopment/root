@@ -4,46 +4,18 @@ namespace {{ namespace }};
 
 use Cone\Root\Form\Fields\ID;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Table\Columns\Columns;
+use Cone\Root\Table\Table;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Resource
 {
     /**
-     * Define the fields for the resource.
-     */
-    public function fields(Request $request): array
-    {
-        return array_merge(parent::fields($request), [
-            ID::make()->sortable()->searchable(),
-        ]);
-    }
-
-    /**
      * Define the relations for the resource.
      */
-    public function relations(Request $request): array
+    public function relations(): array
     {
-        return array_merge(parent::relations($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the filters for the resource.
-     */
-    public function filters(Request $request): array
-    {
-        return array_merge(parent::filters($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the actions for the resource.
-     */
-    public function actions(Request $request): array
-    {
-        return array_merge(parent::actions($request), [
+        return array_merge(parent::relations(), [
             //
         ]);
     }
@@ -51,9 +23,9 @@ class {{ class }} extends Resource
     /**
      * Define the extracts for the resource.
      */
-    public function extracts(Request $request): array
+    public function extracts(): array
     {
-        return array_merge(parent::extracts($request), [
+        return array_merge(parent::extracts(), [
             //
         ]);
     }
@@ -61,10 +33,30 @@ class {{ class }} extends Resource
     /**
      * Define the widgets for the resource.
      */
-    public function widgets(Request $request): array
+    public function widgets(): array
     {
-        return array_merge(parent::widgets($request), [
+        return array_merge(parent::widgets(), [
             //
         ]);
+    }
+
+    /**
+     * Get the table instance for the resource.
+     */
+    public function toTable(Request $request): Table
+    {
+        return parent::toTable($request)->withColumns(static function (Columns $columns): void {
+            $columns->id();
+        });
+    }
+
+    /**
+     * Get the form instance for the resource.
+     */
+    public function toForm(Request $request): Form
+    {
+        return parent::toForm($request)->withFields(static function (Fields $fields): void {
+            //
+        });
     }
 }
