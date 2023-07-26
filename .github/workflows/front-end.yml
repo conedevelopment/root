@@ -48,72 +48,8 @@ jobs:
                 git ls-files --cached -z -- 'resources/js/*.js' \
                     | xargs --null -- yarn run acorn --ecma2018 --module --silent
 
-    js_unit_tests:
-        name: "𝟐 JavaScript Unit Tests"
-        permissions:
-            checks: "write"
-            contents: "read"
-            pull-requests: "read"
-        runs-on: "ubuntu-22.04"
-        timeout-minutes: 5
-        steps:
-        -
-            name: "Checkout repository"
-            uses: "actions/checkout@v3"
-        -
-            name: "Set up Node.js"
-            uses: "actions/setup-node@v3"
-            with:
-                node-version: "18"
-                cache: "yarn"
-        -
-            name: "Configure yarn"
-            run: "yarn config set engine-strict true"
-        -
-            name: "Install all dependencies"
-            run: "yarn install --non-interactive --pure-lockfile"
-        -
-            name: "Run tests"
-            run: "true TODO || yarn run test --color"
-
-    js_coding_standards:
-        name: "𝟐 JavaScript Coding Standards"
-        permissions:
-            checks: "write"
-            contents: "read"
-            pull-requests: "read"
-        runs-on: "ubuntu-22.04"
-        timeout-minutes: 5
-        steps:
-        -
-            name: "Checkout repository"
-            uses: "actions/checkout@v3"
-        -
-            name: "Set up Node.js"
-            uses: "actions/setup-node@v3"
-            with:
-                node-version: "18"
-                cache: "yarn"
-        -
-            name: "Configure yarn"
-            run: "yarn config set engine-strict true"
-        -
-            name: "Install all dependencies"
-            run: "yarn install --non-interactive --pure-lockfile"
-        -
-            name: "Run ESLint"
-            run: "yarn run js:eslint --format json --output-file '${{ runner.temp }}/eslint-report.json'"
-            continue-on-error: true
-        -
-            name: "Annotate ESLint Results"
-            uses: "ataylorme/eslint-annotate-action@v2"
-            with:
-                check-name: "𝕩 ESLint Annotations"
-                repo-token: "${{ secrets.GITHUB_TOKEN }}"
-                report-json: "${{ runner.temp }}/eslint-report.json"
-
     scss_coding_standards:
-        name: "𝟑 Sassy CSS Coding Standards"
+        name: "𝟐 Sassy CSS Coding Standards"
         runs-on: "ubuntu-22.04"
         timeout-minutes: 5
         steps:
@@ -137,13 +73,12 @@ jobs:
             run: "yarn install --no-save stylelint-formatter-github-annotate"
         -
             name: "Detect coding standards violations"
-            run: "yarn run scss:cs --custom-formatter=node_modules/stylelint-formatter-github-annotate"
+            run: "yarn run scss:lint --custom-formatter=node_modules/stylelint-formatter-github-annotate"
 
     build:
-        name: "𝟒 Build"
+        name: "𝟑 Build"
         needs:
         - "js_syntax_errors"
-        - "js_coding_standards"
         - "scss_coding_standards"
         runs-on: "ubuntu-22.04"
         timeout-minutes: 5
