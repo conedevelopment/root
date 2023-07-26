@@ -5,7 +5,7 @@ namespace Cone\Root\Tests\Extracts;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Form\Fields;
 use Cone\Root\Form\Fields\Text;
-use Cone\Root\Support\Collections\Actions;
+use Cone\Root\Table\Actions;
 use Cone\Root\Support\Collections\Filters;
 use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Tests\Actions\PublishPosts;

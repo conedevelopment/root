@@ -7,7 +7,6 @@ use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
-use Illuminate\View\ComponentAttributeBag;
 
 class Option implements Renderable
 {
@@ -27,7 +26,7 @@ class Option implements Renderable
     /**
      * Create a new option instance.
      */
-    public function __construct(string $label, mixed $value = null)
+    public function __construct(mixed $value, string $label)
     {
         $this->label = $label;
         $this->setAttribute('value', $value);
@@ -55,7 +54,7 @@ class Option implements Renderable
     public function render(): View
     {
         return App::make('view')->make($this->template, [
-            'attrs' => new ComponentAttributeBag($this->resolveAttributes()),
+            'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
         ]);
     }

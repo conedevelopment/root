@@ -35,7 +35,7 @@ class BelongsToMany extends Relation
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saved(function (Model $model) use ($request, $value): void {
+        $this->resolveModel()->saved(function () use ($request, $value): void {
             $this->resolveHydrate($request, $value);
 
             $this->getRelation()->sync($value);

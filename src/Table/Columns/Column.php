@@ -16,7 +16,6 @@ use Illuminate\Support\Str;
 
 abstract class Column implements Renderable
 {
-    use Authorizable;
     use Makeable;
 
     /**

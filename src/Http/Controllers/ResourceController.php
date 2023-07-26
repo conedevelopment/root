@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Http\Requests\RootRequest;
 use Cone\Root\Support\Alert;
@@ -73,8 +72,7 @@ class ResourceController extends Controller
         $model = $resource->getModelInstance();
 
         $fields = $resource->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model);
 
         $request->validate($fields->mapToValidate($request, $model));
 
@@ -117,8 +115,7 @@ class ResourceController extends Controller
         }
 
         $fields = $resource->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible(ResourceContext::Update->value);
+            ->authorized($request, $model);
 
         $request->validate($fields->mapToValidate($request, $model));
 

@@ -3,12 +3,14 @@
 namespace Cone\Root\Navigation;
 
 use Cone\Root\Traits\HasAttributes;
+use Cone\Root\Traits\Makeable;
 use Illuminate\Support\Facades\URL;
 
 class Item
 {
     use HasAttributes;
     use HasItems;
+    use Makeable;
 
     /**
      * Create a new item instance.

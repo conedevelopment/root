@@ -12,9 +12,9 @@ class Checkbox extends Select
     /**
      * Make a new option instance.
      */
-    public function newOption(string $label, mixed $value = null): CheckboxOption
+    public function newOption(mixed $value, string $label): CheckboxOption
     {
-        return CheckboxOption::make($label, $value)
+        return CheckboxOption::make($value, $label)
             ->name(sprintf('%s[]', $this->getAttribute('name')));
     }
 }

@@ -12,9 +12,9 @@ class CheckboxOption extends Option
     /**
      * Create a new option instance.
      */
-    public function __construct(string $label, mixed $value = null)
+    public function __construct(mixed $value, string $label)
     {
-        parent::__construct($label, $value);
+        parent::__construct($value, $label);
 
         $this->setAttribute('type', 'checkbox');
     }

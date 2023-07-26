@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 
 abstract class Field implements Renderable
 {
@@ -266,14 +265,6 @@ abstract class Field implements Renderable
     public function updateRules(array|Closure $rules): static
     {
         return $this->rules($rules, 'update');
-    }
-
-    /**
-     * Make a new attribute bag.
-     */
-    public function newAttributeBag(): ComponentAttributeBag
-    {
-        return new ComponentAttributeBag($this->resolveAttributes());
     }
 
     /**

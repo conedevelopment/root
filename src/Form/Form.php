@@ -3,6 +3,7 @@
 namespace Cone\Root\Form;
 
 use Closure;
+use Cone\Root\Form\Fields\Fields;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
@@ -15,14 +16,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\ViewErrorBag;
 
 class Form implements Renderable, Routable
 {
+    use Macroable;
     use Makeable;
-    use ResolvesFields {
-        ResolvesFields::resolveFields as __resolveFields;
-    }
+    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -53,115 +54,11 @@ class Form implements Renderable, Routable
     protected ?MessageBag $errors = null;
 
     /**
-     * Resolve the fields.
+     * Create a new form instance.
      */
-    public function resolveFields(Request $request): Fields
+    public function __construct()
     {
-        if (is_null($this->fields) && ! is_null($this->fieldsResolver)) {
-            $callback = $this->fieldsResolver;
-
-            $this->fieldsResolver = function () use ($request, $callback) {
-                return call_user_func_array($callback, [$this, $request]);
-            };
-        }
-
-        return $this->__resolveFields($request);
-    }
-
-    /**
-     * Make a new text field.
-     */
-    public function textField(string $label, string $name = null): Fields\Text
-    {
-        return new Fields\Text($this, $label, $name);
-    }
-
-    /**
-     * Make a new email field.
-     */
-    public function emailField(string $label, string $name = null): Fields\Email
-    {
-        return new Fields\Email($this, $label, $name);
-    }
-
-    /**
-     * Make a new textarea field.
-     */
-    public function textareaField(string $label, string $name = null): Fields\Textarea
-    {
-        return new Fields\Textarea($this, $label, $name);
-    }
-
-    /**
-     * Make a new number field.
-     */
-    public function numberField(string $label, string $name = null): Fields\Number
-    {
-        return new Fields\Number($this, $label, $name);
-    }
-
-    /**
-     * Make a new range field.
-     */
-    public function rangeField(string $label, string $name = null): Fields\Range
-    {
-        return new Fields\Range($this, $label, $name);
-    }
-
-    /**
-     * Make a new select field.
-     */
-    public function selectField(string $label, string $name = null): Fields\Select
-    {
-        return new Fields\Select($this, $label, $name);
-    }
-
-    /**
-     * Make a new boolean field.
-     */
-    public function booleanField(string $label, string $name = null): Fields\Boolean
-    {
-        return new Fields\Boolean($this, $label, $name);
-    }
-
-    /**
-     * Make a new checkbox field.
-     */
-    public function checkboxField(string $label, string $name = null): Fields\Checkbox
-    {
-        return new Fields\Checkbox($this, $label, $name);
-    }
-
-    /**
-     * Make a new date field.
-     */
-    public function dateField(string $label, string $name = null): Fields\Date
-    {
-        return new Fields\Date($this, $label, $name);
-    }
-
-    /**
-     * Make a new radio field.
-     */
-    public function radioField(string $label, string $name = null): Fields\Radio
-    {
-        return new Fields\Radio($this, $label, $name);
-    }
-
-    /**
-     * Make a new hidden field.
-     */
-    public function hiddenField(string $label, string $name = null): Fields\Hidden
-    {
-        return new Fields\Hidden($this, $label, $name);
-    }
-
-    /**
-     * Make a new has many field.
-     */
-    public function hasManyField(string $label, string $name = null, Closure|string $relation = null): Fields\HasMany
-    {
-        return new Fields\HasMany($this, $label, $name, $relation);
+        $this->fields = new Fields($this, $this->fields());
     }
 
     /**
@@ -196,7 +93,7 @@ class Form implements Renderable, Routable
     public function data(Request $request): array
     {
         return [
-            'fields' => $this->resolveFields($request),
+            'fields' => $this->fields->all(),
             'url' => $this->replaceRoutePlaceholders($request->route()),
             'method' => $this->method(),
         ];
@@ -222,13 +119,23 @@ class Form implements Renderable, Routable
     }
 
     /**
+     * Handle the incoming form request.
+     */
+    public function handle(Request $request): void
+    {
+        $this->validate($request);
+
+        $this->fields->persist($request);
+    }
+
+    /**
      * Validate the incoming request.
      */
     public function validate(Request $request): array
     {
         return $request->validateWithBag(
             $this->errorBag,
-            $this->resolveFields($request)->mapToValidate($request)
+            $this->fields->mapToValidate($request)
         );
     }
 
@@ -259,6 +166,6 @@ class Form implements Renderable, Routable
     {
         $this->__registerRoutes($router);
 
-        $this->resolveFields(App::make('request'))->registerRoutes($router);
+        $this->fields->registerRoutes($router);
     }
 }

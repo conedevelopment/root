@@ -2,37 +2,26 @@
 
 namespace Cone\Root\Extracts;
 
-use Cone\Root\Actions\Action;
-use Cone\Root\Filters\Filter;
-use Cone\Root\Filters\Search;
-use Cone\Root\Filters\Sort;
-use Cone\Root\Form\Fields\Field;
 use Cone\Root\Http\Controllers\ExtractController;
 use Cone\Root\Interfaces\Routable;
+use Cone\Root\Table\Table;
+use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesQuery;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Widget;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Extract implements Arrayable, Routable
+abstract class Extract implements Routable
 {
+    use AsTable;
     use Authorizable;
     use Makeable;
-    use ResolvesActions;
-    use ResolvesFields;
-    use ResolvesFilters;
     use ResolvesWidgets;
     use ResolvesQuery;
     use RegistersRoutes {
@@ -64,96 +53,6 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
-     * Define the filters for the extract.
-     */
-    public function filters(Request $request): array
-    {
-        $fields = $this->resolveFields($request)->authorized($request);
-
-        $searchables = $fields->searchable($request);
-
-        $sortables = $fields->sortable($request);
-
-        return array_values(array_filter([
-            $searchables->isNotEmpty() ? Search::make($searchables) : null,
-            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
-        ]));
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the filter instance.
-     */
-    protected function resolveFilter(Request $request, Filter $filter): void
-    {
-        $filter->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the action instance.
-     */
-    protected function resolveAction(Request $request, Action $action): void
-    {
-        $action->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->resolveFilters($request)
-                ->authorized($request)
-                ->apply($request, $this->resolveQuery($request));
-        });
-    }
-
-    /**
-     * Handle the resolving event on the widget instance.
-     */
-    protected function resolveWidget(Request $request, Widget $widget): void
-    {
-        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Map the items.
-     */
-    public function mapItems(Request $request): array
-    {
-        $query = $this->resolveQuery($request);
-
-        $filters = $this->resolveFilters($request)->authorized($request);
-
-        $items = $filters->apply($request, $query)
-            ->latest()
-            ->paginate($request->input('per_page'))
-            ->withQueryString()
-            ->setPath($this->getUri())
-            ->through(function (Model $model) use ($request): array {
-                return $request->route('rootResource')
-                    ->newItem($model)
-                    ->toDisplay(
-                        $request,
-                        $this->resolveFields($request)->authorized($request, $model)
-                    );
-            })
-            ->toArray();
-
-        return array_merge($items, [
-            'query' => $filters->mapToQuery($request, $query),
-        ]);
-    }
-
-    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Router $router): void
@@ -163,9 +62,8 @@ abstract class Extract implements Arrayable, Routable
         $request = App::make('request');
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($router);
-            $this->resolveActions($request)->registerRoutes($router);
-            $this->resolveWidgets($request)->registerRoutes($router);
+            $this->table($request)->registerRoutes($router);
+            // $this->resolveWidgets($request)->registerRoutes($router);
         });
     }
 
@@ -178,15 +76,13 @@ abstract class Extract implements Arrayable, Routable
     }
 
     /**
-     * Get the instance as an array.
+     * Get the table instance for the resource.
      */
-    public function toArray(): array
+    public function toTable(Request $request): Table
     {
-        return [
-            'key' => $this->getKey(),
-            'name' => $this->getName(),
-            'url' => $this->getUri(),
-        ];
+        return Table::make()->query(function (Request $request): Builder {
+            return $this->resolveQuery($request);
+        });
     }
 
     /**
@@ -195,15 +91,9 @@ abstract class Extract implements Arrayable, Routable
     public function toIndex(Request $request): array
     {
         return [
-            'actions' => $this->resolveActions($request)
-                ->authorized($request)
-                ->mapToForm($request, $this->resolveQuery($request)->getModel()),
-            'filters' => $this->resolveFilters($request)
-                ->authorized($request)
-                ->mapToForm($request),
-            'items' => $this->mapItems($request),
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
+            'table' => $this->table($request),
+            // 'widgets' => $this->resolveWidgets($request),
         ];
     }
 }

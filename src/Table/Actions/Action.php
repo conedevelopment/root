@@ -1,19 +1,18 @@
 <?php
 
-namespace Cone\Root\Actions;
+namespace Cone\Root\Table\Actions;
 
-use Cone\Root\Form\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Support\Alert;
+use Cone\Root\Table\Table;
+use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesQuery;
-use Cone\Root\Traits\ResolvesVisibility;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -23,16 +22,19 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Arrayable, Responsable, Routable
+abstract class Action implements Renderable, Responsable, Routable
 {
+    use AsForm;
     use Authorizable;
     use Makeable;
-    use ResolvesFields;
-    use ResolvesQuery;
-    use ResolvesVisibility;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+
+    /**
+     * The blade template.
+     */
+    protected string $template = 'root::form.form';
 
     /**
      * Indicates if the action is descrtuctive.
@@ -43,6 +45,19 @@ abstract class Action implements Arrayable, Responsable, Routable
      * Indicates if the action is confirmable.
      */
     protected bool $confirmable = false;
+
+    /**
+     * The table instance.
+     */
+    protected Table $table;
+
+    /**
+     * Create a new action instance.
+     */
+    public function __construct(Table $table)
+    {
+        $this->table = $table;
+    }
 
     /**
      * Handle the action.
@@ -114,15 +129,9 @@ abstract class Action implements Arrayable, Responsable, Routable
      */
     public function perform(Request $request): Response
     {
-        $query = $this->resolveQuery($request);
+        $query = $this->table->resolveFilteredQuery($request);
 
-        $model = $query->getModel();
-
-        $request->validate(
-            $this->resolveFields($request)
-                ->authorized($request, $model)
-                ->mapToValidate($request, $model)
-        );
+        $this->toForm($request)->validate($request);
 
         $this->handle(
             $request,
@@ -130,16 +139,6 @@ abstract class Action implements Arrayable, Responsable, Routable
         );
 
         return $this->toResponse($request);
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
     }
 
     /**
@@ -152,7 +151,7 @@ abstract class Action implements Arrayable, Responsable, Routable
         $request = App::make('request');
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($router);
+            $this->form($request)->registerRoutes($router);
         });
     }
 
@@ -165,9 +164,9 @@ abstract class Action implements Arrayable, Responsable, Routable
     }
 
     /**
-     * Get the instance as an array.
+     * Get the view data.
      */
-    public function toArray(): array
+    public function data(Request $request): array
     {
         return [
             'confirmable' => $this->isConfirmable(),
@@ -179,20 +178,24 @@ abstract class Action implements Arrayable, Responsable, Routable
     }
 
     /**
+     * Render the table.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make(
+            $this->template,
+            App::call([$this, 'data'])
+        );
+    }
+
+    /**
      * Get the form representation of the action.
      */
-    public function toForm(Request $request, Model $model): array
+    public function toForm(Request $request): ActionForm
     {
-        $fields = $this->resolveFields($request)
-            ->authorized($request, $model)
-            ->mapToForm($request, $model);
-
-        return array_merge($this->toArray(), [
-            'data' => array_reduce($fields, static function (array $data, array $field): array {
-                return array_replace_recursive($data, [$field['name'] => $field['value']]);
-            }, []),
-            'fields' => $fields,
-        ]);
+        return ActionForm::make()->model(function (Request $request): Model {
+            return $this->table->resolveQuery($request)->getModel();
+        });
     }
 
     /**

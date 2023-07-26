@@ -2,21 +2,21 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Enums\ResourceContext;
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
-use Cone\Root\Navigation\Item as NavigationItem;
+use Cone\Root\Navigation\Item;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
+use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,6 +28,8 @@ use Illuminate\Support\Str;
 
 class Resource implements Routable
 {
+    use AsForm;
+    use AsTable;
     use Authorizable;
     use ResolvesExtracts;
     use ResolvesRelations;
@@ -55,16 +57,6 @@ class Resource implements Routable
      * The icon for the resource.
      */
     protected string $icon = 'archive';
-
-    /**
-     * The form instance.
-     */
-    protected ?Form $form = null;
-
-    /**
-     * The table instance.
-     */
-    protected ?Table $table = null;
 
     /**
      * Create a new resource instance.
@@ -219,18 +211,8 @@ class Resource implements Routable
     {
         $extract->mergeAuthorizationResolver(function (...$parameters): bool {
             return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->query($request);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the widget instance.
-     */
-    protected function resolveWidget(Request $request, Widget $widget): void
-    {
-        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
+        })->query(function () use ($request): Builder {
+            return $this->resolveQuery($request);
         });
     }
 
@@ -279,13 +261,9 @@ class Resource implements Routable
      */
     public function toTable(Request $request): Table
     {
-        if (is_null($this->table)) {
-            $this->table = Table::make()->query(function () use ($request): Builder {
-                return $this->resolveQuery($request);
-            });
-        }
-
-        return $this->table;
+        return Table::make()->query(function () use ($request): Builder {
+            return $this->resolveQuery($request);
+        });
     }
 
     /**
@@ -293,13 +271,9 @@ class Resource implements Routable
      */
     public function toForm(Request $request): Form
     {
-        if (is_null($this->form)) {
-            $this->form = Form::make()->model(function () use ($request): Model {
-                return $request->route($this->getRouteKeyName(), $this->getModelInstance());
-            });
-        }
-
-        return $this->form;
+        return Form::make()->model(function () use ($request): Model {
+            return $request->route($this->getRouteKeyName(), $this->getModelInstance());
+        });
     }
 
     /**
@@ -310,7 +284,7 @@ class Resource implements Routable
         return [
             'resource' => $this,
             'title' => $this->getName(),
-            'table' => $this->toTable($request),
+            'table' => $this->table($request),
             'widgets' => $this->resolveWidgets($request)->authorized($request),
         ];
     }
@@ -322,7 +296,7 @@ class Resource implements Routable
     {
         return [
             'resource' => $this,
-            'form' => $this->toForm($request),
+            'form' => $this->form($request),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
     }
@@ -333,37 +307,20 @@ class Resource implements Routable
     public function toShow(Request $request, Model $model): array
     {
         return [
-            // 'actions' => $this->resolveActions($request),
             'resource' => $this,
-            'form' => $this->toForm($request)->model(fn (): Model => $model),
+            'form' => $this->form($request)->model(fn (): Model => $model),
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            // 'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-            // 'relations' => $this->resolveRelations($request)
-            //     ->authorized($request, $model)
-            //     ->mapToTable($request, $model),
-        ];
-    }
-
-    /**
-     * Get the edit representation of the resource.
-     */
-    public function toEdit(Request $request, Model $model): array
-    {
-        return [
-            'model' => $this->newItem($model)->toForm(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
-            ),
-            'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
+            // 'widgets' => $this->resolveWidgets($request),
+            // 'relations' => $this->resolveRelations($request),
         ];
     }
 
     /**
      * Get the navigation compatible format of the resource.
      */
-    public function toNavigationItem(Request $request): NavigationItem
+    public function toNavigationItem(Request $request): Item
     {
-        return (new NavigationItem($this->getUri(), $this->getName()))->icon($this->icon);
+        return Item::make($this->getUri(), $this->getName())->icon($this->icon);
     }
 
     /**
@@ -391,11 +348,11 @@ class Resource implements Routable
             $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
                 $this->resolveWidgets($request)->registerRoutes($router);
                 $this->resolveExtracts($request)->registerRoutes($router);
-                $this->toTable($request)->registerRoutes($router);
+                $this->table($request)->registerRoutes($router);
 
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                    $this->toForm($request)->registerRoutes($router);
-                    $this->resolveRelations($request)->registerRoutes($router);
+                    $this->form($request)->registerRoutes($router);
+                    // $this->resolveRelations($request)->registerRoutes($router);
                 });
             });
         });

@@ -42,7 +42,7 @@ class MediaController extends Controller
 
         $file = $request->file('file');
 
-        $path = Storage::disk('local')->path("root-chunks/{$file->getClientOriginalName()}");
+        $path = Storage::disk('local')->path("root-uploads/{$file->getClientOriginalName()}");
 
         File::append($path, $file->get());
 

@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use Cone\Root\Extracts\Extract;
+use Cone\Root\Table\Columns\Columns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -17,42 +18,12 @@ class {{ class }} extends Extract
     }
 
     /**
-     * Define the fields for the extract.
+     * Get the table instance for the resource.
      */
-    public function fields(Request $request): array
+    public function toTable(Request $request): Table
     {
-        return array_merge(parent::fields($request), [
+        return parent::toTable($request)->withColumns(static function (Columns $columns): void {
             //
-        ]);
-    }
-
-    /**
-     * Define the filters for the extract.
-     */
-    public function filters(Request $request): array
-    {
-        return array_merge(parent::filters($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the actions for the extract.
-     */
-    public function actions(Request $request): array
-    {
-        return array_merge(parent::actions($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the widgets for the resource.
-     */
-    public function widgets(Request $request): array
-    {
-        return array_merge(parent::widgets($request), [
-            //
-        ]);
+        });
     }
 }

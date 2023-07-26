@@ -16,7 +16,7 @@
                 <table class="table table--hover">
                     <thead>
                         <tr>
-                            @if($actions->isNotEmpty())
+                            @if(! empty($actions))
                                 <th style="width: 3.25rem;">
                                     <span class="sr-only">{{ __('Select') }}</span>
                                     <label class="form-check" aria-label="{{ __('Select all items') }}">

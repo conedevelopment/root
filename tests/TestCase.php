@@ -39,7 +39,7 @@ abstract class TestCase extends BaseTestCase
         Storage::fake('local');
         Storage::fake('public');
 
-        Storage::disk('local')->makeDirectory('root-chunks');
+        Storage::disk('local')->makeDirectory('root-uploads');
 
         $this->admin = User::factory()->create();
 

@@ -3,65 +3,30 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Filters\Filter;
-use Cone\Root\Support\Collections\Filters;
-use Illuminate\Http\Request;
+use Cone\Root\Table\Filters\Filters;
 
 trait ResolvesFilters
 {
     /**
-     * The filters resolver callback.
-     */
-    protected ?Closure $filtersResolver = null;
-
-    /**
      * The resolved filters.
      */
-    protected ?Filters $filters = null;
+    public readonly Filters $filters;
 
     /**
      * Define the filters for the resource.
      */
-    public function filters(Request $request): array
+    public function filters(): array
     {
         return [];
     }
 
     /**
-     * Set the filters resolver.
+     * Apply the given callback on the filters.
      */
-    public function withFilters(array|Closure $filters): static
+    public function withFilters(Closure $callback): static
     {
-        $this->filtersResolver = is_array($filters) ? fn (): array => $filters : $filters;
+        call_user_func_array($callback, [$this->filters, $this]);
 
         return $this;
-    }
-
-    /**
-     * Resolve the filters.
-     */
-    public function resolveFilters(Request $request): Filters
-    {
-        if (is_null($this->filters)) {
-            $this->filters = Filters::make()->register($this->filters($request));
-
-            if (! is_null($this->filtersResolver)) {
-                $this->filters->register(call_user_func_array($this->filtersResolver, [$request]));
-            }
-
-            $this->filters->each(function (Filter $filter) use ($request): void {
-                $this->resolveFilter($request, $filter);
-            });
-        }
-
-        return $this->filters;
-    }
-
-    /**
-     * Handle the resolving event on the filter instance.
-     */
-    protected function resolveFilter(Request $request, Filter $filter): void
-    {
-        //
     }
 }
