@@ -13,11 +13,17 @@ class Alert extends Component
     protected string $type = 'info';
 
     /**
+     * Incidates whether the alert is closable.
+     */
+    protected bool $closable = false;
+
+    /**
      * Create a new component instance.
      */
-    public function __construct(string $type = 'info')
+    public function __construct(string $type = 'info', bool $closable = false)
     {
         $this->type = $type;
+        $this->closable = $closable;
     }
 
     /**
@@ -27,6 +33,7 @@ class Alert extends Component
     {
         return $this->view('root::components.alert', [
             'type' => $this->type,
+            'closable' => $this->closable,
         ]);
     }
 }

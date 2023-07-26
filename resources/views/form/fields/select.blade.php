@@ -2,7 +2,7 @@
     <label class="form-label" for="{{ $attrs->get('id') }}">
         {{ $label }}
         @if($attrs->get('required'))
-            <span style="color: var(--spruce-alert-color-danger);">*</span>
+            <span class="required-marker">*</span>
         @endif
     </label>
     <select {{ $attrs->class(['form-control', 'form-control--invalid' => $invalid]) }}>
