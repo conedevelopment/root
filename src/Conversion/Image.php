@@ -137,7 +137,18 @@ class Image
             imagefill($resource, 0, 0, imagecolorallocatealpha($resource, 0, 0, 0, 127));
         }
 
-        imagecopyresampled($resource, $this->resource, 0, 0, (int) $x, (int) $y, (int) $width, (int) $height, $originalWidth, $originalHeight);
+        imagecopyresampled(
+            $resource,
+            $this->resource,
+            0,
+            0,
+            (int) $x,
+            (int) $y,
+            (int) $width,
+            (int) $height,
+            $originalWidth,
+            $originalHeight
+        );
 
         imagedestroy($this->resource);
         $this->resource = $resource;

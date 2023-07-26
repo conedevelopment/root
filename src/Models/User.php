@@ -108,7 +108,9 @@ class User extends Authenticatable implements Contract, Resourceable
     protected function avatar(): Attribute
     {
         return new Attribute(get: static function (mixed $value, array $attributes): ?string {
-            return isset($attributes['email']) ? sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($attributes['email'])) : null;
+            return isset($attributes['email'])
+                ? sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($attributes['email']))
+                : null;
         });
     }
 

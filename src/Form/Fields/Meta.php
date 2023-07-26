@@ -29,7 +29,9 @@ class Meta extends MorphOne
                 ->one()
                 ->ofMany(
                     [$related->getCreatedAtColumn() => 'MAX'],
-                    fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->getAttribute('name')),
+                    function (Builder $query): Builder {
+                        return $query->where($related->qualifyColumn('key'), $this->getAttribute('name'));
+                    },
                     'metaData'
                 )
                 ->withDefault(['key' => $this->getAttribute('name')]);
@@ -203,10 +205,16 @@ class Meta extends MorphOne
 
         $name = $this->getRelationName();
 
-        if ($this->relation instanceof Closure
+        if (
+            $this->relation instanceof Closure
             && $model->relationLoaded('metaData')
             && ! $model->relationLoaded($name)
-            && ! is_null($value = $model->getRelation('metaData')->sortByDesc('created_at')->firstWhere('key', $this->getAttribute('name')))) {
+            && ! is_null(
+                $value = $model->getRelation('metaData')
+                    ->sortByDesc('created_at')
+                    ->firstWhere('key', $this->getAttribute('name'))
+            )
+        ) {
             $model->setRelation($name, $value);
         }
 

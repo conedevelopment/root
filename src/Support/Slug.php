@@ -133,10 +133,18 @@ class Slug implements Stringable
 
         $match = $this->model
             ->newQuery()
-            ->when(in_array(SoftDeletes::class, class_uses_recursive($this->model)), static function (Builder $query): Builder {
-                return $query->withTrashed();
-            })
-            ->whereRaw(sprintf("`%s` regexp '^%s(%s[\\\\d]+)?$'", $this->to, preg_quote($value), preg_quote($this->separator)))
+            ->when(
+                in_array(SoftDeletes::class, class_uses_recursive($this->model)),
+                static function (Builder $query): Builder {
+                    return $query->withTrashed();
+                }
+            )
+            ->whereRaw(sprintf(
+                "`%s` regexp '^%s(%s[\\\\d]+)?$'",
+                $this->to,
+                preg_quote($value),
+                preg_quote($this->separator)
+            ))
             ->orderByDesc($this->to)
             ->limit(1)
             ->value($this->to);

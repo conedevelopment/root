@@ -44,15 +44,21 @@ class Search extends Filter
                 $boolean = array_key_first($attributes) === $attribute ? 'and' : 'or';
 
                 if (is_array($columns)) {
-                    $query->has($attribute, '>=', 1, $boolean, static function (Builder $query) use ($columns, $value): Builder {
-                        foreach ($columns as $column) {
-                            $boolean = $columns[0] === $column ? 'and' : 'or';
+                    $query->has(
+                        $attribute,
+                        '>=',
+                        1,
+                        $boolean,
+                        static function (Builder $query) use ($columns, $value): Builder {
+                            foreach ($columns as $column) {
+                                $boolean = $columns[0] === $column ? 'and' : 'or';
 
-                            $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
+                                $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $boolean);
+                            }
+
+                            return $query;
                         }
-
-                        return $query;
-                    });
+                    );
                 } else {
                     $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $boolean);
                 }
