@@ -73,7 +73,7 @@ jobs:
             run: "yarn install --no-save stylelint-formatter-github-annotate"
         -
             name: "Detect coding standards violations"
-            run: "yarn run scss:lint --custom-formatter=node_modules/stylelint-formatter-github-annotate"
+            run: "yarn run sass:lint --custom-formatter=node_modules/stylelint-formatter-github-annotate"
 
     build:
         name: "𝟑 Build"
