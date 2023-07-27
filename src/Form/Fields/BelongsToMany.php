@@ -13,9 +13,9 @@ class BelongsToMany extends Relation
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $name, $relation);
+        parent::__construct($form, $label, $key, $relation);
 
         $this->setAttribute('multiple', true);
     }

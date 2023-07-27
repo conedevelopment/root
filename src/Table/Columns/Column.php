@@ -23,9 +23,9 @@ abstract class Column implements Renderable
     protected string $label;
 
     /**
-     * The name.
+     * The key.
      */
-    protected string $name;
+    protected string $key;
 
     /**
      * The Blade template.
@@ -60,10 +60,10 @@ abstract class Column implements Renderable
     /**
      * Create a new column instance.
      */
-    public function __construct(Table $table, string $label, string $name = null)
+    public function __construct(Table $table, string $label, string $key = null)
     {
         $this->label = $label;
-        $this->name = $name ??= Str::of($label)->lower()->snake()->value();
+        $this->key = $key ??= Str::of($label)->lower()->snake()->value();
         $this->table = $table;
     }
 
@@ -72,7 +72,7 @@ abstract class Column implements Renderable
      */
     public function getKey(): string
     {
-        return $this->name;
+        return $this->key;
     }
 
     /**
@@ -167,7 +167,7 @@ abstract class Column implements Renderable
         return [
             'sortable' => $this->isSortable(),
             'label' => $this->label,
-            'name' => $this->name,
+            'key' => $this->key,
         ];
     }
 

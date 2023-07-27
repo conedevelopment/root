@@ -36,9 +36,9 @@ class Editor extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null)
+    public function __construct(Form $form, string $label, string $key = null)
     {
-        parent::__construct($form, $label, $name);
+        parent::__construct($form, $label, $key);
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');

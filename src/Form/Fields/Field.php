@@ -55,7 +55,7 @@ abstract class Field implements Renderable
     /**
      * The field name.
      */
-    protected string $name;
+    protected string $key;
 
     /**
      * The field help text.
@@ -75,11 +75,12 @@ abstract class Field implements Renderable
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null)
+    public function __construct(Form $form, string $label, string $key = null)
     {
         $this->label($label);
-        $this->name($name ??= Str::of($label)->lower()->snake()->value());
-        $this->id($name);
+        $this->key($key ??= Str::of($label)->lower()->snake()->value());
+        $this->name($key);
+        $this->id($key);
 
         $this->form = $form;
     }
@@ -89,7 +90,7 @@ abstract class Field implements Renderable
      */
     public function getKey(): string
     {
-        return $this->name;
+        return $this->key;
     }
 
     /**
@@ -111,15 +112,21 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the name attribute.
+     * Set the key attribute.
      */
-    public function name(string $value): static
+    public function key(string $value): static
     {
-        $this->name = $value;
-
-        $this->setAttribute('name', $value);
+        $this->key = $value;
 
         return $this;
+    }
+
+    /**
+     * Set the "name" HTML attribute attribute.
+     */
+    public function name(string|Closure $value): static
+    {
+        return $this->setAttribute('name', $value);
     }
 
     /**
@@ -287,7 +294,7 @@ abstract class Field implements Renderable
             'help' => $this->help,
             'invalid' => $this->form->errors($request)->has($this->getKey()),
             'label' => $this->label,
-            'name' => $this->name,
+            'key' => $this->key,
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'value' => $this->resolveValue(),

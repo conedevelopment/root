@@ -34,9 +34,9 @@ class File extends MorphToMany
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $name, $relation);
+        parent::__construct($form, $label, $key, $relation);
 
         $this->type('file')->multiple(false);
 

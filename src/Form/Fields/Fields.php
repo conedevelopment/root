@@ -36,121 +36,121 @@ class Fields
     /**
      * Make a new text field.
      */
-    public function text(string $label, string $name = null): Text
+    public function text(string $label, string $key = null): Text
     {
-        return $this->field(Text::class, $label, $name);
+        return $this->field(Text::class, $label, $key);
     }
 
     /**
      * Make a new email field.
      */
-    public function email(string $label, string $name = null): Email
+    public function email(string $label, string $key = null): Email
     {
-        return $this->field(Email::class, $label, $name);
+        return $this->field(Email::class, $label, $key);
     }
 
     /**
      * Make a new textarea field.
      */
-    public function textarea(string $label, string $name = null): Textarea
+    public function textarea(string $label, string $key = null): Textarea
     {
-        return $this->field(Textarea::class, $label, $name);
+        return $this->field(Textarea::class, $label, $key);
     }
 
     /**
      * Make a new number field.
      */
-    public function number(string $label, string $name = null): Number
+    public function number(string $label, string $key = null): Number
     {
-        return $this->field(Number::class, $label, $name);
+        return $this->field(Number::class, $label, $key);
     }
 
     /**
      * Make a new range field.
      */
-    public function range(string $label, string $name = null): Range
+    public function range(string $label, string $key = null): Range
     {
-        return $this->field(Range::class, $label, $name);
+        return $this->field(Range::class, $label, $key);
     }
 
     /**
      * Make a new select field.
      */
-    public function select(string $label, string $name = null): Select
+    public function select(string $label, string $key = null): Select
     {
-        return $this->field(Select::class, $label, $name);
+        return $this->field(Select::class, $label, $key);
     }
 
     /**
      * Make a new boolean field.
      */
-    public function boolean(string $label, string $name = null): Boolean
+    public function boolean(string $label, string $key = null): Boolean
     {
-        return $this->field(Boolean::class, $label, $name);
+        return $this->field(Boolean::class, $label, $key);
     }
 
     /**
      * Make a new checkbox field.
      */
-    public function checkbox(string $label, string $name = null): Checkbox
+    public function checkbox(string $label, string $key = null): Checkbox
     {
-        return $this->field(Checkbox::class, $label, $name);
+        return $this->field(Checkbox::class, $label, $key);
     }
 
     /**
      * Make a new date field.
      */
-    public function date(string $label, string $name = null): Date
+    public function date(string $label, string $key = null): Date
     {
-        return $this->field(Date::class, $label, $name);
+        return $this->field(Date::class, $label, $key);
     }
 
     /**
      * Make a new radio field.
      */
-    public function radio(string $label, string $name = null): Radio
+    public function radio(string $label, string $key = null): Radio
     {
-        return $this->field(Radio::class, $label, $name);
+        return $this->field(Radio::class, $label, $key);
     }
 
     /**
      * Make a new hidden field.
      */
-    public function hidden(string $label, string $name = null): Hidden
+    public function hidden(string $label, string $key = null): Hidden
     {
-        return $this->field(Hidden::class, $label, $name);
+        return $this->field(Hidden::class, $label, $key);
     }
 
     /**
      * Make a new has many field.
      */
-    public function hasMany(string $label, string $name = null, Closure|string $relation = null): HasMany
+    public function hasMany(string $label, string $key = null, Closure|string $relation = null): HasMany
     {
-        return $this->field(HasMany::class, $label, $name, $relation);
+        return $this->field(HasMany::class, $label, $key, $relation);
     }
 
     /**
      * Make a new file field.
      */
-    public function file(string $label, string $name = null, Closure|string $relation = null): File
+    public function file(string $label, string $key = null, Closure|string $relation = null): File
     {
-        return $this->field(File::class, $label, $name, $relation);
+        return $this->field(File::class, $label, $key, $relation);
     }
 
     /**
      * Make a new file field.
      */
-    public function json(string $label, string $name = null): Json
+    public function json(string $label, string $key = null): Json
     {
-        return $this->field(Json::class, $label, $name);
+        return $this->field(Json::class, $label, $key);
     }
 
     /**
      * Create a new method.
      */
-    public function field(string $field, string $label, string $name = null, ...$params): Field
+    public function field(string $field, string $label, string $key = null, ...$params): Field
     {
-        $instance = new $field($this->form, $label, $name, ...$params);
+        $instance = new $field($this->form, $label, $key, ...$params);
 
         $this->push($instance);
 

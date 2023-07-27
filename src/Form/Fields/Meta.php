@@ -20,7 +20,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
@@ -39,7 +39,7 @@ class Meta extends MorphOne
 
         $this->asText();
 
-        parent::__construct($form, $label, $name, $relation);
+        parent::__construct($form, $label, $key, $relation);
     }
 
     /**

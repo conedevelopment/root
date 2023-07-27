@@ -62,9 +62,9 @@ abstract class Relation extends Field implements Routable
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $name = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $name);
+        parent::__construct($form, $label, $key);
 
         $this->relation = $relation ?: $this->getKey();
     }
