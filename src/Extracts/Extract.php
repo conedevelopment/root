@@ -84,11 +84,9 @@ abstract class Extract implements Routable
     {
         $this->__registerRoutes($router);
 
-        $request = App::make('request');
-
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->table($request)->registerRoutes($router);
-            // $this->resolveWidgets($request)->registerRoutes($router);
+        $router->prefix($this->getUriKey())->group(function (Router $router): void {
+            $this->table(App::make('request'))->registerRoutes($router);
+            $this->widgets->registerRoutes($router);
         });
     }
 
@@ -118,7 +116,7 @@ abstract class Extract implements Routable
         return [
             'title' => $this->getName(),
             'table' => $this->table($request),
-            // 'widgets' => $this->widgets($request),
+            'widgets' => $this->widgets,
         ];
     }
 

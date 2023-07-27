@@ -18,7 +18,7 @@ class ExtractController extends Controller
         // Gate::allowIf($extract->authorized($request));
 
         return ResponseFactory::view(
-            'root::extracts.index',
+            'root::resource.extract',
             $extract->toIndex($request)
         );
     }

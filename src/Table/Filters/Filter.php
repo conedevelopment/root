@@ -27,7 +27,7 @@ abstract class Filter implements Renderable
     protected bool $multiple = false;
 
     /**
-     * The table insance.
+     * The table instance.
      */
     protected Table $table;
 
