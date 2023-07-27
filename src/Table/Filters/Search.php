@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Filters;
+namespace Cone\Root\Table\Filters;
 
 use Cone\Root\Form\Fields;
 use Cone\Root\Form\Fields\Field;
