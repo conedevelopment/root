@@ -3,24 +3,32 @@
 namespace Cone\Root\Tests\Models;
 
 use Cone\Root\Models\Medium;
+use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    /** @test */
-    public function a_user_has_uploads()
+    protected User $user;
+
+    public function setUp(): void
     {
-        $medium = $this->admin->uploads()->save(
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+    }
+
+    public function test_a_user_has_uploads()
+    {
+        $medium = $this->user->uploads()->save(
             Medium::factory()->make()
         );
 
-        $this->assertTrue($this->admin->uploads->pluck('id')->contains($medium->id));
+        $this->assertTrue($this->user->uploads->contains($medium));
     }
 
-    /** @test */
-    public function a_user_has_resource_representation()
+    public function test_a_user_has_resource_representation()
     {
-        $this->assertInstanceOf(Resource::class, $this->admin->toResource());
+        $this->assertInstanceOf(Resource::class, $this->user->toResource());
     }
 }
