@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Filters;
+namespace Cone\Root\Table\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
