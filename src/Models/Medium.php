@@ -168,9 +168,13 @@ class Medium extends Model implements Contract
                     return $urls;
                 }
 
-                return array_reduce($attributes['properties']['conversions'] ?? [], function (array $urls, string $conversion): array {
-                    return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
-                }, $urls);
+                return array_reduce(
+                    $attributes['properties']['conversions'] ?? [],
+                    function (array $urls, string $conversion): array {
+                        return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
+                    },
+                    $urls
+                );
             }
         );
     }

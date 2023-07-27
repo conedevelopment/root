@@ -81,7 +81,10 @@ class ExtractTest extends TestCase
         ]);
 
         $this->assertSame(
-            Actions::make(array_merge($this->extract->actions($this->app['request']), [PublishPosts::make()]))->toArray(),
+            Actions::make(array_merge(
+                $this->extract->actions($this->app['request']),
+                [PublishPosts::make()]
+            ))->toArray(),
             $this->extract->resolveActions($this->app['request'])->toArray()
         );
     }
@@ -107,7 +110,10 @@ class ExtractTest extends TestCase
         ]);
 
         $this->assertSame(
-            Fields::make(array_merge($this->extract->fields($this->app['request']), [Text::make(__('Name'))]))->toArray(),
+            Fields::make(array_merge(
+                $this->extract->fields($this->app['request']),
+                [Text::make(__('Name'))]
+            ))->toArray(),
             $this->extract->resolveFields($this->app['request'])->toArray()
         );
     }

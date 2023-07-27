@@ -103,7 +103,10 @@ class ActionTest extends TestCase
         ]);
 
         $this->assertSame(
-            Fields::make(array_merge($this->action->fields($this->app['request']), [Text::make(__('Name'))]))->toArray(),
+            Fields::make(array_merge(
+                $this->action->fields($this->app['request']),
+                [Text::make(__('Name'))]
+            ))->toArray(),
             $this->action->resolveFields($this->app['request'])->toArray()
         );
     }

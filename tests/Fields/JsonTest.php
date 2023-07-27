@@ -34,7 +34,10 @@ class JsonTest extends TestCase
         ]);
 
         $this->assertSame(
-            Fields::make(array_merge($this->field->fields($this->app['request']), [Number::make('Quantity')]))->toArray(),
+            Fields::make(array_merge(
+                $this->field->fields($this->app['request']),
+                [Number::make('Quantity')]
+            ))->toArray(),
             $this->field->resolveFields($this->app['request'])->toArray()
         );
     }
