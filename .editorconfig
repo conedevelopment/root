@@ -15,6 +15,9 @@ block_comment_end = */
 [{*.php,*.js,*.scss}]
 max_line_length = 120
 
+[*.scss]
+indent_size = 2
+
 [*.blade.php]
 max_line_length = 500
 
