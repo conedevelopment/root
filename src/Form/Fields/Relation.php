@@ -66,7 +66,7 @@ abstract class Relation extends Field implements Routable
     {
         parent::__construct($form, $label, $name);
 
-        $this->relation = $relation ?: $this->getAttribute('name');
+        $this->relation = $relation ?: $this->getKey();
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class Relation extends Field implements Routable
      */
     public function getRelatedName(): string
     {
-        return __(Str::of($this->getAttribute('name'))->singular()->headline()->value());
+        return __(Str::of($this->getKey())->singular()->headline()->value());
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class Relation extends Field implements Routable
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $$this->getAttribute('name')
+            ? $$this->getKey()
             : $this->relation;
     }
 

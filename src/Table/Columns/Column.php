@@ -23,7 +23,7 @@ abstract class Column implements Renderable
     protected string $label;
 
     /**
-     * The label.
+     * The name.
      */
     protected string $name;
 

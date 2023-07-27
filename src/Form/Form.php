@@ -16,12 +16,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\ViewErrorBag;
 
 class Form implements Renderable, Routable
 {
-    use Macroable;
     use Makeable;
     use ResolvesFields;
     use RegistersRoutes {
@@ -137,6 +135,16 @@ class Form implements Renderable, Routable
             $this->errorBag,
             $this->fields->mapToValidate($request)
         );
+    }
+
+    /**
+     * Set the validation error bag.
+     */
+    public function errorBag(string $value): static
+    {
+        $this->errorBag = $value;
+
+        return $this;
     }
 
     /**

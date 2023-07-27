@@ -138,11 +138,19 @@ class Fields
     }
 
     /**
+     * Make a new file field.
+     */
+    public function json(string $label, string $name = null): Json
+    {
+        return $this->field(Json::class, $label, $name);
+    }
+
+    /**
      * Create a new method.
      */
-    public function field(string $field, ...$params): Field
+    public function field(string $field, string $label, string $name = null, ...$params): Field
     {
-        $instance = new $field($this->form, ...$params);
+        $instance = new $field($this->form, $label, $name, ...$params);
 
         $this->push($instance);
 

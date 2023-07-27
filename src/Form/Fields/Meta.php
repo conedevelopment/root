@@ -29,12 +29,12 @@ class Meta extends MorphOne
                 ->one()
                 ->ofMany(
                     [$related->getCreatedAtColumn() => 'MAX'],
-                    function (Builder $query): Builder {
-                        return $query->where($related->qualifyColumn('key'), $this->getAttribute('name'));
+                    function (Builder $query) use ($related): Builder {
+                        return $query->where($related->qualifyColumn('key'), $this->getKey());
                     },
                     'metaData'
                 )
-                ->withDefault(['key' => $this->getAttribute('name')]);
+                ->withDefault(['key' => $this->getKey()]);
         };
 
         $this->asText();
@@ -48,7 +48,7 @@ class Meta extends MorphOne
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? sprintf('__root_%s', $this->getAttribute('name'))
+            ? sprintf('__root_%s', $this->getKey())
             : $this->relation;
     }
 
@@ -57,7 +57,7 @@ class Meta extends MorphOne
      */
     public function as(string $field, Closure $callback = null): static
     {
-        $this->field = new $field($this->label, $this->getAttribute('name'));
+        $this->field = new $field($this->label, $this->getKey());
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
@@ -212,7 +212,7 @@ class Meta extends MorphOne
             && ! is_null(
                 $value = $model->getRelation('metaData')
                     ->sortByDesc('created_at')
-                    ->firstWhere('key', $this->getAttribute('name'))
+                    ->firstWhere('key', $this->getKey())
             )
         ) {
             $model->setRelation($name, $value);

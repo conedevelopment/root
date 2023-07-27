@@ -48,12 +48,17 @@ abstract class Field implements Renderable
     ];
 
     /**
-     * The label.
+     * The field label.
      */
     protected string $label;
 
     /**
-     * The help text.
+     * The field name.
+     */
+    protected string $name;
+
+    /**
+     * The field help text.
      */
     protected ?string $help = null;
 
@@ -84,7 +89,7 @@ abstract class Field implements Renderable
      */
     public function getKey(): string
     {
-        return $this->getAttribute('name');
+        return $this->name;
     }
 
     /**
@@ -106,11 +111,15 @@ abstract class Field implements Renderable
     }
 
     /**
-     * Set the "name" HTML attribute.
+     * Set the name attribute.
      */
-    public function name(string|Closure $value): static
+    public function name(string $value): static
     {
-        return $this->setAttribute('name', $value);
+        $this->name = $value;
+
+        $this->setAttribute('name', $value);
+
+        return $this;
     }
 
     /**
@@ -278,6 +287,7 @@ abstract class Field implements Renderable
             'help' => $this->help,
             'invalid' => $this->form->errors($request)->has($this->getKey()),
             'label' => $this->label,
+            'name' => $this->name,
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'value' => $this->resolveValue(),

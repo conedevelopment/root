@@ -2,14 +2,11 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Cone\Root\Models\FieldsetModel;
+use Cone\Root\Form\Form;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 
 class Json extends Field
 {
@@ -19,9 +16,29 @@ class Json extends Field
     }
 
     /**
-     * The Vue component.
+     * Create a new field instance.
      */
-    protected string $component = 'Fieldset';
+    public function __construct(Form $form, string $label, string $name = null)
+    {
+        parent::__construct($form, $label, $name);
+
+        $this->fields = new Fields($form, $this->fields());
+    }
+
+    /**
+     * The Blade template.
+     */
+    protected string $template = 'root::form.fields.fieldset';
+
+    /**
+     * Create a new method.
+     */
+    public function data(Request $request): array
+    {
+        return array_merge(parent::data($request), [
+            'fields' => $this->fields->all(),
+        ]);
+    }
 
     /**
      * Register the routes using the given router.
@@ -30,53 +47,8 @@ class Json extends Field
     {
         $this->__registerRoutes($router);
 
-        $request = App::make('request');
-
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($router);
+        $router->prefix($this->getUriKey())->group(function (Router $router): void {
+            $this->fields->registerRoutes($router);
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toInput(Request $request, Model $model): array
-    {
-        $data = parent::toInput($request, $model);
-
-        $data['value'] = (array) $data['value'];
-
-        $json = FieldsetModel::make()
-            ->setRelation('parent', $model)
-            ->forceFill($data['value']);
-
-        $fields = $this->resolveFields($request)
-            ->authorized($request, $model)
-            ->mapToForm($request, $json);
-
-        return array_replace_recursive($data, [
-            'fields' => $fields,
-            'formattedValue' => array_column($fields, 'formattedValue', 'name'),
-            'value' => array_column($fields, 'value', 'name'),
-        ]);
-    }
-
-    /**
-     * Get the validation representation of the field.
-     */
-    public function toValidate(Request $request, Model $model): array
-    {
-        $rules = $this->resolveFields($request)
-            ->authorized($request, $model)
-            ->mapToValidate($request, $model);
-
-        return array_merge(
-            parent::toValidate($request, $model),
-            Collection::make($rules)
-                ->mapWithKeys(function (array $rules, string $key): array {
-                    return [sprintf('%s.%s', $this->getKey(), $key) => $rules];
-                })
-                ->toArray(),
-        );
     }
 }
