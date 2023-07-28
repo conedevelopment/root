@@ -2,7 +2,6 @@
 
 namespace Cone\Root;
 
-use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
@@ -47,10 +46,6 @@ class RootServiceProvider extends ServiceProvider
 
         $this->app->booted(static function (Application $app): void {
             $app->make(Root::class)->boot();
-        });
-
-        $this->app->resolving(RootRequest::class, static function (RootRequest $request, Application $app): void {
-            RootRequest::createFrom($app['request'], $request);
         });
     }
 

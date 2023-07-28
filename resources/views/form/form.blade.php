@@ -1,4 +1,4 @@
-<form method="POST" action="{{ $url }}">
+<form method="POST" action="{{ $url }}" id="{{ $key }}">
     @csrf
     @method($method)
 

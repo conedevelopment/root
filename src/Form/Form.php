@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 
 class Form implements Renderable, Routable
@@ -52,11 +53,33 @@ class Form implements Renderable, Routable
     protected ?MessageBag $errors = null;
 
     /**
+     * The unique form key.
+     */
+    protected string $key;
+
+    /**
      * Create a new form instance.
      */
-    public function __construct()
+    public function __construct(string $key = null)
     {
+        $this->key = $key ?: Str::random();
         $this->fields = new Fields($this, $this->fields());
+    }
+
+    /**
+     * Get the form key.
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return '';
     }
 
     /**
@@ -92,8 +115,9 @@ class Form implements Renderable, Routable
     {
         return [
             'fields' => $this->fields->all(),
-            'url' => $this->replaceRoutePlaceholders($request->route()),
+            'key' => $this->getKey(),
             'method' => $this->method(),
+            'url' => $this->replaceRoutePlaceholders($request->route()),
         ];
     }
 
@@ -159,14 +183,6 @@ class Form implements Renderable, Routable
         }
 
         return $this->errors;
-    }
-
-    /**
-     * Get the URI key.
-     */
-    public function getUriKey(): string
-    {
-        return '';
     }
 
     /**

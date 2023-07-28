@@ -288,7 +288,6 @@ class Resource implements Routable
     public function toCreate(Request $request): array
     {
         return [
-            'resource' => $this,
             'form' => $this->form($request),
             'model' => $this->form($request)->resolveModel(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
@@ -301,8 +300,8 @@ class Resource implements Routable
     public function toShow(Request $request, Model $model): array
     {
         return [
-            'resource' => $this,
             'form' => $this->form($request)->model(fn (): Model => $model),
+            'formKey' => $this->form($request)->getKey(),
             'model' => $model,
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             // 'widgets' => $this->widgets,

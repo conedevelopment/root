@@ -304,17 +304,35 @@ abstract class Field implements Renderable
     }
 
     /**
+     * Determine if the field is invalid.
+     */
+    public function invalid(Request $request): bool
+    {
+        return $this->form->errors($request)->has($this->getValidationKey());
+    }
+
+    /**
+     * Get the validation error from the request.
+     */
+    public function error(Request $request): ?string
+    {
+        return $this->invalid($request)
+            ? $this->form->errors($request)->first($this->getValidationKey())
+            : null;
+    }
+
+    /**
      * Get the data for the view.
      */
     public function data(Request $request): array
     {
         return [
             'attrs' => $this->newAttributeBag(),
-            'error' => $this->form->errors($request)->first($this->getValidationKey()),
+            'error' => $this->error($request),
             'help' => $this->help,
-            'invalid' => $this->form->errors($request)->has($this->getValidationKey()),
+            'invalid' => $this->invalid($request),
             'label' => $this->label,
-            'key' => $this->key,
+            'key' => $this->getKey(),
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'value' => $this->resolveValue(),

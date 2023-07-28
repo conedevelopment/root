@@ -139,4 +139,12 @@ class Root
     {
         return (string) Config::get('root.domain', null);
     }
+
+    /**
+     * Get the current resource.
+     */
+    public function getCurrentResource(): ?Resource
+    {
+        return $this->resources->current($this->app['request']);
+    }
 }

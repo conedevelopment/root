@@ -62,6 +62,15 @@ class Fieldset extends Field implements Routable
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function invalid(Request $request): bool
+    {
+        return parent::invalid($request)
+            || $this->fields->some(fn (Field $field): bool => $field->invalid($request));
+    }
+
+    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Router $router): void

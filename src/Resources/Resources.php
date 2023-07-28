@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
+use Throwable;
 
 class Resources
 {
@@ -45,6 +46,22 @@ class Resources
         }
 
         return $this->resources->get($key);
+    }
+
+    /**
+     * Resolve the current resource.
+     */
+    public function current(Request $request): ?Resource
+    {
+        if (empty($request->route()->action['__resource__'])) {
+            return null;
+        }
+
+        try {
+            return $this->resolve($request->route()->action['__resource__']);
+        } catch (Throwable $exception) {
+            return null;
+        }
     }
 
     /**
