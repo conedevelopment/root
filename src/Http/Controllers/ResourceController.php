@@ -82,7 +82,7 @@ class ResourceController extends Controller
     }
 
     /**
-     * Show the form for ediging the specified resource.
+     * Show the form for editing the specified resource.
      */
     public function edit(Request $request, Model $model): Response
     {
@@ -94,7 +94,7 @@ class ResourceController extends Controller
 
         return ResponseFactory::view(
             'root::resources.form',
-            $resource->toShow($request, $model)
+            $resource->toEdit($request, $model)
         );
     }
 
@@ -115,7 +115,7 @@ class ResourceController extends Controller
 
         $resource->updated($request, $model);
 
-        return Redirect::to(sprintf('%s/%s/edit', $resource->getUri(), $model->getRouteKey()))
+        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getRouteKey()))
             ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 

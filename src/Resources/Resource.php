@@ -295,9 +295,9 @@ class Resource implements Routable
     }
 
     /**
-     * Get the show representation of the resource.
+     * Get the edit representation of the resource.
      */
-    public function toShow(Request $request, Model $model): array
+    public function toEdit(Request $request, Model $model): array
     {
         return [
             'form' => $this->form($request)->model(fn (): Model => $model),

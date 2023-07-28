@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Middleware;
 
 use Closure;
+use Cone\Root\Root;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -16,7 +17,7 @@ class AuthorizeResource
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        Gate::allowIf($request->route('rootResource')->authorized($request));
+        Gate::allowIf(Root::instance()->getCurrentResource()->authorized($request));
 
         return $next($request);
     }
