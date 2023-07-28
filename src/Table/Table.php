@@ -100,6 +100,7 @@ class Table implements Renderable, Routable
     public function data(Request $request): array
     {
         return [
+            'searchable' => $this->columns->searchable()->isNotEmpty(),
             'columns' => $this->columns->all(),
             'actions' => $this->actions->all(),
             'filters' => $this->filters->all(),

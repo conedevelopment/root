@@ -290,6 +290,7 @@ class Resource implements Routable
         return [
             'resource' => $this,
             'form' => $this->form($request),
+            'model' => $this->form($request)->resolveModel(),
             'title' => __('Create :model', ['model' => $this->getModelName()]),
         ];
     }
@@ -302,6 +303,7 @@ class Resource implements Routable
         return [
             'resource' => $this,
             'form' => $this->form($request)->model(fn (): Model => $model),
+            'model' => $model,
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             // 'widgets' => $this->widgets,
             // 'relations' => $this->relations,

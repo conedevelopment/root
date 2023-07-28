@@ -38,6 +38,40 @@
   }
 }
 
+.data-table-alert {
+  border-width: 1px;
+  flex-wrap: wrap;
+  gap: spacer('xs') spacer('s');
+  padding-inline-end: 0.65em;
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+
+    .form-control {
+      inline-size: auto;
+    }
+  }
+}
+
+.data-table-filter {
+  position: relative;
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+  }
+
+  .context-menu {
+    --inline-size: 16rem;
+    padding: spacer('s');
+  }
+}
+
 .data-table-sort {
   @include a11y-card-link('.data-table-sort__control', true);
   align-items: center;

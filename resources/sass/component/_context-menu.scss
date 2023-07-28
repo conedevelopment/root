@@ -2,7 +2,7 @@
 
 .context-menu {
   --inset-block-start: calc(100% + 1rem);
-  --width: 10rem;
+  --inline-size: 10rem;
 
   @include clear-list;
   @include transition;
@@ -10,11 +10,12 @@
   border: 1px solid color('border');
   border-radius: config('border-radius-sm', $display);
   box-shadow: 0 0 spacer('xxs') hsl(201.15deg 72.03% 32.71% / 5%);
-  inline-size: var(--width);
+  inline-size: var(--inline-size);
   opacity: 0;
   position: absolute;
   scale: 0.85;
   visibility: hidden;
+  z-index: 10;
 
   &--inline-start {
     inset: var(--inset-block-start) auto auto 0;

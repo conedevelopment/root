@@ -44,7 +44,7 @@ class Columns
     /**
      * Filter the searchable columns.
      */
-    public function searchable(): static
+    public function searchable(): Collection
     {
         return $this->columns->filter->isSearchable();
     }
@@ -52,7 +52,7 @@ class Columns
     /**
      * Filter the sortable columns.
      */
-    public function sortable(): static
+    public function sortable(): Collection
     {
         return $this->columns->filter->isSortable();
     }
