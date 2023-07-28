@@ -114,14 +114,9 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        $fields = $resource->resolveFields($request)
-            ->authorized($request, $model);
-
-        $request->validate($fields->mapToValidate($request, $model));
-
-        $fields->persist($request, $model);
-
-        $model->save();
+        $resource->form($request)
+            ->model(fn (): Model => $model)
+            ->handle();
 
         $resource->updated($request, $model);
 

@@ -138,11 +138,11 @@ class Fields
     }
 
     /**
-     * Make a new file field.
+     * Make a new fieldset field.
      */
-    public function json(string $label, string $key = null): Json
+    public function fieldset(string $label, string $key = null): Fieldset
     {
-        return $this->field(Json::class, $label, $key);
+        return $this->field(Fieldset::class, $label, $key);
     }
 
     /**

@@ -111,7 +111,7 @@ trait HasAttributes
         $value = $this->getAttribute($key);
 
         return $value instanceof Closure
-                ? call_user_func($value)
+                ? call_user_func_array($value, [$this])
                 : $value;
     }
 

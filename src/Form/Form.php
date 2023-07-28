@@ -124,6 +124,8 @@ class Form implements Renderable, Routable
         $this->validate($request);
 
         $this->fields->persist($request);
+
+        $this->resolveModel()->save();
     }
 
     /**

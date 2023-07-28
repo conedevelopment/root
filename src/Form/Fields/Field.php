@@ -102,6 +102,22 @@ abstract class Field implements Renderable
     }
 
     /**
+     * Get the request key.
+     */
+    public function getRequestKey(): string
+    {
+        return str_replace('->', '.', $this->getKey());
+    }
+
+    /**
+     * Get the validation key.
+     */
+    public function getValidationKey(): string
+    {
+        return $this->getRequestKey();
+    }
+
+    /**
      * Set the label attribute.
      */
     public function label(string $value): static
@@ -126,6 +142,10 @@ abstract class Field implements Renderable
      */
     public function name(string|Closure $value): static
     {
+        $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
+
+        $value = preg_replace('/\->(.+?)(?=\->|$)/', '[$1]', $value);
+
         return $this->setAttribute('name', $value);
     }
 
@@ -230,7 +250,7 @@ abstract class Field implements Renderable
      */
     public function getValueForHydrate(Request $request): mixed
     {
-        return $request->input([$this->getKey()]);
+        return $request->input($this->getRequestKey());
     }
 
     /**
@@ -290,9 +310,9 @@ abstract class Field implements Renderable
     {
         return [
             'attrs' => $this->newAttributeBag(),
-            'error' => $this->form->errors($request)->first($this->getKey()),
+            'error' => $this->form->errors($request)->first($this->getValidationKey()),
             'help' => $this->help,
-            'invalid' => $this->form->errors($request)->has($this->getKey()),
+            'invalid' => $this->form->errors($request)->has($this->getValidationKey()),
             'label' => $this->label,
             'key' => $this->key,
             'prefix' => $this->prefix,
@@ -328,6 +348,6 @@ abstract class Field implements Renderable
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 
-        return [$this->getKey() => Arr::flatten($rules, 1)];
+        return [$this->getValidationKey() => Arr::flatten($rules, 1)];
     }
 }
