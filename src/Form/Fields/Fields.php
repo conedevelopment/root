@@ -34,6 +34,18 @@ class Fields
     }
 
     /**
+     * Add a new field to the collection.
+     */
+    public function field(string $field, string $label, string $key = null, ...$params): Field
+    {
+        $instance = new $field($this->form, $label, $key, ...$params);
+
+        $this->push($instance);
+
+        return $instance;
+    }
+
+    /**
      * Make a new text field.
      */
     public function text(string $label, string $key = null): Text
@@ -122,19 +134,19 @@ class Fields
     }
 
     /**
-     * Make a new has many field.
-     */
-    public function hasMany(string $label, string $key = null, Closure|string $relation = null): HasMany
-    {
-        return $this->field(HasMany::class, $label, $key, $relation);
-    }
-
-    /**
      * Make a new file field.
      */
     public function file(string $label, string $key = null, Closure|string $relation = null): File
     {
         return $this->field(File::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new media field.
+     */
+    public function media(string $label, string $key = null, Closure|string $relation = null): Media
+    {
+        return $this->field(Media::class, $label, $key, $relation);
     }
 
     /**
@@ -146,15 +158,67 @@ class Fields
     }
 
     /**
-     * Create a new method.
+     * Make a new has one field.
      */
-    public function field(string $field, string $label, string $key = null, ...$params): Field
+    public function hasOne(string $label, string $key = null, Closure|string $relation = null): HasOne
     {
-        $instance = new $field($this->form, $label, $key, ...$params);
+        return $this->field(HasOne::class, $label, $key, $relation);
+    }
 
-        $this->push($instance);
+    /**
+     * Make a new has many field.
+     */
+    public function hasMany(string $label, string $key = null, Closure|string $relation = null): HasMany
+    {
+        return $this->field(HasMany::class, $label, $key, $relation);
+    }
 
-        return $instance;
+    /**
+     * Make a new belongs to field.
+     */
+    public function belongsTo(string $label, string $key = null, Closure|string $relation = null): BelongsTo
+    {
+        return $this->field(BelongsTo::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new belongs to many field.
+     */
+    public function belongsToMany(string $label, string $key = null, Closure|string $relation = null): BelongsToMany
+    {
+        return $this->field(BelongsToMany::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new morph one field.
+     */
+    public function morphOne(string $label, string $key = null, Closure|string $relation = null): MorphOne
+    {
+        return $this->field(MorphOne::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new morph many field.
+     */
+    public function morphMany(string $label, string $key = null, Closure|string $relation = null): MorphMany
+    {
+        return $this->field(MorphMany::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new morph to field.
+     */
+    public function morphTo(string $label, string $key = null, Closure|string $relation = null): MorphTo
+    {
+        return $this->field(MorphTo::class, $label, $key, $relation);
+    }
+
+    /**
+     * Make a new morph to many field.
+     */
+    public function morphToMany(string $label, string $key = null, Closure|string $relation = null): MorphToMany
+    {
+        return $this->field(MorphToMany::class, $label, $key, $relation);
     }
 
     /**
