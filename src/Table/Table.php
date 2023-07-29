@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 
 class Table implements Renderable, Routable
@@ -46,13 +47,27 @@ class Table implements Renderable, Routable
     protected string $template = 'root::table.table';
 
     /**
+     * The table key.
+     */
+    protected string $key;
+
+    /**
      * Create a new table instance.
      */
-    public function __construct()
+    public function __construct(string $key = null)
     {
+        $this->key = $key ?: Str::random();
         $this->columns = new Columns($this, $this->columns());
         $this->actions = new Actions($this, $this->actions());
         $this->filters = new Filters($this, $this->filters());
+    }
+
+    /**
+     * Get the key.
+     */
+    public function getKey(): string
+    {
+        return $this->key;
     }
 
     /**
@@ -81,16 +96,16 @@ class Table implements Renderable, Routable
                         ->value($column->getValueResolver())
                         ->format($column->getFormatResolver());
                 })
-                    ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
-                        $cells->prepend(Select::make(Text::make($this, ''), $model));
-                    })
-                    ->push(
-                        ActionsCell::make(Text::make($this, ''), $model)
-                            ->value(static function (Model $model) use ($url): string {
-                                return sprintf('%s%s', $url, $model->getRouteKey());
-                            })
-                    )
-                    ->all();
+                ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
+                    $cells->prepend(Select::make(Text::make($this, ''), $model));
+                })
+                ->push(
+                    ActionsCell::make(Text::make($this, ''), $model)
+                        ->value(static function (Model $model) use ($url): string {
+                            return sprintf('%s%s', $url, $model->getRouteKey());
+                        })
+                )
+                ->all();
             });
     }
 
@@ -100,11 +115,11 @@ class Table implements Renderable, Routable
     public function data(Request $request): array
     {
         return [
-            'searchable' => $this->columns->searchable()->isNotEmpty(),
-            'columns' => $this->columns->all(),
             'actions' => $this->actions->all(),
+            'columns' => $this->columns->all(),
             'filters' => $this->filters->all(),
             'items' => $this->paginate($request),
+            'searchable' => $this->columns->searchable()->isNotEmpty(),
         ];
     }
 

@@ -37,7 +37,7 @@ abstract class Action implements Renderable, Responsable, Routable
     /**
      * The Blade template.
      */
-    protected string $template = 'root::form.form';
+    protected string $template = 'root::table.actions.action';
 
     /**
      * Indicates if the action is descrtuctive.
@@ -142,7 +142,7 @@ abstract class Action implements Renderable, Responsable, Routable
     {
         $query = $this->resolveQuery($request);
 
-        $this->toForm($request)->validate($request);
+        $this->form($request)->handle($request);
 
         $this->handle(
             $request,
@@ -204,7 +204,7 @@ abstract class Action implements Renderable, Responsable, Routable
      */
     public function toForm(Request $request): ActionForm
     {
-        return ActionForm::make()->model(function (Request $request): Model {
+        return ActionForm::make()->model(function () use ($request): Model {
             return $this->table->resolveQuery($request)->getModel();
         });
     }

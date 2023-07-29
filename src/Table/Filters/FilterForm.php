@@ -5,18 +5,26 @@ namespace Cone\Root\Table\Actions;
 use Cone\Root\Form\Form;
 use Illuminate\Http\Request;
 
-class ActionForm extends Form
+class FilterForm extends Form
 {
     /**
      * The Blade template.
      */
-    protected string $template = 'root::table.actions.form';
+    protected string $template = 'root::table.filters.form';
 
     /**
      * {@inheritdoc}
      */
     public function handle(Request $request): void
     {
-        $this->validate($request);
+        //
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function method(): string
+    {
+        return 'GET';
     }
 }
