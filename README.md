@@ -1,14 +1,13 @@
 <p>
-    <a href="https://root.conedevelopment.com/#gh-light-mode-only">
-        <br/>
-        <img src="./.github/root-logo-dark.svg" alt="Root" width="100">
-        <br/>
-    </a>
-    <a href="https://root.conedevelopment.com/#gh-dark-mode-only">
-        <br/>
-        <img src="./.github/root-logo-light.svg" alt="Root" width="100">
-        <br/>
-    </a>
+  <a href="https://root.conedevelopment.com/">
+    <br>
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="./.github/root-logo-dark.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/root-logo-light.svg">
+      <img alt="Root" width="100" src="./.github/root-logo-light.svg">
+    </picture>
+    <br>
+  </a>
 </p>
 
 **Root is an admin package for Laravel applications with extension support.**
