@@ -55,6 +55,9 @@
         </main>
     </div>
 
+    {{-- Modals --}}
+    @stack('modals')
+
     {{-- Scripts --}}
     {{
         Vite::withEntryPoints('resources/js/app.js')

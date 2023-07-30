@@ -7,7 +7,6 @@ use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -174,12 +173,12 @@ abstract class Column implements Renderable
     /**
      * Render the column.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 
     /**

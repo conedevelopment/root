@@ -3,7 +3,9 @@
 namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Http\Controllers\MediaController;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 
 class Media extends File
 {
@@ -16,6 +18,16 @@ class Media extends File
      * The Blade template.
      */
     protected string $template = 'root::form.fields.media';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function data(Request $request): array
+    {
+        return array_merge(parent::data($request), [
+            'modalKey' => strtolower(Str::random()),
+        ]);
+    }
 
     /**
      * {@inheritdoc}

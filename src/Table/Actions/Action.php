@@ -13,7 +13,6 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -189,14 +188,14 @@ abstract class Action implements Renderable, Responsable, Routable
     }
 
     /**
-     * Render the table.
+     * Render the action.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 
     /**

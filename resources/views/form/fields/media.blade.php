@@ -1,7 +1,9 @@
 <div class="form-group--row">
     <span class="form-label">{{ $label }}</span>
     <div class="file-list">
-        <button type="button" class="btn btn--primary btn--lg btn--block">Choose file(s)</button>
+        <button type="button" class="btn btn--primary btn--lg btn--block" @click="$dispatch('open-{{ $modalKey }}')">
+            Choose file(s)
+        </button>
         <ul class="file-list__items">
             <li class="file-list-item">
                 <div class="file-list-item__column">
@@ -30,3 +32,7 @@
         </ul>
     </div>
 </div>
+
+@push('modals')
+    <x-root::modal :key="$modalKey" />
+@endpush

@@ -1,4 +1,10 @@
-<div class="modal-backdrop" x-data="{ open: false }" x-show="open" x-on:keydown.escape="open = false">
+<div
+    class="modal-backdrop"
+    x-data="{ open: false }"
+    x-show="open"
+    x-on:keydown.escape="open = false"
+    x-on:open-{{ $key }}.window="open = true"
+>
     <div role="dialog" aria-modal="true" tabindex="0" class="modal" x-on:click.away="open = false" x-trap.noscroll="open">
         <div class="modal__header">
             <div class="modal__header-caption">

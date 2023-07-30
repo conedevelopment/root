@@ -4,7 +4,6 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
@@ -256,7 +255,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function render(): View
+    public function render(): string
     {
         return $this->field->render();
     }

@@ -5,7 +5,6 @@ namespace Cone\Root\Form\Fields;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 
 class OptGroup implements Renderable
@@ -65,11 +64,11 @@ class OptGroup implements Renderable
     /**
      * Render the option group.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make($this->template, [
             'attrs' => $this->newAttributeBag(),
             'options' => $this->options,
-        ]);
+        ])->render();
     }
 }

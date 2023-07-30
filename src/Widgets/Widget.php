@@ -9,7 +9,6 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
@@ -120,13 +119,13 @@ abstract class Widget implements Renderable, Routable
     }
 
     /**
-     * Render the field.
+     * Render the widget.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
-            App::call([$this, 'resolveData'])
-        );
+            App::call([$this, 'data'])
+        )->render();
     }
 }

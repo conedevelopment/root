@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 
-class Form implements Renderable, Routable
+class Form implements Routable
 {
     use Makeable;
     use ResolvesFields;
@@ -132,7 +132,7 @@ class Form implements Renderable, Routable
     /**
      * Render the table.
      */
-    public function render(): View
+    public function render()
     {
         return App::make('view')->make(
             $this->template,

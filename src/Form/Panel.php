@@ -3,7 +3,6 @@
 namespace Cone\Root\Form;
 
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -47,11 +46,11 @@ class Panel implements Renderable
     /**
      * Render the table.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 }

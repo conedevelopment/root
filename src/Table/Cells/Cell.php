@@ -9,7 +9,6 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\View\View;
 
 abstract class Cell implements Renderable
 {
@@ -69,11 +68,11 @@ abstract class Cell implements Renderable
     /**
      * Render the cell.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 }

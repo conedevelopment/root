@@ -126,12 +126,12 @@ class Table implements Renderable, Routable
     /**
      * Render the table.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 
     /**

@@ -9,7 +9,6 @@ use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -342,12 +341,12 @@ abstract class Field implements Renderable
     /**
      * Render the field.
      */
-    public function render(): View
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 
     /**
