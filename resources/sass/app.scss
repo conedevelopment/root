@@ -14,3 +14,7 @@
     --container-gap: spacer-clamp('m', 'l')
   ));
 }
+
+[x-cloak] {
+  display: none;
+}

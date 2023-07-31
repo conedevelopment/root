@@ -1,5 +1,5 @@
 <td>
-    <label class="form-check" aria-label="Select LuminoTech LED Desk Lamp">
-        <input class="form-check__control" type="checkbox" value="1" name="1">
+    <label class="form-check" aria-label="">
+        <input class="form-check__control" type="checkbox" value="{{ $model->getKey() }}" x-model="selection">
     </label>
 </td>

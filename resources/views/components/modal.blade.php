@@ -1,5 +1,6 @@
 <div
     class="modal-backdrop"
+    x-cloak
     x-data="{ open: false }"
     x-show="open"
     x-on:keydown.escape="open = false"

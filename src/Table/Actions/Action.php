@@ -92,6 +92,14 @@ abstract class Action implements Responsable, Routable, Stringable
     }
 
     /**
+     * Get the modal key.
+     */
+    public function getModalKey(): string
+    {
+        return 'action-'.strtolower($this->getKey());
+    }
+
+    /**
      * Set the destructive property.
      */
     public function destructive(bool $value = true): static
@@ -185,6 +193,7 @@ abstract class Action implements Responsable, Routable, Stringable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'url' => $this->getUri(),
+            'modalKey' => $this->getModalKey(),
         ];
     }
 

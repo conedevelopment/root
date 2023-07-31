@@ -25,7 +25,7 @@ class Media extends File
     public function data(Request $request): array
     {
         return array_merge(parent::data($request), [
-            'modalKey' => strtolower(Str::random()),
+            'modalKey' => 'field-'.strtolower(Str::random()),
         ]);
     }
 

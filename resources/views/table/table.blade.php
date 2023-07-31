@@ -1,9 +1,10 @@
-<div class="app-card">
+<div class="app-card" x-data="{ selection: [] }">
     <div class="app-card__header">
+        <h2 class="app-card__title">Items</h2>
         <div class="app-card__actions">
             @if($searchable)
                 <form class="search-form">
-                    <input class="form-control  search-form__control" type="text" placeholder="Search..." title="Search" />
+                    <input class="form-control  search-form__control" type="text" placeholder="Search..." title="Search">
                     <button type="submit" class="search-form__submit">
                         <span class="sr-only">Search</span>
                         <x-root::icon name="search" class="search-form__icon" />
@@ -35,11 +36,32 @@
     </div>
     <div class="app-card__body">
         <div class="data-table">
-            <div class="alert alert--info data-table-alert">
-                20 items selected.
+            <div x-cloak x-show="selection.length > 0" class="alert alert--info data-table-alert">
+                <span><span x-text="selection.length"></span> items selected.</span>
                 <div class="data-table-alert__actions">
-                    <button class="btn btn--primary btn--sm">Select all 100</button>
-                    <button class="btn btn--primary btn--sm">Deselect all</button>
+                    <button class="btn btn--primary btn--sm">Select all ({{ $items->total() }})</button>
+                    <button
+                        type="button"
+                        class="btn btn--primary btn--sm"
+                        x-on:click="selection = []"
+                    >
+                        {{ __('Clear') }}
+                    </button>
+                    @if(! empty($actions))
+                        <select
+                            class="form-control form-control--sm"
+                            aria-label="{{ __('Actions') }}"
+                            x-on:change="$dispatch('open-'+$event.target.value)"
+                        >
+                            <option value="">--- {{ __('Select Action') }} ---</option>
+                            @foreach($actions as $action)
+                                <option value="{{ $action->getModalKey() }}">{{ $action->getName() }}</option>
+                            @endforeach
+                        </select>
+                        @foreach($actions as $action)
+                            {!! $action !!}
+                        @endforeach
+                    @endif
                 </div>
             </div>
             <div class="table-responsive">
