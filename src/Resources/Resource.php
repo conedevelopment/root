@@ -301,7 +301,6 @@ class Resource implements Routable
     {
         return [
             'form' => $this->form($request)->model(fn (): Model => $model),
-            'formKey' => $this->form($request)->getKey(),
             'model' => $model,
             'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
             // 'widgets' => $this->widgets,

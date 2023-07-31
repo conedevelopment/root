@@ -8,7 +8,7 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Field implements Renderable, Stringable
+abstract class Field implements Stringable
 {
     use Authorizable;
     use HasAttributes;
@@ -340,14 +340,14 @@ abstract class Field implements Renderable, Stringable
     }
 
     /**
-     * Render the field.
+     * Render the table.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
@@ -355,7 +355,7 @@ abstract class Field implements Renderable, Stringable
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 
     /**

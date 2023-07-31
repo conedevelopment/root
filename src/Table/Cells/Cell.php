@@ -5,13 +5,13 @@ namespace Cone\Root\Table\Cells;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Stringable;
 
-abstract class Cell implements Renderable, Stringable
+abstract class Cell implements Stringable
 {
     use Makeable;
     use ResolvesModelValue;
@@ -69,12 +69,12 @@ abstract class Cell implements Renderable, Stringable
     /**
      * Render the cell.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
@@ -82,6 +82,6 @@ abstract class Cell implements Renderable, Stringable
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 }

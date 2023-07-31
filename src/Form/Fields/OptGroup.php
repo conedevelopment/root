@@ -4,10 +4,11 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
+use Stringable;
 
-class OptGroup implements Renderable
+class OptGroup implements Stringable
 {
     use HasAttributes;
     use Makeable;
@@ -64,11 +65,19 @@ class OptGroup implements Renderable
     /**
      * Render the option group.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make($this->template, [
             'attrs' => $this->newAttributeBag(),
             'options' => $this->options,
-        ])->render();
+        ]);
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render()->render();
     }
 }

@@ -5,14 +5,15 @@ namespace Cone\Root\Table\Filters;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Filter implements Renderable, Stringable
+abstract class Filter implements Stringable
 {
     use Authorizable;
     use Makeable;
@@ -106,10 +107,29 @@ abstract class Filter implements Renderable, Stringable
     }
 
     /**
-     * Convert the field to a string.
+     * Get the view data.
+     */
+    public function data(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Render the filter.
+     */
+    public function render(): View
+    {
+        return App::make('view')->make(
+            $this->template,
+            App::call([$this, 'data'])
+        );
+    }
+
+    /**
+     * Convert the filter to a string.
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 }

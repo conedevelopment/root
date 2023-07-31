@@ -18,7 +18,7 @@ use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Stringable;
 
-class Table implements Renderable, Routable, Stringable
+class Table implements Routable, Stringable
 {
     use Macroable;
     use Makeable;
@@ -126,20 +126,20 @@ class Table implements Renderable, Routable, Stringable
     /**
      * Render the table.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
-     * Convert the field to a string.
+     * Convert the table to a string.
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 
     /**

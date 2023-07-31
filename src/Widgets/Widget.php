@@ -8,14 +8,14 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Widget implements Renderable, Routable, Stringable
+abstract class Widget implements Routable, Stringable
 {
     use Authorizable;
     use Makeable;
@@ -122,12 +122,12 @@ abstract class Widget implements Renderable, Routable, Stringable
     /**
      * Render the widget.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
@@ -135,6 +135,6 @@ abstract class Widget implements Renderable, Routable, Stringable
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 }

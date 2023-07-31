@@ -4,10 +4,11 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
+use Stringable;
 
-class Option implements Renderable
+class Option implements Stringable
 {
     use HasAttributes;
     use Makeable;
@@ -48,13 +49,21 @@ class Option implements Renderable
     }
 
     /**
-     * Render the field.
+     * Render the option.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make($this->template, [
             'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
-        ])->render();
+        ]);
+    }
+
+    /**
+     * Convert the option to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render()->render();
     }
 }

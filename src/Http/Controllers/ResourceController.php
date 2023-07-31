@@ -84,7 +84,7 @@ class ResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, Model $model): Response
+    public function edit(Request $request, Model $model)//: Response
     {
         $resource = Root::instance()->getCurrentResource();
 
@@ -92,7 +92,7 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        return ResponseFactory::view(
+        return view()->make(
             'root::resources.form',
             $resource->toEdit($request, $model)
         );

@@ -2,12 +2,12 @@
 
 namespace Cone\Root\Form;
 
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Stringable;
 
-class Panel implements Renderable, Stringable
+class Panel implements Stringable
 {
     /**
      * The Blade template.
@@ -47,19 +47,19 @@ class Panel implements Renderable, Stringable
     /**
      * Render the table.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
-     * Convert the field to a string.
+     * Convert the panel to a string.
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 }

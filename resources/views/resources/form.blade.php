@@ -9,7 +9,7 @@
 
 <div class="app-actions app-actions--sidebar">
     <div class="app-actions__column">
-        <button type="submit" class="btn btn--primary" form="{{ $formKey }}">Save</button>
+        <button type="submit" class="btn btn--primary" form="{{ $form->getKey() }}">Save</button>
         <button class="btn btn--light">Cancel</button>
     </div>
     @if($model->exists)

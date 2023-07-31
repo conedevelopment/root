@@ -6,14 +6,14 @@ use Closure;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Column implements Renderable, Stringable
+abstract class Column implements Stringable
 {
     use Makeable;
 
@@ -179,19 +179,19 @@ abstract class Column implements Renderable, Stringable
     /**
      * Render the column.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
     }
 
     /**
-     * Convert the field to a string.
+     * Convert the column to a string.
      */
     public function __toString(): string
     {
-        return $this->render();
+        return $this->render()->render();
     }
 }

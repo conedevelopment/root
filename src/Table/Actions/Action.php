@@ -11,8 +11,8 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesQuery;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 use Stringable;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Renderable, Responsable, Routable, Stringable
+abstract class Action implements Responsable, Routable, Stringable
 {
     use AsForm;
     use Authorizable;
@@ -191,12 +191,20 @@ abstract class Action implements Renderable, Responsable, Routable, Stringable
     /**
      * Render the action.
      */
-    public function render(): string
+    public function render(): View
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        )->render();
+        );
+    }
+
+    /**
+     * Convert the action to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render()->render();
     }
 
     /**
@@ -220,13 +228,5 @@ abstract class Action implements Renderable, Responsable, Routable, Stringable
             sprintf('alerts.action-%s', $this->getKey()),
             Alert::info(__(':action was successful!', ['action' => $this->getName()]))
         );
-    }
-
-    /**
-     * Convert the field to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->render();
     }
 }
