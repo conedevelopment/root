@@ -11,15 +11,15 @@ use Cone\Root\Traits\ResolvesFields;
 use Exception;
 use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
+use Stringable;
 
-class Form implements Routable
+class Form implements Renderable, Routable, Stringable
 {
     use Makeable;
     use ResolvesFields;
@@ -132,12 +132,12 @@ class Form implements Routable
     /**
      * Render the table.
      */
-    public function render()
+    public function render(): string
     {
         return App::make('view')->make(
             $this->template,
             App::call([$this, 'data'])
-        );
+        )->render();
     }
 
     /**
@@ -193,5 +193,13 @@ class Form implements Routable
         $this->__registerRoutes($router);
 
         $this->fields->registerRoutes($router);
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

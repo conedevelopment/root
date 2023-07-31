@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Stringable;
 
-abstract class Filter implements Renderable
+abstract class Filter implements Renderable, Stringable
 {
     use Authorizable;
     use Makeable;
@@ -102,5 +103,13 @@ abstract class Filter implements Renderable
         $this->multiple = $value;
 
         return $this;
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

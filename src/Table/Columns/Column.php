@@ -11,8 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Stringable;
 
-abstract class Column implements Renderable
+abstract class Column implements Renderable, Stringable
 {
     use Makeable;
 
@@ -65,6 +66,11 @@ abstract class Column implements Renderable
         $this->key = $key ??= Str::of($label)->lower()->snake()->value();
         $this->table = $table;
     }
+
+    /**
+     * Convert the column to a cell.
+     */
+    abstract public function toCell(Model $model): Cell;
 
     /**
      * Get the key.
@@ -182,7 +188,10 @@ abstract class Column implements Renderable
     }
 
     /**
-     * Convert the column to a cell.
+     * Convert the field to a string.
      */
-    abstract public function toCell(Model $model): Cell;
+    public function __toString(): string
+    {
+        return $this->render();
+    }
 }

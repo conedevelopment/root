@@ -21,9 +21,10 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use Stringable;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Renderable, Responsable, Routable
+abstract class Action implements Renderable, Responsable, Routable, Stringable
 {
     use AsForm;
     use Authorizable;
@@ -219,5 +220,13 @@ abstract class Action implements Renderable, Responsable, Routable
             sprintf('alerts.action-%s', $this->getKey()),
             Alert::info(__(':action was successful!', ['action' => $this->getName()]))
         );
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

@@ -55,7 +55,7 @@
                                 </th>
                             @endif
                             @foreach($columns as $column)
-                                {!! $column->render() !!}
+                                {!! $column !!}
                             @endforeach
                             <th scope="col">
                                 <span class="sr-only">{{ __('Actions') }}</span>
@@ -66,7 +66,7 @@
                         @foreach($items as $cells)
                             <tr>
                                 @foreach($cells as $cell)
-                                    {!! $cell->render() !!}
+                                    {!! $cell !!}
                                 @endforeach
                             </tr>
                         @endforeach

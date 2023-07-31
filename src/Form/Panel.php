@@ -5,8 +5,9 @@ namespace Cone\Root\Form;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Stringable;
 
-class Panel implements Renderable
+class Panel implements Renderable, Stringable
 {
     /**
      * The Blade template.
@@ -52,5 +53,13 @@ class Panel implements Renderable
             $this->template,
             App::call([$this, 'data'])
         )->render();
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

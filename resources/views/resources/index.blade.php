@@ -8,10 +8,10 @@
 @if($widgets->isNotEmpty())
     <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
         @foreach($widgets->all() as $widget)
-            {!! $widget->render() !!}
+            {!! $widget !!}
         @endforeach
     </div>
 @endif
 
-{!! $table->render() !!}
+{!! $table !!}
 @endsection

@@ -9,8 +9,9 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Stringable;
 
-abstract class Cell implements Renderable
+abstract class Cell implements Renderable, Stringable
 {
     use Makeable;
     use ResolvesModelValue;
@@ -74,5 +75,13 @@ abstract class Cell implements Renderable
             $this->template,
             App::call([$this, 'data'])
         )->render();
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

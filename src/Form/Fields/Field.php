@@ -14,8 +14,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Stringable;
 
-abstract class Field implements Renderable
+abstract class Field implements Renderable, Stringable
 {
     use Authorizable;
     use HasAttributes;
@@ -347,6 +348,14 @@ abstract class Field implements Renderable
             $this->template,
             App::call([$this, 'data'])
         )->render();
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 
     /**

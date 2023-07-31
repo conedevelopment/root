@@ -13,8 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Stringable;
 
-abstract class Widget implements Renderable, Routable
+abstract class Widget implements Renderable, Routable, Stringable
 {
     use Authorizable;
     use Makeable;
@@ -127,5 +128,13 @@ abstract class Widget implements Renderable, Routable
             $this->template,
             App::call([$this, 'data'])
         )->render();
+    }
+
+    /**
+     * Convert the field to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
     }
 }

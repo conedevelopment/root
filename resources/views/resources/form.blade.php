@@ -5,7 +5,7 @@
 
 {{-- Content --}}
 @section('content')
-{!! $form->render() !!}
+{!! $form !!}
 
 <div class="app-actions app-actions--sidebar">
     <div class="app-actions__column">
