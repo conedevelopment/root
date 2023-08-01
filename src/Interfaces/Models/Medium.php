@@ -6,8 +6,6 @@ interface Medium
 {
     /**
      * Perform the conversions on the medium.
-     *
-     * @return $this
      */
     public function convert(): static;
 

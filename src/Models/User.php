@@ -74,7 +74,7 @@ class User extends Authenticatable implements Contract, Resourceable
     protected static function booted(): void
     {
         static::creating(static function (self $user): void {
-            $user->password = $user->password ?: Hash::make(Str::random(10));
+            $user->password = $user->password ?: Hash::make(Str::password());
         });
     }
 
