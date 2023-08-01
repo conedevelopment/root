@@ -20,12 +20,20 @@ class Media extends File
     protected string $template = 'root::form.fields.media';
 
     /**
+     * Get the modal key.
+     */
+    public function getModalKey(): string
+    {
+        return strtolower(Str::random());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function data(Request $request): array
     {
         return array_merge(parent::data($request), [
-            'modalKey' => 'field-'.strtolower(Str::random()),
+            'modalKey' => $this->getModalKey(),
         ]);
     }
 

@@ -96,7 +96,7 @@ abstract class Action implements Responsable, Routable, Stringable
      */
     public function getModalKey(): string
     {
-        return 'action-'.strtolower($this->getKey());
+        return strtolower(Str::random());
     }
 
     /**

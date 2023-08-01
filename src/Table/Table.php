@@ -96,16 +96,16 @@ class Table implements Routable, Stringable
                         ->value($column->getValueResolver())
                         ->format($column->getFormatResolver());
                 })
-                ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
-                    $cells->prepend(Select::make(Text::make($this, ''), $model));
-                })
-                ->push(
-                    ActionsCell::make(Text::make($this, ''), $model)
-                        ->value(static function (Model $model) use ($url): string {
-                            return sprintf('%s%s', $url, $model->getRouteKey());
-                        })
-                )
-                ->all();
+                    ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
+                        $cells->prepend(Select::make(Text::make($this, ''), $model));
+                    })
+                    ->push(
+                        ActionsCell::make(Text::make($this, ''), $model)
+                            ->value(static function (Model $model) use ($url): string {
+                                return sprintf('%s%s', $url, $model->getRouteKey());
+                            })
+                    )
+                    ->all();
             });
     }
 
