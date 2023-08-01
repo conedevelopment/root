@@ -62,7 +62,7 @@ class Form implements Routable, Stringable
      */
     public function __construct(string $key = null)
     {
-        $this->key = $key ?: Str::random();
+        $this->key = strtolower($key ?: Str::random(5));
         $this->fields = new Fields($this, $this->fields());
     }
 

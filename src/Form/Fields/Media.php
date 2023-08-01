@@ -24,7 +24,7 @@ class Media extends File
      */
     public function getModalKey(): string
     {
-        return strtolower(Str::random());
+        return sprintf('%s-field-%s', $this->form->getKey(), $this->getKey());
     }
 
     /**
