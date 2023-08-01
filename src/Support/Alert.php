@@ -22,11 +22,6 @@ class Alert implements Arrayable, Jsonable, Stringable
     protected string $message;
 
     /**
-     * The alert timestamp.
-     */
-    protected string $timestamp;
-
-    /**
      * The alert type.
      */
     protected string $type;
@@ -38,39 +33,38 @@ class Alert implements Arrayable, Jsonable, Stringable
     {
         $this->message = $message;
         $this->type = $type;
-        $this->timestamp = date(DATE_ATOM);
     }
 
     /**
      * Make a new info alert instance.
      */
-    public static function info(string $message): static
+    public static function info(string $message): array
     {
-        return new static($message, static::INFO);
+        return (new static($message, static::INFO))->toArray();
     }
 
     /**
      * Make a new success alert instance.
      */
-    public static function success(string $message): static
+    public static function success(string $message): array
     {
-        return new static($message, static::SUCCESS);
+        return (new static($message, static::SUCCESS))->toArray();
     }
 
     /**
      * Make a new error alert instance.
      */
-    public static function error(string $message): static
+    public static function error(string $message): array
     {
-        return new static($message, static::ERROR);
+        return (new static($message, static::ERROR))->toArray();
     }
 
     /**
      * Make a new warning alert instance.
      */
-    public static function warning(string $message): static
+    public static function warning(string $message): array
     {
-        return new static($message, static::WARNING);
+        return (new static($message, static::WARNING))->toArray();
     }
 
     /**
@@ -80,7 +74,6 @@ class Alert implements Arrayable, Jsonable, Stringable
     {
         return [
             'message' => $this->message,
-            'timestamp' => $this->timestamp,
             'type' => $this->type,
         ];
     }

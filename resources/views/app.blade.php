@@ -48,6 +48,11 @@
             </div>
             <div class="container">
                 <div class="app-body">
+                    @foreach($alerts as $alert)
+                        <x-root::alert :type="$alert['type']">
+                            {!! $alert['message'] !!}
+                        </x-root>
+                    @endforeach
                     @yield('content')
                 </div>
             </div>

@@ -5,7 +5,6 @@ namespace Cone\Root\Form\Fields;
 use Cone\Root\Http\Controllers\MediaController;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Str;
 
 class Media extends File
 {

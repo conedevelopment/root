@@ -156,6 +156,7 @@ class RootServiceProvider extends ServiceProvider
             $request = $this->app->make('request');
 
             $view->with([
+                'alerts' => $request->session()->get('alerts', []),
                 'user' => $request->user(),
             ]);
         });
