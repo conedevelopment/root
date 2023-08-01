@@ -10,7 +10,9 @@
         <div class="modal__header">
             <div class="modal__header-caption">
                 <h2 class="modal__title">{{ $title }}</h2>
-                <p class="modal__subtitle">Set notifications for this post</p>
+                @if($subtitle)
+                    <p class="modal__subtitle">{{ $subtitle }}</p>
+                @endif
             </div>
             <button
                 type="button"
@@ -24,9 +26,10 @@
         <div class="modal__body">
             {{ $slot }}
         </div>
-        <div class="modal__footer">
-            <button type="button" class="btn btn--outline-primary" x-on:click="open = false">Cancel</button>
-            <button type="button" class="btn btn--primary">Save</button>
-        </div>
+        @if(isset($footer))
+            <div class="modal__footer">
+                {{ $footer }}
+            </div>
+        @endif
     </div>
 </div>

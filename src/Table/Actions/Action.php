@@ -194,6 +194,7 @@ abstract class Action implements Responsable, Routable, Stringable
             'name' => $this->getName(),
             'url' => $this->getUri(),
             'modalKey' => $this->getModalKey(),
+            'form' => $this->form($request),
         ];
     }
 

@@ -19,11 +19,17 @@ class Modal extends Component
     protected string $title;
 
     /**
+     * The modal subtitle.
+     */
+    protected ?string $subtitle = null;
+
+    /**
      * Create a new component instance.
      */
-    public function __construct(string $title, string $key = null)
+    public function __construct(string $title, string $subtitle = null, string $key = null)
     {
         $this->title = $title;
+        $this->subtitle = $subtitle;
         $this->key = strtolower($key ?: Str::random());
     }
 
@@ -33,8 +39,9 @@ class Modal extends Component
     public function render(): View
     {
         return $this->view('root::components.modal', [
-            'title' => $this->title,
             'key' => $this->key,
+            'subtitle' => $this->subtitle,
+            'title' => $this->title,
         ]);
     }
 }

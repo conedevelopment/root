@@ -11,7 +11,7 @@
                 <div class="app-card__body">
                     <div class="form-group-stack form-group-stack--bordered form-group-container">
                         @foreach($fields as $field)
-                            {!! $field->render() !!}
+                            {!! $field !!}
                         @endforeach
                     </div>
                 </div>
