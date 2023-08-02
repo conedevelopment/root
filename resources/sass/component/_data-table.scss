@@ -1,92 +1,92 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .data-table {
-  overflow: hidden;
-  position: relative;
+    overflow: hidden;
+    position: relative;
 
-  &__image {
-    --dimension: 2.25rem;
-    block-size: var(--dimension);
-    border-radius: 50%;
-    inline-size: var(--dimension);
-  }
-
-  &__actions {
-    align-items: center;
-    display: flex;
-    gap: spacer('xs');
-    justify-content: end;
-  }
-
-  &__footer {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('s');
-    justify-content: space-between;
-    margin-block: spacer('m') spacer('s');
-
-    &-column {
-      display: flex;
-      flex-wrap: wrap;
-      gap: spacer('s');
-
-      > * {
-        margin-block: 0;
-      }
+    &__image {
+        --dimension: 2.25rem;
+        block-size: var(--dimension);
+        border-radius: 50%;
+        inline-size: var(--dimension);
     }
-  }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        gap: spacer('xs');
+        justify-content: end;
+    }
+
+    &__footer {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('s');
+        justify-content: space-between;
+        margin-block: spacer('m') spacer('s');
+
+        &-column {
+            display: flex;
+            flex-wrap: wrap;
+            gap: spacer('s');
+
+            > * {
+                margin-block: 0;
+            }
+        }
+    }
 }
 
 .data-table-alert {
-  border-width: 1px;
-  flex-wrap: wrap;
-  gap: spacer('xs') spacer('s');
-  padding-inline-end: 0.65em;
-
-  &__actions {
-    align-items: center;
-    display: flex;
+    border-width: 1px;
     flex-wrap: wrap;
-    gap: spacer('xs');
+    gap: spacer('xs') spacer('s');
+    padding-inline-end: 0.65em;
 
-    .form-control {
-      inline-size: auto;
+    &__actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('xs');
+
+        .form-control {
+            inline-size: auto;
+        }
     }
-  }
 }
 
 .data-table-filter {
-  position: relative;
+    position: relative;
 
-  &__actions {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('xs');
-  }
+    &__actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('xs');
+    }
 
-  .context-menu {
-    --inline-size: 16rem;
-    padding: spacer('s');
-  }
+    .context-menu {
+        --inline-size: 16rem;
+        padding: spacer('s');
+    }
 }
 
 .data-table-sort {
-  @include a11y-card-link('.data-table-sort__control', true);
-  align-items: center;
-  display: flex;
-  gap: spacer('xs');
-  white-space: nowrap;
+    @include a11y-card-link('.data-table-sort__control', true);
+    align-items: center;
+    display: flex;
+    gap: spacer('xs');
+    white-space: nowrap;
 
-  &__control {
-    @include clear-btn;
-  }
+    &__control {
+        @include clear-btn;
+    }
 
-  svg {
-    --dimension: 0.85em;
-    block-size: var(--dimension);
-    color: color('icon', 'data-table');
-    inline-size: var(--dimension);
-  }
+    svg {
+        --dimension: 0.85em;
+        block-size: var(--dimension);
+        color: color('icon', 'data-table');
+        inline-size: var(--dimension);
+    }
 }

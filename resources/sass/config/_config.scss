@@ -7,120 +7,120 @@ $color-primary-lightest: hsl(210deg 60% 98%);
 $color-danger: hsl(0deg 71% 51%);
 
 @use 'sprucecss/scss/spruce' with (
-  $btn: (
-    'font-family': #{'Manrope', sans-serif},
-    'font-weight': 600,
-  ),
-  $btn-lg: (
-    'font-size': 1rem,
-  ),
-  $colors: (
-    'base': (
-      'border': hsl(215deg 100% 96%),
-      'primary-lightest': $color-primary-lightest,
+    $btn: (
+        'font-family': #{'Manrope', sans-serif},
+        'font-weight': 600,
     ),
-    'btn': (
-      'dark-background': hsl(205deg 100% 2%),
-      'dark-background-hover': hsl(205deg 100% 5%),
-      'dark-foreground': hsl(0deg 0% 100%),
-      'dark-outline-border': hsl(260deg 4% 70%),
-      'dark-outline-foreground': hsl(205deg 100% 2%),
-      'dark-outline-foreground-hover': hsl(0deg 0% 100%),
-      'dark-outline-background-hover': hsl(205deg 100% 2%),
-      'dark-outline-focus-ring': hsl(205deg 100% 2%),
-      'light-background': $color-primary-lightest,
-      'light-background-hover': $color-primary,
-      'light-focus-ring': $color-primary,
-      'light-foreground': $color-primary,
-      'light-foreground-hover': hsl(0deg 0% 100%),
-      'delete-background': color.adjust($color-danger, $lightness: 45%),
-      'delete-background-hover': $color-danger,
-      'delete-focus-ring': $color-danger,
-      'delete-foreground': $color-danger,
-      'delete-foreground-hover': hsl(0deg 0% 100%),
-      'primary-outline-foreground': $color-primary,
+    $btn-lg: (
+        'font-size': 1rem,
     ),
-    'breadcrumb': (
-      'separator': hsl(0deg 0% 80%),
+    $colors: (
+        'base': (
+            'border': hsl(215deg 100% 96%),
+            'primary-lightest': $color-primary-lightest,
+        ),
+        'btn': (
+            'dark-background': hsl(205deg 100% 2%),
+            'dark-background-hover': hsl(205deg 100% 5%),
+            'dark-foreground': hsl(0deg 0% 100%),
+            'dark-outline-border': hsl(260deg 4% 70%),
+            'dark-outline-foreground': hsl(205deg 100% 2%),
+            'dark-outline-foreground-hover': hsl(0deg 0% 100%),
+            'dark-outline-background-hover': hsl(205deg 100% 2%),
+            'dark-outline-focus-ring': hsl(205deg 100% 2%),
+            'light-background': $color-primary-lightest,
+            'light-background-hover': $color-primary,
+            'light-focus-ring': $color-primary,
+            'light-foreground': $color-primary,
+            'light-foreground-hover': hsl(0deg 0% 100%),
+            'delete-background': color.adjust($color-danger, $lightness: 45%),
+            'delete-background-hover': $color-danger,
+            'delete-focus-ring': $color-danger,
+            'delete-foreground': $color-danger,
+            'delete-foreground-hover': hsl(0deg 0% 100%),
+            'primary-outline-foreground': $color-primary,
+        ),
+        'breadcrumb': (
+            'separator': hsl(0deg 0% 80%),
+        ),
+        'combobox': (
+            'item-background': $color-primary-lightest,
+            'item-foreground': $color-primary,
+        ),
+        'data-table': (
+            'icon': hsl(0deg 0% 80%),
+        ),
+        'form': (
+            'border': hsl(260deg 4% 75%),
+        ),
+        'header': (
+            'background': hsl(0deg 0% 100% / 95%),
+        ),
+        'navigation': (
+            'arrow': hsl(0deg 0% 0% / 15%),
+        ),
+        'main': (
+            'background': $color-primary-lightest,
+        ),
+        'modal': (
+            'background': hsl(210deg 60% 98% / 90%),
+        ),
+        'search': (
+            'icon': hsl(229deg 26% 48% / 25%),
+        ),
+        'prism': (
+            'color': hsl(243deg 14% 29%),
+            'background': hsl(0deg 0% 98%),
+            'comment': hsl(225deg 14% 46%),
+            'punctuation': hsl(279deg 50% 53%),
+            'namespace': hsl(173deg 100% 24%),
+            'deleted': hsl(1deg 83% 63% / 56%),
+            'boolean': hsl(0deg 44% 53%),
+            'number': hsl(315deg 90% 35%),
+            'constant': hsl(221deg 57% 52%),
+            'class-name': hsl(0deg 0% 7%),
+            'regex': hsl(1deg 48% 59%),
+        ),
+        'table': (
+            'hover': $color-primary-lightest,
+            'stripe': $color-primary-lightest,
+        ),
+        'widget': (
+            'icon-background': color.adjust($color-primary, $lightness: 49%),
+        ),
     ),
-    'combobox': (
-      'item-background': $color-primary-lightest,
-      'item-foreground': $color-primary,
+    $color-primary: $color-primary,
+    $color-secondary: $color-secondary,
+    $dark-colors: dark.$colors,
+    $display: (
+        'border-radius-sm': 0.45rem,
     ),
-    'data-table': (
-      'icon': hsl(0deg 0% 80%),
+    $form-check: (
+        'font-weight': 400,
     ),
-    'form': (
-      'border': hsl(260deg 4% 75%),
+    $form-control-sm: (
+        'padding': 0.1em 0.45em,
     ),
-    'header': (
-      'background': hsl(0deg 0% 100% / 95%),
+    $form-fieldset: (
+        'gap': 0.5rem,
+        'legend-font-size': 0.938rem,
+        'legend-font-weight': 600,
     ),
-    'navigation': (
-      'arrow': hsl(0deg 0% 0% / 15%),
+    $form-group: (
+        'row-container-inline-size': 40rem,
     ),
-    'main': (
-      'background': $color-primary-lightest,
+    $form-label: (
+        'font-family': #{'Manrope', sans-serif},
+        'font-weight': 600,
     ),
-    'modal': (
-      'background': hsl(210deg 60% 98% / 90%),
+    $typography: (
+        'font-family-base': #{'Open Sans', sans-serif},
+        'font-family-heading': #{'Manrope', sans-serif},
+        'font-size-base': 0.938rem,
+        'font-weight-heading': 600,
     ),
-    'search': (
-      'icon': hsl(229deg 26% 48% / 25%),
-    ),
-    'prism': (
-      'color': hsl(243deg 14% 29%),
-      'background': hsl(0deg 0% 98%),
-      'comment': hsl(225deg 14% 46%),
-      'punctuation': hsl(279deg 50% 53%),
-      'namespace': hsl(173deg 100% 24%),
-      'deleted': hsl(1deg 83% 63% / 56%),
-      'boolean': hsl(0deg 44% 53%),
-      'number': hsl(315deg 90% 35%),
-      'constant': hsl(221deg 57% 52%),
-      'class-name': hsl(0deg 0% 7%),
-      'regex': hsl(1deg 48% 59%),
-    ),
-    'table': (
-      'hover': $color-primary-lightest,
-      'stripe': $color-primary-lightest,
-    ),
-    'widget': (
-      'icon-background': color.adjust($color-primary, $lightness: 49%),
-    ),
-  ),
-  $color-primary: $color-primary,
-  $color-secondary: $color-secondary,
-  $dark-colors: dark.$colors,
-  $display: (
-    'border-radius-sm': 0.45rem,
-  ),
-  $form-check: (
-    'font-weight': 400,
-  ),
-  $form-control-sm: (
-    'padding': 0.1em 0.45em,
-  ),
-  $form-fieldset: (
-    'gap': 0.5rem,
-    'legend-font-size': 0.938rem,
-    'legend-font-weight': 600,
-  ),
-  $form-group: (
-    'row-container-inline-size': 40rem,
-  ),
-  $form-label: (
-    'font-family': #{'Manrope', sans-serif},
-    'font-weight': 600,
-  ),
-  $typography: (
-    'font-family-base': #{'Open Sans', sans-serif},
-    'font-family-heading': #{'Manrope', sans-serif},
-    'font-size-base': 0.938rem,
-    'font-weight-heading': 600,
-  ),
-  $settings: (
-    'css-custom-properties': true,
-    'prefix': 'root',
-  )
+    $settings: (
+        'css-custom-properties': true,
+        'prefix': 'root',
+    )
 );

@@ -25,7 +25,7 @@
                         <div class="form-group-stack form-group-stack--bordered form-group-container">
                             {{-- Filters --}}
                             <div class="data-table-filter__actions">
-                                <button class="btn btn--primary btn--sm">Fitler</button>
+                                <button class="btn btn--primary btn--sm">Filter</button>
                                 <button class="btn btn--light btn--sm">Reset</button>
                             </div>
                         </div>
