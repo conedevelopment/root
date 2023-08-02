@@ -7,7 +7,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
-max_line_length = 2000
+max_line_length = 3000
 block_comment_start = /*
 block_comment = *
 block_comment_end = */
@@ -16,7 +16,7 @@ block_comment_end = */
 max_line_length = 120
 
 [*.blade.php]
-max_line_length = 500
+max_line_length = 3000
 
 [*.md]
 trim_trailing_whitespace = false
