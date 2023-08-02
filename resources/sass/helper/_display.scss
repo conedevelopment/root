@@ -1,19 +1,19 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .display {
-  @each $name, $breakpoint in $breakpoints {
-    @include breakpoint($name) {
-      &--flex\:#{$name} {
-        display: flex !important;
-      }
+    @each $name, $breakpoint in $breakpoints {
+        @include breakpoint($name) {
+            &--flex\:#{$name} {
+                display: flex !important;
+            }
+        }
     }
-  }
 
-  @each $name, $breakpoint in $breakpoints {
-    @include breakpoint($name) {
-      &--none\:#{$name} {
-        display: none !important;
-      }
+    @each $name, $breakpoint in $breakpoints {
+        @include breakpoint($name) {
+            &--none\:#{$name} {
+                display: none !important;
+            }
+        }
     }
-  }
 }

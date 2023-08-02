@@ -1,19 +1,19 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .container {
-  --inline-size: #{config('container-inline-size', $layout)};
-  --gap: #{get-css-variable(--container-gap)};
+    --inline-size: #{config('container-inline-size', $layout)};
+    --gap: #{get-css-variable(--container-gap)};
 
-  @include layout-center(
-    var(--gap),
-    var(--inline-size)
-  );
+    @include layout-center(
+        var(--gap),
+        var(--inline-size)
+    );
 
-  &--wide {
-    --inline-size: 100%;
-  }
+    &--wide {
+        --inline-size: 100%;
+    }
 
-  &--narrow {
-    --inline-size: 50rem;
-  }
+    &--narrow {
+        --inline-size: 50rem;
+    }
 }
