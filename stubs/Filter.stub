@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Filters\Filter;
+use Cone\Root\Table\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 

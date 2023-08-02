@@ -30,15 +30,31 @@ class Columns
     }
 
     /**
+     * Make a new column instance.
+     */
+    public function column(string $column, string $label, string $key = null): mixed
+    {
+        $instance = $column($this->table, $label, $key);
+
+        $this->columns->push($instance);
+
+        return $instance;
+    }
+
+    /**
+     * Make a new ID column.
+     */
+    public function id(string $label = 'ID', string $key = null): Text
+    {
+        return $this->column(Text::class, $label, $key);
+    }
+
+    /**
      * Make a new text column.
      */
-    public function text(string $label, string $key): Text
+    public function text(string $label, string $key = null): Text
     {
-        $column = new Text($this->table, $label, $key);
-
-        $this->columns->push($column);
-
-        return $column;
+        return $this->column(Text::class, $label, $key);
     }
 
     /**

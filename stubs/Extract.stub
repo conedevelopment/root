@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use Cone\Root\Extracts\Extract;
 use Cone\Root\Table\Columns\Columns;
+use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 

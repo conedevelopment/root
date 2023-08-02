@@ -2,7 +2,9 @@
 
 namespace {{ namespace }};
 
+use Cone\Root\Form\Fields\Fields;
 use Cone\Root\Form\Fields\ID;
+use Cone\Root\Form\Form;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Table\Columns\Columns;
 use Cone\Root\Table\Table;
