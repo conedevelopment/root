@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Table\Actions;
+namespace Cone\Root\Table\Filters;
 
 use Cone\Root\Form\Form;
 use Illuminate\Http\Request;
