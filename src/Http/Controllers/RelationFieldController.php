@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Http\Controllers;
 
+use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class RelationFieldController extends Controller
 
         Gate::allowIf($field->authorized($request, $model));
 
-        $model ??= $request->route('rootResource')->getModelInstance();
+        $model ?: Root::instance()->getCurrentResource()->getModelInstance();
 
         $models = $field->resolveRelatableQuery($request, $model)
             ->paginate()

@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
+use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class MediaController extends Controller
 
         Gate::allowIf($field->authorized($request, $model));
 
-        $model ??= $request->route('rootResource')->getModelInstance();
+        $model ??= Root::instance()->getCurrentResource()->getModelInstance();
 
         return new JsonResponse($field->mapItems($request, $model));
     }
@@ -38,7 +39,7 @@ class MediaController extends Controller
 
         $request->validate(['file' => ['required', 'file']]);
 
-        $model ??= $request->route('rootResource')->getModelInstance();
+        $model ??= Root::instance()->getCurrentResource()->getModelInstance();
 
         $file = $request->file('file');
 
@@ -67,7 +68,9 @@ class MediaController extends Controller
 
         Gate::allowIf($field->authorized($request, $model));
 
-        $field->resolveRelatableQuery($request, $model ?: $request->route('rootResource')->getModelInstance())
+        $model ??= Root::instance()->getCurrentResource()->getModelInstance();
+
+        $field->resolveRelatableQuery($request, $model)
             ->find($request->input('models', []))
             ->each
             ->delete();

@@ -184,26 +184,6 @@ abstract class Relation extends Field implements Routable
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(): mixed
-    {
-        if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (Model $model, mixed $value): mixed {
-                if ($value instanceof Model) {
-                    return $value->getKey();
-                } elseif ($value instanceof Collection) {
-                    return $value->map->getKey()->toArray();
-                }
-
-                return $value;
-            };
-        }
-
-        return parent::resolveValue();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getValue(): mixed
     {
         $model = $this->resolveModel();
@@ -318,7 +298,7 @@ abstract class Relation extends Field implements Routable
         return array_merge(parent::data($request), [
             'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
-            'options' => $this->isAsync() ? [] : $this->resolveOptions(),
+            'options' => $this->resolveOptions(),
             'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
         ]);
     }

@@ -4,16 +4,18 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Root;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View as ViewFactory;
-use Illuminate\View\View;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 
 class DashboardController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Root $root): View
+    public function __invoke(Request $request, Root $root): Response
     {
-        return ViewFactory::make('root::dashboard');
+        return ResponseFactory::View('root::dashboard', [
+            //
+        ]);
     }
 }

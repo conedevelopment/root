@@ -3,18 +3,22 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Fields\FileOption;
 use Cone\Root\Form\Form;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
+use Cone\Root\Traits\ResolvesFields;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 
 class File extends MorphToMany
 {
-    // use ResolvesFields;
+    use ResolvesFields;
 
     /**
      * The Blade template.
@@ -25,6 +29,11 @@ class File extends MorphToMany
      * The storage resolver callback.
      */
     protected ?Closure $storageResolver = null;
+
+    /**
+     * Indicates whether the file input is prunable.
+     */
+    protected bool $prunable = false;
 
     /**
      * The storage disk.
@@ -41,6 +50,8 @@ class File extends MorphToMany
         $this->type('file')->multiple(false);
 
         $this->disk(Config::get('root.media.disk', 'public'));
+
+        $this->fields = new Fields($form, $this->fields());
     }
 
     /**
@@ -76,9 +87,34 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function resolveDisplay(Model $related): mixed
+    {
+        if (is_null($this->displayResolver)) {
+            $this->display('file_name');
+        }
+
+        return parent::resolveDisplay($related);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function resolveOptions(): array
     {
-        return [];
+        return $this->resolveValue()
+            ->map(function (Medium $medium): FileOption {
+                return $this->newOption($medium, $this->resolveDisplay($medium));
+            })
+            ->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function newOption(mixed $value, string $label): FileOption
+    {
+        return FileOption::make($value, $label)
+            ->setAttribute('name', sprintf('%s__attached[]', $this->getAttribute('name')));
     }
 
     /**
@@ -117,7 +153,17 @@ class File extends MorphToMany
      */
     public function getValueForHydrate(Request $request): mixed
     {
-        return $request->input([$this->getKey().'__attached']);
+        return $request->input($this->getKey().'__attached');
+    }
+
+    /**
+     * Set the prunable attribute.
+     */
+    public function prunable(bool $value = true): static
+    {
+        $this->prunable = $value;
+
+        return $this;
     }
 
     /**
@@ -126,7 +172,7 @@ class File extends MorphToMany
     public function persist(Request $request, mixed $value): void
     {
         $this->resolveModel()->saved(function () use ($request, $value): void {
-            $files = Arr::wrap($request->file([$this->getKey()], []));
+            $files = Arr::wrap($request->file($this->getKey(), []));
 
             $ids = array_map(function (UploadedFile $file) use ($request): string {
                 return $this->store($request, $file)->getKey();
@@ -136,7 +182,23 @@ class File extends MorphToMany
 
             $this->resolveHydrate($request, $value);
 
-            $this->getRelation()->sync($value);
+            $keys = $this->getRelation()->sync($value);
+
+            if ($this->prunable) {
+                // delete $keys['detached'];
+            }
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerRoutes(Router $router): void
+    {
+        parent::registerRoutes($router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router): void {
+            $this->fields->registerRoutes($router);
         });
     }
 }
