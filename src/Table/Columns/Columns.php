@@ -34,7 +34,7 @@ class Columns
      */
     public function column(string $column, string $label, string $key = null): mixed
     {
-        $instance = $column($this->table, $label, $key);
+        $instance = new $column($this->table, $label, $key);
 
         $this->columns->push($instance);
 
