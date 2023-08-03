@@ -5,6 +5,7 @@
 /.github export-ignore
 /.gitignore export-ignore
 /.vscode export-ignore
+/.stylelintrc.json export-ignore
 /.typos.toml export-ignore
 /composer.lock export-ignore linguist-generated
 /jest.config.js export-ignore
