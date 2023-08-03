@@ -21,11 +21,13 @@ class MediaController extends Controller
     {
         $field = $request->route('rootField');
 
-        Gate::allowIf($field->authorized($request, $model));
-
         $model ??= Root::instance()->getCurrentResource()->getModelInstance();
 
-        return new JsonResponse($field->mapItems($request, $model));
+        Gate::allowIf($field->authorized($request, $model));
+
+        // $field->form->model(fn () => $model);
+
+        return new JsonResponse($field->resolveOptions());
     }
 
     /**

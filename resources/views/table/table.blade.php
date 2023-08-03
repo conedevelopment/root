@@ -2,6 +2,7 @@
     <div class="app-card__header">
         <h2 class="app-card__title">Items</h2>
         <div class="app-card__actions">
+            {{-- Filter Form --}}
             @if($searchable)
                 <form class="search-form">
                     <input class="form-control  search-form__control" type="text" placeholder="Search..." title="Search">

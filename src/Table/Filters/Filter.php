@@ -2,13 +2,13 @@
 
 namespace Cone\Root\Table\Filters;
 
+use Cone\Root\Form\Fields\Field;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
@@ -22,11 +22,6 @@ abstract class Filter implements Stringable
      * The Blade template.
      */
     protected ?string $template = 'root::table.filters.select';
-
-    /**
-     * Indicates if multiple options can be selected.
-     */
-    protected bool $multiple = false;
 
     /**
      * The table instance.
@@ -45,6 +40,11 @@ abstract class Filter implements Stringable
      * Apply the filter on the query.
      */
     abstract public function apply(Request $request, Builder $query, mixed $value): Builder;
+
+    /**
+     * Convert the filter to a form field.
+     */
+    abstract public function toField(FilterForm $form): Field;
 
     /**
      * Get the key.
@@ -67,9 +67,7 @@ abstract class Filter implements Stringable
      */
     public function default(Request $request): mixed
     {
-        $default = $request->query($this->getKey());
-
-        return $this->multiple ? Arr::wrap($default) : $default;
+        return $request->query($this->getKey());
     }
 
     /**
@@ -86,24 +84,6 @@ abstract class Filter implements Stringable
     public function functional(): bool
     {
         return is_null($this->template);
-    }
-
-    /**
-     * Get the filter options.
-     */
-    public function options(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Set the multiple attribute.
-     */
-    public function multiple(bool $value = true): static
-    {
-        $this->multiple = $value;
-
-        return $this;
     }
 
     /**

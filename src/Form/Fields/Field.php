@@ -144,7 +144,7 @@ abstract class Field implements Stringable
     {
         $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
 
-        $value = preg_replace('/\->(.+?)(?=\->|$)/', '[$1]', $value);
+        $value = preg_replace('/(?:\->|\.)(.+?)(?=(?:\->|\.)|$)/', '[$1]', $value);
 
         return $this->setAttribute('name', $value);
     }

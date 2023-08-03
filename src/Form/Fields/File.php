@@ -192,6 +192,16 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
+    public function data(Request $request): array
+    {
+        return array_merge(parent::data($request), [
+            'options' => $this->resolveOptions(),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function registerRoutes(Router $router): void
     {
         parent::registerRoutes($router);

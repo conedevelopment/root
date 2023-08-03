@@ -60,6 +60,22 @@ class Filters
     }
 
     /**
+     * Filter the renderable filters.
+     */
+    public function renderable(): Collection
+    {
+        return $this->filters->reject->functional();
+    }
+
+    /**
+     * Filter the functional filters.
+     */
+    public function functional(): Collection
+    {
+        return $this->filters->filter->functional();
+    }
+
+    /**
      * Handle the dynamic method call.
      */
     public function __call($method, $parameters): mixed

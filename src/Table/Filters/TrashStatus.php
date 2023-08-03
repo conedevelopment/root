@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
-class TrashStatus extends Filter
+class TrashStatus extends Select
 {
     /**
      * Apply the filter on the query.

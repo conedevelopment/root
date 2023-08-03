@@ -298,7 +298,7 @@ abstract class Relation extends Field implements Routable
         return array_merge(parent::data($request), [
             'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
-            'options' => $this->resolveOptions(),
+            'options' => $this->isAsync() ? [] : $this->resolveOptions(),
             'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
         ]);
     }

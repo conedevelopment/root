@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Table;
 
+use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Actions\Actions;
 use Cone\Root\Table\Cells\Actions as ActionsCell;
@@ -10,7 +11,9 @@ use Cone\Root\Table\Cells\Select;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Table\Columns\Columns;
 use Cone\Root\Table\Columns\Text;
+use Cone\Root\Table\Filters\FilterForm;
 use Cone\Root\Table\Filters\Filters;
+use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
@@ -31,6 +34,7 @@ use Stringable;
 
 class Table implements Routable, Stringable
 {
+    use AsForm;
     use Macroable;
     use Makeable;
     use ResolvesActions;
@@ -158,5 +162,17 @@ class Table implements Routable, Stringable
         $this->__registerRoutes($router);
 
         $this->actions->registerRoutes($router);
+    }
+
+    /**
+     * Get the form instance for the table.
+     */
+    public function toForm(Request $request): FilterForm
+    {
+        return FilterForm::make($this->key)
+            ->model(fn (): Model => $this->resolveQuery($request)->getModel())
+            ->withFields(function () {
+                //
+            });
     }
 }
