@@ -33,7 +33,9 @@ class FilterMake extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__.'/../../../stubs/Filter.stub';
+        return match ($this->option('type')) {
+            default => __DIR__.'/../../../stubs/SelectFilter.stub',
+        };
     }
 
     /**
@@ -55,25 +57,7 @@ class FilterMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        $class = $this->replaceTemplate($class);
-
         return $this->replaceMultiple($class);
-    }
-
-    /**
-     * Replace the template related code.
-     */
-    protected function replaceTemplate(string $class): string
-    {
-        if ($template = $this->option('template')) {
-            return str_replace(
-                [PHP_EOL.'%%template%%', '%%/template%%', '{{ template }}'],
-                ['', '', $template],
-                $class
-            );
-        }
-
-        return preg_replace('/\s%%template%%.*%%\/template%%/s', '', $class);
     }
 
     /**
@@ -94,7 +78,7 @@ class FilterMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
+            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
             ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
         ];
     }

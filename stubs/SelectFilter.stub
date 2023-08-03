@@ -2,18 +2,12 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Table\Filters\Filter;
+use Cone\Root\Table\Filters\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class {{ class }} extends Filter
+class {{ class }} extends Select
 {
-%%template%%
-    /**
-     * The Blade template.
-     */
-    protected ?string $template = '{{ template }}';
-%%/template%%
 %%multiple%%
     /**
      * Indicates if multiple options can be selected.
