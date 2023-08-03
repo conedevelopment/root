@@ -75,6 +75,7 @@
                     background-color: color('primary');
                 }
 
+                /* stylelint-disable-next-line selector-no-qualifying-type */
                 svg {
                     color: hsl(0deg 0% 100%);
                 }

@@ -1,5 +1,6 @@
 @use 'sprucecss/scss/spruce' as *;
 
+/* stylelint-disable selector-no-qualifying-type -- Allow qualifying type selectors. */
 code[class*='language-'],
 pre[class*='language-'] {
     border-radius: config('border-radius-lg', $display);
