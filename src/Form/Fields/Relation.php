@@ -103,7 +103,7 @@ abstract class Relation extends Field implements Routable
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $$this->getKey()
+            ? $this->getKey()
             : $this->relation;
     }
 
