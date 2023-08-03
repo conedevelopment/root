@@ -1,7 +1,9 @@
 [files]
 extend-exclude = [
+    ".git",
     "public/build/assets/*",
     "resources/views/form/fields/editor.blade.php"
 ]
+ignore-hidden = false
 [default.extend-words]
 responsable = "responsable"
