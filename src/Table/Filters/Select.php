@@ -3,9 +3,9 @@
 namespace Cone\Root\Table\Filters;
 
 use Cone\Root\Form\Fields\Select as Field;
-use Cone\Root\Form\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 
 abstract class Select extends Filter
 {
@@ -42,19 +42,12 @@ abstract class Select extends Filter
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
-    {
-        return array_merge(parent::data($request), [
-            'options' => $this->options($request),
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toField(Form $form): Field
+    public function toField(FilterForm $form): Field
     {
         return Field::make($form, $this->getName(), $this->getKey())
+            ->options(App::call(function (Request $request): array {
+                return $this->options($request);
+            }))
             ->multiple($this->multiple);
     }
 }

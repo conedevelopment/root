@@ -64,7 +64,7 @@ class Filters
      */
     public function renderable(): Collection
     {
-        return $this->filters->reject->functional();
+        return $this->filters->reject->isFunctional();
     }
 
     /**
@@ -72,7 +72,7 @@ class Filters
      */
     public function functional(): Collection
     {
-        return $this->filters->filter->functional();
+        return $this->filters->filter->isFunctional();
     }
 
     /**

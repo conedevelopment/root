@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Table;
 
+use Cone\Root\Form\Fields\Fields;
 use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Actions\Actions;
@@ -11,6 +12,7 @@ use Cone\Root\Table\Cells\Select;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Table\Columns\Columns;
 use Cone\Root\Table\Columns\Text;
+use Cone\Root\Table\Filters\Filter;
 use Cone\Root\Table\Filters\FilterForm;
 use Cone\Root\Table\Filters\Filters;
 use Cone\Root\Traits\AsForm;
@@ -171,8 +173,10 @@ class Table implements Routable, Stringable
     {
         return FilterForm::make($this->key)
             ->model(fn (): Model => $this->resolveQuery($request)->getModel())
-            ->withFields(function () {
-                //
+            ->withFields(function (Fields $fields): void {
+                $this->filters->functional()->each(function (Filter $filter) use ($fields): void {
+                    $fields->push($filter->toField($fields->form));
+                });
             });
     }
 }

@@ -17,7 +17,7 @@
                 <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
                     <x-root::icon name="search" class="btn__icon" />
                 </button>
-                <div class="theme-switcher" id="theme-switcher">
+                <div class="theme-switcher" id="theme-switcher" data-theme-mode="light">
                     <button
                         type="button"
                         class="btn btn--outline-dark btn--sm btn--icon theme-switcher__system-mode"

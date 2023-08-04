@@ -6,27 +6,24 @@ use Cone\Root\Form\Fields\Field;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use Stringable;
 
-abstract class Filter implements Stringable
+abstract class Filter
 {
     use Authorizable;
     use Makeable;
 
     /**
-     * The Blade template.
-     */
-    protected ?string $template = 'root::table.filters.select';
-
-    /**
      * The table instance.
      */
     protected Table $table;
+
+    /**
+     * Indicates whether the filter is functional.
+     */
+    protected bool $functional = false;
 
     /**
      * Create a new filter instance.
@@ -73,43 +70,16 @@ abstract class Filter implements Stringable
     /**
      * Determine if the filter is active.
      */
-    public function active(Request $request): bool
+    public function isActive(Request $request): bool
     {
         return ! empty($request->query($this->getKey()));
     }
 
     /**
-     * Determine if the filter is functional.
+     * Determine whether the filter is functional.
      */
-    public function functional(): bool
+    public function isFunctional(): bool
     {
-        return is_null($this->template);
-    }
-
-    /**
-     * Get the view data.
-     */
-    public function data(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Render the filter.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
-        );
-    }
-
-    /**
-     * Convert the filter to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->render()->render();
+        return $this->functional;
     }
 }
