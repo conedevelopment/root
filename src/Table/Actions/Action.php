@@ -222,7 +222,7 @@ abstract class Action implements Responsable, Routable, Stringable
      */
     public function toForm(Request $request): ActionForm
     {
-        return ActionForm::make()->model(function () use ($request): Model {
+        return ActionForm::make($this->getKey())->model(function () use ($request): Model {
             return $this->table->resolveQuery($request)->getModel();
         });
     }

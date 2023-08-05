@@ -3,7 +3,6 @@
 namespace Cone\Root\Table;
 
 use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Table\Actions\Actions;
 use Cone\Root\Table\Cells\Actions as ActionsCell;
@@ -30,7 +29,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Stringable;
 
@@ -60,9 +58,9 @@ class Table implements Routable, Stringable
     /**
      * Create a new table instance.
      */
-    public function __construct(string $key = null)
+    public function __construct($key)
     {
-        $this->key = strtolower($key ?: Str::random(5));
+        $this->key = strtolower($key);
         $this->columns = new Columns($this, $this->columns());
         $this->actions = new Actions($this, $this->actions());
         $this->filters = new Filters($this, $this->filters());
@@ -125,6 +123,7 @@ class Table implements Routable, Stringable
             'columns' => $this->columns->all(),
             'filters' => $this->filters->all(),
             'items' => $this->paginate($request),
+            'form' => $this->form($request),
             'searchable' => $this->columns->searchable()->isNotEmpty(),
         ];
     }
@@ -164,6 +163,8 @@ class Table implements Routable, Stringable
         $this->__registerRoutes($router);
 
         $this->actions->registerRoutes($router);
+
+        $this->form(App::make(Request::class))->registerRoutes($router);
     }
 
     /**
@@ -172,9 +173,13 @@ class Table implements Routable, Stringable
     public function toForm(Request $request): FilterForm
     {
         return FilterForm::make($this->key)
-            ->model(fn (): Model => $this->resolveQuery($request)->getModel())
+            ->model(function () use ($request): Model {
+                return $this->resolveQuery($request)
+                    ->getModel()
+                    ->forceFill($this->filters->mapToData($request));
+            })
             ->withFields(function (Fields $fields): void {
-                $this->filters->functional()->each(function (Filter $filter) use ($fields): void {
+                $this->filters->renderable()->each(function (Filter $filter) use ($fields): void {
                     $fields->push($filter->toField($fields->form));
                 });
             });

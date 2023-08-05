@@ -53,7 +53,7 @@ class Filters
         $this->filters->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());
         })->each(static function (Filter $filter) use ($query, $request): void {
-            $filter->apply($request, $query, $request->input($filter->getKey()));
+            $filter->apply($request, $query, $filter->getValue($request));
         });
 
         return $query;
@@ -73,6 +73,18 @@ class Filters
     public function functional(): Collection
     {
         return $this->filters->filter->isFunctional();
+    }
+
+    /**
+     * Map the filters to an array.
+     */
+    public function mapToData(Request $request): array
+    {
+        return $this->filters
+            ->mapWithKeys(static function (Filter $filter) use ($request): array {
+                return [$filter->getKey() => $filter->getValue($request)];
+            })
+            ->toArray();
     }
 
     /**

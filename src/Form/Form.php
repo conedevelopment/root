@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 use Stringable;
 
@@ -60,9 +59,9 @@ class Form implements Routable, Stringable
     /**
      * Create a new form instance.
      */
-    public function __construct(string $key = null)
+    public function __construct(string $key)
     {
-        $this->key = strtolower($key ?: Str::random(5));
+        $this->key = strtolower($key);
         $this->fields = new Fields($this, $this->fields());
     }
 

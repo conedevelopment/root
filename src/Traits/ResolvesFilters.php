@@ -4,6 +4,8 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Cone\Root\Table\Filters\Filters;
+use Cone\Root\Table\Filters\Search;
+use Cone\Root\Table\Filters\TrashStatus;
 
 trait ResolvesFilters
 {
@@ -17,7 +19,11 @@ trait ResolvesFilters
      */
     public function filters(): array
     {
-        return [];
+        return [
+            new Search($this),
+            // new Sort($this),
+            new TrashStatus($this),
+        ];
     }
 
     /**

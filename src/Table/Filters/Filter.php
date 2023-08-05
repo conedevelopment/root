@@ -48,7 +48,15 @@ abstract class Filter
      */
     public function getKey(): string
     {
-        return Str::of(static::class)->classBasename()->kebab()->value();
+        return Str::of(static::class)->classBasename()->snake()->value();
+    }
+
+    /**
+     * Get the request key.
+     */
+    public function getRequestKey(): string
+    {
+        return sprintf('%s.%s', $this->table->getKey(), $this->getKey());
     }
 
     /**
@@ -60,11 +68,11 @@ abstract class Filter
     }
 
     /**
-     * The default value of the filter.
+     * Get the value of the filter.
      */
-    public function default(Request $request): mixed
+    public function getValue(Request $request): mixed
     {
-        return $request->query($this->getKey());
+        return $request->input($this->getRequestKey());
     }
 
     /**
@@ -72,7 +80,7 @@ abstract class Filter
      */
     public function isActive(Request $request): bool
     {
-        return ! empty($request->query($this->getKey()));
+        return $request->has($this->getRequestKey());
     }
 
     /**

@@ -254,7 +254,7 @@ class Resource implements Routable
      */
     public function toTable(Request $request): Table
     {
-        return Table::make()->query(function () use ($request): Builder {
+        return Table::make($this->getKey())->query(function () use ($request): Builder {
             return $this->resolveQuery($request);
         });
     }
@@ -264,7 +264,7 @@ class Resource implements Routable
      */
     public function toForm(Request $request): Form
     {
-        return Form::make()->model(function () use ($request): Model {
+        return Form::make($this->getKey())->model(function () use ($request): Model {
             return $request->route($this->getRouteKeyName(), $this->getModelInstance());
         });
     }

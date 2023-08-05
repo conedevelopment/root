@@ -1,39 +1,7 @@
 <div class="app-card" x-data="{ selection: [] }">
     <div class="app-card__header">
         <h2 class="app-card__title">Items</h2>
-        <div class="app-card__actions">
-            {{-- Filter Form --}}
-            @if($searchable)
-                <form class="search-form">
-                    <input class="form-control  search-form__control" type="text" placeholder="Search..." title="Search">
-                    <button type="submit" class="search-form__submit">
-                        <span class="sr-only">Search</span>
-                        <x-root::icon name="search" class="search-form__icon" />
-                    </button>
-                </form>
-            @endif
-            @if(! empty($filters))
-                <div class="data-table-filter" x-data="{ open: false }" x-on:click.outside="open = false">
-                    <button
-                        type="button"
-                        class="btn btn--light btn--icon data-table-filter__toggle"
-                        x-bind:aria-expanded="open"
-                        x-on:click="open = ! open"
-                    >
-                        <x-root::icon name="filter" class="btn__icon" />
-                    </button>
-                    <div class="context-menu context-menu--inline-end" x-bind:data-state="open ? 'open' : 'closed'">
-                        <div class="form-group-stack form-group-stack--bordered form-group-container">
-                            {{-- Filters --}}
-                            <div class="data-table-filter__actions">
-                                <button class="btn btn--primary btn--sm">Filter</button>
-                                <button class="btn btn--light btn--sm">Reset</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
+        {!! $form !!}
     </div>
     <div class="app-card__body">
         <div class="data-table">

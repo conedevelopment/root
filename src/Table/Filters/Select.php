@@ -3,6 +3,7 @@
 namespace Cone\Root\Table\Filters;
 
 use Cone\Root\Form\Fields\Select as Field;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -22,9 +23,9 @@ abstract class Select extends Filter
     /**
      * {@inheritdoc}
      */
-    public function default(Request $request): mixed
+    public function getValue(Request $request): mixed
     {
-        $default = parent::default($request);
+        $default = parent::getValue($request);
 
         return $this->multiple ? Arr::wrap($default) : $default;
     }
@@ -44,10 +45,11 @@ abstract class Select extends Filter
      */
     public function toField(FilterForm $form): Field
     {
-        return Field::make($form, $this->getName(), $this->getKey())
+        return Field::make($form, $this->getName(), $this->getRequestKey())
             ->options(App::call(function (Request $request): array {
                 return $this->options($request);
             }))
+            ->value(fn (Model $model): mixed => $model->getAttribute($this->getKey()))
             ->multiple($this->multiple);
     }
 }
