@@ -1,4 +1,4 @@
-<form id="{{ $key }}-filters" class="app-card__actions">
+<form id="{{ $key }}-filters" action="" method="GET" class="app-card__actions">
     @if($search)
         {!! $search !!}
     @endif
@@ -14,7 +14,9 @@
             </button>
             <div class="context-menu context-menu--inline-end" x-bind:data-state="open ? 'open' : 'closed'">
                 <div class="form-group-stack form-group-stack--bordered form-group-container">
-                    {{-- Fields --}}
+                    @foreach($fields as $field)
+                        {!! $field !!}
+                    @endforeach
                     <div class="data-table-filter__actions">
                         <button type="submit" class="btn btn--primary btn--sm">Filter</button>
                         <button type="reset" class="btn btn--light btn--sm">Reset</button>

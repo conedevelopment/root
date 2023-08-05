@@ -36,7 +36,7 @@ class FilterForm extends Form
     {
         return array_merge(parent::data($request), [
             'search' => $this->fields->first(fn (Field $field): bool => $field instanceof SearchField),
-            'fields' => $this->fields->reject(fn (Field $field): bool => ! $field instanceof SearchField)->all(),
+            'fields' => $this->fields->reject(fn (Field $field): bool => $field instanceof SearchField)->all(),
         ]);
     }
 }
