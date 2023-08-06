@@ -69,10 +69,12 @@
                     <div class="form-group">
                         <label class="sr-only" for="{{ $key }}.per_page">{{ __('Number of results') }} </label>
                         <select form="{{ $key }}-filters" class="form-control form-control--sm" id="{{ $key }}.per_page" name="{{ $key }}[per_page]">
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
+                            @foreach($perPageOptions as $option)
+                                <option value="{{ $option }}" @selected($option === $items->perPage())>{{ $option }}</option>
+                            @endforeach
+                            @if(! in_array($items->perPage(), $perPageOptions))
+                                <option value="{{ $items->perPage() }}" selected>{{ __('Custom (:perPage)', ['perPage' => $items->perPage()]) }}</option>
+                            @endif
                         </select>
                     </div>
                     <p>{{ __('Showing :from to :to of :total results', ['from' => $items->firstItem(), 'to' => $items->lastItem(), 'total' => $items->total()]) }}</p>

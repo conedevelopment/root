@@ -91,6 +91,14 @@ class Table implements Routable, Stringable
     }
 
     /**
+     * Get the per page options.
+     */
+    public function getPerPageOptions(): array
+    {
+        return array_values(array_unique(array_filter(array_merge([$this->query?->getModel()?->getPerPage()], [15, 25, 50, 100]))));
+    }
+
+    /**
      * Get the per page.
      */
     public function getPage(Request $request): ?int
@@ -149,6 +157,7 @@ class Table implements Routable, Stringable
             'form' => $this->form($request),
             'items' => $this->paginate($request),
             'key' => $this->getKey(),
+            'perPageOptions' => $this->getPerPageOptions(),
         ];
     }
 

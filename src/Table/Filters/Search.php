@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Table\Filters;
 
-use Cone\Root\Table\Filters\FilterForm;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
