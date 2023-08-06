@@ -83,6 +83,30 @@ class Table implements Routable, Stringable
     }
 
     /**
+     * Get the per page.
+     */
+    public function getPerPage(Request $request): ?int
+    {
+        return $request->input($this->getKey().'.per_page');
+    }
+
+    /**
+     * Get the per page.
+     */
+    public function getPage(Request $request): ?int
+    {
+        return $request->input($this->getKey().'.page', 1);
+    }
+
+    /**
+     * Get the page name.
+     */
+    public function getPageName(): string
+    {
+        return sprintf('%s[page]', $this->getKey());
+    }
+
+    /**
      * Perform the query and the pagination.
      */
     public function paginate(Request $request): LengthAwarePaginator
@@ -91,7 +115,7 @@ class Table implements Routable, Stringable
 
         return $this->resolveFilteredQuery($request)
             ->latest()
-            ->paginate($request->input('per_page'))
+            ->paginate($this->getPerPage($request), ['*'], $this->getPageName(), $this->getPage($request))
             ->setPath($url)
             ->withQueryString()
             ->through(function (Model $model) use ($url): array {
@@ -122,9 +146,9 @@ class Table implements Routable, Stringable
             'actions' => $this->actions->all(),
             'columns' => $this->columns->all(),
             'filters' => $this->filters->all(),
-            'items' => $this->paginate($request),
             'form' => $this->form($request),
-            'searchable' => $this->columns->searchable()->isNotEmpty(),
+            'items' => $this->paginate($request),
+            'key' => $this->getKey(),
         ];
     }
 

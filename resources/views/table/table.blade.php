@@ -67,17 +67,16 @@
             <div class="data-table__footer">
                 <div class="data-table__footer-column">
                     <div class="form-group">
-                        <label class="sr-only" for="per_page">{{ __('Number of results') }} </label>
-                        <select class="form-control form-control--sm" id="per_page">
+                        <label class="sr-only" for="{{ $key }}.per_page">{{ __('Number of results') }} </label>
+                        <select form="{{ $key }}-filters" class="form-control form-control--sm" id="{{ $key }}.per_page" name="{{ $key }}[per_page]">
                             <option value="10">10</option>
-                            <option value="20" selected>20</option>
+                            <option value="20">20</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
                     </div>
                     <p>{{ __('Showing :from to :to of :total results', ['from' => $items->firstItem(), 'to' => $items->lastItem(), 'total' => $items->total()]) }}</p>
                 </div>
-
                 {!! $items->links('root::table.pagination') !!}
             </div>
         </div>
