@@ -99,7 +99,8 @@ class Table implements Routable, Stringable
             ->merge([15, 25, 50, 100])
             ->filter()
             ->unique()
-            ->values();
+            ->values()
+            ->toArray();
     }
 
     /**
