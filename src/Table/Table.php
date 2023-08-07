@@ -102,14 +102,6 @@ class Table implements Routable, Stringable
     }
 
     /**
-     * Get the per page.
-     */
-    public function getPage(Request $request): ?int
-    {
-        return $request->input($this->getKey().':page', 1);
-    }
-
-    /**
      * Get the page name.
      */
     public function getPageName(): string
@@ -126,7 +118,7 @@ class Table implements Routable, Stringable
 
         return $this->resolveFilteredQuery($request)
             ->latest()
-            ->paginate($this->getPerPage($request), ['*'], $this->getPageName(), $this->getPage($request))
+            ->paginate($this->getPerPage($request), ['*'], $this->getPageName())
             ->setPath($url)
             ->withQueryString()
             ->through(function (Model $model) use ($url): array {

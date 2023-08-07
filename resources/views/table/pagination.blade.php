@@ -31,9 +31,9 @@
                     @endforeach
                 @endif
             @endforeach
-            @if(! $paginator->onFirstPage())
+            @if($paginator->hasMorePages())
                 <li>
-                    <a href="{{ $paginator->hasMorePages() }}" class="btn btn--sm btn--outline-primary" rel="next">
+                    <a href="{{ $paginator->nextPageUrl() }}" class="btn btn--sm btn--outline-primary" rel="next">
                         {{ __('Next') }}
                     </a>
                 </li>
