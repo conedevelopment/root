@@ -87,7 +87,7 @@ class Table implements Routable, Stringable
      */
     public function getPerPage(Request $request): ?int
     {
-        return $request->input($this->getKey().'.per_page');
+        return $request->input($this->getKey().':per_page');
     }
 
     /**
@@ -95,7 +95,10 @@ class Table implements Routable, Stringable
      */
     public function getPerPageOptions(): array
     {
-        return array_values(array_unique(array_filter(array_merge([$this->query?->getModel()?->getPerPage()], [15, 25, 50, 100]))));
+        return array_values(array_unique(array_filter(array_merge([
+            $this->query?->getModel()?->getPerPage()],
+            [15, 25, 50, 100]
+        ))));
     }
 
     /**
@@ -103,7 +106,7 @@ class Table implements Routable, Stringable
      */
     public function getPage(Request $request): ?int
     {
-        return $request->input($this->getKey().'.page', 1);
+        return $request->input($this->getKey().':page', 1);
     }
 
     /**
@@ -111,7 +114,7 @@ class Table implements Routable, Stringable
      */
     public function getPageName(): string
     {
-        return sprintf('%s[page]', $this->getKey());
+        return sprintf('%s:page', $this->getKey());
     }
 
     /**

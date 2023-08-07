@@ -67,8 +67,8 @@
             <div class="data-table__footer">
                 <div class="data-table__footer-column">
                     <div class="form-group">
-                        <label class="sr-only" for="{{ $key }}.per_page">{{ __('Number of results') }} </label>
-                        <select form="{{ $key }}-filters" class="form-control form-control--sm" id="{{ $key }}.per_page" name="{{ $key }}[per_page]">
+                        <label class="sr-only" for="{{ $key }}:per_page">{{ __('Number of results') }} </label>
+                        <select form="{{ $key }}-filters" class="form-control form-control--sm" id="{{ $key }}:per_page" name="{{ $key }}:per_page">
                             @foreach($perPageOptions as $option)
                                 <option value="{{ $option }}" @selected($option === $items->perPage())>{{ $option }}</option>
                             @endforeach

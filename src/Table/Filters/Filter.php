@@ -56,7 +56,7 @@ abstract class Filter
      */
     public function getRequestKey(): string
     {
-        return sprintf('%s.%s', $this->table->getKey(), $this->getKey());
+        return sprintf('%s:%s', $this->table->getKey(), $this->getKey());
     }
 
     /**
