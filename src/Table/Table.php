@@ -95,7 +95,7 @@ class Table implements Routable, Stringable
      */
     public function getPerPageOptions(): array
     {
-        return Collection::make($this->query?->getModel()?->getPerPage())
+        return Collection::make([$this->query?->getModel()?->getPerPage()])
             ->merge([15, 25, 50, 100])
             ->filter()
             ->unique()
