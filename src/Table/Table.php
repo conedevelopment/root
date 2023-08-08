@@ -95,10 +95,12 @@ class Table implements Routable, Stringable
      */
     public function getPerPageOptions(): array
     {
-        return array_values(array_unique(array_filter(array_merge([
-            $this->query?->getModel()?->getPerPage()],
-            [15, 25, 50, 100]
-        ))));
+        return Collection::make([$this->query?->getModel()?->getPerPage()])
+            ->merge([15, 25, 50, 100])
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     /**
