@@ -41,15 +41,15 @@ jobs:
 
         steps:
         -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
             name: "Setup PHP"
             uses: "shivammathur/setup-php@v2"
             with:
                 php-version: "${{ matrix.php }}"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
-        -
-            name: "Checkout code"
-            uses: "actions/checkout@v3"
         -
             name: "Install Root in Laravel"
             run: |
@@ -65,7 +65,7 @@ jobs:
                 php artisan root:install --seed
                 php artisan root:publish --packages
         -
-            name: "Check stubs"
+            name: "Perform static analysis on stubs"
             working-directory: "laravel"
             run: |
                 composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
