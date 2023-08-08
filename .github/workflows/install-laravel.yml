@@ -42,14 +42,14 @@ jobs:
         steps:
         -
             name: "Setup PHP"
-            uses: "shivammathur/setup-php@v3"
+            uses: "shivammathur/setup-php@v2"
             with:
                 php-version: "${{ matrix.php }}"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
         -
             name: "Checkout code"
-            uses: "actions/checkout@v2"
+            uses: "actions/checkout@v3"
         -
             name: "Install Root in Laravel"
             run: |
