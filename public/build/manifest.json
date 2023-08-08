@@ -7,12 +7,12 @@
     "css": [
       "assets/app-74ca451a.css"
     ],
-    "file": "assets/app-476ff7a9.js",
+    "file": "assets/app-6e634a1a.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/js/editor.js": {
-    "file": "assets/editor-d2ad599f.js",
+    "file": "assets/editor-6b155add.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -20,7 +20,7 @@
     "src": "resources/js/editor.js"
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-5b7d81a2.js",
+    "file": "assets/app-b2a4bab4.js",
     "imports": [
       "resources/js/app.js"
     ],

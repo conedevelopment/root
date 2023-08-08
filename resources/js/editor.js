@@ -49,7 +49,7 @@ document.addEventListener('alpine:init', () => {
             editor() {
                 return editor;
             },
-            isActive(type, opts = {}) {
+            isActive(type, opts = {}, updatedAt) {
                 return editor.isActive(type, opts);
             },
         };

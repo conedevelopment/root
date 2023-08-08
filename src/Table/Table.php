@@ -127,20 +127,20 @@ class Table implements Routable, Stringable
                 return [
                     'id' => $model->getKey(),
                     'cells' => $this->columns->map(static function (Column $column) use ($model): Cell {
-                                return $column->toCell($model)
-                                    ->value($column->getValueResolver())
-                                    ->format($column->getFormatResolver());
-                            })
-                            ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
-                                $cells->prepend(Select::make(Text::make($this, ''), $model));
-                            })
-                            ->push(
-                                ActionsCell::make(Text::make($this, ''), $model)
-                                    ->value(static function (Model $model) use ($url): string {
-                                        return sprintf('%s%s', $url, $model->getRouteKey());
-                                    })
-                            )
-                            ->all(),
+                        return $column->toCell($model)
+                            ->value($column->getValueResolver())
+                            ->format($column->getFormatResolver());
+                    })
+                        ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
+                            $cells->prepend(Select::make(Text::make($this, ''), $model));
+                        })
+                        ->push(
+                            ActionsCell::make(Text::make($this, ''), $model)
+                                ->value(static function (Model $model) use ($url): string {
+                                    return sprintf('%s%s', $url, $model->getRouteKey());
+                                })
+                        )
+                        ->all(),
                 ];
             });
     }
