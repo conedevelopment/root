@@ -76,6 +76,14 @@ class Filters
     }
 
     /**
+     * Filter the active filters.
+     */
+    public function active(Request $request): Collection
+    {
+        return $this->filters->filter->isActive($request);
+    }
+
+    /**
      * Map the filters to an array.
      */
     public function mapToData(Request $request): array

@@ -70,7 +70,11 @@
             ->useHotFile(public_path('vendor/root/hot'))
     }}
     @stack('scripts')
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.Alpine.start();
+        });
+    </script>
     {{-- Logout Form --}}
     <form id="logout-form" style="display:none" method="POST" action="{{ URL::route('root.auth.logout') }}">
         @csrf

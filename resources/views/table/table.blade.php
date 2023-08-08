@@ -1,4 +1,4 @@
-<div class="app-card" x-data="{ selection: [] }">
+<div class="app-card" x-data="{ selection: [], all: false }">
     <div class="app-card__header">
         <h2 class="app-card__title">Items</h2>
         {!! $form !!}
@@ -8,11 +8,17 @@
             <div x-cloak x-show="selection.length > 0" class="alert alert--info data-table-alert">
                 <span><span x-text="selection.length"></span> items selected.</span>
                 <div class="data-table-alert__actions">
-                    <button class="btn btn--primary btn--sm">Select all ({{ $items->total() }})</button>
                     <button
                         type="button"
                         class="btn btn--primary btn--sm"
-                        x-on:click="selection = []"
+                        x-on:click="selection = {{ $items->pluck('id')->toJson() }}"
+                    >
+                        Select all ({{ $items->total() }})
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn--primary btn--sm"
+                        x-on:click="selection = []; all = false"
                     >
                         {{ __('Clear') }}
                     </button>
@@ -54,9 +60,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($items as $cells)
+                        @foreach($items as $item)
                             <tr>
-                                @foreach($cells as $cell)
+                                @foreach($item['cells'] as $cell)
                                     {!! $cell !!}
                                 @endforeach
                             </tr>

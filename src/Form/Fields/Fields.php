@@ -134,6 +134,14 @@ class Fields
     }
 
     /**
+     * Make a new editor field.
+     */
+    public function editor(string $label, string $key = null): Editor
+    {
+        return $this->field(Editor::class, $label, $key);
+    }
+
+    /**
      * Make a new file field.
      */
     public function file(string $label, string $key = null, Closure|string $relation = null): File
