@@ -13,6 +13,7 @@
         "@tiptap/extension-image": "^2.0.3",
         "@tiptap/extension-link": "^2.0.3",
         "@tiptap/extension-text-align": "^2.0.3",
+        "@tiptap/extension-underline": "^2.0.4",
         "@tiptap/pm": "^2.0.3",
         "@tiptap/starter-kit": "^2.0.3",
         "acorn": "^8.10.0",

@@ -20,11 +20,29 @@
     <button
         type="button"
         class="btn btn--sm btn--icon"
+        aria-label="{{ __('Underline') }}"
+        x-bind:class="{ 'btn--primary': isActive('underline', {}, updatedAt), 'btn--light': ! isActive('underline', {}, updatedAt) }"
+        x-on:click="editor().chain().focus().toggleUnderline().run()"
+    >
+        <x-root::icon name="format-underline" class="btn__icon" />
+    </button>
+    <button
+        type="button"
+        class="btn btn--sm btn--icon"
         aria-label="{{ __('Strikethrough') }}"
         x-bind:class="{ 'btn--primary': isActive('strike', {}, updatedAt), 'btn--light': ! isActive('strike', {}, updatedAt) }"
         x-on:click="editor().chain().focus().toggleStrike().run()"
     >
         <x-root::icon name="format-strike" class="btn__icon" />
+    </button>
+    <button
+        type="button"
+        class="btn btn--sm btn--icon"
+        aria-label="{{ __('Highlight') }}"
+        x-bind:class="{ 'btn--primary': isActive('highlight', {}, updatedAt), 'btn--light': ! isActive('highlight', {}, updatedAt) }"
+        x-on:click="editor().chain().focus().toggleHighlight().run()"
+    >
+        <x-root::icon name="format-highlight" class="btn__icon" />
     </button>
     <button
         type="button"

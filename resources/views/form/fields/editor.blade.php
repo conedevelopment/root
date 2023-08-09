@@ -16,6 +16,7 @@
                 @include('root::form.fields.editor.align')
                 @include('root::form.fields.editor.list')
                 @include('root::form.fields.editor.link')
+                @include('root::form.fields.editor.blocks')
                 @include('root::form.fields.editor.history')
             </div>
         </template>
