@@ -99,19 +99,25 @@ class Editor extends Field
      */
     protected function newMediaField(): Media
     {
-        return new class($this->form, __('Media'), $this->getKey().'-media', static function (): MorphToMany {
-            return new MorphToMany(
-                Medium::proxy()->newQuery(),
-                User::proxy(),
-                'media',
-                'root_mediables',
-                'medium_id',
-                'user_id',
-                'id',
-                'id'
-            );
-        }) extends Media {
-            protected string $template = 'root::form.fields.editor.media';
+        return new class($this->form, $this->getKey()) extends Media
+        {
+            public function __construct(Form $form, string $key)
+            {
+                parent::__construct($form, __('Media'), $key.'-media', static function (): MorphToMany {
+                    return new MorphToMany(
+                        Medium::proxy()->newQuery(),
+                        User::proxy(),
+                        'media',
+                        'root_mediables',
+                        'medium_id',
+                        'user_id',
+                        'id',
+                        'id'
+                    );
+                });
+
+                $this->template = 'root::form.fields.editor.media';
+            }
         };
     }
 
