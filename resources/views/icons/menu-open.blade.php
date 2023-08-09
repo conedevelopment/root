@@ -1,13 +1,11 @@
 <svg
     aria-hidden="true"
+    fill="currentColor"
     focusable="false"
     height="24"
-    style="fill:currentColor;"
     version="1.1"
     viewBox="0 0 24 24"
     width="24"
-    xml:space="preserve"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns="http://www.w3.org/2000/svg"
     {{ $attributes }}
 >
