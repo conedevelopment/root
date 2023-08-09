@@ -1,6 +1,6 @@
 <div
     class="form-group--row form-group--row:vertical-start"
-    x-data="editor('{{ $value }}', {{ json_encode($config) }})"
+    x-data="editor({{ json_encode($config) }})"
 >
     <label class="form-label" for="{{ $attrs->get('id') }}" x-on:click="$refs.editor.firstChild.focus()">
         {{ $label }}
@@ -13,11 +13,12 @@
             <div class="editor__controls">
                 @include('root::form.fields.editor.heading')
                 @include('root::form.fields.editor.format')
+                @include('root::form.fields.editor.align')
                 @include('root::form.fields.editor.history')
             </div>
         </template>
         <div class="editor__body" x-ref="editor"></div>
-        <textarea style="display: none; width: 0; height: 0;" x-model="content" name="{{ $attrs->get('name') }}"></textarea>
+        <textarea style="width: 0; height: 0;" hidden readonly x-ref="input" name="{{ $attrs->get('name') }}">{{ $value }}</textarea>
     </div>
     @if($invalid)
         <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>

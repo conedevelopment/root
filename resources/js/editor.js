@@ -6,19 +6,17 @@ import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('editor', (content, config = {}) => {
-        let editor;
+    window.Alpine.data('editor', (config = {}) => {
+        let _editor;
 
         return {
             updatedAt: Date.now(),
 
-            content: content,
-
             init() {
                 const _this = this;
 
-                editor = new Editor({
-                    content: content,
+                _editor = new Editor({
+                    content: this.$refs.input.value,
                     element: this.$refs.editor,
                     extensions: [
                         StarterKit,
@@ -36,8 +34,8 @@ document.addEventListener('alpine:init', () => {
                     onCreate() {
                         _this.updatedAt = Date.now();
                     },
-                    onUpdate(delta) {
-                        _this.content = delta.editor.getHTML();
+                    onUpdate({ editor }) {
+                        _this.$refs.input.value = editor.isEmpty ? '' : editor.getHTML();
 
                         _this.updatedAt = Date.now();
                     },
@@ -47,10 +45,10 @@ document.addEventListener('alpine:init', () => {
                 });
             },
             editor() {
-                return editor;
+                return _editor;
             },
             isActive(type, opts = {}, updatedAt) {
-                return editor.isActive(type, opts);
+                return _editor.isActive(type, opts);
             },
         };
     });
