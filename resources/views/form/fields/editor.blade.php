@@ -16,6 +16,9 @@
                 @include('root::form.fields.editor.align')
                 @include('root::form.fields.editor.list')
                 @include('root::form.fields.editor.link')
+                @isset($media)
+                    {!! $media !!}
+                @endisset
                 @include('root::form.fields.editor.blocks')
                 @include('root::form.fields.editor.history')
             </div>

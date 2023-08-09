@@ -6,7 +6,7 @@
             class="btn btn--primary btn--lg btn--block"
             x-on:click="$dispatch('open-{{ $modalKey }}')"
         >
-            Choose file(s)
+            {{ __('Choose file(s)') }}
         </button>
         <ul class="file-list__items">
             @foreach($options as $attached)
@@ -16,8 +16,10 @@
     </div>
 </div>
 
+{{-- Modal --}}
 @push('modals')
-    <x-root::modal :title="$label" :key="$modalKey">
-
-    </x-root::modal>
+    @include('root::form.fields.media.manager', [
+        'label' => $label,
+        'modalKey' => $modalKey,
+    ])
 @endpush

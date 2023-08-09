@@ -76,18 +76,7 @@ class Editor extends Field
     public function withMedia(Closure $callback = null): static
     {
         if (is_null($this->media)) {
-            $this->media = Media::make(__('Media'), 'media', static function (): MorphToMany {
-                return new MorphToMany(
-                    Medium::proxy()->newQuery(),
-                    User::proxy(),
-                    'media',
-                    'root_media',
-                    'medium_id',
-                    'user_id',
-                    'id',
-                    'id'
-                );
-            });
+            $this->media = $this->newMediaField();
         }
 
         if (! is_null($callback)) {
@@ -103,6 +92,27 @@ class Editor extends Field
     public function getMedia(): ?Media
     {
         return $this->media;
+    }
+
+    /**
+     * Make a custom media field.
+     */
+    protected function newMediaField(): Media
+    {
+        return new class($this->form, __('Media'), $this->getKey().'-media', static function (): MorphToMany {
+            return new MorphToMany(
+                Medium::proxy()->newQuery(),
+                User::proxy(),
+                'media',
+                'root_mediables',
+                'medium_id',
+                'user_id',
+                'id',
+                'id'
+            );
+        }) extends Media {
+            protected string $template = 'root::form.fields.editor.media';
+        };
     }
 
     /**
