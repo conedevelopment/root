@@ -120,3 +120,8 @@ jobs:
             uses: "szepeviktor/svg-validator@v1.0.0"
             with:
                 svg_path: ".github/**/*.svg"
+        -
+            name: "Validate icon files"
+            uses: "szepeviktor/svg-validator@v1.0.0"
+            with:
+                svg_path: "resources/views/icons/*.blade.php"
