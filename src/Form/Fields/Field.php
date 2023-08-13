@@ -36,7 +36,7 @@ abstract class Field implements Stringable
     /**
      * The form instance.
      */
-    protected Form $form;
+    public readonly Form $form;
 
     /**
      * The validation rules.

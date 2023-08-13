@@ -249,7 +249,7 @@ abstract class Relation extends Field implements Routable
             ->when(! is_null($this->groupResolver), function (Collection $collection) use ($value): Collection {
                 return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($value): OptGroup {
                     $options = $group->map(function (Model $related) use ($value): Option {
-                        return $this->newOption($related->getKey(), $this->resolveDisplay($related))
+                        return $this->newOption($related, $this->resolveDisplay($related))
                             ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
                     });
 
@@ -257,7 +257,7 @@ abstract class Relation extends Field implements Routable
                 });
             }, function (Collection $collection) use ($value): Collection {
                 return $collection->map(function (Model $related) use ($value): Option {
-                    return $this->newOption($related->getKey(), $this->resolveDisplay($related))
+                    return $this->newOption($related, $this->resolveDisplay($related))
                         ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
                 });
             })
@@ -267,9 +267,9 @@ abstract class Relation extends Field implements Routable
     /**
      * Make a new option instance.
      */
-    public function newOption(mixed $value, string $label): Option
+    public function newOption(Model $value, string $label): RelationOption
     {
-        return new Option($label, $value);
+        return new RelationOption($value, $label);
     }
 
     /**

@@ -3,11 +3,10 @@
 namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Models\Medium;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 
-class FileOption extends Option implements Arrayable
+class FileOption extends RelationOption
 {
     /**
      * The Blade template.
@@ -15,17 +14,11 @@ class FileOption extends Option implements Arrayable
     protected string $template = 'root::form.fields.file-option';
 
     /**
-     * The Medium instance.
-     */
-    protected Medium $medium;
-
-    /**
      * Create a new option instance.
      */
     public function __construct(Medium $medium, string $label)
     {
-        $this->label = $label;
-        $this->medium = $medium;
+        parent::__construct($medium, $label);
     }
 
     /**
@@ -36,7 +29,7 @@ class FileOption extends Option implements Arrayable
         return App::make('view')->make($this->template, [
             'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
-            'value' => $this->medium,
+            'value' => $this->model,
         ]);
     }
 
@@ -45,8 +38,8 @@ class FileOption extends Option implements Arrayable
      */
     public function toArray(): array
     {
-        return [
-            //
-        ];
+        return array_merge($this->model->append(['dimensions', 'formatted_size'])->toArray(), [
+            'formatted_created_at' => $this->model->created_at->format('Y-m-d H:i'),
+        ]);
     }
 }

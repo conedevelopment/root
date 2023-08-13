@@ -110,7 +110,7 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function newOption(mixed $value, string $label): FileOption
+    public function newOption(Model $value, string $label): FileOption
     {
         return FileOption::make($value, $label)
             ->setAttribute('name', sprintf('%s__attached[]', $this->getAttribute('name')));
