@@ -2,15 +2,13 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Jobs\MoveFile;
-use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
@@ -23,11 +21,11 @@ class MediaController extends Controller
 
         $model ??= Root::instance()->getCurrentResource()->getModelInstance();
 
-        Gate::allowIf($field->authorized($request, $model));
+        // Gate::allowIf($field->authorized($request, $model));
 
-        // $field->form->model(fn () => $model);
+        $field->form->model(fn (): Model => $model);
 
-        return new JsonResponse($field->resolveOptions());
+        return new JsonResponse($field->paginate($request));
     }
 
     /**
@@ -37,7 +35,7 @@ class MediaController extends Controller
     {
         $field = $request->route('rootField');
 
-        Gate::allowIf($field->authorized($request, $model));
+        // Gate::allowIf($field->authorized($request, $model));
 
         $request->validate(['file' => ['required', 'file']]);
 
@@ -45,7 +43,7 @@ class MediaController extends Controller
 
         $file = $request->file('file');
 
-        $path = Storage::disk('local')->path("root-uploads/{$file->getClientOriginalName()}");
+        $path = $file->store('root-uploads', ['disk' => 'local']);
 
         File::append($path, $file->get());
 
@@ -53,10 +51,7 @@ class MediaController extends Controller
             return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
         }
 
-        $medium = $field->store($request, $path);
-
-        MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
-            ->dispatch($medium, $path, false);
+        $medium = $field->store($request, new UploadedFile($path, $file->getClientOriginalName()));
 
         return new JsonResponse($field->mapOption($request, $model, $medium), JsonResponse::HTTP_CREATED);
     }

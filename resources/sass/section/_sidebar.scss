@@ -1,49 +1,49 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-sidebar {
-    block-size: 100%;
-    border-inline-end: 1px solid color('border');
+  block-size: 100%;
+  border-inline-end: 1px solid color('border');
+  display: flex;
+  flex-direction: column;
+  gap: spacer('m');
+  padding-block: 0 spacer('m');
+
+  &__logo {
+    block-size: 1.25rem;
+    display: inline-flex;
+  }
+
+  &__search {
+    display: none;
+
+    @include breakpoint('md') {
+      display: flex;
+    }
+  }
+
+  &__header {
+    align-items: center;
+    block-size: get-css-variable(--header-block-size);
+    border-block-end: 1px solid color('border');
     display: flex;
-    flex-direction: column;
-    gap: spacer('m');
-    padding-block: 0 spacer('m');
+    flex-shrink: 0;
+    justify-content: space-between;
+    margin-inline: spacer('m');
+  }
 
-    &__logo {
-        block-size: 1.25rem;
-        display: inline-flex;
+  &__body {
+    @include scrollbar(
+      $border-radius: 0.15em
+    );
+    flex-grow: 1;
+    margin-inline: calc(#{spacer('m')} / 2);
+    overflow-y: auto;
+    padding-inline: calc(#{spacer('m')} / 2);
+
+    > * + * {
+      border-block-start: 1px solid color('border');
+      margin-block-start: spacer('s');
+      padding-block-start: spacer('s');
     }
-
-    &__search {
-        display: none;
-
-        @include breakpoint('md') {
-            display: flex;
-        }
-    }
-
-    &__header {
-        align-items: center;
-        block-size: get-css-variable(--header-block-size);
-        border-block-end: 1px solid color('border');
-        display: flex;
-        flex-shrink: 0;
-        justify-content: space-between;
-        margin-inline: spacer('m');
-    }
-
-    &__body {
-        @include scrollbar(
-            $border-radius: 0.15em
-        );
-        flex-grow: 1;
-        margin-inline: calc(#{spacer('m')} / 2);
-        overflow-y: auto;
-        padding-inline: calc(#{spacer('m')} / 2);
-
-        > * + * {
-            border-block-start: 1px solid color('border');
-            margin-block-start: spacer('s');
-            padding-block-start: spacer('s');
-        }
-    }
+  }
 }

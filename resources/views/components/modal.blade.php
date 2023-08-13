@@ -6,7 +6,14 @@
     x-on:keydown.escape="open = false"
     x-on:open-{{ $key }}.window="open = true"
 >
-    <div role="dialog" aria-modal="true" tabindex="0" class="modal" x-on:click.away="open = false" x-trap.noscroll="open">
+    <div
+        role="dialog"
+        aria-modal="true"
+        tabindex="0"
+        x-on:click.away="open = false"
+        x-trap.noscroll="open"
+        {{ $attributes->class(['modal']) }}
+    >
         <div class="modal__header">
             <div class="modal__header-caption">
                 <h2 class="modal__title">{{ $title }}</h2>
@@ -14,9 +21,12 @@
                     <p class="modal__subtitle">{{ $subtitle }}</p>
                 @endif
             </div>
+            @isset($header)
+                {{ $header }}
+            @endisset
             <button
                 type="button"
-                class="btn btn--icon btn--light"
+                class="btn btn--icon btn--light modal__close"
                 aria-label="{{ __('Close modal') }}"
                 x-on:click="open = false"
             >
@@ -26,10 +36,10 @@
         <div class="modal__body">
             {{ $slot }}
         </div>
-        @if(isset($footer))
-            <div class="modal__footer">
+        @isset($footer)
+            <div {{ $footer->attributes->class(['modal__footer']) }}>
                 {{ $footer }}
             </div>
-        @endif
+        @endisset
     </div>
 </div>

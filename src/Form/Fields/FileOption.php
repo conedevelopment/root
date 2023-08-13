@@ -3,10 +3,11 @@
 namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Models\Medium;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 
-class FileOption extends Option
+class FileOption extends Option implements Arrayable
 {
     /**
      * The Blade template.
@@ -37,5 +38,15 @@ class FileOption extends Option
             'label' => $this->label,
             'value' => $this->medium,
         ]);
+    }
+
+    /**
+     * Get the array representation of the object.
+     */
+    public function toArray(): array
+    {
+        return [
+            //
+        ];
     }
 }

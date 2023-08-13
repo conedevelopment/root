@@ -2,29 +2,29 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .trending {
-    align-items: center;
-    border-radius: 2rem;
-    display: inline-flex;
-    font-family: config('font-family-heading', $typography);
-    font-size: config('font-size-sm', $typography);
-    font-weight: 600;
-    gap: spacer('xxs');
-    line-height: 1;
-    padding: 0.35em 0.55em;
+  align-items: center;
+  border-radius: 2rem;
+  display: inline-flex;
+  font-family: config('font-family-heading', $typography);
+  font-size: config('font-size-sm', $typography);
+  font-weight: 600;
+  gap: spacer('xxs');
+  line-height: 1;
+  padding: 0.35em 0.55em;
 
-    &--up {
-        background: color.adjust(color('success', 'alert', $only-color: true), $lightness: 60%);
-        color: color.adjust(color('success', 'alert', $only-color: true), $lightness: -7.5%);
-    }
+  &--up {
+    background: color.adjust(color('success', 'alert', $only-color: true), $lightness: 60%);
+    color: color.adjust(color('success', 'alert', $only-color: true), $lightness: -7.5%);
+  }
 
-    &--down {
-        background: color.adjust(color('danger', 'alert', $only-color: true), $lightness: 45%);
-        color: color.adjust(color('danger', 'alert', $only-color: true), $lightness: -5%);
-    }
+  &--down {
+    background: color.adjust(color('danger', 'alert', $only-color: true), $lightness: 45%);
+    color: color.adjust(color('danger', 'alert', $only-color: true), $lightness: -5%);
+  }
 
-    &__icon {
-        --dimension: 0.95em;
-        block-size: var(--dimension);
-        inline-size: var(--dimension);
-    }
+  &__icon {
+    --dimension: 0.95em;
+    block-size: var(--dimension);
+    inline-size: var(--dimension);
+  }
 }

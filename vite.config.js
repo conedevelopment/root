@@ -22,6 +22,7 @@ export default defineConfig({
             input: [
                 'resources/js/app.js',
                 'resources/js/editor.js',
+                'resources/js/media-manager.js',
                 'resources/sass/app.scss',
             ],
             refresh: true,

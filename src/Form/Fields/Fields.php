@@ -166,6 +166,14 @@ class Fields
     }
 
     /**
+     * Make a new flexible field.
+     */
+    public function flexible(string $label, string $key = null): Flexible
+    {
+        return $this->field(Flexible::class, $label, $key);
+    }
+
+    /**
      * Make a new has one field.
      */
     public function hasOne(string $label, string $key = null, Closure|string $relation = null): HasOne
