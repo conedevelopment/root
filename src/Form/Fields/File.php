@@ -102,7 +102,7 @@ class File extends MorphToMany
     {
         return $this->resolveValue()
             ->map(function (Medium $medium): FileOption {
-                return $this->newOption($medium, $this->resolveDisplay($medium));
+                return $this->newOption($medium, $this->resolveDisplay($medium))->selected();
             })
             ->all();
     }
@@ -129,7 +129,7 @@ class File extends MorphToMany
     /**
      * Store the uploaded file.
      */
-    public function store(Request $request, UploadedFile $file): Medium
+    public function store(Request $request, UploadedFile $file): FileOption
     {
         $path = $file->store('root-uploads', ['disk' => 'local']);
 
@@ -144,7 +144,7 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return $medium;
+        return new FileOption($medium, $this->resolveDisplay($medium));
     }
 
     /**
@@ -173,8 +173,8 @@ class File extends MorphToMany
         $this->resolveModel()->saved(function () use ($request, $value): void {
             $files = Arr::wrap($request->file($this->getKey(), []));
 
-            $ids = array_map(function (UploadedFile $file) use ($request): string {
-                return $this->store($request, $file)->getKey();
+            $ids = array_map(function (UploadedFile $file) use ($request): int {
+                return $this->store($request, $file)->model->getKey();
             }, $files);
 
             $value = array_merge((array) $value, $ids);
@@ -183,8 +183,13 @@ class File extends MorphToMany
 
             $keys = $this->getRelation()->sync($value);
 
-            if ($this->prunable) {
-                // delete $keys['detached'];
+            if ($this->prunable && ! empty($keys['detached'])) {
+                Medium::proxy()
+                    ->newQuery()
+                    ->whereIn('id', $keys['detached'])
+                    ->cursor()
+                    ->each
+                    ->delete();
             }
         });
     }

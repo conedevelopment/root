@@ -14,7 +14,7 @@ class RelationOption extends Option
     /**
      * The option model.
      */
-    protected Model $model;
+    public readonly Model $model;
 
     /**
      * Create a new option instance.

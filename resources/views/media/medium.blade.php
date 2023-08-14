@@ -10,22 +10,19 @@
     <span x-show="item.selected" class="media-item__selected">
         <x-root::icon name="check" />
     </span>
-
-    <template x-if="item.type === 'processing' || item.type === 'uploading'">
+    <template x-if="item.processing">
         <span class="media-item__background">
             <span class="preloader--circle media-item__icon"></span>
             <span x-text="item.name" class="media-item__name"></span>
         </span>
     </template>
-
-    <template x-if="item.type === 'image'">
-        <img :src=`${item.thumbnail}?random=${index}` :alt="item.name">
+    <template x-if="! item.processing && item.is_image">
+        <img x-bind:src="item.url" x-bind:alt="item.label">
     </template>
-
-    <template x-if="item.type === 'document'">
+    <template x-if="! item.processing && ! item.is_image">
         <span class="media-item__background">
             <x-root::icon name="archive" class="media-item__icon" />
-            <span x-text="item.name" class="media-item__name"></span>
+            <span x-text="item.label" class="media-item__name"></span>
         </span>
     </template>
 </li>

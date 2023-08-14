@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Interfaces\Models;
 
-use Cone\Root\Interfaces\Resourceable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface User

@@ -49,3 +49,9 @@
     gap: spacer('xxs');
   }
 }
+
+template + .file-list-item {
+  border-block-start: 0;
+  margin-block-start: 0;
+  padding-block-start: 0;
+}

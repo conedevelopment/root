@@ -3,9 +3,10 @@ document.addEventListener('alpine:init', () => {
         return {
             dragging: false,
             processing: false,
-            data: [],
-            next_page_url: null,
             queue: [],
+            selection: config.selection || [],
+            items: [],
+            next_page_url: null,
             init() {
                 //
             },
@@ -21,7 +22,7 @@ document.addEventListener('alpine:init', () => {
                 }).then((response) => {
                     return response.ok ? response.json() : Promise.reject(response);
                 }).then((data) => {
-                    this.data.push(...data.data);
+                    this.items.push(...data.data);
                     this.next_page_url = data.next_page_url;
                 }).catch((error) => {
                     //

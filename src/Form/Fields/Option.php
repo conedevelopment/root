@@ -7,9 +7,10 @@ use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
+use JsonSerializable;
 use Stringable;
 
-class Option implements Arrayable, Stringable
+class Option implements Arrayable, Stringable, JsonSerializable
 {
     use HasAttributes;
     use Makeable;
@@ -58,6 +59,14 @@ class Option implements Arrayable, Stringable
             'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
         ]);
+    }
+
+    /**
+     * Get the JSON serializable format of the object.
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 
     /**

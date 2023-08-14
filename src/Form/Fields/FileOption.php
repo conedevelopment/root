@@ -27,9 +27,7 @@ class FileOption extends RelationOption
     public function render(): View
     {
         return App::make('view')->make($this->template, [
-            'attrs' => $this->newAttributeBag(),
-            'label' => $this->label,
-            'value' => $this->model,
+            //
         ]);
     }
 
@@ -45,9 +43,11 @@ class FileOption extends RelationOption
             'formatted_size' => $this->model->formattedSize,
             'is_image' => $this->model->isImage,
             'mime_type' => $this->model->mime_type,
-            'uuid' => $this->model->uuid,
-            'url' => $this->model->urls['original'] ?? null,
             'pivot' => [],
+            'processing' => false,
+            'selected' => $this->getAttribute('selected', false),
+            'url' => $this->model->urls['original'] ?? null,
+            'uuid' => $this->model->uuid,
         ]);
     }
 }

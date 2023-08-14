@@ -12,15 +12,18 @@
     x-on:drop.prevent="handleFiles($event.dataTransfer.files)"
 >
     <x-slot:header>
-        @include('root::form.fields.media.filters')
+        @include('root::media.filters')
     </x-slot:header>
-
+    <template x-if="items.length === 0">
+        <x-root::alert type="info">
+            {{ __('No Media items are found!') }}
+        </x-root::alert>
+    </template>
     <ol class="media-list" tabindex="-1" x-on:open-{{ $modalKey }}.window.once="fetch()">
-        {{-- <template x-for="(item, index) in items" :key="item.id">
-            @include('root::form.fields.media.medium')
-        </template> --}}
+        <template x-for="item in items" :key="item.uuid">
+            @include('root::media.medium')
+        </template>
     </ol>
-
     <x-slot:footer class="modal__footer--space-between">
         <input
             type="file"

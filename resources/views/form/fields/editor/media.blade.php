@@ -11,7 +11,7 @@
 
 {{-- Modal --}}
 @push('modals')
-    @include('root::form.fields.media.manager', [
+    @include('root::media.manager', [
         'label' => $label,
         'modalKey' => $modalKey,
     ])

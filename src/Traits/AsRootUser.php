@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait AsRootUser
 {
     use InteractsWithProxy;
-    use HasMetaData;
 
     /**
      * Get the proxied interface.

@@ -48,13 +48,16 @@ class Media extends File
      */
     public function paginate(Request $request): array
     {
+        $value = $this->resolveValue();
+
         return $this->resolveRelatableQuery()
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
             ->setPath($this->replaceRoutePlaceholders($request->route()))
-            ->through(function (Medium $related): FileOption {
-                return $this->newOption($related, $this->resolveDisplay($related));
+            ->through(function (Medium $related) use ($value): FileOption {
+                return $this->newOption($related, $this->resolveDisplay($related))
+                    ->selected($value->contains($related));
             })
             ->toArray();
     }
@@ -78,10 +81,14 @@ class Media extends File
      */
     public function data(Request $request): array
     {
-        return array_merge(parent::data($request), [
-            'modalKey' => $this->getModalKey(),
+        $data = parent::data($request);
+
+        return array_merge($data, [
+            'modalKey' => $key = $this->getModalKey(),
             'config' => [
+                'event' => 'update-'.$key,
                 'multiple' => $this->multiple,
+                'selection' => array_map(fn (FileOption $option): array => $option->toArray(), $data['options']),
             ],
         ]);
     }
