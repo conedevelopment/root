@@ -14,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 
 class File extends MorphToMany
 {
@@ -131,8 +132,18 @@ class File extends MorphToMany
      */
     public function store(Request $request, UploadedFile $file): FileOption
     {
-        $path = $file->store('root-uploads', ['disk' => 'local']);
+        $path = $file->storeAs('root-uploads', $file->getClientOriginalName(), ['disk' => 'local']);
 
+        return $this->stored(
+            $request, $file, Storage::disk('local')->path($path)
+        );
+    }
+
+    /**
+     * Handle the stored event.
+     */
+    protected function stored(Request $request, string $path): FileOption
+    {
         $medium = (Medium::proxy())::makeFromPath($path, ['disk' => $this->disk]);
 
         if (! is_null($this->storageResolver)) {
@@ -144,7 +155,7 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return new FileOption($medium, $this->resolveDisplay($medium));
+        return $this->newOption($medium, $this->resolveDisplay($medium));
     }
 
     /**

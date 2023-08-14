@@ -6,8 +6,6 @@ use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 
 class MediaController extends Controller
@@ -37,23 +35,17 @@ class MediaController extends Controller
 
         // Gate::allowIf($field->authorized($request, $model));
 
-        $request->validate(['file' => ['required', 'file']]);
-
         $model ??= Root::instance()->getCurrentResource()->getModelInstance();
+
+        $field->form->model(fn (): Model => $model);
+
+        $request->validate(['file' => ['required', 'file']]);
 
         $file = $request->file('file');
 
-        $path = $file->store('root-uploads', ['disk' => 'local']);
+        $medium = $field->store($request, $file);
 
-        File::append($path, $file->get());
-
-        if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return new JsonResponse('', JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        $medium = $field->store($request, new UploadedFile($path, $file->getClientOriginalName()));
-
-        return new JsonResponse($field->mapOption($request, $model, $medium), JsonResponse::HTTP_CREATED);
+        return new JsonResponse($medium, JsonResponse::HTTP_CREATED);
     }
 
     /**

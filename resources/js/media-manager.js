@@ -1,29 +1,25 @@
+import Queue from './Queue';
+
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('mediaManager', (url, config = {}) => {
         return {
             dragging: false,
             processing: false,
-            queue: [],
+            queue: new Queue(url),
             selection: config.selection || [],
             items: [],
-            next_page_url: null,
+            next_page_url: url,
             init() {
                 //
             },
             fetch() {
                 this.processing = false;
 
-                window.fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
+                window.$http.get(this.next_page_url, {
+                    //
                 }).then((response) => {
-                    return response.ok ? response.json() : Promise.reject(response);
-                }).then((data) => {
-                    this.items.push(...data.data);
-                    this.next_page_url = data.next_page_url;
+                    this.items.push(...response.data.data);
+                    this.next_page_url = response.data.next_page_url;
                 }).catch((error) => {
                     //
                 }).finally(() => {
@@ -32,6 +28,12 @@ document.addEventListener('alpine:init', () => {
             },
             handleFiles(files) {
                 this.dragging = false;
+
+                for (let i = 0; i < files.length; i++) {
+                    this.queue.push(files[i]);
+                }
+
+                this.queue.work();
             },
         };
     });

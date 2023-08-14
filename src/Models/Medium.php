@@ -238,7 +238,7 @@ class Medium extends Model implements Contract
      */
     public function getPath(string $conversion = null, bool $absolute = false): string
     {
-        $path = sprintf('%s/%s', $this->id, $this->file_name);
+        $path = sprintf('%s/%s', $this->uuid, $this->file_name);
 
         if (! is_null($conversion)) {
             $path = substr_replace(

@@ -19,7 +19,14 @@
             {{ __('No Media items are found!') }}
         </x-root::alert>
     </template>
-    <ol class="media-list" tabindex="-1" x-on:open-{{ $modalKey }}.window.once="fetch()">
+    <ol
+        class="media-list"
+        tabindex="-1"
+        x-on:open-{{ $modalKey }}.window.once="fetch()"
+    >
+        <template x-for="item in queue.items" :key="item.hash">
+            @include('root::media.queued-medium')
+        </template>
         <template x-for="item in items" :key="item.uuid">
             @include('root::media.medium')
         </template>
@@ -34,8 +41,12 @@
             x-on:change="handleFiles($event.target.files)"
         >
         <div class="modal__column">
-            <button type="button" class="btn btn--outline-primary">Cancel</button>
-            <button type="button" class="btn btn--primary">Insert</button>
+            <button type="button" class="btn btn--outline-primary">
+                {{ __('Cancel') }}
+            </button>
+            <button type="button" class="btn btn--primary">
+                {{ __('Select') }}
+            </button>
         </div>
     </x-slot:footer>
 </x-root::modal>

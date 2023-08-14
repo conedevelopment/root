@@ -6,7 +6,9 @@ use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Storage;
 
 class Media extends File
 {
@@ -60,6 +62,25 @@ class Media extends File
                     ->selected($value->contains($related));
             })
             ->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function store(Request $request, UploadedFile $file): FileOption
+    {
+        $disk = Storage::build([
+            'driver' => 'local',
+            'root' => Storage::disk('local')->path('root-uploads'),
+        ]);
+
+        $disk->append($file->getClientOriginalName(), $file->get());
+
+        if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
+            return $this->newOption(new Medium(), '');
+        }
+
+        return $this->stored($request, $disk->path($file->getClientOriginalName()));
     }
 
     /**
