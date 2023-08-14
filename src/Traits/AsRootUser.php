@@ -41,9 +41,9 @@ trait AsRootUser
     }
 
     /**
-     * Get the notifications for the user.
+     * Get the Root notifications for the user.
      */
-    public function notifications(): MorphMany
+    public function rootNotifications(): MorphMany
     {
         return $this->morphMany(Notification::getProxiedClass(), 'notifiable')->latest();
     }

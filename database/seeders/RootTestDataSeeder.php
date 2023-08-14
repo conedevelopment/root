@@ -2,8 +2,9 @@
 
 namespace Cone\Root\Database\Seeders;
 
-use Cone\Root\Models\User;
+use Cone\Root\Interfaces\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 
 class RootTestDataSeeder extends Seeder
@@ -21,7 +22,7 @@ class RootTestDataSeeder extends Seeder
      */
     protected function seedUsers(): void
     {
-        User::factory()->create([
+        App::make(User::class)::factory()->create([
             'name' => 'Root Admin',
             'email' => 'admin@root.local',
             'password' => Hash::make('password'),
