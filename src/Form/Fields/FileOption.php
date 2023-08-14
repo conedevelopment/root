@@ -38,8 +38,15 @@ class FileOption extends RelationOption
      */
     public function toArray(): array
     {
-        return array_merge($this->model->append(['dimensions', 'formatted_size'])->toArray(), [
+        return array_merge(parent::toArray(), [
+            'dimensions' => $this->model->dimensions,
+            'file_name' => $this->model->file_name,
             'formatted_created_at' => $this->model->created_at->format('Y-m-d H:i'),
+            'formatted_size' => $this->model->formattedSize,
+            'is_image' => $this->model->isImage,
+            'mime_type' => $this->model->mime_type,
+            'url' => $this->model->urls['original'] ?? null,
+            'pivot' => [],
         ]);
     }
 }

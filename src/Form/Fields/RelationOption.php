@@ -2,10 +2,9 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
-class RelationOption extends Option implements Arrayable
+class RelationOption extends Option
 {
     /**
      * The option label.
@@ -25,13 +24,5 @@ class RelationOption extends Option implements Arrayable
         $this->model = $model;
 
         parent::__construct($model->getKey(), $label);
-    }
-
-    /**
-     * Get the array representation of the object.
-     */
-    public function toArray(): array
-    {
-        return $this->resolveAttributes();
     }
 }

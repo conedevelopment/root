@@ -4,11 +4,12 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 use Stringable;
 
-class Option implements Stringable
+class Option implements Arrayable, Stringable
 {
     use HasAttributes;
     use Makeable;
@@ -65,5 +66,17 @@ class Option implements Stringable
     public function __toString(): string
     {
         return $this->render()->render();
+    }
+
+    /**
+     * Get the array representation of the object.
+     */
+    public function toArray(): array
+    {
+        return [
+            'attrs' => $this->resolveAttributes(),
+            'label' => $this->label,
+            'value' => $this->getAttribute('value'),
+        ];
     }
 }

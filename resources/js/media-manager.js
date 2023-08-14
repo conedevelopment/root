@@ -3,10 +3,9 @@ document.addEventListener('alpine:init', () => {
         return {
             dragging: false,
             processing: false,
-            response: {
-                data: [],
-                next_page_url: null,
-            },
+            data: [],
+            next_page_url: null,
+            queue: [],
             init() {
                 //
             },
@@ -22,8 +21,8 @@ document.addEventListener('alpine:init', () => {
                 }).then((response) => {
                     return response.ok ? response.json() : Promise.reject(response);
                 }).then((data) => {
-                    this.response.data.push(...data.data);
-                    this.response.next_page_url = data.next_page_url;
+                    this.data.push(...data.data);
+                    this.next_page_url = data.next_page_url;
                 }).catch((error) => {
                     //
                 }).finally(() => {
