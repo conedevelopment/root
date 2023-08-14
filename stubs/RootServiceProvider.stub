@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\User;
 use Cone\Root\Interfaces\Models\User as UserInterface;
-use Cone\Root\Models\User as BaseUser;
 use Cone\Root\RootApplicationServiceProvider;
 use Cone\Root\Widgets\Welcome;
 use Illuminate\Support\Facades\Gate;
@@ -12,15 +11,18 @@ use Illuminate\Support\Facades\Gate;
 class RootServiceProvider extends RootApplicationServiceProvider
 {
     /**
+     * All of the container bindings that should be registered.
+     */
+    public array $bindings = [
+        UserInterface::class => User::class,
+    ];
+
+    /**
      * Register any application services.
      */
     public function register(): void
     {
         parent::register();
-
-        if (is_subclass_of(User::class, BaseUser::class)) {
-            $this->app->bind(UserInterface::class, User::class);
-        }
     }
 
     /**
@@ -47,7 +49,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function resources(): array
     {
         return [
-            (BaseUser::proxy())::toResource(),
+            User::toResource(),
         ];
     }
 

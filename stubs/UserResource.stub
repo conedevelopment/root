@@ -25,8 +25,8 @@ class UserResource extends Resource
     {
         return parent::toTable($request)->withColumns(static function (Columns $columns): void {
             $columns->id();
-            $columns->text(__('Name'), 'name);
-            $columns->text(__('Email'), 'email);
+            $columns->text(__('Name'), 'name');
+            $columns->text(__('Email'), 'email');
         });
     }
 
@@ -37,14 +37,14 @@ class UserResource extends Resource
     {
         return parent::toForm($request)->withFields(static function (Fields $fields): void {
             $fields->text(__('Name'), 'name')
-                ->rules(['required', 'string', 'max:256']),
+                ->rules(['required', 'string', 'max:256']);
 
             $fields->email(__('Email'), 'email')
                 ->rules(['required', 'string', 'email', 'max:256'])
                 ->createRules(['unique:users'])
                 ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
-                }),
+                });
         });
     }
 }

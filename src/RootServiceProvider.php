@@ -18,7 +18,6 @@ class RootServiceProvider extends ServiceProvider
     public array $bindings = [
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
-        Interfaces\Models\User::class => Models\User::class,
     ];
 
     /**
