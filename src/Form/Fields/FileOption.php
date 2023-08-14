@@ -45,6 +45,7 @@ class FileOption extends RelationOption
             'formatted_size' => $this->model->formattedSize,
             'is_image' => $this->model->isImage,
             'mime_type' => $this->model->mime_type,
+            'uuid' => $this->model->uuid,
             'url' => $this->model->urls['original'] ?? null,
             'pivot' => [],
         ]);
