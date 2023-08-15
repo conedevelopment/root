@@ -1,4 +1,5 @@
 import Item from './Item';
+import { throttle } from './helpers';
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('mediaManager', (url, config = {}) => {
@@ -11,7 +12,11 @@ document.addEventListener('alpine:init', () => {
             items: [],
             next_page_url: url,
             init() {
-                //
+                this.$root.querySelector('.modal__body').addEventListener('scroll', throttle((event) => {
+                    if (this.shouldPaginate(event)) {
+                        this.fetch();
+                    }
+                }));
             },
             fetch() {
                 this.processing = true;
@@ -25,8 +30,11 @@ document.addEventListener('alpine:init', () => {
                     this.processing = false;
                 });
             },
-            paginate() {
-                //
+            shouldPaginate(event) {
+                return ! this.processing
+                    && this.next_page_url !== null
+                    && this.items.length > 0
+                    && Math.abs(event.target.scrollHeight - event.target.scrollTop - event.target.clientHeight) < 75;
             },
             queueFiles(files) {
                 for (let i = 0; i < files.length; i++) {
