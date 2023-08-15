@@ -32,6 +32,7 @@ return new class() extends Migration
             $table->uuidMorphs('mediable');
             $table->string('collection')->nullable();
             $table->json('meta')->nullable();
+            $table->timestamps();
         });
     }
 
