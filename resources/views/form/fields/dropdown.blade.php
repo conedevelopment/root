@@ -5,7 +5,7 @@
             <template x-for="(item, index) in selectedItems" :key="item.id">
                 <span class="combobox-item" x-show="item.selected">
                     <span x-text="item.label"></span>
-                    <button :aria-label="`Remove ${item.label}`" @click="unselectItemById(item.id)" class="btn btn--primary btn--sm btn--icon">
+                    <button :aria-label="'Remove ' + item.label" @click="unselectItemById(item.id)" class="btn btn--primary btn--sm btn--icon">
                         <svg aria-hidden='true' fill='none' focusable='false' height='24' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' stroke='currentColor' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg' class='btn__icon'>
                             <line x1='18' y1='6' x2='6' y2='18'></line>
                             <line x1='6' y1='6' x2='18' y2='18'></line>
