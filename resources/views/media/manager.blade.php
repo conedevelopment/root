@@ -41,11 +41,18 @@
             x-on:change="queueFiles($event.target.files)"
         >
         <div class="modal__column">
-            <button type="button" class="btn btn--outline-primary">
+            <button type="button" class="btn btn--outline-primary" x-on:click="open = false">
                 {{ __('Cancel') }}
             </button>
-            <button type="button" class="btn btn--primary">
-                {{ __('Select') }}
+            <button
+                type="button"
+                class="btn btn--primary"
+                x-on:click="() => {
+                    $dispatch('{{ $config['event'] }}', selection)
+                    open = false;
+                }"
+            >
+                {{ __('Commit') }}
             </button>
         </div>
     </x-slot:footer>

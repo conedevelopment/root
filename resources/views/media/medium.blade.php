@@ -3,9 +3,9 @@
     role="checkbox"
     tabindex="0"
     x-bind:aria-checked="item.selected"
-    x-on:keydown.enter.prevent="item.selected = ! item.selected"
-    x-on:keydown.space.prevent="item.selected = ! item.selected"
-    x-on:click.prevent="item.selected = ! item.selected"
+    x-on:keydown.enter.prevent="toggle(item)"
+    x-on:keydown.space.prevent="toggle(item)"
+    x-on:click.prevent="toggle(item)"
 >
     <span x-show="item.selected" class="media-item__selected">
         <x-root::icon name="check" />

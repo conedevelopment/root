@@ -69,6 +69,27 @@ document.addEventListener('alpine:init', () => {
                     this.work();
                 }
             },
+            select(item) {
+                const index = this.selection.findIndex((selected) => selected.value === item.value);
+
+                if (index === -1) {
+                    item.selected = true;
+
+                    this.selection.push(item);
+                }
+            },
+            deselect(item) {
+                const index = this.selection.findIndex((selected) => selected.value === item.value);
+
+                if (index >= 0) {
+                    item.selected = false;
+
+                    this.selection.splice(index, 1);
+                }
+            },
+            toggle(item) {
+                item.selected ? this.deselect(item) : this.select(item);
+            },
         };
     });
 });
