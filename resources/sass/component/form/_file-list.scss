@@ -12,7 +12,7 @@
     border-radius: config('border-radius', $form-control);
     padding: spacer('xs');
 
-    > * + * {
+    > li + li {
       border-block-start: config('border-width', $form-control) solid color('border');
       margin-block-start: spacer('xs');
       padding-block-start: spacer('xs');
@@ -25,6 +25,23 @@
   display: flex;
   gap: spacer('s');
   justify-content: space-between;
+
+  &__icon {
+    align-items: center;
+    aspect-ratio: 1;
+    background-color: color('background', 'media');
+    border-radius: config('border-radius-sm', $display);
+    display: flex;
+    inline-size: 2.5rem;
+    justify-content: center;
+
+    svg {
+      --size: 1rem;
+      block-size: var(--size);
+      color: color('icon', 'media');
+      inline-size: var(--size);
+    }
+  }
 
   &__column {
     align-items: center;
@@ -48,10 +65,4 @@
     display: flex;
     gap: spacer('xxs');
   }
-}
-
-template + .file-list-item {
-  border-block-start: 0;
-  margin-block-start: 0;
-  padding-block-start: 0;
 }

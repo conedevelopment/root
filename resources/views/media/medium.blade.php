@@ -21,7 +21,7 @@
     </template>
     <template x-if="! item.processing && ! item.is_image">
         <span class="media-item__background">
-            <x-root::icon name="archive" class="media-item__icon" />
+            <x-root::icon name="document" class="media-item__icon" />
             <span x-text="item.label" class="media-item__name"></span>
         </span>
     </template>
