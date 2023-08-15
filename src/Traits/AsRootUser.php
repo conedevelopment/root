@@ -5,7 +5,6 @@ namespace Cone\Root\Traits;
 use Cone\Root\Interfaces\Models\User;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\Notification;
-use Cone\Root\Models\Record;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -28,14 +27,6 @@ trait AsRootUser
     public function uploads(): HasMany
     {
         return $this->hasMany(Medium::getProxiedClass());
-    }
-
-    /**
-     * Get the records for the user.
-     */
-    public function records(): HasMany
-    {
-        return $this->hasMany(Record::getProxiedClass());
     }
 
     /**
