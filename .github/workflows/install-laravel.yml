@@ -62,8 +62,8 @@ jobs:
                 sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
                 sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
                 php artisan key:generate
-                php artisan root:install --seed
                 php artisan root:publish --packages
+                php artisan root:install --seed
         -
             name: "Perform static analysis on stubs"
             working-directory: "laravel"
