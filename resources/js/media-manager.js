@@ -8,7 +8,6 @@ document.addEventListener('alpine:init', () => {
             processing: false,
             working: false,
             queue: [],
-            selection: config.selection || [],
             items: [],
             next_page_url: url,
             init() {
@@ -75,7 +74,9 @@ document.addEventListener('alpine:init', () => {
                 if (index === -1) {
                     item.selected = true;
 
-                    this.selection.push(item);
+                    config.multiple
+                        ? this.selection.push(item)
+                        : this.selection = [item];
                 }
             },
             deselect(item) {

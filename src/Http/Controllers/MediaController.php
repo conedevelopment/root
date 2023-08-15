@@ -39,13 +39,10 @@ class MediaController extends Controller
 
         $field->form->model(fn (): Model => $model);
 
-        $request->validate(['file' => ['required', 'file']]);
-
-        $file = $request->file('file');
-
-        $medium = $field->store($request, $file);
-
-        return new JsonResponse($medium, JsonResponse::HTTP_CREATED);
+        return new JsonResponse(
+            $field->upload($request),
+            JsonResponse::HTTP_CREATED
+        );
     }
 
     /**

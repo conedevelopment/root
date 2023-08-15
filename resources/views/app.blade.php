@@ -61,7 +61,7 @@
     </div>
 
     {{-- Modals --}}
-    @stack('modals')
+    <div id="modals"></div>
 
     {{-- Scripts --}}
     {{

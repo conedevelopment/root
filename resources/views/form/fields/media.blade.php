@@ -1,7 +1,6 @@
 <div
     class="form-group--row"
     x-data="{ selection: {{ json_encode($options) }} }"
-    x-on:{{ $config['event'] }}.window="selection = $event.detail"
 >
     <span class="form-label">{{ $label }}</span>
     <div class="file-list">
@@ -18,13 +17,10 @@
             </template>
         </ul>
     </div>
-</div>
 
-{{-- Modal --}}
-@push('modals')
     @include('root::media.manager', [
         'label' => $label,
         'modalKey' => $modalKey,
         'config' => $config,
     ])
-@endpush
+</div>

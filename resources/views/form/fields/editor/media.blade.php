@@ -7,12 +7,9 @@
     >
         <x-root::icon name="image" class="btn__icon" />
     </button>
-</div>
 
-{{-- Modal --}}
-@push('modals')
     @include('root::media.manager', [
         'label' => $label,
         'modalKey' => $modalKey,
     ])
-@endpush
+</div>

@@ -4,8 +4,8 @@
     class="modal--media"
     data-dropzone="{{ __('Drag & drop your images and files here') }}"
     x-data="mediaManager('{{ $url }}', {{ json_encode($config) }})"
+    x-model="selection"
     x-bind:class="{ 'modal--dropzone': dragging }"
-    x-on:dragstart.prevent=""
     x-on:dragend.prevent="dragging = false"
     x-on:dragover.prevent="dragging = true"
     x-on:dragleave.prevent="dragging = false"
@@ -41,18 +41,8 @@
             x-on:change="queueFiles($event.target.files)"
         >
         <div class="modal__column">
-            <button type="button" class="btn btn--outline-primary" x-on:click="open = false">
-                {{ __('Cancel') }}
-            </button>
-            <button
-                type="button"
-                class="btn btn--primary"
-                x-on:click="() => {
-                    $dispatch('{{ $config['event'] }}', selection)
-                    open = false;
-                }"
-            >
-                {{ __('Commit') }}
+            <button type="button" class="btn btn--primary" x-on:click="open = false">
+                {{ __('Close') }}
             </button>
         </div>
     </x-slot:footer>

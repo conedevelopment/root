@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class Media extends File
 {
@@ -66,6 +67,22 @@ class Media extends File
     }
 
     /**
+     * Handle the file upload.
+     */
+    public function upload(Request $request): FileOption
+    {
+        $accept = $this->getAttribute('accept');
+
+        $data = $request->validate(['file' => [
+            'required',
+            'file',
+            Rule::when(! is_null($accept), ['mimetypes:'.$accept]),
+        ]]);
+
+        return $this->store($request, $data['file']);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function store(Request $request, UploadedFile $file): FileOption
@@ -103,15 +120,11 @@ class Media extends File
      */
     public function data(Request $request): array
     {
-        $data = parent::data($request);
-
-        return array_merge($data, [
-            'modalKey' => $key = $this->getModalKey(),
+        return array_merge(parent::data($request), [
+            'modalKey' => $this->getModalKey(),
             'config' => [
                 'accept' => $this->getAttribute('accept', '*'),
-                'event' => 'update-'.$key,
                 'multiple' => $this->multiple,
-                'selection' => array_map(fn (FileOption $option): array => $option->toArray(), $data['options']),
             ],
         ]);
     }
