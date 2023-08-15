@@ -1,4 +1,4 @@
-<form id="{{ $key }}-filters" action="" method="GET" class="app-card__actions" autocomplete="off">
+<form id="{{ $key }}" action="" method="GET" class="app-card__actions" autocomplete="off">
     @if($search)
         {!! $search !!}
     @endif

@@ -6,7 +6,7 @@
     <div class="app-card__body">
         <div class="data-table">
             <div x-cloak x-show="selection.length > 0" class="alert alert--info data-table-alert">
-                <span><span x-text="selection.length"></span> items selected.</span>
+                <span><span x-text="selection.length"></span> {{ __('items selected.') }}</span>
                 <div class="data-table-alert__actions">
                     <div class="data-table-alert__column">
                         <button
@@ -14,7 +14,7 @@
                             class="btn btn--primary btn--sm"
                             x-on:click="selection = {{ $items->pluck('id')->toJson() }}"
                         >
-                            Select all ({{ $items->total() }})
+                            {{ __('Select all') }} ({{ $items->total() }})
                         </button>
                         <button
                             type="button"
@@ -79,9 +79,11 @@
                 <div class="data-table__footer-column">
                     <div class="form-group">
                         <label class="sr-only" for="{{ $key }}:per_page">{{ __('Number of results') }} </label>
-                        <select form="{{ $key }}-filters" class="form-control form-control--sm" id="{{ $key }}:per_page" name="{{ $key }}:per_page">
+                        <select form="{{ $form->getKey() }}" class="form-control form-control--sm" id="{{ $key }}:per_page" name="{{ $key }}:per_page">
                             @foreach($perPageOptions as $option)
-                                <option value="{{ $option }}" @selected($option === $items->perPage())>{{ $option }}</option>
+                                <option value="{{ $option }}" @selected($option === $items->perPage())>
+                                    {{ $option }}
+                                </option>
                             @endforeach
                             @if(! in_array($items->perPage(), $perPageOptions))
                                 <option value="{{ $items->perPage() }}" selected>{{ __('Custom (:perPage)', ['perPage' => $items->perPage()]) }}</option>

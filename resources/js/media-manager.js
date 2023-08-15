@@ -30,7 +30,7 @@ document.addEventListener('alpine:init', () => {
             },
             queueFiles(files) {
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.push(new Item(files[i]));
+                    this.queue.unshift(new Item(files[i]));
                 }
 
                 if (! this.working) {
@@ -38,7 +38,7 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             work() {
-                const next = this.queue.find((item) => ! item.failed);
+                const next = this.queue.findLast((item) => ! item.failed);
 
                 if (next) {
                     this.working = true;

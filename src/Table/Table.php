@@ -205,7 +205,7 @@ class Table implements Routable, Stringable
      */
     public function toForm(Request $request): FilterForm
     {
-        return FilterForm::make($this->key)
+        return FilterForm::make($this->key.'-filters')
             ->model(function () use ($request): Model {
                 return $this->resolveQuery($request)
                     ->getModel()

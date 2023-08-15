@@ -24,7 +24,7 @@
         tabindex="-1"
         x-on:open-{{ $modalKey }}.window.once="fetch()"
     >
-        <template x-for="item in queue.reverse()" :key="item.hash">
+        <template x-for="item in queue" :key="item.hash">
             @include('root::media.queued-medium')
         </template>
         <template x-for="item in items" :key="item.uuid">
