@@ -17,6 +17,7 @@
             class="btn btn--delete btn--sm btn--icon"
             aria-label="{{ __('Remove') }}"
             x-bind:aria-describedby="item.uuid"
+            x-on:click="() => { selection.splice(index, 1); item.selected = false; }"
         >
             <x-root::icon name="close" class="btn__icon" />
         </button>

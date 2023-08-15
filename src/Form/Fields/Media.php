@@ -125,6 +125,7 @@ class Media extends File
             'config' => [
                 'accept' => $this->getAttribute('accept', '*'),
                 'multiple' => $this->multiple,
+                'chunk_size' => Config::get('root.media.chunk_size'),
             ],
         ]);
     }

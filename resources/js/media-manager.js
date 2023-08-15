@@ -2,7 +2,7 @@ import Item from './Item';
 import { throttle } from './helpers';
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('mediaManager', (url, config = {}) => {
+    window.Alpine.data('mediaManager', (url, config) => {
         return {
             dragging: false,
             processing: false,
@@ -37,7 +37,10 @@ document.addEventListener('alpine:init', () => {
             },
             queueFiles(files) {
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.unshift(new Item(files[i]));
+                    this.queue.unshift(new Item(files[i], {
+                        url: url,
+                        chunkSize: config.chunk_size,
+                    }));
                 }
 
                 if (! this.working) {

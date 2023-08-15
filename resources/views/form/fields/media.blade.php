@@ -12,7 +12,7 @@
             {{ __('Choose file(s)') }}
         </button>
         <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
-            <template x-for="item in selection" :key="item.uuid">
+            <template x-for="(item, index) in selection" :key="item.uuid">
                 @include('root::form.fields.file-option')
             </template>
         </ul>

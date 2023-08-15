@@ -32,6 +32,7 @@ class Option implements Arrayable, Stringable, JsonSerializable
     {
         $this->label = $label;
         $this->setAttribute('value', $value);
+        $this->selected(false);
     }
 
     /**

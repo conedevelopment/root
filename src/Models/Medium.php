@@ -92,7 +92,7 @@ class Medium extends Model implements Contract
     protected static function booted(): void
     {
         static::deleting(static function (self $medium): void {
-            Storage::disk($medium->disk)->deleteDirectory($medium->id);
+            Storage::disk($medium->disk)->deleteDirectory($medium->uuid);
         });
     }
 
