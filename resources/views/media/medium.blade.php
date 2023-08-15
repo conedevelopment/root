@@ -17,7 +17,7 @@
         </span>
     </template>
     <template x-if="! item.processing && item.is_image">
-        <img x-bind:src="item.url" x-bind:alt="item.label">
+        <img x-bind:src="item.preview_url" x-bind:alt="item.label">
     </template>
     <template x-if="! item.processing && ! item.is_image">
         <span class="media-item__background">
