@@ -110,8 +110,6 @@ class Medium extends Model implements Contract
      */
     public static function makeFromPath(string $path, array $attributes = []): static
     {
-        $name = preg_replace('/[\w]{5}__/iu', '', basename($path, '.chunk'));
-
         $type = mime_content_type($path);
 
         if (! Str::is('image/svg*', $type) && Str::is('image/*', $type)) {
@@ -119,7 +117,7 @@ class Medium extends Model implements Contract
         }
 
         return new static(array_merge([
-            'file_name' => $name,
+            'file_name' => $name = basename($path),
             'mime_type' => $type,
             'width' => isset($width) ? $width : null,
             'height' => isset($height) ? $height : null,

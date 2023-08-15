@@ -1,11 +1,12 @@
-import Queue from './Queue';
+import Item from './Item';
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('mediaManager', (url, config = {}) => {
         return {
             dragging: false,
             processing: false,
-            queue: new Queue(url),
+            working: false,
+            queue: [],
             selection: config.selection || [],
             items: [],
             next_page_url: url,
@@ -13,11 +14,9 @@ document.addEventListener('alpine:init', () => {
                 //
             },
             fetch() {
-                this.processing = false;
+                this.processing = true;
 
-                window.$http.get(this.next_page_url, {
-                    //
-                }).then((response) => {
+                window.$http.get(this.next_page_url).then((response) => {
                     this.items.push(...response.data.data);
                     this.next_page_url = response.data.next_page_url;
                 }).catch((error) => {
@@ -26,14 +25,41 @@ document.addEventListener('alpine:init', () => {
                     this.processing = false;
                 });
             },
-            handleFiles(files) {
-                this.dragging = false;
-
+            paginate() {
+                //
+            },
+            queueFiles(files) {
                 for (let i = 0; i < files.length; i++) {
-                    this.queue.push(files[i]);
+                    this.queue.push(new Item(files[i]));
                 }
 
-                this.queue.work();
+                if (! this.working) {
+                    this.work();
+                }
+            },
+            work() {
+                const next = this.queue.find((item) => ! item.failed);
+
+                if (next) {
+                    this.working = true;
+
+                    next.handle(url).then((item) => {
+                        this.queue.splice(this.queue.indexOf(next), 1);
+                        this.items.unshift(item);
+                    }).catch((error) => {
+                            //
+                    }).finally(() => {
+                        this.working = false;
+                        this.work();
+                    });
+                }
+            },
+            retry(item) {
+                item.retry();
+
+                if (! this.working) {
+                    this.work();
+                }
             },
         };
     });

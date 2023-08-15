@@ -39,7 +39,7 @@ class FileOption extends RelationOption
         return array_merge(parent::toArray(), [
             'dimensions' => $this->model->dimensions,
             'file_name' => $this->model->file_name,
-            'formatted_created_at' => $this->model->created_at->format('Y-m-d H:i'),
+            'formatted_created_at' => $this->model->created_at?->format('Y-m-d H:i'),
             'formatted_size' => $this->model->formattedSize,
             'is_image' => $this->model->isImage,
             'mime_type' => $this->model->mime_type,

@@ -1,34 +1,32 @@
 export default class Item
 {
-    constructor(file, url)
+    constructor(file)
     {
-        this.url = url;
         this.file = file;
+        this.chunks = this._createChunks();
         this.error = null;
         this.failed = false;
-        this.processing = false;
         this.hash = this._createHash();
-        this.chunks = this._createChunks();
-        this.uploaded = 0;
         this.progress = 0;
+        this.uploaded = 0;
     }
 
-    handle()
+    handle(url)
     {
         return this.chunks.reduce((promise, chunk, index) => {
             return promise.then(() => {
-                return this.upload(chunk, index + 1)
+                return this.upload(url, chunk, index + 1)
             });
         }, Promise.resolve(null));
     }
 
-    upload(chunk, index)
+    upload(url, chunk, index)
     {
         const formData = new FormData();
 
-        formData.set('file', chunk, `${this.hash}__${this.file.name}.chunk`);
+        formData.set('file', chunk, `${this.hash}${this.file.name}`);
 
-        return window.$http.post(this.url, formData, {
+        return window.$http.post(url, formData, {
             headers: {
                 'X-Chunk-Hash': this.hash,
                 'X-Chunk-Index': index,
@@ -42,8 +40,6 @@ export default class Item
         }).then((response) => {
             return response.data;
         }).catch((error) => {
-            this.processing = true;
-
             this.error = error.response.data.message;
             this.failed = true;
 
@@ -58,13 +54,18 @@ export default class Item
 
     retry()
     {
-        this.hash = this._createHash();
+        this.chunks = this._createChunks();
+        this.error = null;
         this.failed = false;
+        this.hash = this._createHash();
+        this.processing = false;
+        this.progress = 0;
+        this.uploaded = 0;
     }
 
     _createHash()
     {
-        return Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 5);
+        return Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 10);
     }
 
     _createChunks()

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 class Media extends File
@@ -71,13 +72,13 @@ class Media extends File
     {
         $disk = Storage::build([
             'driver' => 'local',
-            'root' => Storage::disk('local')->path('root-uploads'),
+            'root' => Storage::disk('local')->path(Config::get('root.media.tmp_dir')),
         ]);
 
         $disk->append($file->getClientOriginalName(), $file->get());
 
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return $this->newOption(new Medium(), '');
+            return new PendingFileOption(new Medium(), '');
         }
 
         return $this->stored($request, $disk->path($file->getClientOriginalName()));
@@ -107,6 +108,7 @@ class Media extends File
         return array_merge($data, [
             'modalKey' => $key = $this->getModalKey(),
             'config' => [
+                'accept' => $this->getAttribute('accept', '*'),
                 'event' => 'update-'.$key,
                 'multiple' => $this->multiple,
                 'selection' => array_map(fn (FileOption $option): array => $option->toArray(), $data['options']),

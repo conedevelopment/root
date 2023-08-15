@@ -85,6 +85,7 @@ return [
                 ],
             ],
         ],
+        'tmp_dir' => 'root-tmp',
     ],
 
     /*

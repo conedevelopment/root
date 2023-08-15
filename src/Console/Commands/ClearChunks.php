@@ -34,7 +34,7 @@ class ClearChunks extends Command
 
         $count = 0;
 
-        foreach (Storage::disk('local')->allFiles('root-uploads') as $file) {
+        foreach (Storage::disk('local')->allFiles(Config::get('root.media.upload_dir')) as $file) {
             $info = new SplFileInfo(Storage::disk('local')->path($file));
 
             if ($now - $info->getMTime() >= $expiration) {

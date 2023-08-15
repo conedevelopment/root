@@ -9,7 +9,7 @@
     x-on:dragend.prevent="dragging = false"
     x-on:dragover.prevent="dragging = true"
     x-on:dragleave.prevent="dragging = false"
-    x-on:drop.prevent="handleFiles($event.dataTransfer.files)"
+    x-on:drop.prevent="($event) => { queueFiles($event.dataTransfer.files); dragging = false; }"
 >
     <x-slot:header>
         @include('root::media.filters')
@@ -24,7 +24,7 @@
         tabindex="-1"
         x-on:open-{{ $modalKey }}.window.once="fetch()"
     >
-        <template x-for="item in queue.items" :key="item.hash">
+        <template x-for="item in queue.reverse()" :key="item.hash">
             @include('root::media.queued-medium')
         </template>
         <template x-for="item in items" :key="item.uuid">
@@ -35,10 +35,10 @@
         <input
             type="file"
             class="form-file"
-            accept="image/png, image/jpeg"
+            accept="{{ $config['accept'] }}"
             multiple
             x-bind:disabled="processing"
-            x-on:change="handleFiles($event.target.files)"
+            x-on:change="queueFiles($event.target.files)"
         >
         <div class="modal__column">
             <button type="button" class="btn btn--outline-primary">

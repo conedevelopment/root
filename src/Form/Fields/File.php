@@ -132,10 +132,10 @@ class File extends MorphToMany
      */
     public function store(Request $request, UploadedFile $file): FileOption
     {
-        $path = $file->storeAs('root-uploads', $file->getClientOriginalName(), ['disk' => 'local']);
+        $path = $file->storeAs(Config::get('root.media.tmp_dir'), $file->getClientOriginalName(), ['disk' => 'local']);
 
         return $this->stored(
-            $request, $file, Storage::disk('local')->path($path)
+            $request, Storage::disk('local')->path($path)
         );
     }
 
@@ -144,7 +144,13 @@ class File extends MorphToMany
      */
     protected function stored(Request $request, string $path): FileOption
     {
-        $medium = (Medium::proxy())::makeFromPath($path, ['disk' => $this->disk]);
+        $target = str_replace($request->header('X-Chunk-Hash', ''), '', $path);
+
+        $medium = (Medium::proxy())::makeFromPath($path, [
+            'disk' => $this->disk,
+            'file_name' => $name = basename($target),
+            'name' => pathinfo($name, PATHINFO_FILENAME),
+        ]);
 
         if (! is_null($this->storageResolver)) {
             call_user_func_array($this->storageResolver, [$request, $medium, $path]);
