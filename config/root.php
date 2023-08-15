@@ -77,6 +77,8 @@ return [
     'media' => [
         'disk' => 'public',
         'chunk_expiration' => 1440,
+        'chunk_size' => 2 * 1024 * 1024,
+        'tmp_dir' => 'root-tmp',
         'conversion' => [
             'default' => 'gd',
             'drivers' => [
@@ -85,7 +87,6 @@ return [
                 ],
             ],
         ],
-        'tmp_dir' => 'root-tmp',
     ],
 
     /*

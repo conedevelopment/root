@@ -1,4 +1,8 @@
-<div class="form-group--row" x-data="{ selection: {{ json_encode($options) }} }">
+<div
+    class="form-group--row"
+    x-data="{ selection: {{ json_encode($options) }} }"
+    x-on:{{ $config['event'] }}.window="selection = $event.detail"
+>
     <span class="form-label">{{ $label }}</span>
     <div class="file-list">
         <button
