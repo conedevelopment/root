@@ -46,7 +46,7 @@ class FileOption extends RelationOption
             'pivot' => [],
             'processing' => false,
             'selected' => $this->getAttribute('selected', false),
-            'url' => $this->model->urls['original'] ?? null,
+            'url' => $this->model->urls['thumbnail'] ?? $this->model->urls['original'] ?? null,
             'uuid' => $this->model->uuid,
         ]);
     }

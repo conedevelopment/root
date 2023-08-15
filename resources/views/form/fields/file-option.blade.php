@@ -1,7 +1,7 @@
 <li class="file-list-item">
     <div class="file-list-item__column">
         <template x-if="item.is_image">
-            <img class="file-list-item__thumbnail" src="https://picsum.photos/80/80" x-bind:alt="item.label">
+            <img class="file-list-item__thumbnail" x-bind:src="item.url" x-bind:alt="item.label">
         </template>
         <template x-if="! item.is_image">
             <span class="file-list-item__icon">

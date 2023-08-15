@@ -168,19 +168,13 @@ class Medium extends Model implements Contract
     protected function urls(): Attribute
     {
         return new Attribute(
-            get: function (mixed $value, array $attributes): array {
-                $urls = ['original' => $this->getUrl()];
-
-                if (! $this->convertible()) {
-                    return $urls;
-                }
-
+            get: function (): array {
                 return array_reduce(
-                    $attributes['properties']['conversions'] ?? [],
+                    $this->properties['conversions'] ?? [],
                     function (array $urls, string $conversion): array {
                         return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
                     },
-                    $urls
+                    ['original' => $this->getUrl()]
                 );
             }
         );
