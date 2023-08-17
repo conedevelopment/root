@@ -82,9 +82,9 @@ document.addEventListener('alpine:init', () => {
                 );
             },
             toggle(item) {
-                this.isSelected(item) ? this.deselect(item) : this.select(item);
+                this.selected(item) ? this.deselect(item) : this.select(item);
             },
-            isSelected(item) {
+            selected(item) {
                 return this.selection.findIndex((selected) => selected.value === item.value) > -1;
             },
         };

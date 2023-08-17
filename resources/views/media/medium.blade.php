@@ -2,12 +2,12 @@
     class="media-item"
     role="checkbox"
     tabindex="0"
-    x-bind:aria-checked="isSelected(item)"
+    x-bind:aria-checked="selected(item)"
     x-on:keydown.enter.prevent="toggle(item)"
     x-on:keydown.space.prevent="toggle(item)"
     x-on:click.prevent="toggle(item)"
 >
-    <span x-show="isSelected(item)" class="media-item__selected">
+    <span x-show="selected(item)" class="media-item__selected">
         <x-root::icon name="check" />
     </span>
     <template x-if="item.processing">
