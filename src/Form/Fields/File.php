@@ -218,6 +218,7 @@ class File extends MorphToMany
     {
         return array_merge(parent::data($request), [
             'options' => $this->resolveOptions(),
+            'fields' => $this->fields->all(),
         ]);
     }
 

@@ -28,7 +28,7 @@
                 <button
                     type="button"
                     class="btn btn--icon btn--light modal__close"
-                    aria-label="{{ __('Close modal') }}"
+                    aria-label="{{ __('Close Modal') }}"
                     x-on:click="open = false"
                 >
                     <x-root::icon name="close" class="btn__icon" />

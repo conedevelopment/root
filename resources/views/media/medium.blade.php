@@ -2,12 +2,12 @@
     class="media-item"
     role="checkbox"
     tabindex="0"
-    x-bind:aria-checked="item.selected"
+    x-bind:aria-checked="isSelected(item)"
     x-on:keydown.enter.prevent="toggle(item)"
     x-on:keydown.space.prevent="toggle(item)"
     x-on:click.prevent="toggle(item)"
 >
-    <span x-show="item.selected" class="media-item__selected">
+    <span x-show="isSelected(item)" class="media-item__selected">
         <x-root::icon name="check" />
     </span>
     <template x-if="item.processing">
@@ -17,7 +17,7 @@
         </span>
     </template>
     <template x-if="! item.processing && item.is_image">
-        <img x-bind:src="item.preview_url" x-bind:alt="item.label">
+        <img x-bind:src="item.url" x-bind:alt="item.label">
     </template>
     <template x-if="! item.processing && ! item.is_image">
         <span class="media-item__background">

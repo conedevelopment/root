@@ -13,7 +13,7 @@
         </button>
         <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
             <template x-for="(item, index) in selection" :key="item.uuid">
-                @include('root::form.fields.file-option')
+                <li class="file-list-item" x-html="item.fragment"></li>
             </template>
         </ul>
     </div>

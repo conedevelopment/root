@@ -84,9 +84,19 @@ class Option implements Arrayable, Stringable, JsonSerializable
     public function toArray(): array
     {
         return [
-            'attrs' => $this->resolveAttributes(),
             'label' => $this->label,
+            'selected' => $this->getAttribute('selected'),
             'value' => $this->getAttribute('value'),
         ];
+    }
+
+    /**
+     * Get the fragment representation of the object.
+     */
+    public function toFragment(): array
+    {
+        return array_merge($this->toArray(), [
+            'fragment' => $this->__toString(),
+        ]);
     }
 }

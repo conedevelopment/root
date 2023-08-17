@@ -72,27 +72,20 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             select(item) {
-                const index = this.selection.findIndex((selected) => selected.value === item.value);
-
-                if (index === -1) {
-                    item.selected = true;
-
-                    config.multiple
-                        ? this.selection.push(item)
-                        : this.selection = [item];
-                }
+                config.multiple
+                    ? this.selection.push(item)
+                    : this.selection = [item];
             },
             deselect(item) {
-                const index = this.selection.findIndex((selected) => selected.value === item.value);
-
-                if (index >= 0) {
-                    item.selected = false;
-
-                    this.selection.splice(index, 1);
-                }
+                this.selection.splice(
+                    this.selection.findIndex((selected) => selected.value === item.value), 1
+                );
             },
             toggle(item) {
-                item.selected ? this.deselect(item) : this.select(item);
+                this.isSelected(item) ? this.deselect(item) : this.select(item);
+            },
+            isSelected(item) {
+                return this.selection.findIndex((selected) => selected.value === item.value) > -1;
             },
         };
     });

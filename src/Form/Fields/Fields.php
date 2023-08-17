@@ -166,11 +166,11 @@ class Fields
     }
 
     /**
-     * Make a new flexible field.
+     * Make a new repeater field.
      */
-    public function flexible(string $label, string $key = null): Flexible
+    public function repeater(string $label, string $key = null): Repeater
     {
-        return $this->field(Flexible::class, $label, $key);
+        return $this->field(Repeater::class, $label, $key);
     }
 
     /**

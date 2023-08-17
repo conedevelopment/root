@@ -22,32 +22,35 @@ class FileOption extends RelationOption
     }
 
     /**
-     * Render the option.
+     * {@inheritdoc}
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toFragment();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function render(): View
     {
         return App::make('view')->make($this->template, [
-            //
+            'attrs' => $this->newAttributeBag(),
+            'medium' => $this->model,
+            'label' => $this->label,
         ]);
     }
 
     /**
-     * Get the array representation of the object.
+     * {@inheritdoc}
      */
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'dimensions' => $this->model->dimensions,
             'file_name' => $this->model->file_name,
-            'formatted_created_at' => $this->model->created_at?->format('Y-m-d H:i'),
-            'formatted_size' => $this->model->formattedSize,
             'is_image' => $this->model->isImage,
-            'mime_type' => $this->model->mime_type,
-            'pivot' => [],
             'processing' => false,
-            'selected' => $this->getAttribute('selected', false),
-            'preview_url' => $this->model->urls['thumbnail'] ?? $this->model->urls['original'] ?? null,
-            'download_url' => $this->model->urls['original'] ?? null,
+            'url' => $this->model->getUrl('thumbnail') ?: $this->model->getUrl('original'),
             'uuid' => $this->model->uuid,
         ]);
     }

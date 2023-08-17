@@ -59,9 +59,10 @@ class Media extends File
             ->paginate($request->input('per_page'))
             ->withQueryString()
             ->setPath($this->replaceRoutePlaceholders($request->route()))
-            ->through(function (Medium $related) use ($value): FileOption {
+            ->through(function (Medium $related) use ($value): array {
                 return $this->newOption($related, $this->resolveDisplay($related))
-                    ->selected($value->contains($related));
+                    ->selected($value->contains($related))
+                    ->toFragment();
             })
             ->toArray();
     }
