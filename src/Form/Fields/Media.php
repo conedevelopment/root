@@ -68,6 +68,22 @@ class Media extends File
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function persist(Request $request, mixed $value): void
+    {
+        $this->resolveModel()->saved(function () use ($request, $value): void {
+            $this->resolveHydrate($request, $value);
+
+            $keys = $this->getRelation()->sync($value);
+
+            if ($this->prunable && ! empty($keys['detached'])) {
+                $this->prune($keys['detached']);
+            }
+        });
+    }
+
+    /**
      * Handle the file upload.
      */
     public function upload(Request $request): FileOption

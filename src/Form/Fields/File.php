@@ -201,14 +201,22 @@ class File extends MorphToMany
             $keys = $this->getRelation()->sync($value);
 
             if ($this->prunable && ! empty($keys['detached'])) {
-                Medium::proxy()
-                    ->newQuery()
-                    ->whereIn('id', $keys['detached'])
-                    ->cursor()
-                    ->each
-                    ->delete();
+                $this->prune($keys['detached']);
             }
         });
+    }
+
+    /**
+     * Prune the related models.
+     */
+    protected function prune(array $keys): void
+    {
+        Medium::proxy()
+            ->newQuery()
+            ->whereIn('id', $keys)
+            ->cursor()
+            ->each
+            ->delete();
     }
 
     /**
