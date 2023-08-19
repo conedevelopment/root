@@ -4,12 +4,15 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
 
 class BelongsToMany extends Relation
 {
+    use ResolvesFields;
+
     /**
      * Create a new relation field instance.
      */
@@ -18,6 +21,8 @@ class BelongsToMany extends Relation
         parent::__construct($form, $label, $key, $relation);
 
         $this->setAttribute('multiple', true);
+
+        $this->fields = new Fields($form, $this->fields());
     }
 
     /**
@@ -28,6 +33,34 @@ class BelongsToMany extends Relation
         $relation = parent::getRelation();
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
+    }
+
+    /**
+     * Set the pivot field resolver.
+     */
+    public function withPivotFields(Closure $callback): static
+    {
+        // register routes {relationName}
+
+        // $this->withFields($callback);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function newOption(Model $value, string $label): RelationOption
+    {
+        $option = parent::newOption($value, $label);
+
+        $relation = $this->getRelation();
+
+        if (! $value->relationLoaded($relation->getPivotAccessor())) {
+            $value->setRelation($relation->getPivotAccessor(), $relation->newPivot());
+        }
+
+        return $option;
     }
 
     /**
@@ -51,7 +84,14 @@ class BelongsToMany extends Relation
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
-                $results = $this->resolveRelatableQuery($request, $model)->findMany((array) $value);
+                $results = $this->resolveRelatableQuery($request, $model)
+                    ->findMany((array) array_keys($value))
+                    ->each(static function (Model $related) use ($relation, $value): void {
+                        $related->setRelation(
+                            $relation->getPivotAccessor(),
+                            $relation->newPivot($value[$related->getKey()])
+                        );
+                    });
 
                 $model->setRelation($relation->getRelationName(), $results);
             };
