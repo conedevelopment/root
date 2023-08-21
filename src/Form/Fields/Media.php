@@ -4,7 +4,6 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
@@ -116,20 +115,6 @@ class Media extends File
         }
 
         return $this->stored($request, $disk->path($file->getClientOriginalName()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function newOption(Model $value, string $label): FileOption
-    {
-        // $relation = $this->getRelation();
-
-        // $pivot = $value->relationLoaded($relation->getPivotAccessor())
-        //     ? $value->getRelation($relation->getPivotAccessor())
-        //     : $relation->newPivot();
-
-        return parent::newOption($value, $label);
     }
 
     /**

@@ -7,18 +7,15 @@ use Cone\Root\Form\Form;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
-use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 
 class File extends MorphToMany
 {
-    use ResolvesFields;
-
     /**
      * The Blade template.
      */
@@ -129,9 +126,14 @@ class File extends MorphToMany
      */
     public function store(Request $request, UploadedFile $file): FileOption
     {
-        $path = $file->storeAs(Config::get('root.media.tmp_dir'), $file->getClientOriginalName());
+        $disk = Storage::build([
+            'driver' => 'local',
+            'root' => Config::get('root.media.tmp_dir'),
+        ]);
 
-        return $this->stored($request, $path);
+        $disk->put($file->getClientOriginalName(), $file);
+
+        return $this->stored($request, $disk->path($file->getClientOriginalName()));
     }
 
     /**
@@ -221,19 +223,6 @@ class File extends MorphToMany
     {
         return array_merge(parent::data($request), [
             'options' => $this->resolveOptions(),
-            'fields' => $this->fields->all(),
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function registerRoutes(Router $router): void
-    {
-        parent::registerRoutes($router);
-
-        $router->prefix($this->getUriKey())->group(function (Router $router): void {
-            $this->fields->registerRoutes($router);
-        });
     }
 }
