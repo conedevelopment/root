@@ -106,7 +106,7 @@ class Media extends File
     {
         $disk = Storage::build([
             'driver' => 'local',
-            'root' => Storage::disk('local')->path(Config::get('root.media.tmp_dir')),
+            'root' => Config::get('root.media.tmp_dir'),
         ]);
 
         $disk->append($file->getClientOriginalName(), $file->get());

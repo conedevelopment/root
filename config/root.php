@@ -78,7 +78,7 @@ return [
         'disk' => 'public',
         'chunk_expiration' => 1440,
         'chunk_size' => 2 * 1024 * 1024,
-        'tmp_dir' => 'root-tmp',
+        'tmp_dir' => storage_path('app/root-tmp'),
         'conversion' => [
             'default' => 'gd',
             'drivers' => [

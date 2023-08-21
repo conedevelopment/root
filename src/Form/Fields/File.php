@@ -14,7 +14,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
 
 class File extends MorphToMany
 {
@@ -50,8 +49,6 @@ class File extends MorphToMany
         $this->type('file')->multiple(false);
 
         $this->disk(Config::get('root.media.disk', 'public'));
-
-        $this->fields = new Fields($form, $this->fields());
     }
 
     /**
@@ -132,11 +129,9 @@ class File extends MorphToMany
      */
     public function store(Request $request, UploadedFile $file): FileOption
     {
-        $path = $file->storeAs(Config::get('root.media.tmp_dir'), $file->getClientOriginalName(), ['disk' => 'local']);
+        $path = $file->storeAs(Config::get('root.media.tmp_dir'), $file->getClientOriginalName());
 
-        return $this->stored(
-            $request, Storage::disk('local')->path($path)
-        );
+        return $this->stored($request, $path);
     }
 
     /**

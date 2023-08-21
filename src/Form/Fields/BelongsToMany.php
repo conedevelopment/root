@@ -8,6 +8,7 @@ use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
 class BelongsToMany extends Relation
 {
@@ -22,7 +23,7 @@ class BelongsToMany extends Relation
 
         $this->setAttribute('multiple', true);
 
-        $this->fields = new Fields($form, $this->fields());
+        $this->fields = new Fields($form);
     }
 
     /**
@@ -40,9 +41,7 @@ class BelongsToMany extends Relation
      */
     public function withPivotFields(Closure $callback): static
     {
-        // register routes {relationName}
-
-        // $this->withFields($callback);
+        $this->withFields($callback);
 
         return $this;
     }
@@ -52,15 +51,13 @@ class BelongsToMany extends Relation
      */
     public function newOption(Model $value, string $label): RelationOption
     {
-        $option = parent::newOption($value, $label);
-
         $relation = $this->getRelation();
 
         if (! $value->relationLoaded($relation->getPivotAccessor())) {
             $value->setRelation($relation->getPivotAccessor(), $relation->newPivot());
         }
 
-        return $option;
+        return parent::newOption($value, $label);
     }
 
     /**
@@ -108,5 +105,17 @@ class BelongsToMany extends Relation
         return array_merge(parent::data($request), [
             'relatedName' => $this->getRelatedName(),
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerRoutes(Router $router): void
+    {
+        parent::registerRoutes($router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router): void {
+            $this->fields->registerRoutes($router);
+        });
     }
 }
