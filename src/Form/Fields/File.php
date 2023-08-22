@@ -107,8 +107,14 @@ class File extends MorphToMany
      */
     public function newOption(Model $value, string $label): FileOption
     {
-        return FileOption::make($value, $label)
-            ->setAttribute('name', sprintf('%s__attached[]', $this->getAttribute('name')));
+        $name = sprintf(
+            '%s[%s][%s]',
+            $this->getAttribute('name'),
+            $value->getKey(),
+            $this->getRelation()->getRelatedPivotKeyName()
+        );
+
+        return FileOption::make($value, $label)->setAttribute('name', $name);
     }
 
     /**
@@ -159,14 +165,6 @@ class File extends MorphToMany
             ->dispatch($medium, $path, false);
 
         return $this->newOption($medium, $this->resolveDisplay($medium));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValueForHydrate(Request $request): mixed
-    {
-        return $request->input($this->getKey().'__attached');
     }
 
     /**
