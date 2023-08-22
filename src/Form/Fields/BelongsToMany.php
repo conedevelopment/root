@@ -15,6 +15,11 @@ class BelongsToMany extends Relation
     use ResolvesFields;
 
     /**
+     * The pivot fields resolver callback.
+     */
+    protected ?Closure $pivotFieldsResolver = null;
+
+    /**
      * Create a new relation field instance.
      */
     public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
@@ -23,7 +28,7 @@ class BelongsToMany extends Relation
 
         $this->setAttribute('multiple', true);
 
-        $this->fields = new Fields($form);
+        $this->fields = new PivotFields($form);
     }
 
     /**
@@ -41,7 +46,14 @@ class BelongsToMany extends Relation
      */
     public function withPivotFields(Closure $callback): static
     {
-        $this->withFields($callback);
+        // $this->withFields(function (Fields $fields) use ($callback): Fields {
+        //     return call_user_func_array($callback, [
+        //         $fields,
+        //         $this->newOption($this->getRelation()->getRelated(), '')
+        //     ]);
+        // });
+
+        $this->pivotFieldsResolver = $callback;
 
         return $this;
     }
@@ -49,15 +61,15 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function newOption(Model $value, string $label): RelationOption
+    public function toOption(Model $related): RelationOption
     {
         $relation = $this->getRelation();
 
-        if (! $value->relationLoaded($relation->getPivotAccessor())) {
-            $value->setRelation($relation->getPivotAccessor(), $relation->newPivot());
+        if (! $related->relationLoaded($relation->getPivotAccessor())) {
+            $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
         }
 
-        return parent::newOption($value, $label);
+        return parent::toOption($related);
     }
 
     /**

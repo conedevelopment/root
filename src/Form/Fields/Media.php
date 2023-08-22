@@ -51,17 +51,13 @@ class Media extends File
      */
     public function paginate(Request $request): array
     {
-        $value = $this->resolveValue();
-
         return $this->resolveRelatableQuery()
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
             ->setPath($this->replaceRoutePlaceholders($request->route()))
-            ->through(function (Medium $related) use ($value): array {
-                return $this->newOption($related, $this->resolveDisplay($related))
-                    ->selected($value->contains($related))
-                    ->toFragment();
+            ->through(function (Medium $related): array {
+                return $this->toOption($related)->toFragment();
             })
             ->toArray();
     }

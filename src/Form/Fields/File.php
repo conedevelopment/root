@@ -97,7 +97,7 @@ class File extends MorphToMany
     {
         return $this->resolveValue()
             ->map(function (Medium $medium): FileOption {
-                return $this->newOption($medium, $this->resolveDisplay($medium))->selected();
+                return $this->toOption($medium)->selected();
             })
             ->all();
     }

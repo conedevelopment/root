@@ -242,23 +242,19 @@ abstract class Relation extends Field implements Routable
      */
     public function resolveOptions(): array
     {
-        $value = $this->resolveValue();
-
         return $this->resolveRelatableQuery()
             ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($value): Collection {
-                return $collection->groupBy($this->groupResolver)->map(function ($group, $key) use ($value): OptGroup {
-                    $options = $group->map(function (Model $related) use ($value): Option {
-                        return $this->newOption($related, $this->resolveDisplay($related))
-                            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+            ->when(! is_null($this->groupResolver), function (Collection $collection): Collection {
+                return $collection->groupBy($this->groupResolver)->map(function ($group, $key): OptGroup {
+                    $options = $group->map(function (Model $related): Option {
+                        return $this->toOption($related);
                     });
 
                     return new OptGroup($key, $options->all());
                 });
-            }, function (Collection $collection) use ($value): Collection {
-                return $collection->map(function (Model $related) use ($value): Option {
-                    return $this->newOption($related, $this->resolveDisplay($related))
-                        ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+            }, function (Collection $collection): Collection {
+                return $collection->map(function (Model $related): Option {
+                    return $this->toOption($related);
                 });
             })
             ->toArray();
@@ -301,5 +297,16 @@ abstract class Relation extends Field implements Routable
             'options' => $this->isAsync() ? [] : $this->resolveOptions(),
             'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
         ]);
+    }
+
+    /**
+     * Convert the related model to an option.
+     */
+    public function toOption(Model $related): RelationOption
+    {
+        $value = $this->resolveValue();
+
+        return $this->newOption($related, $this->resolveDisplay($related))
+            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
     }
 }
