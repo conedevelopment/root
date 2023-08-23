@@ -25,6 +25,11 @@ class Fields
     protected Collection $fields;
 
     /**
+     * The field registering callback.
+     */
+    protected ?Closure $registeringCallback = null;
+
+    /**
      * Create a new fields instance.
      */
     public function __construct(Form $form, array $fields = [])
@@ -34,11 +39,25 @@ class Fields
     }
 
     /**
+     * Set the callback for the field registration.
+     */
+    public function registering(Closure $callback): static
+    {
+        $this->registeringCallback = $callback;
+
+        return $this;
+    }
+
+    /**
      * Add a new field to the collection.
      */
     public function field(string $field, string $label, string $key = null, ...$params): Field
     {
         $instance = new $field($this->form, $label, $key, ...$params);
+
+        if (! is_null($this->registeringCallback)) {
+            call_user_func_array($this->registeringCallback, [$instance]);
+        }
 
         $this->push($instance);
 

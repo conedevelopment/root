@@ -117,6 +117,7 @@ class Form implements Routable, Stringable
             'key' => $this->getKey(),
             'method' => $this->method(),
             'url' => $this->replaceRoutePlaceholders($request->route()),
+            'errors' => $this->errors($request),
         ];
     }
 

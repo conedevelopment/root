@@ -28,7 +28,7 @@ class BelongsToMany extends Relation
 
         $this->setAttribute('multiple', true);
 
-        $this->fields = new PivotFields($form);
+        $this->fields = new Fields($form);
     }
 
     /**
@@ -46,14 +46,32 @@ class BelongsToMany extends Relation
      */
     public function withPivotFields(Closure $callback): static
     {
-        // $this->withFields(function (Fields $fields) use ($callback): Fields {
-        //     return call_user_func_array($callback, [
-        //         $fields,
-        //         $this->newOption($this->getRelation()->getRelated(), '')
-        //     ]);
-        // });
+        $this->fields->registering(function (Field $field): void {
+            $field->key(sprintf('%s.*.%s', $this->getKey(), $field->getKey()));
+        });
 
-        $this->pivotFieldsResolver = $callback;
+        $this->withFields($callback);
+
+        $this->pivotFieldsResolver = function (Model $related) use ($callback): Fields {
+            $fields = new Fields($this->form);
+
+            $fields->registering(function (Field $field) use ($related): void {
+                $attribute = $field->getKey();
+
+                $key = sprintf('%s.%s.%s', $this->getKey(), $related->getKey(), $field->getKey());
+
+                $field->key($key)
+                    ->id($key)
+                    ->name($key)
+                    ->value(function () use ($related, $attribute): mixed {
+                        return $related->getRelation($this->getRelation()->getPivotAccessor())->getAttribute($attribute);
+                    });
+            });
+
+            call_user_func_array($callback, [$fields]);
+
+            return $fields;
+        };
 
         return $this;
     }
@@ -69,7 +87,13 @@ class BelongsToMany extends Relation
             $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
         }
 
-        return parent::toOption($related);
+        $option =  parent::toOption($related);
+
+        if (! is_null($this->pivotFieldsResolver)) {
+            $option->withPivotFields($this->pivotFieldsResolver);
+        }
+
+        return $option;
     }
 
     /**
@@ -91,10 +115,12 @@ class BelongsToMany extends Relation
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
+                $value = (array) $value;
+
                 $relation = $this->getRelation($model);
 
                 $results = $this->resolveRelatableQuery($request, $model)
-                    ->findMany((array) array_keys($value))
+                    ->findMany(array_keys($value))
                     ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
                             $relation->getPivotAccessor(),
@@ -129,5 +155,16 @@ class BelongsToMany extends Relation
         $router->prefix($this->getUriKey())->group(function (Router $router): void {
             $this->fields->registerRoutes($router);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toValidate(Request $request): array
+    {
+        return array_merge(
+            parent::toValidate($request),
+            $this->fields->mapToValidate($request)
+        );
     }
 }

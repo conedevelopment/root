@@ -14,15 +14,17 @@
     <input type="hidden" name="{{ $attrs->get('name') }}" value="{{ $attrs->get('value') }}">
 </div>
 <div class="file-list-item__actions">
-    <button
-        type="button"
-        class="btn btn--light btn--sm btn--icon"
-        aria-label="{{ __('Edit') }}"
-        aria-describedby="{{ $medium->uuid }}"
-        x-on:click="$dispatch('open-{{ $medium->uuid }}')"
-    >
-        <x-root::icon name="edit" class="btn__icon" />
-    </a>
+    @if(! empty($fields))
+        <button
+            type="button"
+            class="btn btn--light btn--sm btn--icon"
+            aria-label="{{ __('Edit') }}"
+            aria-describedby="{{ $medium->uuid }}"
+            x-on:click="$dispatch('open-{{ $medium->uuid }}')"
+        >
+            <x-root::icon name="edit" class="btn__icon" />
+        </a>
+    @endif
     <button
         type="button"
         class="btn btn--delete btn--sm btn--icon"
@@ -34,4 +36,18 @@
     </button>
 </div>
 
-<x-root::modal :title="$label" :key="$medium->uuid"></x-root::modal>
+@if(! empty($fields))
+    <x-root::modal :title="$label" :key="$medium->uuid">
+        @foreach($fields as $field)
+            {!! $field !!}
+        @endforeach
+
+        <x-slot:footer>
+            <div class="modal__column">
+                <button type="button" class="btn btn--primary" x-on:click="open = false">
+                    {{ __('Close') }}
+                </button>
+            </div>
+        </x-slot:footer>
+    </x-root::modal>
+@endif

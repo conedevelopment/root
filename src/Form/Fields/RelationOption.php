@@ -20,7 +20,7 @@ class RelationOption extends Option
     /**
      * The pivot fields.
      */
-    protected ?Fields $pivotFields = null;
+    protected ?Fields $fields = null;
 
     /**
      * Create a new option instance.
@@ -37,7 +37,7 @@ class RelationOption extends Option
      */
     public function withPivotFields(Closure $callback): static
     {
-        $this->pivotFields = call_user_func_array($callback, [$this]);
+        $this->fields = call_user_func_array($callback, [$this->model]);
 
         return $this;
     }

@@ -6,9 +6,15 @@
         @endif
     </label>
     <input {{ $attrs->class(['form-file']) }}>
-    @foreach($value as $attached)
-        <input type="hidden" name="{{ $attrs->get('name') }}__attached[]" value="{{ $attached->getKey() }}">
-    @endforeach
+    @if(! empty($options))
+        <ul class="file-list__items">
+            @foreach($options as $option)
+                <li class="file-list-item">
+                    {!! $option !!}
+                </li>
+            @endforeach
+        </ul>
+    @endif
     @if($invalid)
         <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
     @endif

@@ -38,6 +38,7 @@ class FileOption extends RelationOption
             'attrs' => $this->newAttributeBag(),
             'medium' => $this->model,
             'label' => $this->label,
+            'fields' => $this->fields?->all() ?: [],
         ]);
     }
 

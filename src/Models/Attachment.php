@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class Attachment extends MorphPivot
 {
+    protected $attributes = [
+        'collection' => 'foo',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *

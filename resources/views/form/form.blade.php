@@ -1,3 +1,9 @@
+@if($errors->isNotEmpty())
+    <x-root::alert type="danger">
+        {{ __('Some error occurred when submitting the form!') }}
+    </x-root::alert>
+@endif
+
 <form method="POST" action="{{ $url }}" id="{{ $key }}" autocomplete="off">
     @csrf
     @method($method)
