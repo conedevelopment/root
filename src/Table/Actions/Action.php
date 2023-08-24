@@ -11,6 +11,7 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesQuery;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +25,7 @@ use Illuminate\Support\Str;
 use Stringable;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action implements Responsable, Routable, Stringable
+abstract class Action implements Responsable, Routable, Htmlable, Stringable
 {
     use AsForm;
     use Authorizable;
@@ -207,6 +208,14 @@ abstract class Action implements Responsable, Routable, Stringable
             $this->template,
             App::call([$this, 'data'])
         );
+    }
+
+    /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->toHtml();
     }
 
     /**

@@ -2,12 +2,13 @@
 
 namespace Cone\Root\Form;
 
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Stringable;
 
-class Panel implements Stringable
+class Panel implements Htmlable, Stringable
 {
     /**
      * The Blade template.
@@ -56,10 +57,18 @@ class Panel implements Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the panel to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 }

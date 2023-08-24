@@ -8,6 +8,7 @@ use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Widget implements Routable, Stringable
+abstract class Widget implements Routable, Htmlable, Stringable
 {
     use Authorizable;
     use Makeable;
@@ -131,10 +132,18 @@ abstract class Widget implements Routable, Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the field to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 }

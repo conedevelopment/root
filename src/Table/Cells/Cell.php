@@ -5,13 +5,14 @@ namespace Cone\Root\Table\Cells;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Stringable;
 
-abstract class Cell implements Stringable
+abstract class Cell implements Htmlable, Stringable
 {
     use Makeable;
     use ResolvesModelValue;
@@ -78,10 +79,18 @@ abstract class Cell implements Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the field to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 }

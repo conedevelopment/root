@@ -8,6 +8,7 @@ use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Field implements Stringable
+abstract class Field implements Htmlable, Stringable
 {
     use Authorizable;
     use HasAttributes;
@@ -352,11 +353,19 @@ abstract class Field implements Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the field to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 
     /**

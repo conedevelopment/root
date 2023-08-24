@@ -9,6 +9,7 @@ use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Exception;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\ViewErrorBag;
 use Stringable;
 
-class Form implements Routable, Stringable
+class Form implements Routable, Htmlable, Stringable
 {
     use Makeable;
     use ResolvesFields;
@@ -196,10 +197,18 @@ class Form implements Routable, Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the form to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 }

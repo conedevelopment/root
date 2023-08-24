@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Cone\Root\Form\Form;
+use Closure;
+use Cone\Root\Http\Controllers\RepeaterController;
 use Cone\Root\Traits\RegistersRoutes;
+use Illuminate\Routing\Router;
 
 class Repeater extends Fieldset
 {
@@ -17,12 +19,20 @@ class Repeater extends Fieldset
     protected string $template = 'root::form.fields.repeater';
 
     /**
-     * Create a new field instance.
+     * {@inheritdoc}
      */
-    public function __construct(Form $form, string $label, string $key)
+    public function withFields(Closure $callback): static
     {
-        parent::__construct($form, $label, $key);
-
         //
+
+        return parent::withFields($callback);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        $router->post('/', [RepeaterController::class]);
     }
 }

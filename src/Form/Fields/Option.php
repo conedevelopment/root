@@ -5,12 +5,13 @@ namespace Cone\Root\Form\Fields;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 use JsonSerializable;
 use Stringable;
 
-class Option implements Arrayable, Stringable, JsonSerializable
+class Option implements Arrayable, Htmlable, Stringable, JsonSerializable
 {
     use HasAttributes;
     use Makeable;
@@ -63,6 +64,14 @@ class Option implements Arrayable, Stringable, JsonSerializable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Get the JSON serializable format of the object.
      */
     public function jsonSerialize(): array
@@ -75,7 +84,7 @@ class Option implements Arrayable, Stringable, JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 
     /**

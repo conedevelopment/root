@@ -22,6 +22,7 @@ use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Traits\Macroable;
 use Stringable;
 
-class Table implements Routable, Stringable
+class Table implements Routable, Htmlable, Stringable
 {
     use AsForm;
     use Macroable;
@@ -173,11 +174,19 @@ class Table implements Routable, Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the table to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 
     /**

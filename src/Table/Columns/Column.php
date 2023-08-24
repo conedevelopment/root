@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Column implements Stringable
+abstract class Column implements Htmlable, Stringable
 {
     use Makeable;
 
@@ -188,10 +189,18 @@ abstract class Column implements Stringable
     }
 
     /**
+     * Render the HTML string.
+     */
+    public function toHtml(): string
+    {
+        return $this->render()->render();
+    }
+
+    /**
      * Convert the column to a string.
      */
     public function __toString(): string
     {
-        return $this->render()->render();
+        return $this->toHtml();
     }
 }
