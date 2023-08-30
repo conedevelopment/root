@@ -87,7 +87,7 @@ class BelongsToMany extends Relation
             $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
         }
 
-        $option =  parent::toOption($related);
+        $option = parent::toOption($related);
 
         if (! is_null($this->pivotFieldsResolver)) {
             $option->withPivotFields($this->pivotFieldsResolver);

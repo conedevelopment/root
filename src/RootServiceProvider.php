@@ -6,6 +6,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -116,8 +117,12 @@ class RootServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
             });
 
-        $this->app->make(Root::class)->routes(function (): void {
+        $root->routes(function (Router $router): void {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+            $router->prefix('api')->as('api.')->group(function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            });
         });
 
         RateLimiter::for('root.auth', static function (Request $request): Limit {
