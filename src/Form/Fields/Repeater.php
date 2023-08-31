@@ -33,6 +33,6 @@ class Repeater extends Fieldset
      */
     public function routes(Router $router): void
     {
-        $router->post('/', [RepeaterController::class]);
+        $router->post('/', RepeaterController::class);
     }
 }

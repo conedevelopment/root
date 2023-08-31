@@ -1,18 +1,18 @@
 {
   "resources/js/app.css": {
-    "file": "assets/app-f5b9c96a.css",
+    "file": "assets/app-79a10dd5.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
     "css": [
-      "assets/app-f5b9c96a.css"
+      "assets/app-79a10dd5.css"
     ],
-    "file": "assets/app-4b28aa6e.js",
+    "file": "assets/app-974e6980.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/js/editor.js": {
-    "file": "assets/editor-8c1a4bed.js",
+    "file": "assets/editor-7447720e.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -20,7 +20,7 @@
     "src": "resources/js/editor.js"
   },
   "resources/js/media-manager.js": {
-    "file": "assets/media-manager-8c1a4bed.js",
+    "file": "assets/media-manager-7447720e.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -28,7 +28,7 @@
     "src": "resources/js/media-manager.js"
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-faba5158.js",
+    "file": "assets/app-03d643d3.js",
     "imports": [
       "resources/js/app.js"
     ],

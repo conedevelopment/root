@@ -1,11 +1,26 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .media-list {
+  --column: 2;
   @include clear-list;
-  @include layout-grid('m', 7.5rem);
+  display: grid;
+  gap: spacer('m');
+  grid-template-columns: repeat(var(--column), minmax(0, 1fr));
+
+  @include breakpoint('xs') {
+    --column: 3;
+  }
+
+  @include breakpoint('sm') {
+    --column: 4;
+  }
 
   @include breakpoint('md') {
-    @include layout-grid('m', 9rem);
+    --column: 6;
+  }
+
+  @include breakpoint('lg') {
+    --column: 8;
   }
 
   > * + * {
@@ -72,6 +87,10 @@
       block-size: var(--size);
       inline-size: var(--size);
     }
+  }
+
+  .progressbar {
+    margin-block-start: spacer('s');
   }
 
   img {

@@ -49,7 +49,7 @@
                     <thead>
                         <tr>
                             @if(! empty($actions))
-                                <th style="width: 3.25rem;">
+                            <th style="inline-size: 3.25rem;">
                                     <span class="sr-only">{{ __('Select') }}</span>
                                     <label class="form-check" aria-label="{{ __('Select all items') }}">
                                         <input class="form-check__control" type="checkbox">

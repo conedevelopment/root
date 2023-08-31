@@ -6,7 +6,7 @@ document.addEventListener('alpine:init', () => {
             fetch() {
                 this.processing = true;
 
-                window.$http.post(this.next_page_url).then((response) => {
+                window.$http.post(url).then((response) => {
                     //
                 }).catch((error) => {
                     //
