@@ -5,7 +5,9 @@ namespace Cone\Root\Form\Fields;
 use Closure;
 use Cone\Root\Http\Controllers\RepeaterController;
 use Cone\Root\Traits\RegistersRoutes;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 
 class Repeater extends Fieldset
 {
@@ -19,6 +21,14 @@ class Repeater extends Fieldset
     protected string $template = 'root::form.fields.repeater';
 
     /**
+     * Get the add new label.
+     */
+    public function addNewLabel(): string
+    {
+        return __('Add :name', ['name' => Str::singular($this->label)]);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function withFields(Closure $callback): static
@@ -26,6 +36,16 @@ class Repeater extends Fieldset
         //
 
         return parent::withFields($callback);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function data(Request $request): array
+    {
+        return array_merge(parent::data($request), [
+            'addNewLabel' => $this->addNewLabel(),
+        ]);
     }
 
     /**

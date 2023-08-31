@@ -3,4 +3,10 @@
     <div class="repeater-container">
 
     </div>
+    <div class="btn-dropdown">
+        <button type="button" class="btn btn--primary btn--icon">
+            {{ $addNewLabel }}
+            <x-root::icon name="plus" class="btn__icon" />
+        </button>
+    </div>
 </div>
