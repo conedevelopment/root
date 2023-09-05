@@ -7,7 +7,6 @@ use Cone\Root\Form\Form;
 use Cone\Root\Http\Controllers\ResourceController;
 use Cone\Root\Interfaces\Routable;
 use Cone\Root\Navigation\Item;
-use Cone\Root\Relations\Relations;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
@@ -16,7 +15,6 @@ use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
-use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
 use Cone\Root\Widgets\Widgets;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,7 +32,6 @@ class Resource implements Routable
     use AsTable;
     use Authorizable;
     use ResolvesExtracts;
-    use ResolvesRelations;
     use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -68,7 +65,6 @@ class Resource implements Routable
         $this->model = $model;
         $this->extracts = new Extracts($this, $this->extracts());
         $this->widgets = new Widgets($this->widgets());
-        $this->relations = new Relations($this->relations());
     }
 
     /**
@@ -347,7 +343,6 @@ class Resource implements Routable
 
                 $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                     $this->form($request)->registerRoutes($router);
-                    // $this->relations->registerRoutes($router);
                 });
             });
         });

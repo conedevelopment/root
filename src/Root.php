@@ -74,7 +74,9 @@ class Root
             call_user_func_array($callback, [$this]);
         }
 
-        $this->resources->each(fn (Resource $resource) => $resource->boot($this));
+        $this->resources->each(function (Resource $resource): void {
+            $resource->boot($this);
+        });
 
         foreach ($this->booted as $callback) {
             call_user_func_array($callback, [$this]);
