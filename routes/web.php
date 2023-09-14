@@ -9,7 +9,7 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');
-Route::get('/create', [ResourceController::class, 'create'])->name('resource.create');
+Route::get('/{resource}/create', [ResourceController::class, 'create'])->name('resource.create');
 Route::post('/{resource}', [ResourceController::class, 'store'])->name('resource.store');
 Route::get('/{resource}/{resourceModel}', [ResourceController::class, 'edit'])->name('resource.edit');
 Route::patch('/{resource}/{resourceModel}', [ResourceController::class, 'update'])->name('resource.update');

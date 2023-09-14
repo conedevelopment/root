@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Form\Fields;
+namespace Cone\Root\Form\Fields\Options;
 
 class PendingFileOption extends FileOption
 {

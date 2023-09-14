@@ -3,6 +3,7 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Fields\Options\RelationOption;
 use Cone\Root\Form\Form;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
@@ -111,7 +112,7 @@ class BelongsToMany extends Relation
         $option = parent::toOption($related);
 
         if (! is_null($this->pivotFieldsResolver)) {
-            $option->withPivotFields($this->pivotFieldsResolver);
+            $option->withPivotFields(call_user_func_array($this->pivotFieldsResolver, [$related]));
         }
 
         return $option;

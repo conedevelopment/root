@@ -1,12 +1,14 @@
 <?php
 
-namespace Cone\Root\Form\Fields;
+namespace Cone\Root\Form\Fields\Options;
 
 use Cone\Root\Support\Element;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Support\Traits\Conditionable;
 
 class Option extends Element
 {
+    use Conditionable;
     use Makeable;
 
     /**

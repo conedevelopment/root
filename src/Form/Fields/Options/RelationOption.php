@@ -1,8 +1,8 @@
 <?php
 
-namespace Cone\Root\Form\Fields;
+namespace Cone\Root\Form\Fields\Options;
 
-use Closure;
+use Cone\Root\Form\Fields\Fields;
 use Illuminate\Database\Eloquent\Model;
 
 class RelationOption extends Option
@@ -33,11 +33,11 @@ class RelationOption extends Option
     }
 
     /**
-     * Resolve the pivot fields.
+     * Set the pivot fields.
      */
-    public function withPivotFields(Closure $callback): static
+    public function withPivotFields(Fields $fields): static
     {
-        $this->fields = call_user_func_array($callback, [$this->model]);
+        $this->fields = $fields;
 
         return $this;
     }

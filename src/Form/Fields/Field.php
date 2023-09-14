@@ -97,6 +97,7 @@ abstract class Field extends Element implements Responsable
         $this->label($label);
         $this->name($this->modelAttribute);
         $this->id($this->modelAttribute);
+        $this->setAttribute('class', 'form-control');
         $this->setAttribute('form', $form->getAttribute('id'));
     }
 

@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Cone\Root\Form\Fields\Options\CheckboxOption;
+
 class Checkbox extends Select
 {
     /**

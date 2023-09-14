@@ -3,6 +3,8 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Fields\Options\OptGroup;
+use Cone\Root\Form\Fields\Options\RelationOption;
 use Cone\Root\Form\Form;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -231,7 +233,7 @@ abstract class Relation extends Field
     {
         $value = $this->resolveValue($request);
 
-        $mapCallback = function (Model $related) use ($value): Option {
+        $mapCallback = function (Model $related) use ($value): RelationOption {
             return $this->toOption($related)
                 ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
         };

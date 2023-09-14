@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Cone\Root\Form\Fields\Options\RadioOption;
+
 class Radio extends Checkbox
 {
     /**

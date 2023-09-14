@@ -15,7 +15,6 @@ class Text extends Field
         parent::__construct($form, $label, $modelAttribute);
 
         $this->type('text');
-        $this->setAttribute('class', 'form-control');
     }
 
     /**

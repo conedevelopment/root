@@ -3,6 +3,7 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
+use Cone\Root\Form\Fields\Options\FileOption;
 use Cone\Root\Form\Form;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;

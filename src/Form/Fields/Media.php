@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Form\Fields;
 
+use Cone\Root\Form\Fields\Options\FileOption;
+use Cone\Root\Form\Fields\Options\PendingFileOption;
 use Cone\Root\Models\Medium;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;

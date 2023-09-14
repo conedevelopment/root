@@ -12,6 +12,7 @@ use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesWidgets;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements AsForm, AsTable
+class Resource implements Arrayable, AsForm, AsTable
 {
     use Authorizable;
     use ResolvesExtracts;
@@ -217,14 +218,29 @@ class Resource implements AsForm, AsTable
     }
 
     /**
+     * Get the instance as an array.
+     */
+    public function toArray(): array
+    {
+        return [
+            'icon' => $this->getIcon(),
+            'key' => $this->getKey(),
+            'model' => $this->getModel(),
+            'modelName' => $this->getModelName(),
+            'name' => $this->getName(),
+            'uriKey' => $this->getUriKey(),
+        ];
+    }
+
+    /**
      * Get the index representation of the resource.
      */
     public function toIndex(Request $request): array
     {
-        return [
-            'title' => '',
+        return array_merge($this->toArray(), [
+            'title' => $this->getName(),
             'table' => $this->toTable($request, $this->resolveQuery($request)),
-        ];
+        ]);
     }
 
     /**
@@ -232,9 +248,10 @@ class Resource implements AsForm, AsTable
      */
     public function toCreate(Request $request): array
     {
-        return [
-            //
-        ];
+        return array_merge($this->toArray(), [
+            'title' => __('Create :model', ['model' => $this->getModelName()]),
+            'form' => $this->toForm($request, $this->getModelInstance()),
+        ]);
     }
 
     /**
@@ -242,10 +259,10 @@ class Resource implements AsForm, AsTable
      */
     public function toEdit(Request $request, Model $model): array
     {
-        return [
+        return array_merge($this->toArray(), [
             'title' => '',
             'form' => $this->toForm($request, $model),
-        ];
+        ]);
     }
 
     /**
