@@ -348,7 +348,7 @@ class Table extends Element implements AsForm
             ->withFields(function (Request $request, Fields $fields): void {
                 $this->resolveFilters($request)
                     ->renderable()
-                    ->each(function (Filter $filter) use ($request, $fields): void {
+                    ->each(function (Filter $filter) use ($fields): void {
                         $fields->push($filter->toField($fields->form));
                     });
             })

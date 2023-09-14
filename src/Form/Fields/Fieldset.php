@@ -16,6 +16,14 @@ class Fieldset extends Field
     protected string $template = 'root::form.fields.fieldset';
 
     /**
+     * Create a new fields collection.
+     */
+    public function newFieldsCollection(): Fields
+    {
+        return new Fields($this->form);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function persist(Request $request, mixed $value): void

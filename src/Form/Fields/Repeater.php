@@ -3,18 +3,11 @@
 namespace Cone\Root\Form\Fields;
 
 use Closure;
-use Cone\Root\Http\Controllers\RepeaterController;
-use Cone\Root\Traits\RegistersRoutes;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class Repeater extends Fieldset
 {
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
-
     /**
      * The Blade template.
      */
@@ -41,9 +34,9 @@ class Repeater extends Fieldset
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        return array_merge(parent::toArray(), [
             'addNewLabel' => $this->addNewLabel(),
         ]);
     }
@@ -51,8 +44,8 @@ class Repeater extends Fieldset
     /**
      * {@inheritdoc}
      */
-    public function routes(Router $router): void
+    public function toResponse($request): JsonResponse
     {
-        $router->post('/', RepeaterController::class);
+        return parent::toResponse($request);
     }
 }

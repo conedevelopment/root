@@ -141,6 +141,8 @@ class Editor extends Field
                 });
 
                 $this->template = 'root::form.fields.editor.media';
+
+                $this->multiple();
             }
         };
     }

@@ -18,7 +18,7 @@ class ResourceFieldController extends Controller
             ? $resource->resolveRouteBinding($request, $request->query('model'))
             : $resource->getModelInstance();
 
-        $field = $resource->form($request, $model)->findField(
+        $field = $resource->toForm($request, $model)->findField(
             $request, $request->path()
         );
 
