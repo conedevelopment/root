@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Traits\Conditionable;
 use Stringable;
 
-abstract class Cell  extends Element
+abstract class Cell extends Element
 {
     use Conditionable;
     use Makeable;
