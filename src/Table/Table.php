@@ -75,7 +75,7 @@ class Table extends Element implements AsForm
     /**
      * The row URL resolver.
      */
-    protected ?Closure $rowUrlResovler = null;
+    protected ?Closure $rowUrlResolver = null;
 
     /**
      * Create a new table instance.
@@ -299,7 +299,7 @@ class Table extends Element implements AsForm
      */
     public function rowUrl(Closure $callback): static
     {
-        $this->rowUrlResovler = $callback;
+        $this->rowUrlResolver = $callback;
 
         return $this;
     }
@@ -309,11 +309,11 @@ class Table extends Element implements AsForm
      */
     public function resolveRowUrl(Request $request, Model $model): string
     {
-        if (is_null($this->rowUrlResovler)) {
+        if (is_null($this->rowUrlResolver)) {
             return sprintf('%s/%s', $request->url(), $model->getKey());
         }
 
-        return call_user_func_array($this->rowUrlResovler, [$request, $model]);
+        return call_user_func_array($this->rowUrlResolver, [$request, $model]);
     }
 
     /**
