@@ -56,7 +56,7 @@ abstract class Filter
      */
     public function getRequestKey(): string
     {
-        return sprintf('%s:%s', $this->table->getKey(), $this->getKey());
+        return sprintf('%s:%s', $this->table->getAttribute('id'), $this->getKey());
     }
 
     /**
@@ -80,7 +80,7 @@ abstract class Filter
      */
     public function isActive(Request $request): bool
     {
-        return $request->has($this->getRequestKey());
+        return $request->filled($this->getRequestKey());
     }
 
     /**

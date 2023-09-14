@@ -2,16 +2,11 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Cone\Root\Traits\HasAttributes;
+use Cone\Root\Support\Element;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\App;
-use Stringable;
 
-class OptGroup implements Htmlable, Stringable
+class OptGroup extends Element
 {
-    use HasAttributes;
     use Makeable;
 
     /**
@@ -64,29 +59,12 @@ class OptGroup implements Htmlable, Stringable
     }
 
     /**
-     * Render the option group.
+     * {@inheritdoc}
      */
-    public function render(): View
+    public function toArray(): array
     {
-        return App::make('view')->make($this->template, [
-            'attrs' => $this->newAttributeBag(),
+        return array_merge(parent::toArray(), [
             'options' => $this->options,
         ]);
-    }
-
-    /**
-     * Render the HTML string.
-     */
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    /**
-     * Convert the field to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->toHtml();
     }
 }

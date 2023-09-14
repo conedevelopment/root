@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Widgets;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -46,16 +45,6 @@ class Widgets
         $this->register($instance);
 
         return $instance;
-    }
-
-    /**
-     * Register the widget routes.
-     */
-    public function registerRoutes(Router $router): void
-    {
-        $router->prefix('widgets')->group(function (Router $router): void {
-            $this->widgets->each->registerRoutes($router);
-        });
     }
 
     /**

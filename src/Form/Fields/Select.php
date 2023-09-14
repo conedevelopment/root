@@ -5,6 +5,7 @@ namespace Cone\Root\Form\Fields;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 
 class Select extends Field
 {
@@ -76,15 +77,15 @@ class Select extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(): array
+    public function resolveOptions(Request $request): array
     {
         if (is_null($this->optionsResolver)) {
             return [];
         }
 
-        $options = call_user_func_array($this->optionsResolver, [$this->resolveModel()]);
+        $options = call_user_func_array($this->optionsResolver, [$request, $this->getModel()]);
 
-        $value = Arr::wrap($this->resolveValue());
+        $value = Arr::wrap($this->resolveValue($request));
 
         return array_map(function (mixed $label, mixed $option) use ($value): Option {
             $option = $label instanceof Option ? $label : $this->newOption($option, $label);
@@ -106,11 +107,16 @@ class Select extends Field
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
-            'nullable' => $this->isNullable(),
-            'options' => $this->resolveOptions(),
-        ]);
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'nullable' => $this->isNullable(),
+                    'options' => $this->resolveOptions($request),
+                ];
+            })
+        );
     }
 }

@@ -4,6 +4,7 @@ namespace Cone\Root\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 trait ResolvesModelValue
 {
@@ -18,9 +19,14 @@ trait ResolvesModelValue
     protected ?Closure $valueResolver = null;
 
     /**
-     * Resolve the model.
+     * Get the model.
      */
-    abstract public function resolveModel(): Model;
+    abstract public function getModel(): Model;
+
+    /**
+     * Get the model attribute.
+     */
+    abstract public function getModelAttribute(): string;
 
     /**
      * Set the value resolver.
@@ -35,7 +41,7 @@ trait ResolvesModelValue
     /**
      * Resolve the value.
      */
-    public function resolveValue(): mixed
+    public function resolveValue(Request $request): mixed
     {
         $value = $this->getValue();
 
@@ -43,7 +49,7 @@ trait ResolvesModelValue
             return $value;
         }
 
-        return call_user_func_array($this->valueResolver, [$this->resolveModel(), $value]);
+        return call_user_func_array($this->valueResolver, [$request, $this->getModel(), $value]);
     }
 
     /**
@@ -51,7 +57,7 @@ trait ResolvesModelValue
      */
     public function getValue(): mixed
     {
-        return $this->resolveModel()->getAttribute($this->getKey());
+        return $this->getModel()->getAttribute($this->getModelAttribute());
     }
 
     /**
@@ -67,14 +73,14 @@ trait ResolvesModelValue
     /**
      * Format the value.
      */
-    public function resolveFormat(): mixed
+    public function resolveFormat(Request $request): mixed
     {
-        $value = $this->resolveValue();
+        $value = $this->resolveValue($request);
 
         if (is_null($this->formatResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->formatResolver, [$this->resolveModel(), $value]);
+        return call_user_func_array($this->formatResolver, [$request, $this->getModel(), $value]);
     }
 }

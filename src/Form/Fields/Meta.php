@@ -4,6 +4,7 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
@@ -19,7 +20,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->getRelated();
@@ -29,16 +30,16 @@ class Meta extends MorphOne
                 ->ofMany(
                     [$related->getCreatedAtColumn() => 'MAX'],
                     function (Builder $query) use ($related): Builder {
-                        return $query->where($related->qualifyColumn('key'), $this->getKey());
+                        return $query->where($related->qualifyColumn('key'), $this->getModelAttribute());
                     },
                     'metaData'
                 )
-                ->withDefault(['key' => $this->getKey()]);
+                ->withDefault(['key' => $this->getModelAttribute()]);
         };
 
         $this->asText();
 
-        parent::__construct($form, $label, $key, $relation);
+        parent::__construct($form, $label, $modelAttribute, $relation);
     }
 
     /**
@@ -47,7 +48,7 @@ class Meta extends MorphOne
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? sprintf('__root_%s', $this->getKey())
+            ? sprintf('__root_%s', $this->getModelAttribute())
             : $this->relation;
     }
 
@@ -56,13 +57,13 @@ class Meta extends MorphOne
      */
     public function as(string $field, Closure $callback = null): static
     {
-        $this->field = new $field($this->label, $this->getKey());
+        $this->field = new $field($this->label, $this->getModelAttribute());
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
         }
 
-        $this->field->value(fn (): mixed => $this->resolveValue());
+        $this->field->value(fn (Request $request): mixed => $this->resolveValue($request));
 
         return $this;
     }
@@ -190,7 +191,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(): array
+    public function resolveOptions(Request $request): array
     {
         return [];
     }
@@ -200,7 +201,7 @@ class Meta extends MorphOne
      */
     public function getValue(): mixed
     {
-        $model = $this->resolveModel();
+        $model = $this->getModel();
 
         $name = $this->getRelationName();
 
@@ -211,19 +212,19 @@ class Meta extends MorphOne
             && ! is_null(
                 $value = $model->getRelation('metaData')
                     ->sortByDesc('created_at')
-                    ->firstWhere('key', $this->getKey())
+                    ->firstWhere('key', $this->getModelAttribute())
             )
         ) {
             $model->setRelation($name, $value);
         }
 
-        return parent::getValue($model);
+        return parent::getValue();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(): mixed
+    public function resolveValue(Request $request): mixed
     {
         if (is_null($this->valueResolver)) {
             $this->valueResolver = static function (Model $model, mixed $value): mixed {
@@ -231,7 +232,7 @@ class Meta extends MorphOne
             };
         }
 
-        return parent::resolveValue();
+        return parent::resolveValue($request);
     }
 
     /**
@@ -255,9 +256,17 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function render(): string
+    public function render(): View
     {
         return $this->field->render();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return $this->field->toArray();
     }
 
     /**

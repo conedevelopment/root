@@ -1,4 +1,4 @@
-<form id="{{ $key }}" action="" method="GET" class="app-card__actions" autocomplete="off">
+<form {{ $attrs }}>
     @if($search)
         {!! $search !!}
     @endif
@@ -11,7 +11,9 @@
                 x-on:click="open = ! open"
             >
                 <x-root::icon name="filter" class="btn__icon" />
-                <span class="btn__counter">2</span>
+                @if($attrs->get('data-active'))
+                    <span class="btn__counter">{{ $attrs->get('data-active') }}</span>
+                @endif
             </button>
             <div class="context-menu context-menu--inline-end" x-bind:data-state="open ? 'open' : 'closed'">
                 <div class="form-group-stack form-group-stack--bordered form-group-container">
@@ -19,8 +21,12 @@
                         {!! $field !!}
                     @endforeach
                     <div class="data-table-filter__actions">
-                        <button type="submit" class="btn btn--primary btn--sm">Filter</button>
-                        <button type="reset" class="btn btn--light btn--sm">Reset</button>
+                        <button type="submit" class="btn btn--primary btn--sm">
+                            {{ __('Filter') }}
+                        </button>
+                        <button type="reset" class="btn btn--light btn--sm">
+                            {{ __('Reset') }}
+                        </button>
                     </div>
                 </div>
             </div>

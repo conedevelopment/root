@@ -2,40 +2,29 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Extracts\Extracts;
 use Cone\Root\Form\Form;
-use Cone\Root\Http\Controllers\ResourceController;
-use Cone\Root\Interfaces\Routable;
+use Cone\Root\Interfaces\AsForm;
+use Cone\Root\Interfaces\AsTable;
 use Cone\Root\Navigation\Item;
 use Cone\Root\Root;
 use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
-use Cone\Root\Traits\AsForm;
-use Cone\Root\Traits\AsTable;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Widgets;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Routable
+class Resource implements AsForm, AsTable
 {
-    use AsForm;
-    use AsTable;
     use Authorizable;
     use ResolvesExtracts;
     use ResolvesWidgets;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
 
     /**
      * The model class.
@@ -56,16 +45,6 @@ class Resource implements Routable
      * The icon for the resource.
      */
     protected string $icon = 'archive';
-
-    /**
-     * Create a new resource instance.
-     */
-    public function __construct(string $model)
-    {
-        $this->model = $model;
-        $this->extracts = new Extracts($this, $this->extracts());
-        $this->widgets = new Widgets($this->widgets());
-    }
 
     /**
      * Get the model for the resource.
@@ -89,22 +68,6 @@ class Resource implements Routable
     public function getUriKey(): string
     {
         return $this->getKey();
-    }
-
-    /**
-     * Get the route key name.
-     */
-    public function getRouteKeyName(): string
-    {
-        return Str::of($this->getKey())->singular()->replace('-', '_')->prepend('resource_')->value();
-    }
-
-    /**
-     * Get the URI of the resource.
-     */
-    public function getUri(): string
-    {
-        return Str::start(sprintf('%s/%s', App::make(Root::class)->getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -194,47 +157,24 @@ class Resource implements Routable
     }
 
     /**
+     * Resolve the route binding query.
+     */
+    public function resolveRouteBindingQuery(Request $request): Builder
+    {
+        return $this->resolveQuery($request)->when(
+            $this->isSoftDeletable(),
+            static function (Builder $query): Builder {
+                return $query->withTrashed();
+            }
+        );
+    }
+
+    /**
      * Resolve the resource model for a bound value.
      */
     public function resolveRouteBinding(Request $request, string $id): Model
     {
-        return $this->resolveQuery($request)
-            ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
-                return $query->withTrashed();
-            })
-            ->findOrFail($id);
-    }
-
-    /**
-     * Handle the created event.
-     */
-    public function created(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the updated event.
-     */
-    public function updated(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the deleted event.
-     */
-    public function deleted(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the restored event.
-     */
-    public function restored(Request $request, Model $model): void
-    {
-        //
+        return $this->resolveRouteBindingQuery($request)->findOrFail($id);
     }
 
     /**
@@ -246,23 +186,34 @@ class Resource implements Routable
     }
 
     /**
-     * Get the table instance for the resource.
+     * The URL for the given model.
      */
-    public function toTable(Request $request): Table
+    public function modelUrl(Model $model): string
     {
-        return Table::make($this->getKey())->query(function () use ($request): Builder {
-            return $this->resolveQuery($request);
-        });
+        return URL::route($model->exists ? 'root.resource.update' : 'root.resource.store', [$this->getUriKey(), $model]);
     }
 
     /**
-     * Get the form instance for the resource.
+     * Make a new form for the model.
      */
-    public function toForm(Request $request): Form
+    public function toTable(Request $request, Builder $query): Table
     {
-        return Form::make($this->getKey())->model(function () use ($request): Model {
-            return $request->route($this->getRouteKeyName(), $this->getModelInstance());
-        });
+        return (new Table($query))
+            ->rowUrl(function (Request $request, Model $model): string {
+                return $this->modelUrl($model);
+            });
+    }
+
+    /**
+     * Make a new form for the model.
+     */
+    public function toForm(Request $request, Model $model): Form
+    {
+        return new Form(
+            $model,
+            $this->modelUrl($model),
+            sprintf('/root/api/%s/form/fields', $this->getKey())
+        );
     }
 
     /**
@@ -271,10 +222,8 @@ class Resource implements Routable
     public function toIndex(Request $request): array
     {
         return [
-            'resource' => $this,
-            'title' => $this->getName(),
-            'table' => $this->table($request),
-            'widgets' => $this->widgets,
+            'title' => '',
+            'table' => $this->toTable($request, $this->resolveQuery($request)),
         ];
     }
 
@@ -284,9 +233,7 @@ class Resource implements Routable
     public function toCreate(Request $request): array
     {
         return [
-            'form' => $this->form($request),
-            'model' => $this->form($request)->resolveModel(),
-            'title' => __('Create :model', ['model' => $this->getModelName()]),
+            //
         ];
     }
 
@@ -296,11 +243,8 @@ class Resource implements Routable
     public function toEdit(Request $request, Model $model): array
     {
         return [
-            'form' => $this->form($request)->model(fn (): Model => $model),
-            'model' => $model,
-            'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            // 'widgets' => $this->widgets,
-            // 'relations' => $this->relations,
+            'title' => '',
+            'form' => $this->toForm($request, $model),
         ];
     }
 
@@ -309,9 +253,8 @@ class Resource implements Routable
      */
     public function toNavigationItem(Request $request): Item
     {
-        return Item::make($this->getUri(), $this->getName())
-            ->icon($this->icon)
-            ->add($this->extracts->mapToNavigation($request));
+        return Item::make('#', $this->getName())
+            ->icon($this->icon);
     }
 
     /**
@@ -319,59 +262,6 @@ class Resource implements Routable
      */
     public function boot(Root $root): void
     {
-        $root->routes(function (Router $router): void {
-            $this->registerRoutes($router);
-        });
-
         Navigation::location('sidebar')->add($this->toNavigationItem($root->app['request']));
-    }
-
-    /**
-     * Register the routes.
-     */
-    public function registerRoutes(Router $router): void
-    {
-        $router->group(['__resource__' => $this->getKey()], function (Router $router) {
-            $this->__registerRoutes($router);
-
-            $request = App::make('request');
-
-            $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-                $this->widgets->registerRoutes($router);
-                $this->extracts->registerRoutes($router);
-                $this->table($request)->registerRoutes($router);
-
-                $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                    $this->form($request)->registerRoutes($router);
-                });
-            });
-        });
-    }
-
-    /**
-     * Register the route constraints.
-     */
-    public function registerRouteConstraints(Router $router): void
-    {
-        $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
-            return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
-        });
-    }
-
-    /**
-     * The routes that should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        $router->get('/', [ResourceController::class, 'index']);
-        $router->get('/create', [ResourceController::class, 'create']);
-        $router->post('/', [ResourceController::class, 'store']);
-        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'edit']);
-        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
-        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
-
-        if ($this->isSoftDeletable()) {
-            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
-        }
     }
 }

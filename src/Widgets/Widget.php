@@ -3,24 +3,19 @@
 namespace Cone\Root\Widgets;
 
 use Closure;
-use Cone\Root\Http\Controllers\WidgetController;
-use Cone\Root\Interfaces\Routable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Stringable;
 
-abstract class Widget implements Routable, Htmlable, Stringable
+abstract class Widget implements Htmlable, Stringable
 {
     use Authorizable;
     use Makeable;
-    use RegistersRoutes;
 
     /**
      * Indicates if the component is async.
@@ -108,16 +103,6 @@ abstract class Widget implements Routable, Htmlable, Stringable
             $this->data($request),
             is_null($this->dataResolver) ? [] : call_user_func_array($this->dataResolver, [$request])
         );
-    }
-
-    /**
-     * The routes that should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        if ($this->async) {
-            $router->get('/', WidgetController::class);
-        }
     }
 
     /**

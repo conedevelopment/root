@@ -8,7 +8,7 @@ use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\App;
 
 class BelongsToMany extends Relation
 {
@@ -22,13 +22,11 @@ class BelongsToMany extends Relation
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $key, $relation);
+        parent::__construct($form, $label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
-
-        $this->fields = new Fields($form);
     }
 
     /**
@@ -42,33 +40,56 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Create a new fields collection.
+     */
+    public function newFieldsCollection(): Fields
+    {
+        return new Fields($this->form);
+    }
+
+    /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveField(Request $request, Field $field): void
+    {
+        if (! is_null($this->apiUri)) {
+            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
+        }
+
+        $field->setModelAttribute(
+            sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
+        );
+    }
+
+    /**
      * Set the pivot field resolver.
      */
     public function withPivotFields(Closure $callback): static
     {
-        $this->fields->registering(function (Field $field): void {
-            $field->key(sprintf('%s.*.%s', $this->getKey(), $field->getKey()));
-        });
-
         $this->withFields($callback);
 
         $this->pivotFieldsResolver = function (Model $related) use ($callback): Fields {
             $fields = new Fields($this->form);
 
-            $fields->registering(function (Field $field) use ($related): void {
-                $attribute = $field->getKey();
-
-                $key = sprintf('%s.%s.%s', $this->getKey(), $related->getKey(), $field->getKey());
-
-                $field->key($key)
-                    ->id($key)
-                    ->name($key)
-                    ->value(function () use ($related, $attribute): mixed {
-                        return $related->getRelation($this->getRelation()->getPivotAccessor())->getAttribute($attribute);
-                    });
+            App::call(static function (Request $request) use ($callback, $fields): void {
+                call_user_func_array($callback, [$request, $fields]);
             });
 
-            call_user_func_array($callback, [$fields]);
+            $fields->each(function (Field $field) use ($related): void {
+                $attribute = sprintf(
+                    '%s.%s.%s',
+                    $this->getModelAttribute(),
+                    $related->getKey(),
+                    $key = $field->getModelAttribute()
+                );
+
+                $field->setModelAttribute($attribute)
+                    ->name($attribute)
+                    ->id($attribute)
+                    ->value(function () use ($related, $key): mixed {
+                        return $related->getRelation($this->getRelation()->getPivotAccessor())->getAttribute($key);
+                    });
+            });
 
             return $fields;
         };
@@ -101,7 +122,7 @@ class BelongsToMany extends Relation
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saved(function () use ($request, $value): void {
+        $this->getModel()->saved(function () use ($request, $value): void {
             $this->resolveHydrate($request, $value);
 
             $this->getRelation()->sync($value);
@@ -117,9 +138,9 @@ class BelongsToMany extends Relation
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $value = (array) $value;
 
-                $relation = $this->getRelation($model);
+                $relation = $this->getRelation();
 
-                $results = $this->resolveRelatableQuery($request, $model)
+                $results = $this->resolveRelatableQuery($request)
                     ->findMany(array_keys($value))
                     ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
@@ -138,23 +159,11 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        return array_merge(parent::toArray(), [
             'relatedName' => $this->getRelatedName(),
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function registerRoutes(Router $router): void
-    {
-        parent::registerRoutes($router);
-
-        $router->prefix($this->getUriKey())->group(function (Router $router): void {
-            $this->fields->registerRoutes($router);
-        });
     }
 
     /**
@@ -164,7 +173,7 @@ class BelongsToMany extends Relation
     {
         return array_merge(
             parent::toValidate($request),
-            $this->fields->mapToValidate($request)
+            $this->resolveFields($request)->mapToValidate($request)
         );
     }
 }

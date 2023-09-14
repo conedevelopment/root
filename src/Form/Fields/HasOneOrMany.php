@@ -22,7 +22,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saved(function (Model $model) use ($request, $value): void {
+        $this->getModel()->saved(function (Model $model) use ($request, $value): void {
             $relation = $this->getRelation();
 
             $this->resolveHydrate($request, $value);
@@ -44,7 +44,7 @@ abstract class HasOneOrMany extends Relation
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $related = $this->resolveRelatableQuery()->find($value);
+                $related = $this->resolveRelatableQuery($request)->find($value);
 
                 $model->setRelation($this->getRelationName(), $related);
             };

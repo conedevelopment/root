@@ -9,10 +9,10 @@
 
 <div class="app-actions app-actions--sidebar">
     <div class="app-actions__column">
-        <button type="submit" class="btn btn--primary" form="{{ $form->getKey() }}">Save</button>
+        <button type="submit" class="btn btn--primary" form="{{ $form->getAttribute('id') }}">Save</button>
         <button class="btn btn--light">Cancel</button>
     </div>
-    @if($model->exists)
+    @if($form->model->exists)
         <div class="app-actions__column">
             <form method="POST" action="#">
                 @csrf

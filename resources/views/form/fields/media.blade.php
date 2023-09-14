@@ -1,6 +1,6 @@
 <div
     class="form-group--row"
-    x-data="{ selection: {{ json_encode($options) }} }"
+    x-data="{ selection: {{ json_encode($selection) }} }"
 >
     <span class="form-label">{{ $label }}</span>
     <div class="file-list">
@@ -13,7 +13,7 @@
         </button>
         <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
             <template x-for="(item, index) in selection" :key="item.uuid">
-                <li class="file-list-item" x-html="item.fragment"></li>
+                <li class="file-list-item" x-html="item.html"></li>
             </template>
         </ul>
     </div>

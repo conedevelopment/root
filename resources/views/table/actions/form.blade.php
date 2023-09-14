@@ -1,4 +1,4 @@
-<form method="POST" action="{{ $url }}" id="{{ $key }}" autocomplete="off">
+<form {{ $attrs }}>
     @csrf
     @method($method)
     <div class="form-group-stack form-group-stack--bordered form-group-container">

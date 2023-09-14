@@ -52,9 +52,7 @@ class RootApplicationServiceProvider extends ServiceProvider
     protected function registerRoutes(Root $root): void
     {
         $root->routes(function (Router $router) use ($root): void {
-            $router->prefix('dashboard')->group(function (Router $router) use ($root): void {
-                $root->widgets->registerRoutes($router);
-            });
+            //
         });
     }
 

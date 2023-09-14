@@ -4,7 +4,9 @@ namespace Cone\Root\Table\Filters;
 
 use Cone\Root\Form\Fields\Field;
 use Cone\Root\Form\Form;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class FilterForm extends Form
 {
@@ -12,6 +14,17 @@ class FilterForm extends Form
      * The Blade template.
      */
     protected string $template = 'root::table.filters.form';
+
+    /**
+     * Create a new form instance.
+     */
+    public function __construct(Model $model, string $action, string $apiUri = null)
+    {
+        parent::__construct($model, $action, $apiUri);
+
+        $this->method('GET');
+        $this->setAttribute('class', 'app-card__actions');
+    }
 
     /**
      * {@inheritdoc}
@@ -24,19 +37,20 @@ class FilterForm extends Form
     /**
      * {@inheritdoc}
      */
-    public function method(): string
+    public function toArray(): array
     {
-        return 'GET';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function data(Request $request): array
-    {
-        return array_merge(parent::data($request), [
-            'search' => $this->fields->first(fn (Field $field): bool => $field instanceof SearchField),
-            'fields' => $this->fields->reject(fn (Field $field): bool => $field instanceof SearchField)->all(),
-        ]);
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'search' => $this->resolveFields($request)->first(function (Field $field): bool {
+                        return $field instanceof SearchField;
+                    }),
+                    'fields' => $this->resolveFields($request)->reject(function (Field $field): bool {
+                        return $field instanceof SearchField;
+                    })->all(),
+                ];
+            }
+        ));
     }
 }

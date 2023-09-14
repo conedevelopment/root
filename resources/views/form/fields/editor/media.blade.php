@@ -1,4 +1,4 @@
-<div class="editor__group">
+<div class="editor__group" x-data="{ selection: [] }">
     <button
         type="button"
         class="btn btn--light btn--sm btn--icon"

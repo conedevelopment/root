@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,9 +40,9 @@ class File extends MorphToMany
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $key, $relation);
+        parent::__construct($form, $label, $modelAttribute, $relation);
 
         $this->type('file')->multiple(false);
 
@@ -93,9 +94,9 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(): array
+    public function resolveOptions(Request $request): array
     {
-        return $this->resolveValue()
+        return $this->resolveValue($request)
             ->map(function (Medium $medium): FileOption {
                 return $this->toOption($medium)->selected();
             })
@@ -164,7 +165,7 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return $this->newOption($medium, $this->resolveDisplay($medium));
+        return $this->toOption($medium);
     }
 
     /**
@@ -182,8 +183,8 @@ class File extends MorphToMany
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saved(function () use ($request, $value): void {
-            $files = Arr::wrap($request->file($this->getKey(), []));
+        $this->getModel()->saved(function () use ($request, $value): void {
+            $files = Arr::wrap($request->file($this->getRequestKey(), []));
 
             $ids = array_map(function (UploadedFile $file) use ($request): int {
                 return $this->store($request, $file)->model->getKey();
@@ -196,7 +197,7 @@ class File extends MorphToMany
             $keys = $this->getRelation()->sync($value);
 
             if ($this->prunable && ! empty($keys['detached'])) {
-                $this->prune($keys['detached']);
+                $this->prune($request, $keys['detached']);
             }
         });
     }
@@ -204,23 +205,34 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    protected function prune(array $keys): void
+    protected function prune(Request $request, array $keys): int
     {
-        Medium::proxy()
-            ->newQuery()
+        $count = 0;
+
+        $this->resolveRelatableQuery($request)
             ->whereIn('id', $keys)
             ->cursor()
-            ->each
-            ->delete();
+            ->each(static function (Medium $medium) use (&$count): void {
+                $medium->delete();
+
+                $count++;
+            });
+
+        return $count;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
-            'options' => $this->resolveOptions(),
-        ]);
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'options' => $this->resolveOptions($request),
+                ];
+            })
+        );
     }
 }

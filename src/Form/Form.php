@@ -2,30 +2,22 @@
 
 namespace Cone\Root\Form;
 
-use Closure;
+use Cone\Root\Form\Fields\Field;
 use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Interfaces\Routable;
-use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Support\Element;
 use Cone\Root\Traits\ResolvesFields;
-use Exception;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\MessageBag;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\ViewErrorBag;
-use Stringable;
 
-class Form implements Routable, Htmlable, Stringable
+class Form extends Element
 {
-    use Makeable;
+    use Conditionable;
     use ResolvesFields;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
 
     /**
      * The Blade template.
@@ -35,12 +27,7 @@ class Form implements Routable, Htmlable, Stringable
     /**
      * The form model.
      */
-    protected ?Model $model = null;
-
-    /**
-     * The model resolver.
-     */
-    protected ?Closure $modelResolver = null;
+    public readonly Model $model;
 
     /**
      * The error bag.
@@ -53,92 +40,63 @@ class Form implements Routable, Htmlable, Stringable
     protected ?MessageBag $errors = null;
 
     /**
-     * The unique form key.
+     * The API URI.
      */
-    protected string $key;
+    protected ?string $apiUri = null;
+
+    /**
+     * The form method.
+     */
+    protected string $method = 'POST';
 
     /**
      * Create a new form instance.
      */
-    public function __construct(string $key)
+    public function __construct(Model $model, string $action, string $apiUri = null)
     {
-        $this->key = strtolower($key);
-        $this->fields = new Fields($this, $this->fields());
+        $this->model = $model;
+        $this->apiUri = $apiUri;
+
+        $this->action($action);
+        $this->method($model->exists ? 'PATCH' : 'POST');
+        $this->id(Str::random(10));
+        $this->autocomplete('off');
     }
 
     /**
-     * Get the form key.
+     * Set the "enctype" HTML attribute.
      */
-    public function getKey(): string
+    public function enctype(string $value): static
     {
-        return $this->key;
+        return $this->setAttribute('enctype', $value);
     }
 
     /**
-     * Get the URI key.
+     * Set the "autocomplete" HTML attribute.
      */
-    public function getUriKey(): string
+    public function autocomplete(string $value): static
     {
-        return '';
+        return $this->setAttribute('autocomplete', $value);
     }
 
     /**
-     * Set the model resolver callback.
+     * Set the "method" HTML attribute.
      */
-    public function model(Closure $callback): static
+    public function method(string $value): static
     {
-        $this->model = null;
+        $this->method = $value;
 
-        $this->modelResolver = $callback;
-
-        return $this;
+        return $this->setAttribute('method', $value === 'GET' ? 'GET' : 'POST');
     }
 
     /**
-     * Resolve the model.
+     * Set the "action" HTML attribute.
      */
-    public function resolveModel(): Model
+    public function action(string $value): static
     {
-        if (is_null($this->model) && is_null($this->modelResolver)) {
-            throw new Exception();
-        } elseif (is_null($this->model)) {
-            $this->model = call_user_func($this->modelResolver);
-        }
+        $this->method = $value;
 
-        return $this->model;
-    }
-
-    /**
-     * Get the view data.
-     */
-    public function data(Request $request): array
-    {
-        return [
-            'fields' => $this->fields->all(),
-            'key' => $this->getKey(),
-            'method' => $this->method(),
-            'url' => $this->replaceRoutePlaceholders($request->route()),
-            'errors' => $this->errors($request),
-        ];
-    }
-
-    /**
-     * Get the form method.
-     */
-    public function method(): string
-    {
-        return $this->resolveModel()->exists ? 'PATCH' : 'POST';
-    }
-
-    /**
-     * Render the table.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
-        );
+        return $this->setAttribute('action', $value);
     }
 
     /**
@@ -148,9 +106,9 @@ class Form implements Routable, Htmlable, Stringable
     {
         $this->validate($request);
 
-        $this->fields->persist($request);
+        $this->resolveFields($request)->persist($request);
 
-        $this->resolveModel()->save();
+        $this->model->save();
     }
 
     /**
@@ -160,7 +118,7 @@ class Form implements Routable, Htmlable, Stringable
     {
         return $request->validateWithBag(
             $this->errorBag,
-            $this->fields->mapToValidate($request)
+            $this->resolveFields($request)->mapToValidate($request)
         );
     }
 
@@ -187,28 +145,37 @@ class Form implements Routable, Htmlable, Stringable
     }
 
     /**
-     * Register the routes.
+     * Handle the callback for the field resolution.
      */
-    public function registerRoutes(Router $router): void
+    protected function resolveField(Request $request, Field $field): void
     {
-        $this->__registerRoutes($router);
-
-        $this->fields->registerRoutes($router);
+        if (! is_null($this->apiUri)) {
+            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
+        }
     }
 
     /**
-     * Render the HTML string.
+     * Create a new fields collection.
      */
-    public function toHtml(): string
+    protected function newFieldsCollection(): Fields
     {
-        return $this->render()->render();
+        return new Fields($this);
     }
 
     /**
-     * Convert the form to a string.
+     * Conver the form to an array.
      */
-    public function __toString(): string
+    public function toArray(): array
     {
-        return $this->toHtml();
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'errors' => $this->errors($request),
+                    'fields' => $this->resolveFields($request)->all(),
+                    'method' => $this->method,
+                ];
+            })
+        );
     }
 }

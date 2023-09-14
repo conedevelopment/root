@@ -46,10 +46,8 @@ class Filters
     /**
      * Apply the filters on the query.
      */
-    public function apply(Request $request): Builder
+    public function apply(Request $request, Builder $query): Builder
     {
-        $query = $this->table->resolveQuery($request);
-
         $this->filters->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getKey());
         })->each(static function (Filter $filter) use ($query, $request): void {

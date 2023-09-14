@@ -4,21 +4,16 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
-use Cone\Root\Http\Controllers\RelationFieldController;
-use Cone\Root\Interfaces\Routable;
-use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field implements Routable
+abstract class Relation extends Field
 {
-    use RegistersRoutes;
-
     /**
      * The relation name on the model.
      */
@@ -62,11 +57,11 @@ abstract class Relation extends Field implements Routable
     /**
      * Create a new relation field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null, Closure|string $relation = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null, Closure|string $relation = null)
     {
-        parent::__construct($form, $label, $key);
+        parent::__construct($form, $label, $modelAttribute);
 
-        $this->relation = $relation ?: $this->getKey();
+        $this->relation = $relation ?: $this->getModelAttribute();
     }
 
     /**
@@ -83,10 +78,10 @@ abstract class Relation extends Field implements Routable
     public function getRelation(): EloquentRelation
     {
         if ($this->relation instanceof Closure) {
-            return call_user_func_array($this->relation, [$this->resolveModel()]);
+            return call_user_func_array($this->relation, [$this->getModel()]);
         }
 
-        return call_user_func([$this->resolveModel(), $this->relation]);
+        return call_user_func([$this->getModel(), $this->relation]);
     }
 
     /**
@@ -94,7 +89,7 @@ abstract class Relation extends Field implements Routable
      */
     public function getRelatedName(): string
     {
-        return __(Str::of($this->getKey())->singular()->headline()->value());
+        return __(Str::of($this->getModelAttribute())->singular()->headline()->value());
     }
 
     /**
@@ -103,16 +98,8 @@ abstract class Relation extends Field implements Routable
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $this->getKey()
+            ? $this->getModelAttribute()
             : $this->relation;
-    }
-
-    /**
-     * Get the route key name.
-     */
-    public function getRouteKeyName(): string
-    {
-        return Str::of($this->getKey())->singular()->prepend('field_')->value();
     }
 
     /**
@@ -186,7 +173,7 @@ abstract class Relation extends Field implements Routable
      */
     public function getValue(): mixed
     {
-        $model = $this->resolveModel();
+        $model = $this->getModel();
 
         $name = $this->getRelationName();
 
@@ -210,18 +197,18 @@ abstract class Relation extends Field implements Routable
     /**
      * Resolve the related model's eloquent query.
      */
-    public function resolveRelatableQuery(): Builder
+    public function resolveRelatableQuery(Request $request): Builder
     {
-        $model = $this->resolveModel();
+        $model = $this->getModel();
 
         $query = $this->getRelation()->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
-            $query = call_user_func_array($scope, [$query, $model]);
+            $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
         if (! is_null($this->queryResolver)) {
-            $query = call_user_func_array($this->queryResolver, [$query, $model]);
+            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
         }
 
         return $query;
@@ -240,22 +227,24 @@ abstract class Relation extends Field implements Routable
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(): array
+    public function resolveOptions(Request $request): array
     {
-        return $this->resolveRelatableQuery()
-            ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection): Collection {
-                return $collection->groupBy($this->groupResolver)->map(function ($group, $key): OptGroup {
-                    $options = $group->map(function (Model $related): Option {
-                        return $this->toOption($related);
-                    });
+        $value = $this->resolveValue($request);
 
-                    return new OptGroup($key, $options->all());
-                });
-            }, function (Collection $collection): Collection {
-                return $collection->map(function (Model $related): Option {
-                    return $this->toOption($related);
-                });
+        $mapCallback = function (Model $related) use ($value): Option {
+            return $this->toOption($related)
+                ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+        };
+
+        return $this->resolveRelatableQuery($request)
+            ->get()
+            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($mapCallback): Collection {
+                return $collection->groupBy($this->groupResolver)
+                    ->map(function ($group, $key) use ($mapCallback): OptGroup {
+                        return new OptGroup($key, $group->map($mapCallback)->all());
+                    });
+            }, function (Collection $collection) use ($mapCallback): Collection {
+                return $collection->map($mapCallback);
             })
             ->toArray();
     }
@@ -263,40 +252,41 @@ abstract class Relation extends Field implements Routable
     /**
      * Make a new option instance.
      */
-    public function newOption(Model $value, string $label): RelationOption
+    public function newOption(Model $related, string $label): RelationOption
     {
-        return new RelationOption($value, $label);
+        return new RelationOption($related, $label);
     }
 
     /**
-     * Get the route parameter name.
+     * Build the API URI.
      */
-    public function getParameterName(): string
+    protected function buildApiUri(): ?string
     {
-        return 'rootField';
-    }
-
-    /**
-     * The routes that should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        if ($this->isAsync()) {
-            $router->get('/', RelationFieldController::class);
+        if (is_null($this->apiUri)) {
+            return $this->apiUri;
         }
+
+        return sprintf('%s?%s', $this->apiUri, http_build_query([
+            'model' => $this->getModel()->getKey(),
+        ]));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
-            'async' => $this->isAsync(),
-            'nullable' => $this->isNullable(),
-            'options' => $this->isAsync() ? [] : $this->resolveOptions(),
-            'url' => $this->isAsync() ? $this->replaceRoutePlaceholders($request->route()) : null,
-        ]);
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'async' => $this->isAsync(),
+                    'nullable' => $this->isNullable(),
+                    'options' => $this->isAsync() ? [] : $this->resolveOptions($request),
+                    'url' => $this->isAsync() ? $this->buildApiUri() : null,
+                ];
+            })
+        );
     }
 
     /**
@@ -304,9 +294,6 @@ abstract class Relation extends Field implements Routable
      */
     public function toOption(Model $related): RelationOption
     {
-        $value = $this->resolveValue();
-
-        return $this->newOption($related, $this->resolveDisplay($related))
-            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+        return $this->newOption($related, $this->resolveDisplay($related));
     }
 }

@@ -4,7 +4,7 @@
     </x-root::alert>
 @endif
 
-<form method="POST" action="{{ $url }}" id="{{ $key }}" autocomplete="off">
+<form {{ $attrs }}>
     @csrf
     @method($method)
 

@@ -5,18 +5,14 @@ namespace Cone\Root\Form\Fields;
 use Closure;
 use Cone\Root\Form\Form;
 use Cone\Root\Models\Medium;
-use Cone\Root\Models\User;
-use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFields;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
 {
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
+    use ResolvesFields;
 
     /**
      * The Blade template.
@@ -36,12 +32,26 @@ class Editor extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null)
     {
-        parent::__construct($form, $label, $key);
+        parent::__construct($form, $label, $modelAttribute);
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setApiUri(string $apiUri): static
+    {
+        if (! is_null($this->media)) {
+            $this->media->setApiUri(
+                sprintf('%s/%s', $apiUri, $this->media->getUriKey())
+            );
+        }
+
+        return parent::setApiUri($apiUri);
     }
 
     /**
@@ -71,12 +81,26 @@ class Editor extends Field
     }
 
     /**
+     * Create a new fields collection.
+     */
+    protected function newFieldsCollection(): Fields
+    {
+        return new Fields($this->form);
+    }
+
+    /**
      * Configure the media field.
      */
     public function withMedia(Closure $callback = null): static
     {
+        if (is_null($this->fields)) {
+            $this->fields = $this->newFieldsCollection();
+        }
+
         if (is_null($this->media)) {
             $this->media = $this->newMediaField();
+
+            $this->fields->push($this->media);
         }
 
         if (! is_null($callback)) {
@@ -99,18 +123,18 @@ class Editor extends Field
      */
     protected function newMediaField(): Media
     {
-        return new class($this->form, $this->getKey()) extends Media
+        return new class($this->form, $this->getModelAttribute()) extends Media
         {
-            public function __construct(Form $form, string $key)
+            public function __construct(Form $form, string $modelAttribute)
             {
-                parent::__construct($form, __('Media'), $key.'-media', static function (): MorphToMany {
+                parent::__construct($form, __('Media'), $modelAttribute.'-media', static function (): MorphToMany {
                     return new MorphToMany(
                         Medium::proxy()->newQuery(),
-                        User::proxy(),
+                        new class() extends Model {},
                         'media',
                         'root_mediables',
                         'medium_id',
-                        'user_id',
+                        '_model_id',
                         'id',
                         'id'
                     );
@@ -122,25 +146,11 @@ class Editor extends Field
     }
 
     /**
-     * Register the routes using the given router.
-     */
-    public function registerRoutes(Router $router): void
-    {
-        $this->__registerRoutes($router);
-
-        if (! is_null($this->media)) {
-            $router->prefix($this->getUriKey())->group(function (Router $router): void {
-                $this->media->registerRoutes($router);
-            });
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        return array_merge(parent::toArray(), [
             'config' => $this->config,
             'media' => $this->media,
         ]);

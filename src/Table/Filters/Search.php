@@ -30,7 +30,9 @@ class Search extends Filter
     public function toField(FilterForm $form): SearchField
     {
         return SearchField::make($form, $this->getName(), $this->getRequestKey())
-            ->value(fn (Model $model): ?string => $model->getAttribute($this->getKey()))
+            ->value(function (Request $request, Model $model): ?string {
+                return $model->getAttribute($this->getKey());
+            })
             ->placeholder($this->getName().'...');
     }
 }

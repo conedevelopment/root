@@ -2,49 +2,35 @@
 
 namespace Cone\Root\Table;
 
+use Closure;
 use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Interfaces\Routable;
+use Cone\Root\Interfaces\AsForm;
+use Cone\Root\Support\Element;
+use Cone\Root\Table\Actions\Action;
 use Cone\Root\Table\Actions\Actions;
-use Cone\Root\Table\Cells\Actions as ActionsCell;
-use Cone\Root\Table\Cells\Cell;
-use Cone\Root\Table\Cells\Select;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Table\Columns\Columns;
-use Cone\Root\Table\Columns\Text;
+use Cone\Root\Table\Columns\RowActions;
+use Cone\Root\Table\Columns\RowSelect;
 use Cone\Root\Table\Filters\Filter;
 use Cone\Root\Table\Filters\FilterForm;
 use Cone\Root\Table\Filters\Filters;
-use Cone\Root\Traits\AsForm;
+use Cone\Root\Table\Filters\Search;
+use Cone\Root\Table\Filters\TrashStatus;
 use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesColumns;
-use Cone\Root\Traits\ResolvesFilters;
-use Cone\Root\Traits\ResolvesQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
-use Stringable;
 
-class Table implements Routable, Htmlable, Stringable
+class Table extends Element implements AsForm
 {
-    use AsForm;
     use Macroable;
     use Makeable;
-    use ResolvesActions;
-    use ResolvesColumns;
-    use ResolvesFilters;
-    use ResolvesQuery;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
 
     /**
      * The Blade template.
@@ -52,27 +38,71 @@ class Table implements Routable, Htmlable, Stringable
     protected string $template = 'root::table.table';
 
     /**
-     * The table key.
+     * The columns collection.
      */
-    protected string $key;
+    protected ?Columns $columns = null;
+
+    /**
+     * The columns resolver callback.
+     */
+    protected ?Closure $columnsResolver = null;
+
+    /**
+     * The actions collection.
+     */
+    protected ?Actions $actions = null;
+
+    /**
+     * The actions resolver callback.
+     */
+    protected ?Closure $actionsResolver = null;
+
+    /**
+     * The filters collection.
+     */
+    protected ?Filters $filters = null;
+
+    /**
+     * The filters resolver callback.
+     */
+    protected ?Closure $filtersResolver = null;
+
+    /**
+     * The Eloquent query.
+     */
+    protected Builder $query;
+
+    /**
+     * The row URL resolver.
+     */
+    protected ?Closure $rowUrlResovler = null;
 
     /**
      * Create a new table instance.
      */
-    public function __construct($key)
+    public function __construct(Builder $query)
     {
-        $this->key = strtolower($key);
-        $this->columns = new Columns($this, $this->columns());
-        $this->actions = new Actions($this, $this->actions());
-        $this->filters = new Filters($this, $this->filters());
+        $this->query = $query;
+
+        $this->id(
+            Str::of(get_class($query->getModel()))->classBasename()->lower()->plural()->value()
+        );
     }
 
     /**
-     * Get the key.
+     * Get the table title.
      */
-    public function getKey(): string
+    public function getTitle(): string
     {
-        return $this->key;
+        return __(Str::of(get_class($this->query->getModel()))->classBasename()->headline()->plural()->value());
+    }
+
+    /**
+     * Get the table query.
+     */
+    public function getQuery(): Builder
+    {
+        return $this->query;
     }
 
     /**
@@ -80,7 +110,7 @@ class Table implements Routable, Htmlable, Stringable
      */
     public function resolveFilteredQuery(Request $request): Builder
     {
-        return $this->filters->apply($request);
+        return $this->resolveFilters($request)->apply($request, $this->getQuery());
     }
 
     /**
@@ -88,7 +118,7 @@ class Table implements Routable, Htmlable, Stringable
      */
     public function getPerPage(Request $request): ?int
     {
-        return $request->input($this->getKey().':per_page');
+        return $request->input($this->getAttribute('id').':per_page');
     }
 
     /**
@@ -96,7 +126,7 @@ class Table implements Routable, Htmlable, Stringable
      */
     public function getPerPageOptions(): array
     {
-        return Collection::make([$this->query?->getModel()?->getPerPage()])
+        return Collection::make([$this->query->getModel()->getPerPage()])
             ->merge([15, 25, 50, 100])
             ->filter()
             ->unique()
@@ -109,7 +139,181 @@ class Table implements Routable, Htmlable, Stringable
      */
     public function getPageName(): string
     {
-        return sprintf('%s:page', $this->getKey());
+        return sprintf('%s:page', $this->getAttribute('id'));
+    }
+
+    /**
+     * Define the columns for the object.
+     */
+    protected function columns(Request $request, Columns $columns): void
+    {
+        //
+    }
+
+    /**
+     * Apply the given callback on the columns.
+     */
+    public function withColumns(Closure $callback): static
+    {
+        $this->columnsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the columns collection.
+     */
+    public function resolveColumns(Request $request): Columns
+    {
+        if (is_null($this->columns)) {
+            $this->columns = new Columns($this);
+
+            if ($this->resolveActions($request)->isNotEmpty()) {
+                $this->columns->push(new RowSelect($this, __('Select'), 'id'));
+            }
+
+            $this->columns($request, $this->columns);
+
+            if (! is_null($this->columnsResolver)) {
+                call_user_func_array($this->columnsResolver, [$request, $this->columns]);
+            }
+
+            $this->columns->push(new RowActions($this, __('Actions'), 'id'));
+
+            $this->columns->each(function (Column $column) use ($request): void {
+                $this->resolveColumn($request, $column);
+            });
+        }
+
+        return $this->columns;
+    }
+
+    /**
+     * Handle the callback for the column resolution.
+     */
+    protected function resolveColumn(Request $request, Column $column): void
+    {
+        //
+    }
+
+    /**
+     * Define the actions for the object.
+     */
+    protected function actions(Request $request, Actions $actions): void
+    {
+        //
+    }
+
+    /**
+     * Set the actions resolver callback.
+     */
+    public function withActions(Closure $callback): static
+    {
+        $this->actionsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the actions collection.
+     */
+    public function resolveActions(Request $request): Actions
+    {
+        if (is_null($this->actions)) {
+            $this->actions = new Actions($this);
+
+            $this->actions($request, $this->actions);
+
+            if (! is_null($this->actionsResolver)) {
+                call_user_func_array($this->actionsResolver, [$request, $this->actions]);
+            }
+
+            $this->actions->each(function (Action $action) use ($request): void {
+                $this->resolveAction($request, $action);
+            });
+        }
+
+        return $this->actions;
+    }
+
+    /**
+     * Handle the callback for the action resolution.
+     */
+    protected function resolveAction(Request $request, Action $action): void
+    {
+        //
+    }
+
+    /**
+     * Define the filters for the object.
+     */
+    protected function filters(Request $request, Filters $filters): void
+    {
+        $filters->filter(Search::class);
+        // $this->filters->filter(Sort::class);
+        $filters->filter(TrashStatus::class);
+    }
+
+    /**
+     * Apply the given callback on the filters.
+     */
+    public function withFilters(Closure $callback): static
+    {
+        $this->filtersResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the filters collection.
+     */
+    public function resolveFilters(Request $request): Filters
+    {
+        if (is_null($this->filters)) {
+            $this->filters = new Filters($this);
+
+            $this->filters($request, $this->filters);
+
+            if (! is_null($this->filtersResolver)) {
+                call_user_func_array($this->filtersResolver, [$request, $this->filters]);
+            }
+
+            $this->filters->each(function (Filter $filter) use ($request): void {
+                $this->resolveFilter($request, $filter);
+            });
+        }
+
+        return $this->filters;
+    }
+
+    /**
+     * Handle the callback for the filter resolution.
+     */
+    protected function resolveFilter(Request $request, Filter $filter): void
+    {
+        //
+    }
+
+    /**
+     * Set the row URL resolver callback.
+     */
+    public function rowUrl(Closure $callback): static
+    {
+        $this->rowUrlResovler = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the row URL.
+     */
+    public function resolveRowUrl(Request $request, Model $model): string
+    {
+        if (is_null($this->rowUrlResovler)) {
+            return sprintf('%s/%s', $request->url(), $model->getKey());
+        }
+
+        return call_user_func_array($this->rowUrlResovler, [$request, $model]);
     }
 
     /**
@@ -117,113 +321,58 @@ class Table implements Routable, Htmlable, Stringable
      */
     public function paginate(Request $request): LengthAwarePaginator
     {
-        $url = $this->replaceRoutePlaceholders($request->route());
-
         return $this->resolveFilteredQuery($request)
             ->latest()
             ->paginate($this->getPerPage($request), ['*'], $this->getPageName())
-            ->setPath($url)
+            ->setPath($request->path())
             ->withQueryString()
-            ->through(function (Model $model) use ($url): array {
+            ->through(function (Model $model) use ($request): array {
                 return [
                     'id' => $model->getKey(),
-                    'cells' => $this->columns->map(static function (Column $column) use ($model): Cell {
-                        return $column->toCell($model)
-                            ->value($column->getValueResolver())
-                            ->format($column->getFormatResolver());
-                    })
-                        ->when($this->actions->isNotEmpty(), function (Collection $cells) use ($model): void {
-                            $cells->prepend(Select::make(Text::make($this, ''), $model));
-                        })
-                        ->push(
-                            ActionsCell::make(Text::make($this, ''), $model)
-                                ->value(static function (Model $model) use ($url): string {
-                                    return sprintf('%s%s', $url, $model->getRouteKey());
-                                })
-                        )
-                        ->all(),
+                    'cells' => $this->resolveColumns($request)->mapToCells($model),
                 ];
             });
     }
 
     /**
-     * Get the view data.
+     * Make a new form instance.
      */
-    public function data(Request $request): array
+    public function toForm(Request $request, Model $model): FilterForm
     {
-        return [
-            'actions' => $this->actions->all(),
-            'columns' => $this->columns->all(),
-            'filters' => $this->filters->all(),
-            'form' => $this->form($request),
-            'items' => $this->paginate($request),
-            'key' => $this->getKey(),
-            'perPageOptions' => $this->getPerPageOptions(),
-        ];
-    }
+        $data = $this->resolveFilters($request)->mapToData($request);
 
-    /**
-     * Render the table.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
-        );
-    }
+        $model->forceFill($data);
 
-    /**
-     * Render the HTML string.
-     */
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    /**
-     * Convert the table to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->toHtml();
-    }
-
-    /**
-     * Get the URI key.
-     */
-    public function getUriKey(): string
-    {
-        return '';
-    }
-
-    /**
-     * Register the routes.
-     */
-    public function registerRoutes(Router $router): void
-    {
-        $this->__registerRoutes($router);
-
-        $this->actions->registerRoutes($router);
-
-        $this->form(App::make(Request::class))->registerRoutes($router);
-    }
-
-    /**
-     * Get the form instance for the table.
-     */
-    public function toForm(Request $request): FilterForm
-    {
-        return FilterForm::make($this->key.'-filters')
-            ->model(function () use ($request): Model {
-                return $this->resolveQuery($request)
-                    ->getModel()
-                    ->forceFill($this->filters->mapToData($request));
+        return (new FilterForm($model, $request->fullUrl()))
+            ->id(sprintf('%s-filters', $this->getAttribute('id')))
+            ->withFields(function (Request $request, Fields $fields): void {
+                $this->resolveFilters($request)
+                    ->renderable()
+                    ->each(function (Filter $filter) use ($request, $fields): void {
+                        $fields->push($filter->toField($fields->form));
+                    });
             })
-            ->withFields(function (Fields $fields): void {
-                $this->filters->renderable()->each(function (Filter $filter) use ($fields): void {
-                    $fields->push($filter->toField($fields->form));
-                });
-            });
+            ->setAttribute('data-active', $this->resolveFilters($request)->active($request)->count());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'actions' => $this->resolveActions($request)->all(),
+                    'columns' => $this->resolveColumns($request)->all(),
+                    'filters' => $this->resolveFilters($request)->all(),
+                    'form' => $this->toForm($request, $this->query->getModel()),
+                    'items' => $this->paginate($request),
+                    'perPageOptions' => $this->getPerPageOptions(),
+                    'title' => $this->getTitle(),
+                ];
+            })
+        );
     }
 }

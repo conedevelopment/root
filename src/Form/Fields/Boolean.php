@@ -15,9 +15,9 @@ class Boolean extends Field
     /**
      * Create a new file field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null)
     {
-        parent::__construct($form, $label, $key);
+        parent::__construct($form, $label, $modelAttribute);
 
         $this->type('checkbox');
     }
@@ -27,7 +27,7 @@ class Boolean extends Field
      */
     public function getValueForHydrate(Request $request): mixed
     {
-        return $request->boolean([$this->getKey()]);
+        return $request->boolean([$this->getRequestKey()]);
     }
 
     /**
@@ -41,14 +41,14 @@ class Boolean extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Create a new method.
      */
-    public function data(Request $request): array
+    public function resolveValue(Request $request): mixed
     {
-        if (! $this->hasAttribute('checked')) {
-            $this->checked(filter_var($this->resolveValue(), FILTER_VALIDATE_BOOL));
-        }
+        $value = parent::resolveValue($request);
 
-        return parent::data($request);
+        $this->checked(filter_var($value, FILTER_VALIDATE_BOOL));
+
+        return $value;
     }
 }

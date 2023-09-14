@@ -2,10 +2,13 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Resources\Resource;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
@@ -107,6 +110,14 @@ class RootServiceProvider extends ServiceProvider
         );
 
         $root = $this->app->make(Root::class);
+
+        $this->app['router']->bind('resource', static function (string $key) use ($root): Resource {
+            return $root->resources->resolve($key);
+        });
+
+        $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
+            return $route->parameter('resource')->resolveRouteBinding($this->app['request'], $id);
+        });
 
         $this->app['router']
             ->middleware(['web'])

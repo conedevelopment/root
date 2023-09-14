@@ -110,9 +110,13 @@ trait HasAttributes
     {
         $value = $this->getAttribute($key);
 
-        return $value instanceof Closure
-                ? call_user_func_array($value, [$this])
-                : $value;
+        $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
+
+        return match ($key) {
+            'class' => Arr::toCssClasses((array) $value),
+            'style' => Arr::toCssStyles((array) $value),
+            default => $value,
+        };
     }
 
     /**

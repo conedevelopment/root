@@ -10,11 +10,12 @@ class Text extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null)
     {
-        parent::__construct($form, $label, $key);
+        parent::__construct($form, $label, $modelAttribute);
 
         $this->type('text');
+        $this->setAttribute('class', 'form-control');
     }
 
     /**

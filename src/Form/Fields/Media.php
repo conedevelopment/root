@@ -2,16 +2,16 @@
 
 namespace Cone\Root\Form\Fields;
 
-use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
-class Media extends File
+class Media extends File implements Responsable
 {
     /**
      * Indicates if the component is async.
@@ -33,7 +33,7 @@ class Media extends File
      */
     public function getModalKey(): string
     {
-        return sprintf('%s-field-%s', $this->form->getKey(), $this->getKey());
+        return sprintf('%s-field-%s', $this->form->getAttribute('id'), $this->getModelAttribute());
     }
 
     /**
@@ -51,13 +51,13 @@ class Media extends File
      */
     public function paginate(Request $request): array
     {
-        return $this->resolveRelatableQuery()
+        return $this->resolveRelatableQuery($request)
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
-            ->setPath($this->replaceRoutePlaceholders($request->route()))
+            ->setPath($this->apiUri)
             ->through(function (Medium $related): array {
-                return $this->toOption($related)->toFragment();
+                return $this->toOption($related)->toRenderedArray();
             })
             ->toArray();
     }
@@ -67,13 +67,13 @@ class Media extends File
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saved(function () use ($request, $value): void {
+        $this->getModel()->saved(function () use ($request, $value): void {
             $this->resolveHydrate($request, $value);
 
             $keys = $this->getRelation()->sync($value);
 
             if ($this->prunable && ! empty($keys['detached'])) {
-                $this->prune($keys['detached']);
+                $this->prune($request, $keys['detached']);
             }
         });
     }
@@ -81,7 +81,7 @@ class Media extends File
     /**
      * Handle the file upload.
      */
-    public function upload(Request $request): FileOption
+    public function upload(Request $request): JsonResponse
     {
         $accept = $this->getAttribute('accept');
 
@@ -91,7 +91,9 @@ class Media extends File
             Rule::when(! is_null($accept), ['mimetypes:'.$accept]),
         ]]);
 
-        return $this->store($request, $data['file']);
+        $option = $this->store($request, $data['file']);
+
+        return new JsonResponse($option->toRenderedArray(), JsonResponse::HTTP_CREATED);
     }
 
     /**
@@ -116,25 +118,32 @@ class Media extends File
     /**
      * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        $data = parent::toArray();
+
+        return array_merge($data, [
             'modalKey' => $this->getModalKey(),
             'config' => [
                 'accept' => $this->getAttribute('accept', '*'),
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
             ],
+            'selection' => array_map(function (FileOption $option): array {
+                return $option->toRenderedArray();
+            }, $data['options'] ?? []),
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function routes(Router $router): void
+    public function toResponse($request): JsonResponse
     {
-        $router->get('/', [MediaController::class, 'index']);
-        $router->post('/', [MediaController::class, 'store']);
-        $router->delete('/', [MediaController::class, 'destroy']);
+        return match ($request->method()) {
+            'POST' => $this->upload($request),
+            'DELETE' => new JsonResponse(['deleted' => $this->prune($request, $request->input('ids', []))]),
+            default => new JsonResponse($this->paginate($request)),
+        };
     }
 }

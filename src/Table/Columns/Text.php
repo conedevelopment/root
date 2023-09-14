@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Text extends Column
 {
     /**
-     * Convert the column to a cell.
+     * {@inheritdoc}
      */
-    public function toCell(Model $model): TextCell
+    public function newCell(Model $model): TextCell
     {
         return new TextCell($this, $model);
     }

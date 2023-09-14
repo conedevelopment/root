@@ -3,6 +3,7 @@
 namespace Cone\Root\Table\Columns;
 
 use Cone\Root\Table\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
@@ -71,6 +72,14 @@ class Columns
     public function sortable(): Collection
     {
         return $this->columns->filter->isSortable();
+    }
+
+    /**
+     * Map the columns to cells for the given model.
+     */
+    public function mapToCells(Model $model): array
+    {
+        return $this->columns->map->toCell($model)->all();
     }
 
     /**

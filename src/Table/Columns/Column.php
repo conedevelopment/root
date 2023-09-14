@@ -3,18 +3,14 @@
 namespace Cone\Root\Table\Columns;
 
 use Closure;
+use Cone\Root\Support\Element;
 use Cone\Root\Table\Cells\Cell;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use Stringable;
 
-abstract class Column implements Htmlable, Stringable
+abstract class Column extends Element
 {
     use Makeable;
 
@@ -24,14 +20,9 @@ abstract class Column implements Htmlable, Stringable
     protected string $label;
 
     /**
-     * The key.
-     */
-    protected string $key;
-
-    /**
      * The Blade template.
      */
-    protected string $template = 'root::table.column';
+    protected string $template = 'root::table.columns.column';
 
     /**
      * Indicates if the field is sortable.
@@ -59,66 +50,31 @@ abstract class Column implements Htmlable, Stringable
     protected Table $table;
 
     /**
+     * The associated model attribute.
+     */
+    protected string $modelAttribute;
+
+    /**
      * Create a new column instance.
      */
-    public function __construct(Table $table, string $label, string $key = null)
+    public function __construct(Table $table, string $label, string $modelAttribute = null)
     {
         $this->label = $label;
-        $this->key = $key ??= Str::of($label)->lower()->snake()->value();
         $this->table = $table;
+        $this->modelAttribute = $modelAttribute ??= Str::of($label)->lower()->snake()->value();
     }
 
     /**
-     * Convert the column to a cell.
+     * Create a new cell instance.
      */
-    abstract public function toCell(Model $model): Cell;
+    abstract public function newCell(Model $model): Cell;
 
     /**
-     * Get the key.
+     * Get the model attribute.
      */
-    public function getKey(): string
+    public function getModelAttribute(): string
     {
-        return $this->key;
-    }
-
-    /**
-     * Set the value resolver.
-     */
-    public function value(Closure $callback): static
-    {
-        $this->valueResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Get the value resolver.
-     */
-    public function getValueResolver(): Closure
-    {
-        return $this->valueResolver ?: static function (Model $model, mixed $value): mixed {
-            return $value;
-        };
-    }
-
-    /**
-     * Set the format resolver.
-     */
-    public function format(Closure $callback): static
-    {
-        $this->formatResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Get the format resolver.
-     */
-    public function getFormatResolver(): Closure
-    {
-        return $this->valueResolver ?: static function (Model $model, mixed $value): mixed {
-            return $value;
-        };
+        return $this->modelAttribute;
     }
 
     /**
@@ -166,41 +122,48 @@ abstract class Column implements Htmlable, Stringable
     }
 
     /**
+     * Set the value resolver callback.
+     */
+    public function value(Closure $callback): static
+    {
+        $this->valueResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Set the format resolver callback.
+     */
+    public function format(Closure $callback): static
+    {
+        $this->formatResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Convert the column to a cell.
+     */
+    public function toCell(Model $model): Cell
+    {
+        return $this->newCell($model)
+            ->when(! is_null($this->valueResolver), function (Cell $cell) {
+                $cell->value($this->valueResolver);
+            })
+            ->when(! is_null($this->formatResolver), function (Cell $cell) {
+                $cell->format($this->formatResolver);
+            });
+    }
+
+    /**
      * The view data.
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return [
-            'sortable' => $this->isSortable(),
+        return array_merge(parent::toArray(), [
+            'attribute' => $this->modelAttribute,
             'label' => $this->label,
-            'key' => $this->key,
-        ];
-    }
-
-    /**
-     * Render the column.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
-        );
-    }
-
-    /**
-     * Render the HTML string.
-     */
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    /**
-     * Convert the column to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->toHtml();
+            'sortable' => $this->isSortable(),
+        ]);
     }
 }

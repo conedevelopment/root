@@ -17,7 +17,7 @@ class AuthorizeResource
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        Gate::allowIf(Root::instance()->getCurrentResource()->authorized($request));
+        // Gate::allowIf(Root::instance()->getCurrentResource()->authorized($request));
 
         return $next($request);
     }

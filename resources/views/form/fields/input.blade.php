@@ -9,7 +9,7 @@
         @if($prefix)
             <div class="form-group-label">{!! $prefix !!}</div>
         @endif
-        <input {{ $attrs->class(['form-control', 'form-control--invalid' => $invalid]) }} value="{{ $value }}">
+        <input {{ $attrs }} value="{{ $value }}">
         @if($suffix)
             <div class="form-group-label">{!! $suffix !!}</div>
         @endif

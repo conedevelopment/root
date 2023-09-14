@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Middleware\AuthorizeResource;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Root;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -27,10 +28,8 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request, Resource $resource): Response
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
         }
@@ -44,10 +43,8 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Response
+    public function create(Request $request, Resource $resource): Response
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
@@ -61,38 +58,30 @@ class ResourceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Resource $resource): RedirectResponse
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
 
         $model = $resource->getModelInstance();
 
-        $resource->form($request)
-            ->model(fn (): Model => $model)
-            ->handle($request);
+        $resource->form($model)->handle($request);
 
-        $resource->created($request, $model);
-
-        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getRouteKey()))
+        return Redirect::to($resource->modelUrl($model))
             ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, Model $model)//: Response
+    public function edit(Request $request, Resource $resource, Model $model): Response
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
-        return view()->make(
+        return ResponseFactory::view(
             'root::resources.form',
             $resource->toEdit($request, $model)
         );

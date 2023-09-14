@@ -49,7 +49,7 @@ abstract class Select extends Filter
             ->options(App::call(function (Request $request): array {
                 return $this->options($request);
             }))
-            ->value(fn (Model $model): mixed => $model->getAttribute($this->getKey()))
+            ->value(fn (Request $request, Model $model): mixed => $model->getAttribute($this->getKey()))
             ->multiple($this->multiple);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Table\Cells;
 
+use Cone\Root\Support\Element;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
@@ -10,10 +11,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Traits\Conditionable;
 use Stringable;
 
-abstract class Cell implements Htmlable, Stringable
+abstract class Cell  extends Element
 {
+    use Conditionable;
     use Makeable;
     use ResolvesModelValue;
 
@@ -42,55 +45,33 @@ abstract class Cell implements Htmlable, Stringable
     }
 
     /**
-     * Resolve the model.
+     * Get the model.
      */
-    public function resolveModel(): Model
+    public function getModel(): Model
     {
         return $this->model;
     }
 
     /**
-     * Get the key.
+     * Get the model attribute.
      */
-    public function getKey(): string
+    public function getModelAttribute(): string
     {
-        return $this->column->getKey();
+        return $this->column->getModelAttribute();
     }
 
     /**
-     * The view data.
+     * {@inheritdoc}
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return [
-            'formattedValue' => $this->resolveFormat(),
-        ];
-    }
-
-    /**
-     * Render the cell.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'formattedValue' => $this->resolveFormat($request),
+                ];
+            })
         );
-    }
-
-    /**
-     * Render the HTML string.
-     */
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    /**
-     * Convert the field to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->toHtml();
     }
 }

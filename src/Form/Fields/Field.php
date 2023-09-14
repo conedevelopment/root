@@ -4,23 +4,21 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Form;
-use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\HasAttributes;
+use Cone\Root\Support\Element;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use Stringable;
+use Illuminate\Support\Traits\Conditionable;
 
-abstract class Field implements Htmlable, Stringable
+abstract class Field extends Element implements Responsable
 {
-    use Authorizable;
-    use HasAttributes;
+    use Conditionable;
     use Makeable;
     use ResolvesModelValue;
 
@@ -37,7 +35,7 @@ abstract class Field implements Htmlable, Stringable
     /**
      * The form instance.
      */
-    public readonly Form $form;
+    protected Form $form;
 
     /**
      * The validation rules.
@@ -54,9 +52,9 @@ abstract class Field implements Htmlable, Stringable
     protected string $label;
 
     /**
-     * The field name.
+     * The associated model attribute.
      */
-    protected string $key;
+    protected string $modelAttribute;
 
     /**
      * The field help text.
@@ -74,33 +72,68 @@ abstract class Field implements Htmlable, Stringable
     protected ?string $suffix = null;
 
     /**
+     * The field model.
+     */
+    protected ?Model $model = null;
+
+    /**
+     * Indicates if the field should use the old value.
+     */
+    protected bool $withOldValue = true;
+
+    /**
+     * The API URI.
+     */
+    protected ?string $apiUri = null;
+
+    /**
      * Create a new field instance.
      */
-    public function __construct(Form $form, string $label, string $key = null)
+    public function __construct(Form $form, string $label, string $modelAttribute = null)
     {
-        $this->label($label);
-        $this->key($key ??= Str::of($label)->lower()->snake()->value());
-        $this->name($key);
-        $this->id($key);
-        $this->setAttribute('form', $form->getKey());
-
+        $this->modelAttribute = $modelAttribute ?: Str::of($label)->lower()->snake()->value();
         $this->form = $form;
+
+        $this->label($label);
+        $this->name($this->modelAttribute);
+        $this->id($this->modelAttribute);
+        $this->setAttribute('form', $form->getAttribute('id'));
     }
 
     /**
-     * Get the key.
+     * Get the model.
      */
-    public function getKey(): string
+    public function getModel(): Model
     {
-        return $this->key;
+        return $this->model ?: $this->form->model;
     }
 
     /**
-     * Get the URI key.
+     * Set the model.
      */
-    public function getUriKey(): string
+    public function setModel(Model $model): static
     {
-        return $this->getKey();
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Get the model attribute.
+     */
+    public function getModelAttribute(): string
+    {
+        return $this->modelAttribute;
+    }
+
+    /**
+     * Set the model attribute.
+     */
+    public function setModelAttribute(string $value): static
+    {
+        $this->modelAttribute = $value;
+
+        return $this;
     }
 
     /**
@@ -108,7 +141,7 @@ abstract class Field implements Htmlable, Stringable
      */
     public function getRequestKey(): string
     {
-        return str_replace('->', '.', $this->getKey());
+        return str_replace('->', '.', $this->getModelAttribute());
     }
 
     /**
@@ -120,21 +153,37 @@ abstract class Field implements Htmlable, Stringable
     }
 
     /**
-     * Set the label attribute.
+     * Get the URI key.
      */
-    public function label(string $value): static
+    public function getUriKey(): string
     {
-        $this->label = $value;
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Set the API URI.
+     */
+    public function setApiUri(string $apiUri): static
+    {
+        $this->apiUri = $apiUri;
 
         return $this;
     }
 
     /**
-     * Set the key attribute.
+     * Get the API URI.
      */
-    public function key(string $value): static
+    public function getApiUri(): ?string
     {
-        $this->key = $value;
+        return $this->apiUri;
+    }
+
+    /**
+     * Set the label attribute.
+     */
+    public function label(string $value): static
+    {
+        $this->label = $value;
 
         return $this;
     }
@@ -149,14 +198,6 @@ abstract class Field implements Htmlable, Stringable
         $value = preg_replace('/(?:\->|\.)(.+?)(?=(?:\->|\.)|$)/', '[$1]', $value);
 
         return $this->setAttribute('name', $value);
-    }
-
-    /**
-     * Set the "id" HTML attribute.
-     */
-    public function id(string|Closure $value): static
-    {
-        return $this->setAttribute('id', $value);
     }
 
     /**
@@ -230,11 +271,45 @@ abstract class Field implements Htmlable, Stringable
     }
 
     /**
-     * Resolve the model.
+     * Resolve the value.
      */
-    public function resolveModel(): Model
+    public function resolveValue(Request $request): mixed
     {
-        return $this->form->resolveModel();
+        $value = $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())
+            ? $this->getOldValue($request)
+            : $this->getValue();
+
+        if (is_null($this->valueResolver)) {
+            return $value;
+        }
+
+        return call_user_func_array($this->valueResolver, [$request, $this->getModel(), $value]);
+    }
+
+    /**
+     * Get the old value from the request.
+     */
+    public function getOldValue(Request $request): mixed
+    {
+        return $request->old($this->getRequestKey());
+    }
+
+    /**
+     * Set the with old value attribute.
+     */
+    public function withOldValue(bool $value = true): static
+    {
+        $this->withOldValue = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the with old value attribute to false.
+     */
+    public function withoutOldValue(): mixed
+    {
+        return $this->withOldValue(false);
     }
 
     /**
@@ -242,7 +317,7 @@ abstract class Field implements Htmlable, Stringable
      */
     public function persist(Request $request, mixed $value): void
     {
-        $this->resolveModel()->saving(function () use ($request, $value): void {
+        $this->getModel()->saving(function () use ($request, $value): void {
             $this->resolveHydrate($request, $value);
         });
     }
@@ -272,11 +347,11 @@ abstract class Field implements Htmlable, Stringable
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function () use ($value): void {
-                $this->resolveModel()->setAttribute($this->getKey(), $value);
+                $this->getModel()->setAttribute($this->getModelAttribute(), $value);
             };
         }
 
-        call_user_func_array($this->hydrateResolver, [$request, $this->resolveModel(), $value]);
+        call_user_func_array($this->hydrateResolver, [$request, $this->getModel(), $value]);
     }
 
     /**
@@ -318,54 +393,29 @@ abstract class Field implements Htmlable, Stringable
      */
     public function error(Request $request): ?string
     {
-        return $this->invalid($request)
-            ? $this->form->errors($request)->first($this->getValidationKey())
-            : null;
+        return $this->form->errors($request)->first($this->getValidationKey()) ?: null;
     }
 
     /**
-     * Get the data for the view.
+     * Convert the field to an array.
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return [
-            'attrs' => $this->newAttributeBag(),
-            'error' => $this->error($request),
-            'help' => $this->help,
-            'invalid' => $this->invalid($request),
-            'label' => $this->label,
-            'key' => $this->getKey(),
-            'prefix' => $this->prefix,
-            'suffix' => $this->suffix,
-            'value' => $this->resolveValue(),
-        ];
-    }
-
-    /**
-     * Render the table.
-     */
-    public function render(): View
-    {
-        return App::make('view')->make(
-            $this->template,
-            App::call([$this, 'data'])
-        );
-    }
-
-    /**
-     * Render the HTML string.
-     */
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    /**
-     * Convert the field to a string.
-     */
-    public function __toString(): string
-    {
-        return $this->toHtml();
+        return App::call(function (Request $request): array {
+            return [
+                'attribute' => $this->getModelAttribute(),
+                'attrs' => $this->newAttributeBag()->class([
+                    'form-control--invalid' => $this->invalid($request),
+                ]),
+                'error' => $this->error($request),
+                'help' => $this->help,
+                'invalid' => $this->invalid($request),
+                'label' => $this->label,
+                'prefix' => $this->prefix,
+                'suffix' => $this->suffix,
+                'value' => $this->resolveValue($request),
+            ];
+        });
     }
 
     /**
@@ -373,7 +423,7 @@ abstract class Field implements Htmlable, Stringable
      */
     public function toValidate(Request $request): array
     {
-        $model = $this->resolveModel();
+        $model = $this->getModel();
 
         $key = $model->exists ? 'update' : 'create';
 
@@ -385,5 +435,13 @@ abstract class Field implements Htmlable, Stringable
         );
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     */
+    public function toResponse($request): JsonResponse
+    {
+        return new JsonResponse($this->toArray());
     }
 }
