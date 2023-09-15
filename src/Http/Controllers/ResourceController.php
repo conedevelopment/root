@@ -90,31 +90,23 @@ class ResourceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Model $model): RedirectResponse
+    public function update(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
 
-        $resource->form($request)
-            ->model(fn (): Model => $model)
-            ->handle($request);
+        $resource->toForm($request, $model)->handle($request);
 
-        $resource->updated($request, $model);
-
-        return Redirect::to(sprintf('%s/%s', $resource->getUri(), $model->getRouteKey()))
+        return Redirect::to($resource->modelUrl($model))
             ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Model $model): RedirectResponse
+    public function destroy(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = Root::instance()->getCurrentResource();
-
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
         if ($resource->getPolicy()) {
@@ -123,26 +115,20 @@ class ResourceController extends Controller
 
         $trashed ? $model->forceDelete() : $model->delete();
 
-        $resource->deleted($request, $model);
-
-        return Redirect::to(URL::previousPath() === $resource->getUri() ? URL::previous() : $resource->getUri())
+        return Redirect::route('root.resource.index', $resource->getKey())
             ->with('alerts.resource-deleted', Alert::success(__('The resource has been deleted!')));
     }
 
     /**
      * Restore the specified resource in storage.
      */
-    public function restore(Request $request, Model $model): RedirectResponse
+    public function restore(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = Root::instance()->getCurrentResource();
-
         if ($resource->getPolicy()) {
             $this->authorize('restore', $model);
         }
 
         $model->restore();
-
-        $resource->restored($request, $model);
 
         return Redirect::back()
             ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));

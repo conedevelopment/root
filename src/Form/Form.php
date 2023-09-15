@@ -59,7 +59,7 @@ class Form extends Element
 
         $this->action($action);
         $this->method($model->exists ? 'PATCH' : 'POST');
-        $this->id(Str::random(10));
+        $this->id(Str::of(get_class($model))->classBasename()->lower()->append('-form')->value());
         $this->autocomplete('off');
     }
 

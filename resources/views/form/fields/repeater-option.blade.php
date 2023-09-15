@@ -17,7 +17,8 @@
                 </template>
             </button>
             <h3 id="{{ $value }}-title" class="repeater__title">
-                <span class="repeater__order">{{ $label }}</span>
+                <span class="repeater__order">#<span x-text="index + 1"></span></span>
+                {{ $label }}
             </h3>
         </div>
         <div class="repeater__actions">
@@ -43,6 +44,7 @@
                 class="btn btn--delete btn--sm btn--icon"
                 aria-describedby="{{ $value }}-title"
                 aria-label="{{ __('Remove') }}"
+                x-on:click="options.splice(index, 1)"
             >
                 <x-root::icon name="close" class="btn__icon" />
             </button>

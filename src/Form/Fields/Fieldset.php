@@ -24,6 +24,16 @@ class Fieldset extends Field
     }
 
     /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveField(Request $request, Field $field): void
+    {
+        if (! is_null($this->apiUri)) {
+            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function persist(Request $request, mixed $value): void

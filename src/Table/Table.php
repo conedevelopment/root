@@ -85,7 +85,7 @@ class Table extends Element implements AsForm
         $this->query = $query;
 
         $this->id(
-            Str::of(get_class($query->getModel()))->classBasename()->lower()->plural()->value()
+            Str::of(get_class($query->getModel()))->classBasename()->lower()->plural()->append('-table')->value()
         );
     }
 

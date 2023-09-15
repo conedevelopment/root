@@ -13,7 +13,7 @@
         </button>
         <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
             <template x-for="(item, index) in selection" :key="item.uuid">
-                <li class="file-list-item" x-html="item.html"></li>
+                <li x-html="item.html"></li>
             </template>
         </ul>
     </div>

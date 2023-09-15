@@ -4,14 +4,19 @@ namespace Cone\Root\Form\Fields;
 
 use Closure;
 use Cone\Root\Form\Fields\Options\RepeaterOption;
+use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-class Repeater extends Fieldset
+class Repeater extends Field
 {
+    use ResolvesFields {
+        ResolvesFields::withFields as __withFields;
+    }
+
     /**
      * The Blade template.
      */
@@ -44,6 +49,22 @@ class Repeater extends Fieldset
     public function getValueForHydrate(Request $request): mixed
     {
         return array_values((array) parent::getValueForHydrate($request));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOldValue(Request $request): mixed
+    {
+        return array_values((array) parent::getOldValue($request));
+    }
+
+    /**
+     * Create a new fields collection.
+     */
+    public function newFieldsCollection(): Fields
+    {
+        return new Fields($this->form);
     }
 
     /**
@@ -93,7 +114,7 @@ class Repeater extends Fieldset
             return $fields;
         };
 
-        return parent::withFields($callback);
+        return $this->__withFields($callback);
     }
 
     /**
@@ -116,9 +137,9 @@ class Repeater extends Fieldset
     {
         $value = (array) $this->resolveValue($request);
 
-        return array_map(function (array $option, int $key): RepeaterOption {
-            return $this->newOption($option, sprintf('#%d', ++$key));
-        }, $value, array_keys($value));
+        return array_map(function (array $option): RepeaterOption {
+            return $this->newOption($option, $this->getOptionName());
+        }, $value);
     }
 
     /**
@@ -138,7 +159,7 @@ class Repeater extends Fieldset
     public function buildOption(Request $request): JsonResponse
     {
         return new JsonResponse(
-            $this->newOption([], sprintf('#%d', mt_rand(10, 20)))->toRenderedArray()
+            $this->newOption([], $this->getOptionName())->toRenderedArray()
         );
     }
 
@@ -159,6 +180,17 @@ class Repeater extends Fieldset
                     'config' => [],
                 ];
             })
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toValidate(Request $request): array
+    {
+        return array_merge(
+            parent::toValidate($request),
+            $this->resolveFields($request)->mapToValidate($request)
         );
     }
 

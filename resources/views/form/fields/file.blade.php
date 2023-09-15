@@ -9,9 +9,7 @@
     @if(! empty($options))
         <ul class="file-list__items">
             @foreach($options as $option)
-                <li class="file-list-item">
-                    {!! $option !!}
-                </li>
+                <li>{!! $option !!}</li>
             @endforeach
         </ul>
     @endif
