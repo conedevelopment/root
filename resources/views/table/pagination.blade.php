@@ -23,7 +23,7 @@
                                     {{ $page }}
                                 </span>
                             @else
-                                <a href="{{ $url }}" class="btn btn--sm btn--outline-primary"   >
+                                <a href="{{ $url }}" class="btn btn--sm btn--outline-primary">
                                     {{ $page }}
                                 </a>
                             @endif
