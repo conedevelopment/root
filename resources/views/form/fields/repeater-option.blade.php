@@ -27,7 +27,8 @@
                 class="btn btn--light btn--sm btn--icon"
                 aria-describedby="{{ $value }}-title"
                 aria-label="{{ __('Move up') }}"
-                disabled
+                x-on:click="swap(index, index - 1)"
+                x-bind:disabled="index === 0"
             >
                 <x-root::icon name="chevron-up" class="btn__icon" />
             </button>
@@ -36,6 +37,8 @@
                 class="btn btn--light btn--sm btn--icon"
                 aria-describedby="{{ $value }}-title"
                 aria-label="{{ __('Move down') }}"
+                x-on:click="swap(index, index + 1)"
+                x-bind:disabled="index + 1 === options.length"
             >
                 <x-root::icon name="chevron-down" class="btn__icon" />
             </button>
@@ -44,7 +47,7 @@
                 class="btn btn--delete btn--sm btn--icon"
                 aria-describedby="{{ $value }}-title"
                 aria-label="{{ __('Remove') }}"
-                x-on:click="options.splice(index, 1)"
+                x-on:click="remove(index)"
             >
                 <x-root::icon name="close" class="btn__icon" />
             </button>
