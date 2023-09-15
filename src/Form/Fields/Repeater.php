@@ -28,11 +28,26 @@ class Repeater extends Field
     protected ?Closure $optionFieldsResolver = null;
 
     /**
+     * The maximum number of options.
+     */
+    protected ?int $max = null;
+
+    /**
+     * Set the maximum number of options.
+     */
+    public function max(int $value): static
+    {
+        $this->max = $value;
+
+        return $this;
+    }
+
+    /**
      * Get the option name.
      */
     public function getOptionName(): string
     {
-        return Str::singular($this->label);
+        return __(Str::singular($this->label));
     }
 
     /**
@@ -173,11 +188,11 @@ class Repeater extends Field
             App::call(function (Request $request): array {
                 return [
                     'addNewLabel' => $this->getAddNewOptionLabel(),
+                    'max' => $this->max,
                     'options' => array_map(static function (RepeaterOption $option): array {
                         return $option->toRenderedArray();
                     }, $this->resolveOptions($request)),
                     'url' => $this->getApiUri(),
-                    'config' => [],
                 ];
             })
         );

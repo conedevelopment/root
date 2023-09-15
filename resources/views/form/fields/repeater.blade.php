@@ -6,7 +6,12 @@
         </template>
     </div>
     <div class="btn-dropdown">
-        <button type="button" class="btn btn--primary btn--icon" x-on:click="add">
+        <button
+            type="button"
+            class="btn btn--primary btn--icon"
+            x-bind:disabled="processing || options.length >= {{ $max }}"
+            x-on:click="add"
+        >
             {{ $addNewLabel }}
             <x-root::icon name="plus" class="btn__icon" />
         </button>

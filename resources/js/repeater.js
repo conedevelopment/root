@@ -1,5 +1,5 @@
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('repeater', (url, options = [], config = {}) => {
+    window.Alpine.data('repeater', (url, options = []) => {
         return {
             processing: false,
             options: options,
