@@ -163,7 +163,7 @@ class Form extends Element
     }
 
     /**
-     * Conver the form to an array.
+     * Convert the form to an array.
      */
     public function toArray(): array
     {
