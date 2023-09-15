@@ -23,11 +23,19 @@ class Repeater extends Fieldset
     protected ?Closure $optionFieldsResolver = null;
 
     /**
-     * Get the add new label.
+     * Get the option name.
      */
-    public function addNewLabel(): string
+    public function getOptionName(): string
     {
-        return __('Add :name', ['name' => Str::singular($this->label)]);
+        return Str::singular($this->label);
+    }
+
+    /**
+     * Get the add new option label.
+     */
+    public function getAddNewOptionLabel(): string
+    {
+        return __('Add :name', ['name' => $this->getOptionName()]);
     }
 
     /**
@@ -36,6 +44,20 @@ class Repeater extends Fieldset
     public function getValueForHydrate(Request $request): mixed
     {
         return array_values((array) parent::getValueForHydrate($request));
+    }
+
+    /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveField(Request $request, Field $field): void
+    {
+        if (! is_null($this->apiUri)) {
+            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
+        }
+
+        $field->setModelAttribute(
+            sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
+        );
     }
 
     /**
@@ -105,7 +127,7 @@ class Repeater extends Fieldset
     public function newOption(array $value, string $label): mixed
     {
         return (new RepeaterOption($this->newTemporaryModel($value), $label))
-            ->when(! is_null($this->optionFieldsResolver), function (RepeaterOption $option) use ($value): void {
+            ->when(! is_null($this->optionFieldsResolver), function (RepeaterOption $option): void {
                 $option->withFields(call_user_func_array($this->optionFieldsResolver, [$option->model]));
             });
     }
@@ -113,13 +135,11 @@ class Repeater extends Fieldset
     /**
      * Build a new option.
      */
-    public function build(Request $request): JsonResponse
+    public function buildOption(Request $request): JsonResponse
     {
-        // resolveDisplay
-
-        $label = sprintf('#%d', '');
-
-        return new JsonResponse($this->newOption([], $label));
+        return new JsonResponse(
+            $this->newOption([], sprintf('#%d', mt_rand(10, 20)))->toRenderedArray()
+        );
     }
 
     /**
@@ -131,8 +151,12 @@ class Repeater extends Fieldset
             parent::toArray(),
             App::call(function (Request $request): array {
                 return [
-                    'addNewLabel' => $this->addNewLabel(),
-                    'options' => $this->resolveOptions($request),
+                    'addNewLabel' => $this->getAddNewOptionLabel(),
+                    'options' => array_map(static function (RepeaterOption $option): array {
+                        return $option->toRenderedArray();
+                    }, $this->resolveOptions($request)),
+                    'url' => $this->getApiUri(),
+                    'config' => [],
                 ];
             })
         );
@@ -144,7 +168,7 @@ class Repeater extends Fieldset
     public function toResponse($request): JsonResponse
     {
         return match ($request->method()) {
-            'POST' => $this->build($request),
+            'POST' => $this->buildOption($request),
             default => parent::toResponse($request),
         };
     }

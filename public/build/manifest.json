@@ -7,12 +7,12 @@
     "css": [
       "assets/app-79a10dd5.css"
     ],
-    "file": "assets/app-974e6980.js",
+    "file": "assets/app-c08fa438.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/js/editor.js": {
-    "file": "assets/editor-7447720e.js",
+    "file": "assets/editor-036c15a0.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -20,15 +20,23 @@
     "src": "resources/js/editor.js"
   },
   "resources/js/media-manager.js": {
-    "file": "assets/media-manager-7447720e.js",
+    "file": "assets/media-manager-036c15a0.js",
     "imports": [
       "resources/js/app.js"
     ],
     "isEntry": true,
     "src": "resources/js/media-manager.js"
   },
+  "resources/js/repeater.js": {
+    "file": "assets/repeater-036c15a0.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/repeater.js"
+  },
   "resources/sass/app.scss": {
-    "file": "assets/app-03d643d3.js",
+    "file": "assets/app-7b52f4e6.js",
     "imports": [
       "resources/js/app.js"
     ],
