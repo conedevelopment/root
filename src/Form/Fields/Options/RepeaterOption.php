@@ -34,7 +34,7 @@ class RepeaterOption extends Option
     {
         $this->model = $model;
 
-        parent::__construct($model->getKey(), $label);
+        parent::__construct($model->getAttribute('_key'), $label);
     }
 
     /**

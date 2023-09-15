@@ -115,7 +115,11 @@ class Repeater extends Fieldset
      */
     public function build(Request $request): JsonResponse
     {
-        return new JsonResponse();
+        // resolveDisplay
+
+        $label = sprintf('#%d', '');
+
+        return new JsonResponse($this->newOption([], $label));
     }
 
     /**

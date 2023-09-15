@@ -5,7 +5,7 @@
                 type="button"
                 class="btn btn--primary btn--sm btn--icon repeater__toggle"
                 aria-label="{{ __('Toggle') }}"
-                aria-describedby="repeater-item-1"
+                aria-describedby="{{ $value }}-title"
                 x-bind:aria-expanded="open"
                 x-on:click="open = ! open"
             >
@@ -16,7 +16,7 @@
                     <x-root::icon name="plus" class="btn__icon"/>
                 </template>
             </button>
-            <h3 id="repeater-item-1" class="repeater__title">
+            <h3 id="{{ $value }}-title" class="repeater__title">
                 <span class="repeater__order">{{ $label }}</span>
             </h3>
         </div>
@@ -24,8 +24,8 @@
             <button
                 type="button"
                 class="btn btn--light btn--sm btn--icon"
-                aria-describedby="repeater-item-1"
-                aria-label="Move one up"
+                aria-describedby="{{ $value }}-title"
+                aria-label="{{ __('Move up') }}"
                 disabled
             >
                 <x-root::icon name="chevron-up" class="btn__icon" />
@@ -33,16 +33,16 @@
             <button
                 type="button"
                 class="btn btn--light btn--sm btn--icon"
-                aria-describedby="repeater-item-1"
-                aria-label="Move one down"
+                aria-describedby="{{ $value }}-title"
+                aria-label="{{ __('Move down') }}"
             >
                 <x-root::icon name="chevron-down" class="btn__icon" />
             </button>
             <button
                 type="button"
                 class="btn btn--delete btn--sm btn--icon"
-                aria-describedby="repeater-item-1"
-                aria-label="Remove"
+                aria-describedby="{{ $value }}-title"
+                aria-label="{{ __('Remove') }}"
             >
                 <x-root::icon name="close" class="btn__icon" />
             </button>
