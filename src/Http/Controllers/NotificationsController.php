@@ -2,10 +2,8 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 
 class NotificationsController extends Controller
 {
@@ -14,15 +12,13 @@ class NotificationsController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $notifications = (Notification::proxy())::rootQuery($request)
-            ->filter($request)
-            ->latest()
+        $notifications = $request->user()
+            ->rootNotifications()
             ->paginate($request->input('per_page'))
-            ->setPath(URL::route('root.api.notifications.index', [], false))
             ->withQueryString();
 
         return new JsonResponse(array_merge($notifications->toArray(), [
-            'total_unread' => $request->user()->notifications()->unread()->count(),
+            'total_unread' => $request->user()->rootNotifications()->unread()->count(),
         ]));
     }
 
@@ -31,7 +27,7 @@ class NotificationsController extends Controller
      */
     public function show(Request $request, string $id): JsonResponse
     {
-        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
+        $notification = $request->user()->rootNotifications()->findOrFail($id);
 
         return new JsonResponse($notification);
     }
@@ -41,7 +37,7 @@ class NotificationsController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
+        $notification = $request->user()->rootNotifications()->findOrFail($id);
 
         $notification->markAsRead();
 
@@ -53,7 +49,7 @@ class NotificationsController extends Controller
      */
     public function destroy(Request $request, string $id): JsonResponse
     {
-        $notification = (Notification::proxy())::rootQuery($request)->findOrFail($id);
+        $notification = $request->user()->rootNotifications()->findOrFail($id);
 
         $notification->delete();
 

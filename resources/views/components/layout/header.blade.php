@@ -46,9 +46,9 @@
             </div>
             <x-root::layout.breadcrumbs />
         </div>
-        <div class="app-header__actions" x-data="{ open: false }" x-on:click.outside="open = false">
+        <div class="app-header__actions">
             <x-root::notifications />
-            <div class="user-menu">
+            <div class="user-menu" x-data="{ open: false }" x-on:click.outside="open = false">
                 <img class="user-menu__avatar" src="{{ $user->avatar }}" alt="{{ $user->name }}">
                 <div class="user-menu__caption">
                     <span class="user-menu__role">{{ $user->name }}</span>

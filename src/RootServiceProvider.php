@@ -129,11 +129,11 @@ class RootServiceProvider extends ServiceProvider
             });
 
         $root->routes(function (Router $router): void {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-
             $router->prefix('api')->as('api.')->group(function (): void {
                 $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
             });
+
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
 
         RateLimiter::for('root.auth', static function (Request $request): Limit {

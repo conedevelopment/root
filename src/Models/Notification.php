@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Models;
 
+use Attribute;
+use Cone\Root\Database\Factories\NotificationFactory;
 use Cone\Root\Interfaces\Models\Notification as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -20,6 +22,14 @@ class Notification extends DatabaseNotification implements Contract
      * @var string
      */
     protected $table = 'root_notifications';
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): NotificationFactory
+    {
+        return NotificationFactory::new();
+    }
 
     /**
      * Get the proxied interface.

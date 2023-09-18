@@ -9,7 +9,7 @@ document.addEventListener('alpine:init', () => {
             working: false,
             queue: [],
             items: [],
-            next_page_url: url,
+            nextPageUrl: url,
             init() {
                 this.$root.querySelector('.modal__body').addEventListener('scroll', throttle((event) => {
                     if (this.shouldPaginate(event)) {
@@ -20,9 +20,9 @@ document.addEventListener('alpine:init', () => {
             fetch() {
                 this.processing = true;
 
-                window.$http.get(this.next_page_url).then((response) => {
+                window.$http.get(this.nextPageUrl).then((response) => {
                     this.items.push(...response.data.data);
-                    this.next_page_url = response.data.next_page_url;
+                    this.nextPageUrl = response.data.next_page_url;
                 }).catch((error) => {
                     //
                 }).finally(() => {
@@ -31,7 +31,7 @@ document.addEventListener('alpine:init', () => {
             },
             shouldPaginate(event) {
                 return ! this.processing
-                    && this.next_page_url !== null
+                    && this.nextPageUrl !== null
                     && this.items.length > 0
                     && Math.abs(event.target.scrollHeight - event.target.scrollTop - event.target.clientHeight) < 75;
             },
