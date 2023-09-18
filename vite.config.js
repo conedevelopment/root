@@ -24,6 +24,7 @@ export default defineConfig({
                 'resources/js/editor.js',
                 'resources/js/media-manager.js',
                 'resources/js/repeater.js',
+                'resources/js/dropdown.js',
                 'resources/sass/app.scss',
             ],
             refresh: true,

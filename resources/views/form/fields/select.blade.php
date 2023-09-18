@@ -5,12 +5,12 @@
             <span class="required-marker">*</span>
         @endif
     </label>
-    <select {{ $attrs->class(['form-control', 'form-control--invalid' => $invalid]) }}>
+    <select {{ $attrs }}>
         @if($nullable)
             <option value="">--- {{ $label }} ---</option>
         @endif
         @foreach($options as $option)
-            {!! $option->render() !!}
+            {!! $option !!}
         @endforeach
     </select>
 </div>

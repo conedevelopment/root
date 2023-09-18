@@ -108,6 +108,14 @@ class Fields
     }
 
     /**
+     * Make a new tag field.
+     */
+    public function tag(string $label, string $modelAttribute = null): Tag
+    {
+        return $this->field(Tag::class, $label, $modelAttribute);
+    }
+
+    /**
      * Make a new date field.
      */
     public function date(string $label, string $modelAttribute = null): Date
@@ -169,6 +177,14 @@ class Fields
     public function repeater(string $label, string $modelAttribute = null): Repeater
     {
         return $this->field(Repeater::class, $label, $modelAttribute);
+    }
+
+    /**
+     * Make a new repeater field.
+     */
+    public function dropdown(string $label, string $modelAttribute = null): Dropdown
+    {
+        return $this->field(Dropdown::class, $label, $modelAttribute);
     }
 
     /**

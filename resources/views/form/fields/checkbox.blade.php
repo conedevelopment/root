@@ -7,7 +7,7 @@
     </label>
     <div class="form-group form-group--vertical-check">
         @foreach($options as $option)
-            {!! $option->render() !!}
+            {!! $option !!}
         @endforeach
     </div>
     @if($invalid)
