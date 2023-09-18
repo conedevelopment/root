@@ -37,7 +37,7 @@
                                 href="#"
                                 class="notification-card__link"
                                 x-text="notification.subject"
-                                x-on:click.prevet="markAsRead(notification)"
+                                x-on:click.prevent="markAsRead(notification)"
                             ></a>
                         </h3>
                         <p x-text="notification.formatted_created_at"></p>
