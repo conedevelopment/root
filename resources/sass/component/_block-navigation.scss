@@ -31,11 +31,11 @@
   }
 
   &__menu {
-    &[data-state='closed'] {
+    &:not(.is-open) {
       display: none;
     }
 
-    &[data-state='open'] {
+    &.is-open {
       display: block;
     }
 

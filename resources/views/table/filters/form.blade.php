@@ -15,7 +15,7 @@
                     <span class="btn__counter">{{ $attrs->get('data-active') }}</span>
                 @endif
             </button>
-            <div class="context-menu context-menu--inline-end" x-bind:data-state="open ? 'open' : 'closed'">
+            <div class="context-menu context-menu--inline-end" x-bind:class="{ 'is-open': open }">
                 <div class="form-group-stack form-group-stack--bordered form-group-container">
                     @foreach($fields as $field)
                         {!! $field !!}

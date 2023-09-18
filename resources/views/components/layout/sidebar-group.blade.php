@@ -11,7 +11,7 @@
             <x-root::icon name="chevron-down" class="btn__icon" />
         </button>
     </h3>
-    <nav class="block-navigation__menu block-navigation__menu--breakout" x-bind:data-state="open ? 'open' : 'closed'">
+    <nav class="block-navigation__menu block-navigation__menu--breakout" x-bind:class="{ 'is-open': open }">
         <ul>
             @foreach($items as $item)
                 <li>

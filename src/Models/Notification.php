@@ -2,19 +2,32 @@
 
 namespace Cone\Root\Models;
 
-use Attribute;
 use Cone\Root\Database\Factories\NotificationFactory;
 use Cone\Root\Interfaces\Models\Notification as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\URL;
 
 class Notification extends DatabaseNotification implements Contract
 {
     use HasFactory;
     use HasUuids;
     use InteractsWithProxy;
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'formatted_created_at',
+        'is_read',
+        'subject',
+        'url',
+    ];
 
     /**
      * The table associated with the model.
@@ -37,5 +50,45 @@ class Notification extends DatabaseNotification implements Contract
     public static function getProxiedInterface(): string
     {
         return Contract::class;
+    }
+
+    /**
+     * Get the subject attribute.
+     */
+    protected function subject(): Attribute
+    {
+        return new Attribute(
+            get: fn (): ?string => $this->data['subject'] ?? $this->getKey()
+        );
+    }
+
+    /**
+     * Get the formatted created at attribute.
+     */
+    protected function formattedCreatedAt(): Attribute
+    {
+        return new Attribute(
+            get: fn (): ?string => $this->created_at?->format('Y-m-d H:i'),
+        );
+    }
+
+    /**
+     * Get the formatted created at attribute.
+     */
+    protected function isRead(): Attribute
+    {
+        return new Attribute(
+            get: fn (): bool => ! is_null($this->read_at),
+        );
+    }
+
+    /**
+     * Get the URL attribute.
+     */
+    protected function url(): Attribute
+    {
+        return new Attribute(
+            get: fn (): ?string => $this->exists ? URL::route('root.api.notifications.update', $this) : null,
+        );
     }
 }

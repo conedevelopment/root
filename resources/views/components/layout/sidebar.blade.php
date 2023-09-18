@@ -29,7 +29,7 @@
         </div>
         <div class="app-sidebar__body">
             <div class="block-navigation">
-                <nav class="block-navigation__menu block-navigation__menu--breakout" data-state="open">
+                <nav class="block-navigation__menu block-navigation__menu--breakout is-open">
                     <ul>
                         <li>
                             <a
