@@ -1,11 +1,11 @@
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('dropdown', (options, config) => {
+    window.Alpine.data('dropdown', (options, selection, config) => {
         return {
-            selection: [],
+            selection: selection,
             options: options,
             search: null,
             open: false,
-            highlighted: null,
+            highlighted: 0,
             highlight(index) {
                 this.open = true;
 
@@ -30,11 +30,6 @@ document.addEventListener('alpine:init', () => {
             highlightPrev() {
                 this.highlight(this.highlighted - 1);
             },
-            toggleFromKeyboard() {
-                if (this.highlightedItemIndex === null) {
-                    this.options[this.highlightedItemIndex].selected = ! this.options[this.highlightedItemIndex].selected;
-                }
-            },
             select(item) {
                 config.multiple
                     ? this.selection.push(item)
@@ -46,11 +41,20 @@ document.addEventListener('alpine:init', () => {
                 );
             },
             toggle(item) {
-                console.log(item);
                 this.selected(item) ? this.deselect(item) : this.select(item);
             },
             selected(item) {
                 return this.selection.findIndex((selected) => selected.value === item.value) > -1;
+            },
+            filter(search) {
+                if (! search) {
+                    return this.options;
+                }
+
+                return this.options.filter((option) => {
+                    return option.value.includes(search)
+                        || option.label.replace(/<[^>]+>/g, '').includes(search);
+                });
             },
         };
     });

@@ -4,6 +4,7 @@ namespace Cone\Root\Form\Fields;
 
 use Cone\Root\Form\Fields\Options\DropdownOption;
 use Cone\Root\Form\Form;
+use Illuminate\Support\Collection;
 
 class Dropdown extends Select
 {
@@ -41,6 +42,15 @@ class Dropdown extends Select
             'options' => array_map(static function (DropdownOption $option): array {
                 return $option->toRenderedArray();
             }, $data['options']),
+            'selection' => Collection::make($data['options'])
+                ->filter(function (DropdownOption $option): bool {
+                    return $option->getAttribute('selected');
+                })
+                ->values()
+                ->map(function (DropdownOption $option): array {
+                    return $option->toRenderedArray();
+                })
+                ->toArray(),
             'config' => [
                 'multiple' => $this->getAttribute('multiple'),
             ],
