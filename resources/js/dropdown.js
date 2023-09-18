@@ -11,7 +11,7 @@ document.addEventListener('alpine:init', () => {
 
                 if (this.options.length === 0) {
                     this.highlighted = null;
-                } else if (this.index >= this.options.length) {
+                } else if (index >= this.options.length) {
                     this.highlighted = 0;
                 } else if (index < 0) {
                     this.highlighted = this.options.length - 1;
