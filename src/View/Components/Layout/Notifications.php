@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\View\Components;
+namespace Cone\Root\View\Components\Layout;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\Component;
@@ -13,7 +13,7 @@ class Notifications extends Component
      */
     public function render(): View
     {
-        return $this->view('root::components.notifications', [
+        return $this->view('root::components.layout.notifications', [
             'url' => URL::route('root.api.notifications.index'),
         ]);
     }

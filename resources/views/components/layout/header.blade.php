@@ -17,37 +17,12 @@
                 <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
                     <x-root::icon name="search" class="btn__icon" />
                 </button>
-                <div class="theme-switcher" id="theme-switcher" data-theme-mode="light">
-                    <button
-                        type="button"
-                        class="btn btn--outline-dark btn--sm btn--icon theme-switcher__system-mode"
-                        aria-label="Switch to light mode"
-                        data-action="light"
-                    >
-                        <x-root::icon name="light-mode" class="btn__icon" />
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn--outline-dark btn--sm btn--icon theme-switcher__light-mode"
-                        aria-label="Switch to dark mode"
-                        data-action="dark"
-                    >
-                        <x-root::icon name="system-mode" class="btn__icon" />
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn--outline-dark btn--sm btn--icon theme-switcher__dark-mode"
-                        aria-label="Switch to system mode"
-                        data-action="system"
-                    >
-                        <x-root::icon name="system-mode" class="btn__icon" />
-                    </button>
-                </div>
+                <x-root::layout.theme />
             </div>
             <x-root::layout.breadcrumbs />
         </div>
         <div class="app-header__actions">
-            <x-root::notifications />
+            <x-root::layout.notifications />
             <div class="user-menu" x-data="{ open: false }" x-on:click.outside="open = false">
                 <img class="user-menu__avatar" src="{{ $user->avatar }}" alt="{{ $user->name }}">
                 <div class="user-menu__caption">

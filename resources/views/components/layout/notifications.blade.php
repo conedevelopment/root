@@ -52,12 +52,3 @@
         </template>
     </div>
 </div>
-
-{{-- Script --}}
-@pushOnce('scripts')
-    {{
-        Vite::withEntryPoints('resources/js/notifications.js')
-            ->useBuildDirectory('vendor/root/build')
-            ->useHotFile(public_path('vendor/root/hot'))
-    }}
-@endpushOnce

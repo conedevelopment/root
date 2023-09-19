@@ -6,6 +6,7 @@ use Cone\Root\Resources\Resource;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -50,6 +51,10 @@ class RootServiceProvider extends ServiceProvider
 
         $this->app->booted(static function (Application $app): void {
             $app->make(Root::class)->boot();
+        });
+
+        $this->app->afterResolving(EncryptCookies::class, static function (EncryptCookies $middleware): void {
+            $middleware->disableFor('__root_theme');
         });
     }
 
