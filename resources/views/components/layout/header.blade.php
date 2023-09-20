@@ -34,7 +34,7 @@
                 </button>
                 <ul class="context-menu" x-bind:class="{ 'is-open': open }">
                     <li>
-                        <button type="submit" form="logout-form">
+                        <button type="submit" form="logout-form" class="context-menu__item">
                             {{ __('Logout') }}
                         </button>
                     </li>
