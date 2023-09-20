@@ -137,7 +137,9 @@ class Repeater extends Field
      */
     public function newTemporaryModel(array $attributes = []): Model
     {
-        $model = new class() extends Model {};
+        $model = new class() extends Model
+        {
+        };
 
         return $model->forceFill(array_replace(
             ['_key' => Str::uuid()],

@@ -130,7 +130,9 @@ class Editor extends Field
                 parent::__construct($form, __('Media'), $modelAttribute.'-media', static function (): MorphToMany {
                     return new MorphToMany(
                         Medium::proxy()->newQuery(),
-                        new class() extends Model {},
+                        new class() extends Model
+                        {
+                        },
                         'media',
                         'root_mediables',
                         'medium_id',

@@ -51,6 +51,6 @@ class FilterForm extends Form
                     })->all(),
                 ];
             }
-        ));
+            ));
     }
 }

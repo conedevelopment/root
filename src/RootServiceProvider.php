@@ -3,6 +3,7 @@
 namespace Cone\Root;
 
 use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Facades\Navigation as Nav;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
@@ -49,10 +50,6 @@ class RootServiceProvider extends ServiceProvider
             $this->mergeConfigFrom(__DIR__.'/../config/root.php', 'root');
         }
 
-        $this->app->booted(static function (Application $app): void {
-            $app->make(Root::class)->boot();
-        });
-
         $this->app->afterResolving(EncryptCookies::class, static function (EncryptCookies $middleware): void {
             $middleware->disableFor('__root_theme');
         });
@@ -70,8 +67,8 @@ class RootServiceProvider extends ServiceProvider
         }
 
         $this->registerViews();
-
         $this->registerRoutes();
+        $this->registerNavigation();
     }
 
     /**
@@ -180,6 +177,22 @@ class RootServiceProvider extends ServiceProvider
                 'alerts' => $request->session()->get('alerts', []),
                 'user' => $request->user(),
             ]);
+        });
+    }
+
+    /**
+     * Register the navigation.
+     */
+    protected function registerNavigation(): void
+    {
+        $this->app->make(Root::class)->booting(static function (Root $root): void {
+            $root->resources->each(static function (Resource $resource): void {
+                Nav::location('sidebar')->new(
+                    $resource->getUrl(),
+                    $resource->getName(),
+                    ['icon' => $resource->getIcon()]
+                );
+            });
         });
     }
 }

@@ -25,11 +25,11 @@ abstract class Extract implements Routable
     use AsTable;
     use Authorizable;
     use Makeable;
-    use ResolvesWidgets;
-    use ResolvesQuery;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesQuery;
+    use ResolvesWidgets;
 
     /**
      * The parent resource instance.

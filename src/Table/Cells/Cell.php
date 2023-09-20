@@ -6,13 +6,10 @@ use Cone\Root\Support\Element;
 use Cone\Root\Table\Columns\Column;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Traits\Conditionable;
-use Stringable;
 
 abstract class Cell extends Element
 {

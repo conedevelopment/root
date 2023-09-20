@@ -28,11 +28,6 @@ class Root
     protected array $booting = [];
 
     /**
-     * The registered booted callbacks.
-     */
-    protected array $booted = [];
-
-    /**
      * The Application instance.
      */
     public readonly Application $app;
@@ -73,14 +68,6 @@ class Root
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
-
-        $this->resources->each(function (Resource $resource): void {
-            $resource->boot($this);
-        });
-
-        foreach ($this->booted as $callback) {
-            call_user_func_array($callback, [$this]);
-        }
     }
 
     /**
@@ -89,14 +76,6 @@ class Root
     public function booting(Closure $callback): void
     {
         $this->booting[] = $callback;
-    }
-
-    /**
-     * Register a booted callback.
-     */
-    public function booted(Closure $callback): void
-    {
-        $this->booted[] = $callback;
     }
 
     /**

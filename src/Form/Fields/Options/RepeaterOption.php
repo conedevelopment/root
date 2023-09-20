@@ -65,7 +65,7 @@ class RepeaterOption extends Option
         return $this;
     }
 
-        /**
+    /**
      * Get the array representation of the object.
      */
     public function toArray(): array

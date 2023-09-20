@@ -5,9 +5,6 @@ namespace Cone\Root\Resources;
 use Cone\Root\Form\Form;
 use Cone\Root\Interfaces\AsForm;
 use Cone\Root\Interfaces\AsTable;
-use Cone\Root\Navigation\Item;
-use Cone\Root\Root;
-use Cone\Root\Support\Facades\Navigation;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\ResolvesExtracts;
@@ -187,7 +184,15 @@ class Resource implements Arrayable, AsForm, AsTable
     }
 
     /**
-     * The URL for the given model.
+     * Get the resource URL.
+     */
+    public function getUrl(): string
+    {
+        return URL::route('root.resource.index', $this->getUriKey());
+    }
+
+    /**
+     * Get the URL for the given model.
      */
     public function modelUrl(Model $model): string
     {
@@ -263,22 +268,5 @@ class Resource implements Arrayable, AsForm, AsTable
             'title' => '',
             'form' => $this->toForm($request, $model),
         ]);
-    }
-
-    /**
-     * Get the navigation compatible format of the resource.
-     */
-    public function toNavigationItem(Request $request): Item
-    {
-        return Item::make('#', $this->getName())
-            ->icon($this->icon);
-    }
-
-    /**
-     * Handle the resource registered event.
-     */
-    public function boot(Root $root): void
-    {
-        Navigation::location('sidebar')->add($this->toNavigationItem($root->app['request']));
     }
 }

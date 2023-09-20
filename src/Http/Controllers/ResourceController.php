@@ -4,7 +4,6 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Root;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response as ResponseFactory;
-use Illuminate\Support\Facades\URL;
 
 class ResourceController extends Controller
 {

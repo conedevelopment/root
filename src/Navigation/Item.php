@@ -15,12 +15,13 @@ class Item
     /**
      * Create a new item instance.
      */
-    public function __construct(string $url, string $label)
+    public function __construct(string $url, string $label, array $attributes = [])
     {
         $this->url($url);
         $this->label($label);
         $this->icon('archive');
         $this->group(__('General'));
+        $this->setAttributes($attributes);
     }
 
     /**
