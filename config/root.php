@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\HandleRootRequests;
 use Cone\Root\Http\Middleware\Authenticate;
+use Cone\Root\Http\Middleware\HandleRootRequests;
 
 return [
 

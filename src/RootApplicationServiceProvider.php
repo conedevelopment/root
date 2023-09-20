@@ -25,7 +25,6 @@ class RootApplicationServiceProvider extends ServiceProvider
 
         $this->registerResources();
         $this->registerWidgets();
-        $this->registerRoutes();
     }
 
     /**
@@ -42,16 +41,6 @@ class RootApplicationServiceProvider extends ServiceProvider
     protected function registerWidgets(): void
     {
         $this->app->make(Root::class)->widgets->register($this->widgets());
-    }
-
-    /**
-     * Register the routes.
-     */
-    protected function registerRoutes(): void
-    {
-        $this->app->make(Root::class)->routes(function (Router $router): void {
-            //
-        });
     }
 
     /**
