@@ -56,25 +56,11 @@ class WidgetMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        $class = $this->replaceAsync($class);
-
         $class = $this->replaceTemplate($class);
 
         $this->makeView();
 
         return $class;
-    }
-
-    /**
-     * Replace the async related code.
-     */
-    protected function replaceAsync(string $class): string
-    {
-        if ($this->option('async')) {
-            $class = str_replace([PHP_EOL.'%%async%%', '%%/async%%'], '', $class);
-        }
-
-        return preg_replace('/\n%%async%%.*%%\/async%%/s', '', $class);
     }
 
     /**
@@ -125,7 +111,6 @@ class WidgetMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['async', null, InputOption::VALUE_NONE, 'Mark the widget as async'],
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the component already exists'],
             ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
         ];

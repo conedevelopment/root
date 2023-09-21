@@ -23,11 +23,12 @@ class UserResource extends Resource
      */
     public function toTable(Request $request): Table
     {
-        return parent::toTable($request)->withColumns(static function (Columns $columns): void {
-            $columns->id();
-            $columns->text(__('Name'), 'name');
-            $columns->text(__('Email'), 'email');
-        });
+        return parent::toTable($request)
+            ->withColumns(static function (Request $request, Columns $columns): void {
+                $columns->id();
+                $columns->text(__('Name'), 'name');
+                $columns->text(__('Email'), 'email');
+            });
     }
 
     /**
@@ -35,16 +36,17 @@ class UserResource extends Resource
      */
     public function toForm(Request $request): Form
     {
-        return parent::toForm($request)->withFields(static function (Fields $fields): void {
-            $fields->text(__('Name'), 'name')
-                ->rules(['required', 'string', 'max:256']);
+        return parent::toForm($request)
+            ->withFields(static function (Request $request, Fields $fields): void {
+                $fields->text(__('Name'), 'name')
+                    ->rules(['required', 'string', 'max:256']);
 
-            $fields->email(__('Email'), 'email')
-                ->rules(['required', 'string', 'email', 'max:256'])
-                ->createRules(['unique:users'])
-                ->updateRules(static function (Request $request, Model $model): array {
-                    return [Rule::unique('users')->ignoreModel($model)];
-                });
-        });
+                $fields->email(__('Email'), 'email')
+                    ->rules(['required', 'string', 'email', 'max:256'])
+                    ->createRules(['unique:users'])
+                    ->updateRules(static function (Request $request, Model $model): array {
+                        return [Rule::unique('users')->ignoreModel($model)];
+                    });
+            });
     }
 }

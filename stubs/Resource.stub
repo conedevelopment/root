@@ -13,16 +13,6 @@ use Illuminate\Http\Request;
 class {{ class }} extends Resource
 {
     /**
-     * Define the relations for the resource.
-     */
-    public function relations(): array
-    {
-        return array_merge(parent::relations(), [
-            //
-        ]);
-    }
-
-    /**
      * Define the extracts for the resource.
      */
     public function extracts(): array
@@ -47,9 +37,10 @@ class {{ class }} extends Resource
      */
     public function toTable(Request $request): Table
     {
-        return parent::toTable($request)->withColumns(static function (Columns $columns): void {
-            $columns->id();
-        });
+        return parent::toTable($request)
+            ->withColumns(static function (Request $request, Columns $columns): void {
+                $columns->id();
+            });
     }
 
     /**
@@ -57,8 +48,9 @@ class {{ class }} extends Resource
      */
     public function toForm(Request $request): Form
     {
-        return parent::toForm($request)->withFields(static function (Fields $fields): void {
-            //
-        });
+        return parent::toForm($request)
+            ->withFields(static function (Request $request, Fields $fields): void {
+                //
+            });
     }
 }

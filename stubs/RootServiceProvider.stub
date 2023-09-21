@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Root\Resources\UserResource;
 use Cone\Root\Conversion\Image;
 use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\RootApplicationServiceProvider;
@@ -55,7 +56,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function resources(): array
     {
         return [
-            User::toResource(),
+            new UserResource(),
         ];
     }
 
@@ -65,7 +66,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function widgets(): array
     {
         return [
-            Welcome::make(),
+            new Welcome(),
         ];
     }
 }

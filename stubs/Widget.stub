@@ -3,16 +3,9 @@
 namespace {{ namespace }};
 
 use Cone\Root\Widgets\Widget;
-use Illuminate\Http\Request;
 
 class {{ class }} extends Widget
 {
-%%async%%
-    /**
-     * Indicates whether the widget is async.
-     */
-    protected bool $async = true;
-%%/async%%
     /**
      * The Blade template.
      */
@@ -21,9 +14,9 @@ class {{ class }} extends Widget
     /**
      * Get the data.
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        return array_merge(parent::toArray(), [
             //
         ]);
     }
