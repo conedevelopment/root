@@ -7,7 +7,6 @@ use Cone\Root\Interfaces\AsForm;
 use Cone\Root\Interfaces\AsTable;
 use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\ResolvesExtracts;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +20,6 @@ use Illuminate\Support\Str;
 class Resource implements Arrayable, AsForm, AsTable
 {
     use Authorizable;
-    use ResolvesExtracts;
     use ResolvesWidgets;
 
     /**

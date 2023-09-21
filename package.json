@@ -18,6 +18,7 @@
         "@tiptap/starter-kit": "^2.0.3",
         "acorn": "^8.10.0",
         "alpinejs": "^3.12.3",
+        "apexcharts": "^3.42.0",
         "axios": "^1.4.0",
         "laravel-vite-plugin": "^0.7.8",
         "postcss": "^8.2.4",
