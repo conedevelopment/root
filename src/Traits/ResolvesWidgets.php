@@ -2,31 +2,46 @@
 
 namespace Cone\Root\Traits;
 
-use Closure;
+use Cone\Root\Widgets\Widget;
 use Cone\Root\Widgets\Widgets;
+use Illuminate\Http\Request;
 
 trait ResolvesWidgets
 {
     /**
-     * The resolved widgets.
+     * The widgets collection.
      */
-    public readonly Widgets $widgets;
+    protected ?Widgets $widgets = null;
 
     /**
      * Define the widgets.
      */
-    public function widgets(): array
+    public function widgets(Request $request): array
     {
         return [];
     }
 
     /**
-     * Apply the callback on the widgets.
+     * Resolve the widgets collection.
      */
-    public function withWidgets(Closure $callback): static
+    public function resolveWidgets(Request $request): Widgets
     {
-        call_user_func_array($callback, [$this->widgets]);
+        if (is_null($this->widgets)) {
+            $this->widgets = new Widgets($this->widgets($request));
 
-        return $this;
+            $this->widgets->each(function (Widget $widget) use ($request): void {
+                $this->resolveWidget($request, $widget);
+            });
+        }
+
+        return $this->widgets;
+    }
+
+    /**
+     * Handle the callback for the widget resolution.
+     */
+    protected function resolveWidget(Request $request, Widget $widget): void
+    {
+        //
     }
 }

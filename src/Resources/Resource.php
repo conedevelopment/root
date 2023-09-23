@@ -243,6 +243,7 @@ class Resource implements Arrayable, AsForm, AsTable
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
             'table' => $this->toTable($request, $this->resolveQuery($request)),
+            'widgets' => $this->resolveWidgets($request)->all(),
         ]);
     }
 

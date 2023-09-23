@@ -5,6 +5,7 @@ namespace Cone\Root\Form\Fields;
 use Closure;
 use Cone\Root\Form\Form;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
@@ -32,13 +33,25 @@ class Fields
     }
 
     /**
+     * Register the given fields.
+     */
+    public function register(array|Field $fields): static
+    {
+        foreach (Arr::wrap($fields) as $field) {
+            $this->fields->push($field);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a new field to the collection.
      */
     public function field(string $field, string $label, string $modelAttribute = null, ...$params): Field
     {
         $instance = new $field($this->form, $label, $modelAttribute, ...$params);
 
-        $this->push($instance);
+        $this->register($field);
 
         return $instance;
     }
