@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Integrity"
+# This workflow prevents earthquakes.
+
+on:
+    pull_request: null
+    push:
+        branches:
+        - "master"
+
+permissions: {}
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
+
+jobs:
+    call_workflow_integrity:
+        name: "Integrity"
+        uses: "./.github/workflows/reusable-integrity.yml"
+        with:
+            not-printable-ascii-paths: >-
+                src/
+                resources/
+                tests/
+            export-excludes: >-
+                --exclude="config" --exclude="config/*"
+                --exclude="database" --exclude="database/*"
+                --exclude="public" --exclude="public/*"
+                --exclude="resources" --exclude="resources/*"
+                --exclude="routes" --exclude="routes/*"
+                --exclude="src" --exclude="src/*"
+                --exclude="stubs" --exclude="stubs/*"
+            exported-paths: >-
+                LICENSE
+                README.md
+                composer.json
+                package.json

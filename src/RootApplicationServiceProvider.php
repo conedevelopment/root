@@ -2,7 +2,6 @@
 
 namespace Cone\Root;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
