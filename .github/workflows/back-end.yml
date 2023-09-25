@@ -39,7 +39,7 @@ jobs:
                 ! git grep -e '\${[A-Z_a-z]' -- '*.php' '*.scss'
         -
             name: "Check source code for syntax errors"
-            run: "composer exec --no-interaction -- parallel-lint src/"
+            run: "composer exec --no-interaction -- parallel-lint src/ tests/"
 
     unit_tests:
         name: "2️⃣ Unit and functional tests"
