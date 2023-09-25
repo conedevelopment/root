@@ -51,7 +51,7 @@ class Fields
     {
         $instance = new $field($this->form, $label, $modelAttribute, ...$params);
 
-        $this->register($field);
+        $this->register($instance);
 
         return $instance;
     }
