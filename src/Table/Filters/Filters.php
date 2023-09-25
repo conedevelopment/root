@@ -5,6 +5,7 @@ namespace Cone\Root\Table\Filters;
 use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
@@ -32,13 +33,25 @@ class Filters
     }
 
     /**
+     * Register the given filters.
+     */
+    public function register(array|Filter $filters): static
+    {
+        foreach (Arr::wrap($filters) as $filter) {
+            $this->filters->push($filter);
+        }
+
+        return $this;
+    }
+
+    /**
      * Make a new filter instance.
      */
     public function filter(string $filter, ...$params): Filter
     {
         $instance = new $filter($this->table, ...$params);
 
-        $this->push($instance);
+        $this->register($instance);
 
         return $instance;
     }
@@ -49,7 +62,7 @@ class Filters
     public function apply(Request $request, Builder $query): Builder
     {
         $this->filters->filter(static function (Filter $filter) use ($request): bool {
-            return $request->has($filter->getKey());
+            return $request->has($filter->getRequestKey());
         })->each(static function (Filter $filter) use ($query, $request): void {
             $filter->apply($request, $query, $filter->getValue($request));
         });
