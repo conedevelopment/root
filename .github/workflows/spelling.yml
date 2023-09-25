@@ -2,7 +2,7 @@
 
 name: "Spelling"
 
-on:  # yamllint disable-line rule:truthy
+on:
     pull_request: null
     push:
         branches:

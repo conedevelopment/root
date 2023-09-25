@@ -17,28 +17,6 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    byte_level:
-        name: "0️⃣ Byte-level"
-        runs-on: "ubuntu-22.04"
-        timeout-minutes: 1
-        steps:
-        -
-            name: "Checkout repository"
-            uses: "actions/checkout@v3"
-        -
-            name: "Check file permissions"
-            run: |
-                test "$(find ./ -type f -not -path './.git/*' -executable)" = ""
-        -
-            name: "Check for byte order mark (BOM)"
-            run: |
-                ! git grep --perl-regexp -I -e '^\xEF\xBB\xBF'
-        -
-            # https://html.spec.whatwg.org/multipage/named-characters.html
-            name: "Find non-printable ASCII characters"
-            run: |
-                ! LC_ALL=C.UTF-8 git grep --perl-regexp --line-number -e '[^ -~]' -- '*.php'
-
     syntax_errors:
         name: "1️⃣ Syntax errors"
         runs-on: "ubuntu-22.04"
@@ -56,17 +34,12 @@ jobs:
             name: "Checkout repository"
             uses: "actions/checkout@v3"
         -
-            name: "Search for conflict markers 🐌"
-            run: |
-                ! git grep --line-number -e '^\(<<<<<<<\s\|=======\s\|=======$\|>>>>>>>\s\||||||||\s\)'
-        -
             name: "Search for invalid complex curly syntax 🐌"
             run: |
                 ! git grep -e '\${[A-Z_a-z]' -- '*.php' '*.scss'
         -
             name: "Check source code for syntax errors"
             run: "composer exec --no-interaction -- parallel-lint src/"
-            # @TODO Check template files for syntax errors
 
     unit_tests:
         name: "2️⃣ Unit and functional tests"
@@ -188,16 +161,6 @@ jobs:
             name: "Checkout repository"
             uses: "actions/checkout@v3"
         -
-            name: "Check EditorConfig configuration"
-            run: "test -f .editorconfig"
-        -
-            name: "Check adherence to EditorConfig"
-            uses: "greut/eclint-action@v0"
-        -
-            name: "Look for TAB characters in the middle of the line 🐌"
-            run: |
-                ! git grep --perl-regexp --line-number -I '^(?!//)[^\t]+\t'
-        -
             name: "Install dependencies"
             uses: "ramsey/composer-install@v2"
             with:
@@ -213,52 +176,3 @@ jobs:
             name: "Annotate Pint results"
             if: "${{ failure() && steps.pint.outcome == 'failure' }}"
             run: "composer exec -- pint --test --format=checkstyle | cs2pr"
-        -
-            # Move TODO-s into GitHub issues!
-            name: "Search for TODO-s and FIXME-s 🐌"
-            run: |
-                ! git grep --extended-regexp --ignore-case '\b(TODO|FIXME)\b' -- ':!:*/back-end\.yml'
-        -
-            name: "Remove blank first lines and multiple blank lines 🐌"
-            run: |
-                git ls-files --cached -z -- ':(exclude,glob)**/yarn.lock' \
-                    | xargs --null -L 1 -- sed -i -e '/./,$!d' -e '/^$/N;/^\n$/D'
-        -
-            name: "Check differences to repository"
-            run: "git diff --exit-code"
-
-    exported_files:
-        name: "5️⃣ Exported files"
-        needs:
-        - "byte_level"
-        - "syntax_errors"
-        runs-on: "ubuntu-22.04"
-        timeout-minutes: 1
-        steps:
-        -
-            name: "Checkout repository"
-            uses: "actions/checkout@v3"
-        -
-            name: "Check for ignored files in the index 🐌"
-            run: |
-                IGNORED_FILES="$(git ls-files --cached --ignored --exclude-standard)"
-                test -z "${IGNORED_FILES}"
-        -
-            name: "Check exported files"
-            run: |
-                EXPECTED="LICENSE,README.md,composer.json,package.json"
-                CURRENT="$(
-                    git archive HEAD \
-                        | tar --list --exclude="src" --exclude="src/*" \
-                            --exclude="config" --exclude="config/*" \
-                            --exclude="database" --exclude="database/*" \
-                            --exclude="public" --exclude="public/*" \
-                            --exclude="resources" --exclude="resources/*" \
-                            --exclude="routes" --exclude="routes/*" \
-                            --exclude="src" --exclude="src/*" \
-                            --exclude="stubs" --exclude="stubs/*" \
-                        | paste --serial --delimiters=","
-                )"
-                echo "CURRENT =${CURRENT}"
-                echo "EXPECTED=${EXPECTED}"
-                test "${CURRENT}" = "${EXPECTED}"

@@ -1,0 +1,168 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Shared Integrity"
+# This action prevents earthquakes.
+
+on:
+    workflow_call:
+        inputs:
+            executables:
+                description: "List of executable files"
+                type: "string"
+                default: ""
+                required: false
+            not-printable-ascii-paths:
+                description: "Paths to be searched for characters outside the printable ASCII range"
+                type: "string"
+                default: "src/ tests/"
+                required: false
+            export-excludes:
+                description: "List of the expected exported directories"
+                type: "string"
+                default: "--exclude='src' --exclude='src/*'"
+                required: false
+            exported-paths:
+                description: "List of the expected exported files"
+                type: "string"
+                default: "LICENSE README.md composer.json"
+                required: false
+
+permissions: {}
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}-reusable-integrity"
+    cancel-in-progress: true
+
+jobs:
+    file:
+        name: "File"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check file permissions"
+            run: |
+                test "$(
+                    git ls-files --stage \
+                        | grep -v '^100644' \
+                        | cut -c '51-'
+                )" = "${{ inputs.executables }}"
+        -
+            # https://github.com/greut/eclint/issues/6
+            name: "Check for byte order mark (BOM)"
+            run: |
+                ! git grep --perl-regexp -I -e '^\xEF\xBB\xBF'
+        -
+            # https://html.spec.whatwg.org/multipage/named-characters.html
+            name: "Search for characters outside the printable ASCII range"
+            run: |
+                ! LC_ALL=C.UTF-8 git grep --perl-regexp --line-number -I -e '[^ -~]' \
+                    -- ${{ inputs.not-printable-ascii-paths }}
+        -
+            name: "Check EditorConfig configuration"
+            run: "test -f .editorconfig"
+        -
+            name: "Check adherence to EditorConfig"
+            uses: "greut/eclint-action@v0"
+        -
+            name: "Look for TAB characters in the middle of the line 🐌"
+            run: |
+                ! git grep --perl-regexp --line-number -I -e '^(?!//)[^\t]+\t'
+        -
+            name: "Look for multiple space characters in the middle of the line 🐌"
+            run: |
+                # Exclude docblocks: grep -v -F '    * @'
+                ! git grep --perl-regexp --line-number -I -e '(?!^#)\S\s\s' \
+                    -- ':!:*.md' ':!:.github/**.yml'
+        -
+            # Move TODO-s into GitHub issues!
+            name: "Search for TODO-s and FIXME-s 🐌"
+            run: |
+                ! git grep --extended-regexp --ignore-case -I -e '\b(TODO|FIXME)\b' \
+                    -- ':!:.github/workflows/reusable-integrity.yml' ':!:.github/workflows/back-end.yml'
+        -
+            name: "Remove blank first lines and multiple blank lines 🐌"
+            run: |
+                # Exclude binary files, empty files and ones with linguist-generated attribute set
+                git grep --files-with-matches -I -e '.' \
+                    | git check-attr --stdin --all \
+                    | sed -n -e 's#^\(.\+\): linguist-generated: set$#":!:\1"#p' \
+                    | xargs -L 1 -- git ls-files --cached -z -- \
+                    | xargs --null -n 1 -- sed -i -e '/./,$!d' -e '/^$/N;/^\n$/D'
+        -
+            name: "Check differences to repository"
+            run: "git diff --exit-code"
+
+    cloc:
+        name: "Lines of Code"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Count Lines of Code"
+            env:
+                GH_TOKEN: "${{ github.token }}"
+            run: |
+                mkdir -p "${{ runner.temp }}/cloc"
+                RELEASE_ASSET_URL="$(
+                    # v1.98
+                    gh api /repos/AlDanial/cloc/releases/117882376 \
+                        --jq '."assets"[] | select(."name" | test("^cloc-.+\\.pl$")) | ."browser_download_url"'
+                )"
+                wget --secure-protocol=TLSv1_3 --max-redirect=1 --retry-on-host-error --retry-connrefused --tries=3 \
+                    --no-verbose --output-document="${{ runner.temp }}/cloc/cloc" "${RELEASE_ASSET_URL}"
+                {
+                    git ls-files -- ':!:LICENSE' ':!:package-lock.json' >"${{ runner.temp }}/cloc/include-list"
+                    echo '```'
+                    perl "${{ runner.temp }}/cloc/cloc" --hide-rate \
+                        --list-file="${{ runner.temp }}/cloc/include-list" \
+                        --ignored="${{ runner.temp }}/cloc/.clocignored"
+                    cat "${{ runner.temp }}/cloc/.clocignored"
+                    echo '```'
+                } >>"${GITHUB_STEP_SUMMARY}"
+
+    commit:
+        name: "Commit"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Search for conflict markers 🐌"
+            run: |
+                ! git grep --line-number -e '^\(<<<<<<<\s\|=======\s\|=======$\|>>>>>>>\s\||||||||\s\)'
+
+    git_archive:
+        name: "Git archive"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check for ignored files in the index 🐌"
+            run: |
+                # Add negated files: ':!:path/to/negated'
+                IGNORED_FILES="$(git ls-files --cached --ignored --exclude-standard)"
+                test -z "${IGNORED_FILES}"
+        -
+            name: "Check exported files"
+            run: |
+                EXPECTED="${{ inputs.exported-paths }}"
+                CURRENT="$(
+                    git archive HEAD \
+                        | tar --list ${{ inputs.export-excludes }} \
+                        | paste --serial --delimiters=" "
+                )"
+                echo "CURRENT =${CURRENT}"
+                echo "EXPECTED=${EXPECTED}"
+                test "${CURRENT}" = "${EXPECTED}"
