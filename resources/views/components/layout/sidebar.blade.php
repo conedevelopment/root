@@ -4,7 +4,7 @@
             <a class="app-sidebar__logo" href="{{ URL::route('root.dashboard') }}" aria-label="{{ Config::get('app.name') }}">
                 <img src="{{ URL::asset('vendor/root/img/root-logo.svg') }}">
             </a>
-            <div class="app-sidebar__search">
+            {{-- <div class="app-sidebar__search">
                 <span class="open-search">
                     <x-root::icon name="search" class="open-search__icon"/>
                     <span class="open-search__caption">{{ __('Search') }}</span>
@@ -15,7 +15,7 @@
                         Ctrl + K
                     </button>
                 </span>
-            </div>
+            </div> --}}
             <button
                 type="button"
                 class="btn btn--outline-dark btn--sm btn--icon display--none:md"

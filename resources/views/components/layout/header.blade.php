@@ -14,9 +14,9 @@
                 >
                     <x-root::icon name="menu-open" class="btn__icon" />
                 </button>
-                <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
+                {{-- <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
                     <x-root::icon name="search" class="btn__icon" />
-                </button>
+                </button> --}}
                 <x-root::layout.theme />
             </div>
             <x-root::layout.breadcrumbs />
