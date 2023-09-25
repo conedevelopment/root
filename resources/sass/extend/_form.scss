@@ -1,26 +1,26 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .form-group-stack {
-  @include layout-stack('s');
+    @include layout-stack('s');
 
-  &--bordered {
-    > * + * {
-      border-block-start: 1px solid color('border');
-      padding-block-start: spacer('s');
+    &--bordered {
+        > * + * {
+            border-block-start: 1px solid color('border');
+            padding-block-start: spacer('s');
+        }
     }
-  }
 }
 
 legend {
-  font-family: config('font-family-heading', $typography);
+    font-family: config('font-family-heading', $typography);
 }
 
 .form-control[type=color] {
-  @include set-css-variable((
-    --border-radius: spacer-clamp('m', 'l')
-  ));
+    @include set-css-variable((
+        --border-radius: spacer-clamp('m', 'l')
+    ));
 }
 
 .required-marker {
-  color: color('danger', 'alert');
+    color: color('danger', 'alert');
 }
