@@ -3,6 +3,8 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\InputOption;
 
 class ResourceMake extends GeneratorCommand
 {
@@ -43,5 +45,41 @@ class ResourceMake extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\\Root\\Resources';
+    }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     */
+    protected function buildClass($name): string
+    {
+        $class = parent::buildClass($name);
+
+        return $this->replaceModel($class);
+    }
+
+    /**
+     * Create a new method.
+     */
+    public function replaceModel(string $class): string
+    {
+        $model = $this->option('model');
+
+        $model = str_replace('/', '\\', $model);
+
+        $model = sprintf('\\%s::class', trim($model, '\\'));
+
+        return str_replace('{{ model }}', $model, $class);
+    }
+
+    /**
+     * Get the console command options.
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['model', null, InputOption::VALUE_OPTIONAL, 'The Eloquent Model'],
+        ];
     }
 }

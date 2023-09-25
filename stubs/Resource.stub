@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 class {{ class }} extends Resource
 {
     /**
+     * The model class.
+     */
+    protected string $model = {{ model }};
+
+    /**
      * Define the widgets for the resource.
      */
     public function widgets(Request $request): array
