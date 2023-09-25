@@ -9,6 +9,7 @@ use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 
 class BelongsToMany extends Relation
@@ -28,6 +29,7 @@ class BelongsToMany extends Relation
         parent::__construct($form, $label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
+        $this->name($this->modelAttribute.'[]');
     }
 
     /**
@@ -138,6 +140,8 @@ class BelongsToMany extends Relation
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $value = (array) $value;
+
+                $value = Arr::isList($value) ? array_fill_keys($value, []) : $value;
 
                 $relation = $this->getRelation();
 

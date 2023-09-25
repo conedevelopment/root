@@ -248,7 +248,7 @@ abstract class Relation extends Field
             }, function (Collection $collection) use ($mapCallback): Collection {
                 return $collection->map($mapCallback);
             })
-            ->toArray();
+            ->all();
     }
 
     /**
