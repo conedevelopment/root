@@ -1,27 +1,27 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .preloader--circle {
-  --color: currentColor;
-  --border-width: 0.25em;
-  --size: 1.5rem;
-  --animation-duration: 1s;
+    --color: currentColor;
+    --border-width: 0.25em;
+    --size: 1.5rem;
+    --animation-duration: 1s;
 
-  block-size: var(--size);
-  inline-size: var(--size);
-
-  &::after {
-    animation: rotation var(--animation-duration) linear infinite;
     block-size: var(--size);
-    border: var(--border-width) solid var(--color);
-    border-color: var(--color) transparent var(--color) transparent;
-    border-radius: 50%;
-    content: '';
-    display: flex;
     inline-size: var(--size);
-  }
+
+    &::after {
+        animation: rotation var(--animation-duration) linear infinite;
+        block-size: var(--size);
+        border: var(--border-width) solid var(--color);
+        border-color: var(--color) transparent var(--color) transparent;
+        border-radius: 50%;
+        content: '';
+        display: flex;
+        inline-size: var(--size);
+    }
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
