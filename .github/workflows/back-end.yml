@@ -44,7 +44,6 @@ jobs:
     unit_tests:
         name: "2️⃣ Unit and functional tests"
         needs:
-        - "byte_level"
         - "syntax_errors"
         strategy:
             fail-fast: false
@@ -100,7 +99,6 @@ jobs:
     static_analysis:
         name: "3️⃣ Static Analysis"
         needs:
-        - "byte_level"
         - "syntax_errors"
         runs-on: "ubuntu-22.04"
         timeout-minutes: 5
@@ -144,7 +142,6 @@ jobs:
     coding_standards:
         name: "4️⃣ Coding Standards"
         needs:
-        - "byte_level"
         - "syntax_errors"
         runs-on: "ubuntu-22.04"
         timeout-minutes: 5
