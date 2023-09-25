@@ -265,6 +265,14 @@ class Fields
     }
 
     /**
+     * Make a new meta field.
+     */
+    public function meta(string $label, string $modelAttribute = null, Closure|string $relation = null): Meta
+    {
+        return $this->field(Meta::class, $label, $modelAttribute, $relation);
+    }
+
+    /**
      * Persist the request value on the model.
      */
     public function persist(Request $request): void

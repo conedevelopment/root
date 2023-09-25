@@ -29,17 +29,15 @@ class Meta extends MorphOne
                 ->one()
                 ->ofMany(
                     [$related->getCreatedAtColumn() => 'MAX'],
-                    function (Builder $query) use ($related): Builder {
-                        return $query->where($related->qualifyColumn('key'), $this->getModelAttribute());
-                    },
+                    fn (Builder $query): Builder => $query->where($related->qualifyColumn('key'), $this->getModelAttribute()),
                     'metaData'
                 )
                 ->withDefault(['key' => $this->getModelAttribute()]);
         };
 
-        $this->asText();
-
         parent::__construct($form, $label, $modelAttribute, $relation);
+
+        $this->asText();
     }
 
     /**
@@ -57,7 +55,7 @@ class Meta extends MorphOne
      */
     public function as(string $field, Closure $callback = null): static
     {
-        $this->field = new $field($this->label, $this->getModelAttribute());
+        $this->field = new $field($this->form, $this->label, $this->getModelAttribute());
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
@@ -227,7 +225,7 @@ class Meta extends MorphOne
     public function resolveValue(Request $request): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (Model $model, mixed $value): mixed {
+            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
                 return $value?->value;
             };
         }
