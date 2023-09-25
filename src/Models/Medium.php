@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\MediumFactory;
 use Cone\Root\Interfaces\Models\Medium as Contract;
+use Cone\Root\Interfaces\Models\User;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -71,18 +73,11 @@ class Medium extends Model implements Contract
     ];
 
     /**
-     * The "type" of the primary key ID.
+     * The number of models to return for pagination.
      *
-     * @var string
+     * @var int
      */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+    protected $perPage = 25;
 
     /**
      * The table associated with the model.
@@ -97,7 +92,7 @@ class Medium extends Model implements Contract
     protected static function booted(): void
     {
         static::deleting(static function (self $medium): void {
-            Storage::disk($medium->disk)->deleteDirectory($medium->id);
+            Storage::disk($medium->disk)->deleteDirectory($medium->uuid);
         });
     }
 
@@ -120,37 +115,31 @@ class Medium extends Model implements Contract
     /**
      * Make a new medium instance from the given path.
      */
-    public static function makeFrom(string $path): static
+    public static function makeFromPath(string $path, array $attributes = []): static
     {
-        $name = preg_replace('/[\w]{5}__/iu', '', basename($path, '.chunk'));
-
         $type = mime_content_type($path);
 
         if (! Str::is('image/svg*', $type) && Str::is('image/*', $type)) {
             [$width, $height] = getimagesize($path);
         }
 
-        return static::make([
-            'file_name' => $name,
+        return new static(array_merge([
+            'file_name' => $name = basename($path),
             'mime_type' => $type,
             'width' => isset($width) ? $width : null,
             'height' => isset($height) ? $height : null,
             'disk' => Config::get('root.media.disk', 'public'),
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
-        ]);
+        ], $attributes));
     }
 
     /**
-     * Create a new medium from the given path.
+     * Get the columns that should receive a unique identifier.
      */
-    public static function createFrom(string $path): static
+    public function uniqueIds(): array
     {
-        $medium = static::makeFrom($path);
-
-        $medium->save();
-
-        return $medium;
+        return ['uuid'];
     }
 
     /**
@@ -158,7 +147,7 @@ class Medium extends Model implements Contract
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::getProxiedClass());
+        return $this->belongsTo(get_class(App::make(User::class)));
     }
 
     /**
@@ -179,16 +168,14 @@ class Medium extends Model implements Contract
     protected function urls(): Attribute
     {
         return new Attribute(
-            get: function (mixed $value, array $attributes): array {
-                $urls = ['original' => $this->getUrl()];
-
-                if (! $this->convertible()) {
-                    return $urls;
-                }
-
-                return array_reduce($attributes['properties']['conversions'] ?? [], function (array $urls, string $conversion): array {
-                    return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
-                }, $urls);
+            get: function (): array {
+                return array_reduce(
+                    $this->properties['conversions'] ?? [],
+                    function (array $urls, string $conversion): array {
+                        return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
+                    },
+                    ['original' => $this->getUrl()]
+                );
             }
         );
     }
@@ -237,8 +224,6 @@ class Medium extends Model implements Contract
 
     /**
      * Perform the conversions on the medium.
-     *
-     * @return $this
      */
     public function convert(): static
     {
@@ -250,9 +235,9 @@ class Medium extends Model implements Contract
     /**
      * Get the path to the conversion.
      */
-    public function getPath(?string $conversion = null, bool $absolute = false): string
+    public function getPath(string $conversion = null, bool $absolute = false): string
     {
-        $path = sprintf('%s/%s', $this->id, $this->file_name);
+        $path = sprintf('%s/%s', $this->uuid, $this->file_name);
 
         if (! is_null($conversion)) {
             $path = substr_replace(
@@ -266,7 +251,7 @@ class Medium extends Model implements Contract
     /**
      * Get the full path to the conversion.
      */
-    public function getAbsolutePath(?string $conversion = null): string
+    public function getAbsolutePath(string $conversion = null): string
     {
         return $this->getPath($conversion, true);
     }
@@ -274,7 +259,7 @@ class Medium extends Model implements Contract
     /**
      * Get the url to the conversion.
      */
-    public function getUrl(?string $conversion = null): string
+    public function getUrl(string $conversion = null): string
     {
         return URL::to(Storage::disk($this->disk)->url($this->getPath($conversion)));
     }
@@ -282,7 +267,7 @@ class Medium extends Model implements Contract
     /**
      * Scope the query only to the given search term.
      */
-    public function scopeSearch(Builder $query, ?string $value = null): Builder
+    public function scopeSearch(Builder $query, string $value = null): Builder
     {
         if (is_null($value)) {
             return $query;
@@ -304,19 +289,5 @@ class Medium extends Model implements Contract
             default:
                 return $query;
         }
-    }
-
-    /**
-     * Sort the query by the given order.
-     */
-    public function scopeSort(Builder $query, ?array $value = []): Builder
-    {
-        $value = array_replace(['by' => 'id', 'order' => 'desc'], (array) $value);
-
-        if ($value['by'] === 'id') {
-            $value['by'] = $query->getModel()->getKeyName();
-        }
-
-        return $query->orderBy($query->qualifyColumn($value['by']), $value['order']);
     }
 }

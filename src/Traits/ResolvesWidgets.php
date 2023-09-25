@@ -2,25 +2,19 @@
 
 namespace Cone\Root\Traits;
 
-use Closure;
-use Cone\Root\Support\Collections\Widgets;
 use Cone\Root\Widgets\Widget;
+use Cone\Root\Widgets\Widgets;
 use Illuminate\Http\Request;
 
 trait ResolvesWidgets
 {
     /**
-     * The widgets resolver callback.
-     */
-    protected ?Closure $widgetsResolver = null;
-
-    /**
-     * The resolved fields.
+     * The widgets collection.
      */
     protected ?Widgets $widgets = null;
 
     /**
-     * Define the widgets for the resource.
+     * Define the widgets.
      */
     public function widgets(Request $request): array
     {
@@ -28,26 +22,12 @@ trait ResolvesWidgets
     }
 
     /**
-     * Set the widgets resolver.
-     */
-    public function withWidgets(array|Closure $widgets): static
-    {
-        $this->widgetsResolver = is_array($widgets) ? fn (): array => $widgets : $widgets;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the widgets.
+     * Resolve the widgets collection.
      */
     public function resolveWidgets(Request $request): Widgets
     {
         if (is_null($this->widgets)) {
-            $this->widgets = Widgets::make()->register($this->widgets($request));
-
-            if (! is_null($this->widgetsResolver)) {
-                $this->widgets->register(call_user_func_array($this->widgetsResolver, [$request]));
-            }
+            $this->widgets = new Widgets($this->widgets($request));
 
             $this->widgets->each(function (Widget $widget) use ($request): void {
                 $this->resolveWidget($request, $widget);
@@ -58,7 +38,7 @@ trait ResolvesWidgets
     }
 
     /**
-     * Handle the resolving event on the widget instance.
+     * Handle the callback for the widget resolution.
      */
     protected function resolveWidget(Request $request, Widget $widget): void
     {

@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Traits;
 
+use Cone\Root\Models\Attachment;
 use Cone\Root\Models\Medium;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,6 +26,10 @@ trait HasMedia
      */
     public function media(): MorphToMany
     {
-        return $this->morphToMany(Medium::getProxiedClass(), 'mediable', 'root_mediables');
+        return $this->morphToMany(Medium::getProxiedClass(), 'mediable', 'root_mediables')
+            ->as('attachment')
+            ->using(Attachment::class)
+            ->withPivot(['meta', 'collection'])
+            ->withTimestamps();
     }
 }

@@ -1,0 +1,1 @@
+<td>{!! $formattedValue !!}</td>

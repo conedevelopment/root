@@ -1,0 +1,10 @@
+{
+    "extends": "stylelint-config-sass-guidelines",
+    "rules": {
+        "indentation": 4,
+        "max-nesting-depth": 6,
+        "selector-class-pattern": [
+            "^[a-z0-9\\:-]+$"
+        ]
+    }
+}

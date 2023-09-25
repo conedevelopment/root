@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', App::getLocale()) }}">
 <head>
-    {{-- Meta --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {{-- Styles --}}
-    <link rel="stylesheet" type="text/css" href="{{ Vite::asset('resources/js/app.css', 'vendor/root/build') }}">
+    <link rel="stylesheet" href="{{ Vite::asset('resources/js/app.css', 'vendor/root/build') }}">
 
-    {{-- Title --}}
     <title>@yield('title') - {{ Config::get('app.name') }}</title>
 </head>
 <body>
-    <main class="site-auth">
-        <div class="site-auth__inner">
-            <img class="site-auth__logo" src="{{ Config::get('root.branding.logo') }}" alt="">
+    <a class="btn btn--primary skip-link" href="#content">{{ __('Skip to content') }}</a>
+    <main id="content" class="l-auth">
+        <div class="l-auth__inner">
+            <div class="l-auth__form">
+                <a class="l-auth__logo" href="#" aria-label="{{ Config::get('app.name') }}">
+                    <img src="{{ URL::asset('vendor/root/img/root-logo.svg') }}" alt="">
+                </a>
+                <div class="auth-form">
+                    <h1 class="auth-form__title">@yield('title')</h1>
+                    @if(Session::has('status'))
+                        <x-root::alert type="success">
+                            {{ Session::get('status') }}
+                        </x-root::alert>
+                    @endif
 
-            {{-- Message --}}
-            @if(Session::has('message'))
-                <div role="alert" class="alert alert--danger">
-                    {{ Session::get('message') }}
+                    @if($errors->isNotEmpty())
+                        <x-root::alert type="danger">
+                            {{ __('Some error occurred when submitting the form!') }}
+                        </x-root::alert>
+                    @endif
+
+                    @yield('content')
                 </div>
-            @endif
-
-            {{-- Errors --}}
-            @if($errors->isNotEmpty())
-                <div role="alert" class="alert alert--danger">
-                    {{ __('Error!') }}
-                </div>
-            @endif
-
-            <div class="site-auth__panel">
-                {{-- Content --}}
-                @yield('content')
+                @hasSection('footer')
+                    <div class="l-auth__footer">
+                        @yield('footer')
+                    </div>
+                @endif
             </div>
+            <div class="l-auth__sidebar"></div>
         </div>
     </main>
 </body>

@@ -2,13 +2,20 @@
 
 namespace Cone\Root\Support;
 
-use Cone\Root\Enums\AlertType;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Stringable;
 
 class Alert implements Arrayable, Jsonable, Stringable
 {
+    public const INFO = 'info';
+
+    public const SUCCESS = 'success';
+
+    public const ERROR = 'error';
+
+    public const WARNING = 'warning';
+
     /**
      * The alert message.
      */
@@ -17,53 +24,47 @@ class Alert implements Arrayable, Jsonable, Stringable
     /**
      * The alert type.
      */
-    protected AlertType $type;
-
-    /**
-     * The alert timestamp.
-     */
-    protected string $timestamp;
+    protected string $type;
 
     /**
      * Create a new alert instance.
      */
-    public function __construct(string $message, AlertType $type)
+    public function __construct(string $message, string $type = self::INFO)
     {
         $this->message = $message;
         $this->type = $type;
-        $this->timestamp = date(DATE_ATOM);
     }
 
     /**
      * Make a new info alert instance.
      */
-    public static function info(string $message): static
+    public static function info(string $message): array
     {
-        return new static($message, AlertType::Info);
+        return (new static($message, static::INFO))->toArray();
     }
 
     /**
      * Make a new success alert instance.
      */
-    public static function success(string $message): static
+    public static function success(string $message): array
     {
-        return new static($message, AlertType::Success);
+        return (new static($message, static::SUCCESS))->toArray();
     }
 
     /**
      * Make a new error alert instance.
      */
-    public static function error(string $message): static
+    public static function error(string $message): array
     {
-        return new static($message, AlertType::Error);
+        return (new static($message, static::ERROR))->toArray();
     }
 
     /**
      * Make a new warning alert instance.
      */
-    public static function warning(string $message): static
+    public static function warning(string $message): array
     {
-        return new static($message, AlertType::Warning);
+        return (new static($message, static::WARNING))->toArray();
     }
 
     /**
@@ -73,7 +74,6 @@ class Alert implements Arrayable, Jsonable, Stringable
     {
         return [
             'message' => $this->message,
-            'timestamp' => $this->timestamp,
             'type' => $this->type,
         ];
     }

@@ -3,12 +3,12 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Support\Breadcrumbs;
-use Cone\Root\Support\Collections\Assets;
-use Cone\Root\Support\Collections\Resources;
-use Cone\Root\Support\Collections\Widgets;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Resources\Resources;
+use Cone\Root\Widgets\Widgets;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -20,17 +20,12 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '1.3.0';
+    public const VERSION = '2.0.0-alpha';
 
     /**
      * The registered booting callbacks.
      */
     protected array $booting = [];
-
-    /**
-     * The registered booted callbacks.
-     */
-    protected array $booted = [];
 
     /**
      * The Application instance.
@@ -48,13 +43,6 @@ class Root
     public readonly Widgets $widgets;
 
     /**
-     * The assets collection.
-     */
-    public readonly Assets $assets;
-
-    public readonly Breadcrumbs $breadcrumbs;
-
-    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -62,8 +50,14 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
-        $this->assets = new Assets();
-        $this->breadcrumbs = new Breadcrumbs();
+    }
+
+    /**
+     * Resolve the Root instance from the container.
+     */
+    public static function instance(): static
+    {
+        return App::make(static::class);
     }
 
     /**
@@ -74,16 +68,6 @@ class Root
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
-
-        if ($this->getPath() !== '/' && $this->app['request']->path() !== trim($this->getPath(), '/')) {
-            $this->breadcrumbs->pattern($this->getPath(), __('Dashboard'));
-        }
-
-        $this->resources->each->boot($this);
-
-        foreach ($this->booted as $callback) {
-            call_user_func_array($callback, [$this]);
-        }
     }
 
     /**
@@ -92,14 +76,6 @@ class Root
     public function booting(Closure $callback): void
     {
         $this->booting[] = $callback;
-    }
-
-    /**
-     * Register a booted callback.
-     */
-    public function booted(Closure $callback): void
-    {
-        $this->booted[] = $callback;
     }
 
     /**
@@ -143,5 +119,13 @@ class Root
     public function getDomain(): string
     {
         return (string) Config::get('root.domain', null);
+    }
+
+    /**
+     * Get the current resource.
+     */
+    public function getCurrentResource(): ?Resource
+    {
+        return $this->resources->current($this->app['request']);
     }
 }

@@ -2,8 +2,18 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Facades\Navigation as Nav;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -15,8 +25,6 @@ class RootServiceProvider extends ServiceProvider
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
-        Interfaces\Models\Record::class => Models\Record::class,
-        Interfaces\Models\User::class => Models\User::class,
     ];
 
     /**
@@ -24,6 +32,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
+        Interfaces\Navigation\Manager::class => Navigation\Manager::class,
     ];
 
     /**
@@ -41,8 +50,8 @@ class RootServiceProvider extends ServiceProvider
             $this->mergeConfigFrom(__DIR__.'/../config/root.php', 'root');
         }
 
-        $this->app->booted(static function (Application $app): void {
-            $app->make(Root::class)->boot();
+        $this->app->afterResolving(EncryptCookies::class, static function (EncryptCookies $middleware): void {
+            $middleware->disableFor('__root_theme');
         });
     }
 
@@ -57,10 +66,9 @@ class RootServiceProvider extends ServiceProvider
             $this->registerPublishes();
         }
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
-
-        $this->registerComposers();
+        $this->registerViews();
         $this->registerRoutes();
+        $this->registerNavigation();
     }
 
     /**
@@ -73,7 +81,7 @@ class RootServiceProvider extends ServiceProvider
         ], 'root-config');
 
         $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/root'),
+            __DIR__.'/../public' => $this->app->publicPath('vendor/root'),
         ], 'root-compiled');
 
         $this->publishes([
@@ -103,8 +111,35 @@ class RootServiceProvider extends ServiceProvider
             'root', $this->app['config']->get('root.middleware', [])
         );
 
-        $this->app->make(Root::class)->routes(function (): void {
+        $root = $this->app->make(Root::class);
+
+        $this->app['router']->bind('resource', static function (string $key) use ($root): Resource {
+            return $root->resources->resolve($key);
+        });
+
+        $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
+            return $route->parameter('resource')->resolveRouteBinding($this->app['request'], $id);
+        });
+
+        $this->app['router']
+            ->middleware(['web'])
+            ->domain($root->getDomain())
+            ->prefix($root->getPath())
+            ->as('root.auth.')
+            ->group(function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
+            });
+
+        $root->routes(function (Router $router): void {
+            $router->prefix('api')->as('api.')->group(function (): void {
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            });
+
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+
+        RateLimiter::for('root.auth', static function (Request $request): Limit {
+            return Limit::perMinute(6)->by($request->user()?->id ?: $request->ip());
         });
     }
 
@@ -116,7 +151,6 @@ class RootServiceProvider extends ServiceProvider
         $this->commands([
             Console\Commands\ActionMake::class,
             Console\Commands\ClearChunks::class,
-            Console\Commands\ExtractMake::class,
             Console\Commands\FieldMake::class,
             Console\Commands\FilterMake::class,
             Console\Commands\Install::class,
@@ -127,27 +161,37 @@ class RootServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the view composers.
+     * Register the views.
      */
-    protected function registerComposers(): void
+    protected function registerViews(): void
     {
-        $this->app['view']->composer('root::app', static function (View $view): void {
-            $app = $view->getFactory()->getContainer();
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'root');
 
-            $root = $app->make(Root::class);
+        Blade::componentNamespace('Cone\\Root\\View\\Components', 'root');
 
-            $request = $app->make('request');
+        $this->app['view']->composer('root::*', function (View $view): void {
+            $request = $this->app->make('request');
 
-            $view->with('root', [
-                'resources' => $root->resources->authorized($request)->mapToNavigation($request),
-                'translations' => (object) $app['translator']->getLoader()->load($app->getLocale(), '*', '*'),
-                'user' => $request->user()->toRoot(),
-                'config' => [
-                    'name' => $app['config']->get('app.name'),
-                    'url' => $root->getPath(),
-                    'branding' => $app['config']->get('root.branding'),
-                ],
+            $view->with([
+                'alerts' => $request->session()->get('alerts', []),
+                'user' => $request->user(),
             ]);
+        });
+    }
+
+    /**
+     * Register the navigation.
+     */
+    protected function registerNavigation(): void
+    {
+        $this->app->make(Root::class)->booting(static function (Root $root): void {
+            $root->resources->each(static function (Resource $resource): void {
+                Nav::location('sidebar')->new(
+                    $resource->getUrl(),
+                    $resource->getName(),
+                    ['icon' => $resource->getIcon()]
+                );
+            });
         });
     }
 }

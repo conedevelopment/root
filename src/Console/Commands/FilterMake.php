@@ -33,7 +33,9 @@ class FilterMake extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__.'/../../../stubs/Filter.stub';
+        return match ($this->option('type')) {
+            default => __DIR__.'/../../../stubs/SelectFilter.stub',
+        };
     }
 
     /**
@@ -55,25 +57,7 @@ class FilterMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        $class = $this->replaceComponent($class);
-
         return $this->replaceMultiple($class);
-    }
-
-    /**
-     * Replace the component related code.
-     */
-    protected function replaceComponent(string $class): string
-    {
-        if ($component = $this->option('component')) {
-            return str_replace(
-                [PHP_EOL.'%%component%%', '%%/component%%', '{{ component }}'],
-                ['', '', $component],
-                $class
-            );
-        }
-
-        return preg_replace('/\s%%component%%.*%%\/component%%/s', '', $class);
     }
 
     /**
@@ -94,7 +78,7 @@ class FilterMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+            ['type', null, InputOption::VALUE_OPTIONAL, 'The filter type', 'select'],
             ['multiple', null, InputOption::VALUE_NONE, 'Mark the filter as multiple'],
         ];
     }

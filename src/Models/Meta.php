@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Meta extends Model implements Contract
 {
-    use InteractsWithProxy;
     use HasFactory;
+    use InteractsWithProxy;
 
     /**
      * The attributes that are mass assignable.

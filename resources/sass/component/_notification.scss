@@ -1,0 +1,118 @@
+@use 'sass:color';
+@use 'sass:map';
+@use 'sprucecss/scss/spruce' as *;
+
+.app-notification {
+  position: relative;
+
+  &__header {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: font-size('h4');
+    font-weight: 600;
+    margin-block: 0;
+  }
+
+  &__list {
+    @include scrollbar;
+    max-block-size: 25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    > * + * {
+      border-block-start: 1px solid color('border');
+      margin-block-start: spacer('s');
+      padding-block-start: spacer('s');
+    }
+  }
+
+  .context-menu {
+    --inline-size: 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: spacer('s');
+    inset: var(--inset-block-start) -4.75rem auto auto;
+    padding: spacer('s');
+
+    @include breakpoint('sm') {
+      inset: var(--inset-block-start) 0 auto auto;
+    }
+
+    @include breakpoint('md') {
+      --inline-size: 26rem;
+    }
+  }
+}
+
+.notification-card {
+  @include a11y-card-link('.notification-card__link', true);
+  display: flex;
+  gap: spacer('s');
+
+  &--read {
+    opacity: 0.5;
+  }
+
+  &__icon {
+    --size: 2.5rem;
+    align-items: center;
+    block-size: var(--size);
+    border-radius: config('border-radius-sm', $display);
+    display: flex;
+    flex-shrink: 0;
+    inline-size: var(--size);
+    justify-content: center;
+
+    &--info {
+      background-color: color.adjust(color('info', 'alert', $only-color: true), $lightness: 55%);
+      color: color('info', 'alert');
+    }
+
+    &--warning {
+      background-color: color.adjust(color('warning', 'alert', $only-color: true), $lightness: 41%);
+      color: color('warning', 'alert');
+    }
+
+    &--danger {
+      background-color: color.adjust(color('danger', 'alert', $only-color: true), $lightness: 46.5%);
+      color: color('danger', 'alert');
+    }
+
+    &--success {
+      background-color: color.adjust(color('success', 'alert', $only-color: true), $lightness: 63%);
+      color: color('success', 'alert');
+    }
+
+    svg {
+      --size: 1rem;
+      block-size: var(--size);
+      inline-size: var(--size);
+    }
+  }
+
+  &__caption {
+    @include layout-stack('xxs');
+    line-height: config('line-height-md', $typography);
+    padding-inline-end: spacer('s');
+  }
+
+  &__title {
+    font-size: config('font-size-base', $typography);
+  }
+
+  &__link {
+    color: color('heading');
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: color('link');
+    }
+  }
+}

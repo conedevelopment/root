@@ -4,8 +4,8 @@ namespace Cone\Root\Conversion;
 
 use Closure;
 use Cone\Root\Models\Medium;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class GdDriver extends Driver
 {
@@ -14,7 +14,7 @@ class GdDriver extends Driver
      */
     public function perform(Medium $medium): void
     {
-        File::ensureDirectoryExists(Storage::disk('local')->path('root-tmp'));
+        File::ensureDirectoryExists(Config::get('root.media.tmp_dir'));
 
         parent::perform($medium);
     }

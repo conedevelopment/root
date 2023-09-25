@@ -7,36 +7,77 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     {{-- Styles --}}
-    <link href="/vendor/root/favicon.png" rel="icon" sizes="32x32">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&amp;family=IBM+Plex+Sans:wght@400;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    @foreach(App::make('root')->assets->styles() as $key => $style)
-        <link id="style-{{ $key }}" href="{{ $style->getUrl() }}" rel="stylesheet">
-    @endforeach
+    <link rel="icon" href="{{ URL::asset('vendor/root/favicon.png') }}" sizes="32x32">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=Open+Sans:wght@400;700&display=swap">
+    {{
+        Vite::withEntryPoints('resources/sass/app.scss')
+            ->useBuildDirectory('vendor/root/build')
+            ->useHotFile(public_path('vendor/root/hot'))
+    }}
+    @stack('styles')
 
     {{-- Title --}}
     <title>{{ Config::get('app.name') }}</title>
 </head>
 <body>
-    {{-- App --}}
-    @inertia
+    <a class="btn btn--primary skip-link" href="#content">{{ __('Skip to content') }}</a>
+    <div class="l-main" x-data="{ sidebarOpen: false }">
+        <x-root::layout.sidebar />
+        <main id="content" class="l-main__body" data-item="body">
+            <x-root::layout.header />
+            <div class="app-heading">
+                <div class="container">
+                    <div class="app-heading__inner">
+                        <div class="app-heading__caption">
+                            <h1 class="app-heading__title">@yield('title')</h1>
+                            @hasSection('subtitle')
+                                <div class="app-heading__description">
+                                    <p>@yield('subtitle')</p>
+                                </div>
+                            @endif
+                        </div>
+                        @hasSection('actions')
+                            <div class="app-heading__actions">
+                                @yield('actions')
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="app-body">
+                    @foreach($alerts as $alert)
+                        <x-root::alert :type="$alert['type']">
+                            {!! $alert['message'] !!}
+                        </x-root>
+                    @endforeach
+                    @yield('content')
+                </div>
+            </div>
+            <x-root::layout.footer />
+        </main>
+    </div>
 
-    {{-- SVG Icons --}}
-    @include('root::icons')
+    {{-- Modals --}}
+    <div id="modals"></div>
 
     {{-- Scripts --}}
-    <script>
-        window.Root = @json($root);
-    </script>
     {{
         Vite::withEntryPoints('resources/js/app.js')
             ->useBuildDirectory('vendor/root/build')
             ->useHotFile(public_path('vendor/root/hot'))
     }}
-    @foreach(App::make('root')->assets->scripts() as $key => $script)
-        <script id="script-{{ $key }}" src="{{ $script->getUrl() }}"></script>
-    @endforeach
+    @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.Alpine.start();
+        });
+    </script>
+    {{-- Logout Form --}}
+    <form id="logout-form" style="display:none" method="POST" action="{{ URL::route('root.auth.logout') }}">
+        @csrf
+    </form>
 </body>
 </html>

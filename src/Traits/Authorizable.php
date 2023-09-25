@@ -13,23 +13,6 @@ trait Authorizable
     protected ?Closure $authorizationResolver = null;
 
     /**
-     * Merge the current and the given resolvers.
-     */
-    public function mergeAuthorizationResolver(Closure $callback): static
-    {
-        if (is_null($this->authorizationResolver)) {
-            return $this->authorize($callback);
-        }
-
-        $resolver = $this->authorizationResolver;
-
-        return $this->authorize(static function (Request $request, ...$parameters) use ($callback, $resolver): bool {
-            return call_user_func_array($callback, [$request, ...$parameters])
-                && call_user_func_array($resolver, [$request, ...$parameters]);
-        });
-    }
-
-    /**
      * Set the authorization resolver.
      */
     public function authorize(Closure $callback): static
@@ -41,8 +24,6 @@ trait Authorizable
 
     /**
      * Resolve the authorization.
-     *
-     * @param  array  ...$parameters
      */
     public function authorized(Request $request, ...$parameters): bool
     {

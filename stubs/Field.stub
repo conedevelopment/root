@@ -2,21 +2,14 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Fields\Field;
+use Cone\Root\Form\Fields\Field;
 
 class {{ class }} extends Field
 {
-%%component%%
+%%template%%
     /**
-     * The Vue component.
+     * The Blade template.
      */
-    protected string $component = '{{ component }}';
-%%/component%%
-    /**
-     * Create a new field instance.
-     */
-    public function __construct(string $label, ?string $name = null)
-    {
-        parent::__construct($label, $name);
-    }
+    protected string $template = '{{ template }}';
+%%/template%%
 }

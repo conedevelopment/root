@@ -1,56 +1,63 @@
 @use 'sass:color';
 @use 'sass:map';
-@use '~sprucecss/scss/spruce';
-
-.app-alert {
-    @include spruce.layout-stack(spruce.spacer(s));
-    margin-block-start: 1.5rem;
-}
+@use 'sprucecss/scss/spruce' as *;
 
 .alert {
+  align-items: center;
+  border: 1px solid;
+  border-left: 0.4rem solid;
+  border-radius: config('border-radius-sm', $display);
+  display: flex;
+  gap: spacer('m');
+  justify-content: space-between;
+  line-height: config('line-height-md', $typography);
+  padding: 0.65em 1em;
+
+  @each $name, $value in map.get($colors, 'alert') {
+    @at-root .alert--#{$name} {
+      background-color: color.scale($value, $lightness: 95%);
+      color: color.scale($value, $lightness: -30%);
+    }
+
+    @at-root .alert--#{$name} .alert__close {
+      background-color: color.scale($value, $lightness: -30%);
+      color: color.scale($value, $lightness: 90%);
+    }
+  }
+
+  @each $name, $value in map.get($colors, 'alert') {
+    @at-root [data-theme-mode='dark'] .alert--#{$name} {
+      background-color: transparent;
+      border-color: color.scale($value, $lightness: -30%);
+      color: color('text');
+    }
+  }
+
+  &__caption {
+    @include layout-stack('xxs');
+  }
+
+  &__close {
+    --dimension: 1.5rem;
+    @include clear-btn;
+    @include transition;
     align-items: center;
-    border: 1px solid;
-    border-left: 0.35rem solid;
-    border-radius: spruce.$border-radius-lg;
+    block-size: var(--dimension);
+    border-radius: config('border-radius-sm', $display);
     display: flex;
-    flex-wrap: wrap;
-    font-weight: 500;
-    gap: spruce.spacer(m);
-    justify-content: space-between;
-    padding: 0.65em 1em;
+    flex-shrink: 0;
+    inline-size: var(--dimension);
+    justify-content: center;
 
-    @each $name, $value in map.get(spruce.$colors, alert) {
-        @at-root .alert--#{$name} {
-            background-color: color.scale($value, $lightness: 90%);
-            color: color.scale($value, $lightness: -30%);
-        }
-
-        @at-root .alert--#{$name} .alert__close {
-            background-color: color.scale($value, $lightness: -30%);
-            color: color.scale($value, $lightness: 90%);
-        }
+    &:hover,
+    &:focus {
+      opacity: 0.75;
     }
 
-    &__close {
-        @include spruce.clear-btn;
-        align-items: center;
-        border-radius: spruce.$border-radius-lg;
-        display: flex;
-        height: 1.5rem;
-        justify-content: center;
-        transition-duration: spruce.transition(duration);
-        transition-property: opacity;
-        transition-timing-function: spruce.transition(timing-function);
-        width: 1.5rem;
-
-        &:hover,
-        &:focus {
-            opacity: 0.75;
-        }
-
-        svg {
-            height: 0.5rem;
-            width: 0.5rem;
-        }
+    svg {
+      --dimension: 0.85rem;
+      block-size: var(--dimension);
+      inline-size: var(--dimension);
     }
+  }
 }

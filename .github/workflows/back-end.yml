@@ -1,59 +1,264 @@
-name: Back-end
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Back-end"
 
 on:
-  push:
-    branches:
-      - master
-  pull_request: null
+    pull_request: null
+    push:
+        branches:
+        - "master"
+# Add [skip ci] to commit message to skip CI.
+
+permissions:
+    contents: "read"
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
 
 jobs:
-  unit_tests:
+    byte_level:
+        name: "0️⃣ Byte-level"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check file permissions"
+            run: |
+                test "$(find ./ -type f -not -path './.git/*' -executable)" = ""
+        -
+            name: "Check for byte order mark (BOM)"
+            run: |
+                ! git grep --perl-regexp -I -e '^\xEF\xBB\xBF'
+        -
+            # https://html.spec.whatwg.org/multipage/named-characters.html
+            name: "Find non-printable ASCII characters"
+            run: |
+                ! LC_ALL=C.UTF-8 git grep --perl-regexp --line-number -e '[^ -~]' -- '*.php'
 
-    strategy:
-      fail-fast: true
-      matrix:
-        os: ["ubuntu-22.04"]
-        php: ["8.1", "8.2"]
-        laravel: ["^10.0"]
-        dependency-version: ["highest"]
+    syntax_errors:
+        name: "1️⃣ Syntax errors"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Set up PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "8.1"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+                coverage: "none"
+                tools: "parallel-lint"
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Search for conflict markers 🐌"
+            run: |
+                ! git grep --line-number -e '^\(<<<<<<<\s\|=======\s\|=======$\|>>>>>>>\s\||||||||\s\)'
+        -
+            name: "Search for invalid complex curly syntax 🐌"
+            run: |
+                ! git grep -e '\${[A-Z_a-z]' -- '*.php' '*.scss'
+        -
+            name: "Check source code for syntax errors"
+            run: "composer exec --no-interaction -- parallel-lint src/"
+            # @TODO Check template files for syntax errors
 
-    name: "Unit - PHP ${{ matrix.php }} - L ${{ matrix.laravel }} - ${{ matrix.dependency-version }}"
+    unit_tests:
+        name: "2️⃣ Unit and functional tests"
+        needs:
+        - "byte_level"
+        - "syntax_errors"
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version:
+                - "8.1"
+                - "8.2"
+                dependencies:
+                - "lowest"
+                - "locked"
+                - "highest"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Set up PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "${{ matrix.php-version }}"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+        -
+            name: "Setup problem matcher for PHPUnit"
+            run: |
+                echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Install dependencies"
+            uses: "ramsey/composer-install@v2"
+            with:
+                dependency-versions: "${{ matrix.dependencies }}"
+        -
+            name: "Execute unit tests"
+            run: "composer exec -- phpunit"
+        -
+            name: "Tests have failed: upload logs"
+            if: "${{ failure() }}"
+            uses: "actions/upload-artifact@v3"
+            with:
+                path: "storage/logs/"
+                name: "laravel-logs-${{ matrix.php-version }}-${{ matrix.dependencies }}"
+        -
+            name: "Send coverage to Coveralls"
+            env:
+                COVERALLS_REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+            if: "${{ env.COVERALLS_REPO_TOKEN && matrix.php-version == '8.2' && matrix.dependencies == 'locked' }}"
+            run: |
+                wget --no-verbose \
+                    "https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.3/php-coveralls.phar"
+                php ./php-coveralls.phar --verbose
 
-    runs-on: "${{ matrix.os }}"
+    static_analysis:
+        name: "3️⃣ Static Analysis"
+        needs:
+        - "byte_level"
+        - "syntax_errors"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Set up PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "8.2"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+                coverage: "none"
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check JSON files"
+            run: |
+                git ls-files --cached -z -- '*.json' \
+                    | xargs -t --null -L 1 -- \
+                        php -r 'json_decode(file_get_contents($argv[1]), null, 512, JSON_THROW_ON_ERROR);'
+        -
+            name: "Validate Composer configuration"
+            run: "composer validate --no-interaction --strict"
+        -
+            name: "Install dependencies"
+            uses: "ramsey/composer-install@v2"
+            with:
+                dependency-versions: "locked"
+        -
+            name: "Check PSR-4 mapping 🐌"
+            run: "composer dump-autoload --optimize --strict-psr"
+        -
+            # https://github.com/phpstan/phpstan/issues/9475
+            name: "Search for $this->$this typo 🐌"
+            run: |
+                ! git grep --line-number -e '\$this\s*->\s*\$this' -- ':!:*/back-end\.yml'
+        -
+            name: "Perform static analysis"
+            run: "true TODO || composer exec -- phpstan analyze --level=5 src/"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    coding_standards:
+        name: "4️⃣ Coding Standards"
+        needs:
+        - "byte_level"
+        - "syntax_errors"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Set up PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "8.2"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+                coverage: "none"
+                tools: "phpcs,cs2pr"
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check EditorConfig configuration"
+            run: "test -f .editorconfig"
+        -
+            name: "Check adherence to EditorConfig"
+            uses: "greut/eclint-action@v0"
+        -
+            name: "Look for TAB characters in the middle of the line 🐌"
+            run: |
+                ! git grep --perl-regexp --line-number -I '^(?!//)[^\t]+\t'
+        -
+            name: "Install dependencies"
+            uses: "ramsey/composer-install@v2"
+            with:
+                dependency-versions: "locked"
+        #-
+        #    name: "Detect coding standards violations"
+        #    run: "composer exec -- phpcs -q --report=checkstyle --standard=PSR12 src/ | cs2pr"
+        -
+            name: "Detect coding standards violations"
+            id: "pint"
+            run: "composer exec -- pint --verbose --test"
+        -
+            name: "Annotate Pint results"
+            if: "${{ failure() && steps.pint.outcome == 'failure' }}"
+            run: "composer exec -- pint --test --format=checkstyle | cs2pr"
+        -
+            # Move TODO-s into GitHub issues!
+            name: "Search for TODO-s and FIXME-s 🐌"
+            run: |
+                ! git grep --extended-regexp --ignore-case '\b(TODO|FIXME)\b' -- ':!:*/back-end\.yml'
+        -
+            name: "Remove blank first lines and multiple blank lines 🐌"
+            run: |
+                git ls-files --cached -z -- ':(exclude,glob)**/yarn.lock' \
+                    | xargs --null -L 1 -- sed -i -e '/./,$!d' -e '/^$/N;/^\n$/D'
+        -
+            name: "Check differences to repository"
+            run: "git diff --exit-code"
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif
-          tools: composer:v2
-          coverage: xdebug3
-
-      - name: Check Composer configuration
-        run: composer validate --strict
-
-      - name: Install dependencies
-        if: ${{ matrix.dependency-version == 'highest' }}
-        run: composer update --no-interaction --no-progress --prefer-dist --with="laravel/framework:${{ matrix.laravel }}"
-
-      - name: Install locked dependencies
-        if: ${{ matrix.dependency-version == 'locked' }}
-        run: composer install --prefer-dist --no-interaction --no-progress
-
-      - name: Check for PSR-4 mapping errors
-        run: composer dump-autoload --optimize --strict-psr
-
-      - name: Execute tests
-        run: composer exec -- phpunit
-
-      - name: Send coverage to Coveralls
-        if: ${{ matrix.os == 'ubuntu-22.04' && matrix.php == '8.1' && matrix.laravel == '^10.0' }}
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          wget "https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.2/php-coveralls.phar"
-          php ./php-coveralls.phar -v
+    exported_files:
+        name: "5️⃣ Exported files"
+        needs:
+        - "byte_level"
+        - "syntax_errors"
+        runs-on: "ubuntu-22.04"
+        timeout-minutes: 1
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Check for ignored files in the index 🐌"
+            run: |
+                IGNORED_FILES="$(git ls-files --cached --ignored --exclude-standard)"
+                test -z "${IGNORED_FILES}"
+        -
+            name: "Check exported files"
+            run: |
+                EXPECTED="LICENSE,README.md,composer.json,package.json"
+                CURRENT="$(
+                    git archive HEAD \
+                        | tar --list --exclude="src" --exclude="src/*" \
+                            --exclude="config" --exclude="config/*" \
+                            --exclude="database" --exclude="database/*" \
+                            --exclude="public" --exclude="public/*" \
+                            --exclude="resources" --exclude="resources/*" \
+                            --exclude="routes" --exclude="routes/*" \
+                            --exclude="src" --exclude="src/*" \
+                            --exclude="stubs" --exclude="stubs/*" \
+                        | paste --serial --delimiters=","
+                )"
+                echo "CURRENT =${CURRENT}"
+                echo "EXPECTED=${EXPECTED}"
+                test "${CURRENT}" = "${EXPECTED}"

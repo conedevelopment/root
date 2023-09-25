@@ -1,0 +1,60 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.editor {
+  @include set-css-variable((
+    --block-size: 18rem
+  ));
+  @include transition;
+  block-size: get-css-variable(--block-size);
+  border: 1px solid color('border', 'form');
+  border-radius: config('border-radius-sm', $display);
+  display: flex;
+  flex-direction: column;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+
+  &:focus-within {
+    @include focus-ring(
+      $type: config('focus-ring-type', $form-control, false),
+      $border-color: color('border-focus', 'form'),
+      $ring-color: color('ring-focus', 'form'),
+      $box-shadow-type: config('focus-ring-box-shadow-type', $form-control, false),
+      $ring-size: config('focus-ring-size', $form-control, false),
+      $ring-offset: config('focus-ring-offset', $form-control, false)
+    );
+  }
+
+  &__controls {
+    align-items: center;
+    border-block-end: 1px solid color('border');
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs') spacer('s');
+    padding: spacer('xs');
+
+    .form-control {
+      inline-size: auto;
+    }
+  }
+
+  &__group {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+  }
+
+  &__body {
+    @include scrollbar;
+    flex: 1 1 auto;
+    margin: spacer('xxs');
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: spacer('s');
+
+    > [contenteditable='true'] {
+      @include layout-stack('xs');
+      outline: 0;
+    }
+  }
+}

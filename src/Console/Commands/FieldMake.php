@@ -55,23 +55,23 @@ class FieldMake extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        return $this->replaceComponent($class);
+        return $this->replaceTemplate($class);
     }
 
     /**
-     * Replace the component related code.
+     * Replace the template related code.
      */
-    protected function replaceComponent(string $class): string
+    protected function replaceTemplate(string $class): string
     {
-        if ($component = $this->option('component')) {
+        if ($template = $this->option('template')) {
             return str_replace(
-                [PHP_EOL.'%%component%%', '%%/component%%', '{{ component }}'],
-                ['', '', $component],
+                [PHP_EOL.'%%template%%', '%%/template%%', '{{ template }}'],
+                ['', '', $template],
                 $class
             );
         }
 
-        return preg_replace('/\n%%component%%.*%%\/component%%/s', '', $class);
+        return preg_replace('/\n%%template%%.*%%\/template%%/s', '', $class);
     }
 
     /**
@@ -80,7 +80,7 @@ class FieldMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['component', null, InputOption::VALUE_OPTIONAL, 'The Vue component'],
+            ['template', null, InputOption::VALUE_OPTIONAL, 'The Blade template'],
         ];
     }
 }

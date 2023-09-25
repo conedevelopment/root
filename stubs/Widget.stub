@@ -3,41 +3,20 @@
 namespace {{ namespace }};
 
 use Cone\Root\Widgets\Widget;
-use Illuminate\Http\Request;
 
 class {{ class }} extends Widget
 {
-%%async%%
-    /**
-     * Indicates if the widget is async.
-     */
-    protected bool $async = true;
-%%/async%%
-%%component%%
-    /**
-     * The Vue component.
-     */
-    protected string $component = '{{ component }}';
-%%/component%%
     /**
      * The Blade template.
      */
     protected string $template = '{{ template }}';
 
     /**
-     * Create a new widget instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Get the data.
      */
-    public function data(Request $request): array
+    public function toArray(): array
     {
-        return array_merge(parent::data($request), [
+        return array_merge(parent::toArray(), [
             //
         ]);
     }

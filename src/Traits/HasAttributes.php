@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Traits;
 
+use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 
 trait HasAttributes
 {
@@ -85,5 +87,43 @@ trait HasAttributes
         $this->attributes = [];
 
         return $this;
+    }
+
+    /**
+     * Resolve the attributes.
+     */
+    public function resolveAttributes(): array
+    {
+        return array_reduce(
+            array_keys($this->attributes),
+            function (array $attributes, string $key): mixed {
+                return array_merge($attributes, [$key => $this->resolveAttribute($key)]);
+            },
+            []
+        );
+    }
+
+    /**
+     * Resolve the given attribute.
+     */
+    public function resolveAttribute(string $key): mixed
+    {
+        $value = $this->getAttribute($key);
+
+        $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
+
+        return match ($key) {
+            'class' => Arr::toCssClasses((array) $value),
+            'style' => Arr::toCssStyles((array) $value),
+            default => $value,
+        };
+    }
+
+    /**
+     * Make a new attribute bag instance.
+     */
+    public function newAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->resolveAttributes());
     }
 }

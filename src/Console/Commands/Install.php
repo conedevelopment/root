@@ -4,8 +4,8 @@ namespace Cone\Root\Console\Commands;
 
 use Cone\Root\Database\Seeders\RootTestDataSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Install extends Command
@@ -31,7 +31,7 @@ class Install extends Command
     {
         $status = $this->call('migrate');
 
-        File::ensureDirectoryExists(Storage::disk('local')->path('root-chunks'));
+        File::ensureDirectoryExists(Config::get('root.media.tmp_dir'));
 
         if ($this->option('seed')) {
             $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);

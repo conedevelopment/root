@@ -1,0 +1,18 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.app-actions {
+  justify-content: space-between;
+
+  &--sidebar {
+    @include breakpoint('lg') {
+      margin-inline-end: calc(20rem + #{spacer('m')});
+    }
+  }
+
+  &,
+  &__column {
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('m');
+  }
+}

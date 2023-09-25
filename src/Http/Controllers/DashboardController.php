@@ -4,8 +4,8 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Root;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 
 class DashboardController extends Controller
 {
@@ -14,9 +14,8 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request, Root $root): Response
     {
-        return Inertia::render('Dashboard', [
-            'title' => __('Dashboard'),
-            'widgets' => $root->widgets->authorized($request)->toArray(),
+        return ResponseFactory::View('root::dashboard', [
+            'widgets' => $root->widgets->all(),
         ]);
     }
 }

@@ -3,23 +3,24 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "test": "jest",
-        "lint": "eslint resources/js/",
-        "lint:sass": "stylelint resources/sass/"
+        "prod:build": "vite build",
+        "sass:lint": "stylelint resources/sass/"
     },
     "dependencies": {
-        "@inertiajs/vue3": "^1.0.0",
-        "@tiptap/extension-highlight": "^2.0.0-beta.209",
-        "@tiptap/extension-history": "^2.0.0-beta.209",
-        "@tiptap/extension-image": "^2.0.0-beta.209",
-        "@tiptap/extension-link": "^2.0.0-beta.209",
+        "@alpinejs/focus": "^3.12.3",
+        "@tiptap/extension-highlight": "^2.0.3",
+        "@tiptap/extension-history": "^2.0.3",
+        "@tiptap/extension-image": "^2.0.3",
+        "@tiptap/extension-link": "^2.0.3",
         "@tiptap/extension-text-align": "^2.0.3",
-        "@tiptap/pm": "^2.0.0-beta.220",
-        "@tiptap/starter-kit": "^2.0.0-beta.207",
-        "@tiptap/vue-3": "^2.0.0-beta.96",
-        "@vitejs/plugin-vue": "^4.0.0",
-        "@vue/compiler-sfc": "^3.0.5",
-        "laravel-vite-plugin": "^0.7.3",
+        "@tiptap/extension-underline": "^2.0.4",
+        "@tiptap/pm": "^2.0.3",
+        "@tiptap/starter-kit": "^2.0.3",
+        "acorn": "^8.10.0",
+        "alpinejs": "^3.12.3",
+        "apexcharts": "^3.42.0",
+        "axios": "^1.4.0",
+        "laravel-vite-plugin": "^0.7.8",
         "postcss": "^8.2.4",
         "prosemirror-commands": "^1.5.0",
         "prosemirror-dropcursor": "^1.6.1",
@@ -30,20 +31,15 @@
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.32.4",
         "sass-loader": "^8.0.0",
-        "sprucecss": "^1.2.0",
-        "vite": "^4.3.0",
-        "vue": "^3.2.39",
-        "vue-loader": "^16.1.0"
+        "sprucecss": "^2.2.1",
+        "tiptap": "^1.32.2",
+        "vite": "^4.3.0"
     },
     "devDependencies": {
-        "@babel/preset-env": "^7.18.10",
-        "@vue/test-utils": "^2.0.0-rc.1",
-        "eslint": "^7.20.0",
-        "eslint-plugin-vue": "^7.6.0",
-        "jest": "^26.6.3",
         "stylelint": "^14.2.0",
-        "typescript": "^4.1.5",
-        "vue-jest": "^5.0.0-alpha.7"
+        "stylelint-config-sass-guidelines": "^10.0.0"
     },
-    "version": "0.0.0"
+    "engines": {
+        "node": "^18.0 || ^19.0 || ^20.0"
+    }
 }

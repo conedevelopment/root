@@ -32,15 +32,19 @@ class ClearChunks extends Command
 
         $expiration = Config::get('root.media.chunk_expiration', 1440) * 60;
 
-        foreach (Storage::disk('local')->allFiles('root-chunks') as $file) {
+        $count = 0;
+
+        foreach (Storage::disk('local')->allFiles(Config::get('root.media.upload_dir')) as $file) {
             $info = new SplFileInfo(Storage::disk('local')->path($file));
 
             if ($now - $info->getMTime() >= $expiration) {
                 Storage::disk('local')->delete($file);
+
+                $count++;
             }
         }
 
-        $this->info('File chunks are cleared!');
+        $this->info(sprintf('%d chunks are cleared!', $count));
 
         return Command::SUCCESS;
     }

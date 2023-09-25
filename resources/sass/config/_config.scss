@@ -1,77 +1,132 @@
-$color-primary-light: hsl(215 100% 96%);
-$color-primary: hsl(214 98% 49%);
-$color-delete: hsl(0 71% 51%);
+@use 'sass:color';
+@use 'dark-colors' as dark;
 
-@use '~sprucecss/scss/spruce' with (
-    $settings: (
-        prefix: root,
-        utilities: true
+$color-primary: hsl(214deg 98% 49%);
+$color-secondary: hsl(160 89% 46%);
+$color-primary-lightest: hsl(210deg 60% 98%);
+$color-danger: hsl(0deg 71% 51%);
+
+@use 'sprucecss/scss/spruce' with (
+  $btn: (
+    'font-family': #{'Manrope', sans-serif},
+    'font-weight': 600,
+  ),
+  $btn-lg: (
+    'font-size': 1rem,
+  ),
+  $colors: (
+    'base': (
+      'border': hsl(215deg 100% 96%),
+      'primary-lightest': $color-primary-lightest,
     ),
-    $color-primary: $color-primary,
-    $color-secondary: hsl(214 98% 25%),
-    $colors: (
-        base: (
-            primary-light: $color-primary-light,
-            heading: hsl(238 69% 22%),
-            text: hsl(207 44% 20%)
-        ),
-        btn: (
-            primary-foreground-opaque: hsl(0 0% 100% / 0.75),
-            secondary-foreground-opaque: hsl(0 0% 100% / 0.75),
-            tertiary-background: $color-primary-light,
-            tertiary-background-hover: $color-primary,
-            tertiary-foreground: $color-primary,
-            tertiary-foreground-hover: $color-primary-light,
-            tertiary-focus-ring: $color-primary,
-            delete-foreground: $color-delete,
-            delete-foreground-hover: hsl(0 0% 100%),
-            delete-background: hsl(0 71% 95%),
-            delete-background-hover: $color-delete,
-            delete-focus-ring: $color-delete,
-            yellow-foreground: hsl(0 0% 0%),
-            yellow-background: hsl(45 100% 49%),
-            yellow-background-hover: hsl(45 100% 56%)
-        ),
-        form: (
-            border: hsl(223 16% 80%),
-            border-focus: $color-primary,
-            check-background: hsl(214 98% 25%),
-            fieldset-background: hsl(210 100% 99%),
-            select-foreground: hsl(214 98% 25%),
-            range-background: hsl(210 50% 98%),
-            range-border: hsl(213 20% 83%)
-        ),
-        table: (
-            border: $color-primary-light,
-            hover: $color-primary-light,
-            stripe: hsl(216 100% 98%)
-        ),
-        breadcrumb: (
-            arrow: hsl(0 0% 0% / 0.1)
-        ),
-        sidebar: (
-            border: hsl(214 100% 92%),
-            icon: hsl(245 37% 83%),
-            active: $color-primary-light
-        )
+    'btn': (
+      'dark-background': hsl(205deg 100% 2%),
+      'dark-background-hover': hsl(205deg 100% 5%),
+      'dark-foreground': hsl(0deg 0% 100%),
+      'dark-outline-border': hsl(260deg 4% 70%),
+      'dark-outline-foreground': hsl(205deg 100% 2%),
+      'dark-outline-foreground-hover': hsl(0deg 0% 100%),
+      'dark-outline-background-hover': hsl(205deg 100% 2%),
+      'dark-outline-focus-ring': hsl(205deg 100% 2%),
+      'light-background': $color-primary-lightest,
+      'light-background-hover': $color-primary,
+      'light-focus-ring': $color-primary,
+      'light-foreground': $color-primary,
+      'light-foreground-hover': hsl(0deg 0% 100%),
+      'delete-background': color.adjust($color-danger, $lightness: 45%),
+      'delete-background-hover': $color-danger,
+      'delete-focus-ring': $color-danger,
+      'delete-foreground': $color-danger,
+      'delete-foreground-hover': hsl(0deg 0% 100%),
+      'primary-outline-foreground': $color-primary,
     ),
-    $spacers: (
-        m: 2rem
+    'breadcrumb': (
+      'separator': hsl(0deg 0% 80%),
     ),
-    $font-family-base: #{'Inter', sans-serif},
-    $font-family-heading: #{'Poppins', sans-serif},
-    $font-size-sm: 0.8375rem,
-    $font-size-base: 0.9375rem,
-    $border-radius-sm: 0.25rem,
-    $border-radius-lg: 0.5rem,
-    $btn-border-radius: 0.5rem,
-    $btn-font-size-sm: 0.8675rem,
-    $btn-font-weight: 600,
-    $btn-icon-size-sm: 0.7em,
-    $btn-padding-sm: 0.65em 0.95em,
-    $form-control-font-size-sm: 0.9375rem,
-    $form-label-font-weight: 600,
-    $table-padding-sm: 0.5rem,
-    $transition-duration: 0.1s,
-    $table-stripe: even
+    'combobox': (
+      'item-background': $color-primary-lightest,
+      'item-foreground': $color-primary,
+    ),
+    'data-table': (
+      'icon': hsl(0deg 0% 80%),
+    ),
+    'form': (
+      'border': hsl(260deg 4% 75%),
+    ),
+    'header': (
+      'background': hsl(0deg 0% 100% / 95%),
+    ),
+    'navigation': (
+      'arrow': hsl(0deg 0% 0% / 15%),
+    ),
+    'main': (
+      'background': $color-primary-lightest,
+    ),
+    'media': (
+      'background': $color-primary-lightest,
+      'dropzone-background': hsl(214deg 98% 49% / 75%),
+      'dropzone-border': hsl(214deg 98% 40%),
+      'icon': $color-primary,
+    ),
+    'modal': (
+      'background': hsl(210deg 60% 98% / 90%),
+    ),
+    'search': (
+      'icon': hsl(229deg 26% 48% / 25%),
+    ),
+    'prism': (
+      'color': hsl(243deg 14% 29%),
+      'background': hsl(0deg 0% 98%),
+      'comment': hsl(225deg 14% 46%),
+      'punctuation': hsl(279deg 50% 53%),
+      'namespace': hsl(173deg 100% 24%),
+      'deleted': hsl(1deg 83% 63% / 56%),
+      'boolean': hsl(0deg 44% 53%),
+      'number': hsl(315deg 90% 35%),
+      'constant': hsl(221deg 57% 52%),
+      'class-name': hsl(0deg 0% 7%),
+      'regex': hsl(1deg 48% 59%),
+    ),
+    'table': (
+      'hover': $color-primary-lightest,
+      'stripe': $color-primary-lightest,
+    ),
+    'widget': (
+      'icon-background': color.adjust($color-primary, $lightness: 49%),
+    ),
+  ),
+  $color-primary: $color-primary,
+  $color-secondary: $color-secondary,
+  $dark-colors: dark.$colors,
+  $display: (
+    'border-radius-sm': 0.45rem,
+  ),
+  $form-check: (
+    'font-weight': 400,
+  ),
+  $form-control-sm: (
+    'padding': 0.1em 0.45em,
+  ),
+  $form-fieldset: (
+    'gap': 0.5rem,
+    'legend-font-size': 0.938rem,
+    'legend-font-weight': 600,
+  ),
+  $form-group: (
+    'row-container-inline-size': 40rem,
+  ),
+  $form-label: (
+    'font-family': #{'Manrope', sans-serif},
+    'font-weight': 600,
+  ),
+  $typography: (
+    'font-family-base': #{'Open Sans', sans-serif},
+    'font-family-heading': #{'Manrope', sans-serif},
+    'font-size-base': 0.938rem,
+    'font-weight-heading': 600,
+  ),
+  $settings: (
+    'css-custom-properties': true,
+    'prefix': 'root',
+  )
 );

@@ -1,77 +1,90 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
 name: "Install in Laravel"
 
 on:
-  push:
-    branches:
-      - "master"
-  pull_request:
+    pull_request: null
+    push:
+        branches:
+        - "master"
+# Add [skip ci] to commit message to skip CI.
+
+permissions:
+    contents: "read"
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
 
 jobs:
-  laravel_install:
+    laravel_install:
+        name: "${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
 
-    strategy:
-      fail-fast: true
-      matrix:
-        os: ["ubuntu-22.04"]
-        php: ["8.1", "8.2"]
-        stability: ["prefer-stable"]
-        laravel: ["10.x"]
+        strategy:
+            fail-fast: true
+            matrix:
+                os:
+                - "ubuntu-22.04"
+                php:
+                - "8.1"
+                - "8.2"
+                stability:
+                - "prefer-stable"
+                laravel:
+                - "10.x"
 
-    name: "${{ matrix.os }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
+        runs-on: "${{ matrix.os }}"
 
-    runs-on: "${{ matrix.os }}"
+        defaults:
+            run:
+                shell: "bash"
 
-    defaults:
-      run:
-        shell: "bash"
-
-    steps:
-
-      - name: "Setup PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          php-version: "${{ matrix.php }}"
-          extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
-          tools: "composer:v2"
-          coverage: "none"
-
-      - name: "Checkout code"
-        uses: "actions/checkout@v2"
-
-      - name: "Install Root in Laravel"
-        run: |
-          git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
-          cd laravel/
-          composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
-          composer require --no-interaction --no-progress --dev --${{ matrix.stability }} --prefer-dist --update-with-dependencies "conedevelopment/root:dev-${{ github.sha }} || dev-${{ github.ref_name }}"
-          # APP_ENV is local
-          cp -v .env.example .env
-          sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
-          sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
-          php artisan key:generate
-          php artisan root:install --seed
-          php artisan root:publish --packages
-
-      - name: "Check stubs"
-        run: |
-          cd laravel/
-          composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
-          php artisan root:action FooBar
-          php artisan root:extract FooBar
-          php artisan root:field FooBar
-          php artisan root:filter FooBar
-          php artisan root:resource FooBar
-          php artisan root:widget FooBar
-          vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
-
-      - name: "Install front-end dependencies"
-        run: |
-          cd laravel/
-          # laravel-vite-plugin is a devDependency
-          #npm install --production
-          npm install
-
-      - name: "Build front-end"
-        run: |
-          cd laravel/
-          npm run build
+        steps:
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v3"
+        -
+            name: "Setup PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "${{ matrix.php }}"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+                coverage: "none"
+        -
+            name: "Install Root in Laravel"
+            run: |
+                git clone -b ${{ matrix.laravel }} https://github.com/laravel/laravel.git laravel
+                cd laravel/
+                composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
+                composer require --no-interaction --no-progress --dev --${{ matrix.stability }} --prefer-dist --update-with-dependencies "conedevelopment/root:dev-${{ github.sha }} || dev-${{ github.ref_name }}"
+                # APP_ENV is local
+                cp -v .env.example .env
+                sed -i -e 's#^DB_CONNECTION=.*$#DB_CONNECTION=sqlite#' .env
+                sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
+                php artisan key:generate
+                php artisan root:install --seed
+                php artisan root:publish --packages
+        -
+            name: "Perform static analysis on stubs"
+            working-directory: "laravel"
+            run: |
+                composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
+                php artisan root:action FooBar
+                php artisan root:extract FooBar
+                php artisan root:field FooBar
+                php artisan root:filter FooBar
+                php artisan root:resource FooBar
+                php artisan root:widget FooBar
+                vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
+        -
+            name: "Install front-end dependencies"
+            working-directory: "laravel"
+            run: |
+                # laravel-vite-plugin is a devDependency
+                #npm install --production
+                npm install
+        -
+            name: "Build front-end"
+            working-directory: "laravel"
+            run: |
+                npm run build

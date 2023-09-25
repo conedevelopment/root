@@ -2,47 +2,25 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Actions\Action;
-use Cone\Root\Enums\ResourceContext;
-use Cone\Root\Extracts\Extract;
-use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
-use Cone\Root\Filters\Search;
-use Cone\Root\Filters\Sort;
-use Cone\Root\Http\Controllers\ResourceController;
-use Cone\Root\Interfaces\Routable;
-use Cone\Root\Root;
+use Cone\Root\Form\Form;
+use Cone\Root\Interfaces\AsForm;
+use Cone\Root\Interfaces\AsTable;
+use Cone\Root\Table\Table;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesExtracts;
-use Cone\Root\Traits\ResolvesFields;
-use Cone\Root\Traits\ResolvesFilters;
-use Cone\Root\Traits\ResolvesRelations;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Routable
+class Resource implements Arrayable, AsForm, AsTable
 {
     use Authorizable;
-    use ResolvesActions;
-    use ResolvesExtracts;
-    use ResolvesFields;
-    use ResolvesFilters;
-    use ResolvesRelations;
     use ResolvesWidgets;
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
 
     /**
      * The model class.
@@ -62,15 +40,7 @@ class Resource implements Arrayable, Routable
     /**
      * The icon for the resource.
      */
-    protected string $icon = 'inventory-2';
-
-    /**
-     * Create a new resource instance.
-     */
-    public function __construct(string $model)
-    {
-        $this->model = $model;
-    }
+    protected string $icon = 'archive';
 
     /**
      * Get the model for the resource.
@@ -94,22 +64,6 @@ class Resource implements Arrayable, Routable
     public function getUriKey(): string
     {
         return $this->getKey();
-    }
-
-    /**
-     * Get the route key name.
-     */
-    public function getRouteKeyName(): string
-    {
-        return Str::of($this->getKey())->singular()->replace('-', '_')->prepend('resource_')->value();
-    }
-
-    /**
-     * Get the URI of the resource.
-     */
-    public function getUri(): string
-    {
-        return Str::start(sprintf('%s/%s', App::make(Root::class)->getPath(), $this->getKey()), '/');
     }
 
     /**
@@ -163,19 +117,6 @@ class Resource implements Arrayable, Routable
     }
 
     /**
-     * Get the resource abilities.
-     */
-    public function getAbilities(): array
-    {
-        $policy = $this->getPolicy();
-
-        return [
-            'viewAny' => is_null($policy) || Gate::check('viewAny', $this->getModel()),
-            'create' => is_null($policy) || Gate::check('create', $this->getModel()),
-        ];
-    }
-
-    /**
      * Set the relations to eagerload.
      */
     public function with(array $relations): static
@@ -212,159 +153,24 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Resolve the route binding query.
+     */
+    public function resolveRouteBindingQuery(Request $request): Builder
+    {
+        return $this->resolveQuery($request)->when(
+            $this->isSoftDeletable(),
+            static function (Builder $query): Builder {
+                return $query->withTrashed();
+            }
+        );
+    }
+
+    /**
      * Resolve the resource model for a bound value.
      */
     public function resolveRouteBinding(Request $request, string $id): Model
     {
-        return $this->resolveQuery($request)
-            ->when($this->isSoftDeletable(), static function (Builder $query): Builder {
-                return $query->withTrashed();
-            })
-            ->findOrFail($id);
-    }
-
-    /**
-     * Define the filters for the resource.
-     */
-    public function filters(Request $request): array
-    {
-        $fields = $this->resolveFields($request)
-            ->visible(ResourceContext::Index->value)
-            ->authorized($request, $this->getModelInstance());
-
-        $searchables = $fields->searchable($request);
-
-        $sortables = $fields->sortable($request);
-
-        return array_values(array_filter([
-            $searchables->isNotEmpty() ? Search::make($searchables) : null,
-            $sortables->isNotEmpty() ? Sort::make($sortables) : null,
-        ]));
-    }
-
-    /**
-     * Handle the resolving event on the field instance.
-     */
-    protected function resolveField(Request $request, Field $field): void
-    {
-        $field->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the filter instance.
-     */
-    protected function resolveFilter(Request $request, Filter $filter): void
-    {
-        $filter->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the action instance.
-     */
-    protected function resolveAction(Request $request, Action $action): void
-    {
-        $action->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->resolveFilters($request)
-                ->authorized($request)
-                ->apply($request, $this->resolveQuery($request));
-        });
-    }
-
-    /**
-     * Handle the resolving event on the extract instance.
-     */
-    protected function resolveExtract(Request $request, Extract $extract): void
-    {
-        $extract->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        })->withQuery(function (Request $request): Builder {
-            return $this->resolveQuery($request);
-        });
-    }
-
-    /**
-     * Handle the resolving event on the widget instance.
-     */
-    protected function resolveWidget(Request $request, Widget $widget): void
-    {
-        $widget->mergeAuthorizationResolver(function (...$parameters): bool {
-            return $this->authorized(...$parameters);
-        });
-    }
-
-    /**
-     * Map the items.
-     */
-    public function mapItems(Request $request): array
-    {
-        $filters = $this->resolveFilters($request)->authorized($request);
-
-        $query = $this->resolveQuery($request);
-
-        $items = $filters->apply($request, $query)
-            ->latest()
-            ->paginate($request->input('per_page'))
-            ->withQueryString()
-            ->setPath($this->getUri())
-            ->through(function (Model $model) use ($request): array {
-                return $this->newItem($model)->toDisplay(
-                    $request,
-                    $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Index->value)
-                );
-            })
-            ->toArray();
-
-        return array_merge($items, [
-            'query' => $filters->mapToQuery($request, $query),
-        ]);
-    }
-
-    /**
-     * Make a new item instance.
-     */
-    public function newItem(Model $model): Item
-    {
-        return (new Item($model))->url(function () use ($model): string {
-            return $model->exists ? sprintf('%s/%s', $this->getUri(), $model->getRouteKey()) : $this->getUri();
-        });
-    }
-
-    /**
-     * Handle the created event.
-     */
-    public function created(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the updated event.
-     */
-    public function updated(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the deleted event.
-     */
-    public function deleted(Request $request, Model $model): void
-    {
-        //
-    }
-
-    /**
-     * Handle the restored event.
-     */
-    public function restored(Request $request, Model $model): void
-    {
-        //
+        return $this->resolveRouteBindingQuery($request)->findOrFail($id);
     }
 
     /**
@@ -376,17 +182,56 @@ class Resource implements Arrayable, Routable
     }
 
     /**
+     * Get the resource URL.
+     */
+    public function getUrl(): string
+    {
+        return URL::route('root.resource.index', $this->getUriKey());
+    }
+
+    /**
+     * Get the URL for the given model.
+     */
+    public function modelUrl(Model $model): string
+    {
+        return URL::route($model->exists ? 'root.resource.update' : 'root.resource.store', [$this->getUriKey(), $model]);
+    }
+
+    /**
+     * Make a new form for the model.
+     */
+    public function toTable(Request $request, Builder $query): Table
+    {
+        return (new Table($query))
+            ->rowUrl(function (Request $request, Model $model): string {
+                return $this->modelUrl($model);
+            });
+    }
+
+    /**
+     * Make a new form for the model.
+     */
+    public function toForm(Request $request, Model $model): Form
+    {
+        return new Form(
+            $model,
+            $this->modelUrl($model),
+            sprintf('/root/api/%s/form/fields', $this->getKey())
+        );
+    }
+
+    /**
      * Get the instance as an array.
      */
     public function toArray(): array
     {
         return [
-            'abilities' => $this->getAbilities(),
             'icon' => $this->getIcon(),
             'key' => $this->getKey(),
+            'model' => $this->getModel(),
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
-            'url' => $this->getUri(),
+            'uriKey' => $this->getUriKey(),
         ];
     }
 
@@ -395,18 +240,11 @@ class Resource implements Arrayable, Routable
      */
     public function toIndex(Request $request): array
     {
-        return [
-            'actions' => $this->resolveActions($request)
-                ->authorized($request)
-                ->visible(ResourceContext::Index->value)
-                ->mapToForm($request, $this->getModelInstance()),
-            'filters' => $this->resolveFilters($request)
-                ->authorized($request)
-                ->mapToForm($request),
-            'items' => $this->mapItems($request),
+        return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-        ];
+            'table' => $this->toTable($request, $this->resolveQuery($request)),
+            'widgets' => $this->resolveWidgets($request)->all(),
+        ]);
     }
 
     /**
@@ -414,37 +252,10 @@ class Resource implements Arrayable, Routable
      */
     public function toCreate(Request $request): array
     {
-        $model = $this->getModelInstance();
-
-        return [
-            'model' => $this->newItem($model)->toForm(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Create->value)
-            ),
+        return array_merge($this->toArray(), [
             'title' => __('Create :model', ['model' => $this->getModelName()]),
-        ];
-    }
-
-    /**
-     * Get the show representation of the resource.
-     */
-    public function toShow(Request $request, Model $model): array
-    {
-        return [
-            'actions' => $this->resolveActions($request)
-                ->visible(ResourceContext::Show->value)
-                ->authorized($request, $model)
-                ->mapToForm($request, $model),
-            'model' => $this->newItem($model)->toDisplay(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Show->value)
-            ),
-            'title' => __(':model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-            'widgets' => $this->resolveWidgets($request)->authorized($request)->toArray(),
-            'relations' => $this->resolveRelations($request)
-                ->authorized($request, $model)
-                ->mapToTable($request, $model),
-        ];
+            'form' => $this->toForm($request, $this->getModelInstance()),
+        ]);
     }
 
     /**
@@ -452,103 +263,9 @@ class Resource implements Arrayable, Routable
      */
     public function toEdit(Request $request, Model $model): array
     {
-        return [
-            'model' => $this->newItem($model)->toForm(
-                $request,
-                $this->resolveFields($request)->authorized($request, $model)->visible(ResourceContext::Update->value)
-            ),
-            'title' => __('Edit :model: :id', ['model' => $this->getModelName(), 'id' => $model->getKey()]),
-        ];
-    }
-
-    /**
-     * Get the navigation compatible format of the resource.
-     */
-    public function toNavigation(Request $request): array
-    {
         return array_merge($this->toArray(), [
-            'links' => $this->resolveExtracts($request)
-                ->authorized($request)
-                ->map(static function (Extract $extract): array {
-                    return [
-                        'url' => $extract->getUri(),
-                        'label' => $extract->getName(),
-                    ];
-                })
-                ->toArray(),
-        ]);
-    }
-
-    /**
-     * Handle the resource registered event.
-     */
-    public function boot(Root $root): void
-    {
-        $root->routes(function (Router $router): void {
-            $this->registerRoutes($router);
-        });
-    }
-
-    /**
-     * Register the routes.
-     */
-    public function registerRoutes(Router $router): void
-    {
-        $this->__registerRoutes($router);
-
-        $request = App::make('request');
-
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveWidgets($request)->registerRoutes($router);
-            $this->resolveExtracts($request)->registerRoutes($router);
-            $this->resolveActions($request)->registerRoutes($router);
-            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
-                $this->resolveFields($request)->registerRoutes($router);
-                $this->resolveRelations($request)->registerRoutes($router);
-            });
-        });
-    }
-
-    /**
-     * Register the route constraints.
-     */
-    public function registerRouteConstraints(Router $router): void
-    {
-        $router->bind($this->getRouteKeyName(), function (string $id) use ($router): Model {
-            return $this->resolveRouteBinding($router->getCurrentRequest(), $id);
-        });
-    }
-
-    /**
-     * The routes that should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        $router->get('/', [ResourceController::class, 'index']);
-        $router->get('/create', [ResourceController::class, 'create']);
-        $router->post('/', [ResourceController::class, 'store']);
-        $router->get("{{$this->getRouteKeyName()}}", [ResourceController::class, 'show']);
-        $router->get("{{$this->getRouteKeyName()}}/edit", [ResourceController::class, 'edit']);
-        $router->patch("{{$this->getRouteKeyName()}}", [ResourceController::class, 'update']);
-        $router->delete("{{$this->getRouteKeyName()}}", [ResourceController::class, 'destroy']);
-
-        if ($this->isSoftDeletable()) {
-            $router->post("{{$this->getRouteKeyName()}}/restore", [ResourceController::class, 'restore']);
-        }
-    }
-
-    /**
-     * Handle the routes registered event.
-     */
-    public function routesRegistered(Router $router): void
-    {
-        App::make(Root::class)->breadcrumbs->patterns([
-            $this->getUri() => $this->getName(),
-            sprintf('%s/create', $this->getUri()) => __('Create'),
-            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
-                return $request->route()->originalParameter($this->getRouteKeyName());
-            },
-            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+            'title' => '',
+            'form' => $this->toForm($request, $model),
         ]);
     }
 }

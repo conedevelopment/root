@@ -21,25 +21,22 @@ class NotificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => 'App\\Notifications\\TestNotification',
+            'type' => 'App\\Notifications\\CustomNotification',
             'data' => [
-                'content' => $this->faker->text(),
-                'title' => $this->faker->words(5, true),
+                'subject' => $this->faker->jobTitle(),
+                'content' => $this->faker->paragraph(),
             ],
+            'read_at' => Date::now(),
         ];
     }
 
     /**
-     * Define the model's unread state.
-     *
-     * @return \Cone\Root\Database\Factories\NotificationFactory
+     * Indicate that the model should be unread.
      */
-    public function read(): static
+    public function unread(): static
     {
-        return $this->state(function (array $attributes): array {
-            return [
-                'read_at' => Date::now(),
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'read_at' => null,
+        ]);
     }
 }

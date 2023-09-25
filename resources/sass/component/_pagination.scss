@@ -1,0 +1,19 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.pagination {
+  &__links {
+    @include clear-list;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+
+    > * + * {
+      margin-block-start: 0;
+    }
+  }
+
+  [aria-current="page"] {
+    background-color: color('primary-background', 'btn');
+    color: color('primary-foreground', 'btn');
+  }
+}
