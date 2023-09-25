@@ -13,7 +13,7 @@
                 aria-valuemax="100"
                 aria-labelledby="progress-caption"
             >
-                <div class="progressbar__indicator" x-bind:style="item.progress && { inlineSize: `${item.progress}%` }"></div>
+                <div class="progressbar__indicator" x-bind:style="item.progress && { inlineSize: item.progress + '%' }"></div>
             </div>
             <div x-bind:id="item.hash" class="progressbar__caption" x-text="item.name"></div>
         </div>
