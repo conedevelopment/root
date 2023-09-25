@@ -91,7 +91,7 @@ jobs:
                 git grep --files-with-matches -I -e '.' \
                     | git check-attr --stdin --all \
                     | sed -n -e 's#^\(.\+\): linguist-generated: set$#":!:\1"#p' \
-                    | xargs -L 1 -- git ls-files --cached -z -- \
+                    | xargs -- git ls-files --cached -z -- \
                     | xargs --null -n 1 -- sed -i -e '/./,$!d' -e '/^$/N;/^\n$/D'
         -
             name: "Check differences to repository"
