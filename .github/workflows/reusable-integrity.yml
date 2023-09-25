@@ -77,7 +77,7 @@ jobs:
                 # Exclude docblocks
                 ! git grep --perl-regexp --line-number -I \
                     -e '(?!^#)\S\s\s' --and --not -e '    \* @' \
-                    -- ':!:*.lock' ':!:*.md' ':!:.github/**.yml'
+                    -- ':!:*.lock' ':!:*.md' ':!:.github/**.yml' ':!:public/build/'
         -
             # Move TODO-s into GitHub issues!
             name: "Search for TODO-s and FIXME-s 🐌"
