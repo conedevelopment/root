@@ -324,7 +324,6 @@ class Table extends Element implements AsForm
         return $this->resolveFilteredQuery($request)
             ->latest()
             ->paginate($this->getPerPage($request), ['*'], $this->getPageName())
-            ->setPath($request->path())
             ->withQueryString()
             ->through(function (Model $model) use ($request): array {
                 return [

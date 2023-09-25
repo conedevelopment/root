@@ -3,31 +3,22 @@
 namespace {{ namespace }};
 
 use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Form\Fields\ID;
 use Cone\Root\Form\Form;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Table\Columns\Columns;
 use Cone\Root\Table\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Resource
 {
     /**
-     * Define the extracts for the resource.
-     */
-    public function extracts(): array
-    {
-        return array_merge(parent::extracts(), [
-            //
-        ]);
-    }
-
-    /**
      * Define the widgets for the resource.
      */
-    public function widgets(): array
+    public function widgets(Request $request): array
     {
-        return array_merge(parent::widgets(), [
+        return array_merge(parent::widgets($request), [
             //
         ]);
     }
@@ -35,9 +26,9 @@ class {{ class }} extends Resource
     /**
      * Get the table instance for the resource.
      */
-    public function toTable(Request $request): Table
+    public function toTable(Request $request, Builder $query): Table
     {
-        return parent::toTable($request)
+        return parent::toTable($request, $query)
             ->withColumns(static function (Request $request, Columns $columns): void {
                 $columns->id();
             });
@@ -46,9 +37,9 @@ class {{ class }} extends Resource
     /**
      * Get the form instance for the resource.
      */
-    public function toForm(Request $request): Form
+    public function toForm(Request $request, Model $model): Form
     {
-        return parent::toForm($request)
+        return parent::toForm($request, $model)
             ->withFields(static function (Request $request, Fields $fields): void {
                 //
             });
