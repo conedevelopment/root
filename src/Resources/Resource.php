@@ -232,6 +232,7 @@ class Resource implements Arrayable, AsForm, AsTable
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
             'uriKey' => $this->getUriKey(),
+            'url' => $this->getUrl(),
         ];
     }
 
