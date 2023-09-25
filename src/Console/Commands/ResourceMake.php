@@ -3,7 +3,6 @@
 namespace Cone\Root\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class ResourceMake extends GeneratorCommand

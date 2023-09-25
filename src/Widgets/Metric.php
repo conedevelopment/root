@@ -4,7 +4,6 @@ namespace Cone\Root\Widgets;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Redis;
 
 abstract class Metric extends Widget
 {
