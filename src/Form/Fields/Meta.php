@@ -115,14 +115,6 @@ class Meta extends MorphOne
     }
 
     /**
-     * Set the meta field as JSON.
-     */
-    public function asJson(Closure $callback = null): static
-    {
-        return $this->as(Json::class, $callback);
-    }
-
-    /**
      * Set the meta field as number.
      */
     public function asNumber(Closure $callback = null): static
