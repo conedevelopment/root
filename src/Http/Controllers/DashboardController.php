@@ -14,7 +14,7 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request, Root $root): Response
     {
-        return ResponseFactory::View('root::dashboard', [
+        return ResponseFactory::view('root::dashboard', [
             'widgets' => $root->widgets->all(),
         ]);
     }
