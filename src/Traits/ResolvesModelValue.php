@@ -21,7 +21,7 @@ trait ResolvesModelValue
     /**
      * Get the model.
      */
-    abstract public function getModel(): Model;
+    abstract public function getModel(): ?Model;
 
     /**
      * Get the model attribute.

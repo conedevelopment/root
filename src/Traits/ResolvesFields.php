@@ -3,9 +3,10 @@
 namespace Cone\Root\Traits;
 
 use Closure;
-use Cone\Root\Form\Fields\Field;
-use Cone\Root\Form\Fields\Fields;
+use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Fields;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 trait ResolvesFields
 {
@@ -20,16 +21,11 @@ trait ResolvesFields
     protected ?Closure $fieldsResolver = null;
 
     /**
-     * Create a new fields collection.
-     */
-    abstract protected function newFieldsCollection(): Fields;
-
-    /**
      * Define the fields for the object.
      */
-    protected function fields(Request $request, Fields $fields): void
+    public function fields(Request $request): array
     {
-        //
+        return [];
     }
 
     /**
@@ -48,12 +44,12 @@ trait ResolvesFields
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
-            $this->fields = $this->newFieldsCollection();
-
-            $this->fields($request, $this->fields);
+            $this->fields = new Fields($this->fields($request));
 
             if (! is_null($this->fieldsResolver)) {
-                call_user_func_array($this->fieldsResolver, [$request, $this->fields]);
+                $this->fields->register(
+                    Arr::wrap(call_user_func_array($this->fieldsResolver, [$request]))
+                );
             }
 
             $this->fields->each(function (Field $field) use ($request): void {

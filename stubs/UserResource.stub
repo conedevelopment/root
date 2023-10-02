@@ -2,10 +2,10 @@
 
 namespace App\Root\Resources;
 
-use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Form\Form;
+use Cone\Root\Fields\Fields;
+use Cone\Root\Interfaces\Form;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Table\Columns\Columns;
+use Cone\Root\Columns\Columns;
 use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

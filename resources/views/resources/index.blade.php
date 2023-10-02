@@ -23,5 +23,5 @@
         </div>
     @endif
 
-    {!! $table !!}
+    @include('root::resources.table.table')
 @endsection

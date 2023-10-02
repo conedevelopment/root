@@ -8,4 +8,4 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('notifications', NotificationsController::class)->except(['store']);
 
 // Resource Fields
-Route::any('/{resource}/form/fields/{field}', ResourceFieldController::class)->where('field', '.*');
+Route::any('/{resource}/fields/{field}', ResourceFieldController::class)->where('field', '.*');

@@ -2,10 +2,10 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Form\Fields\Fields;
-use Cone\Root\Form\Form;
+use Cone\Root\Fields\Fields;
+use Cone\Root\Interfaces\Form;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Table\Columns\Columns;
+use Cone\Root\Columns\Columns;
 use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,34 +19,52 @@ class {{ class }} extends Resource
     protected string $model = {{ model }};
 
     /**
+     * Define the columns.
+     */
+    public function columns(Request $request): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Define the fields.
+     */
+    public function fields(Request $request): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Define the filters.
+     */
+    public function filters(Request $request): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Define the actions.
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
      * Define the widgets for the resource.
      */
     public function widgets(Request $request): array
     {
-        return array_merge(parent::widgets($request), [
+        return [
             //
-        ]);
-    }
-
-    /**
-     * Get the table instance for the resource.
-     */
-    public function toTable(Request $request, Builder $query): Table
-    {
-        return parent::toTable($request, $query)
-            ->withColumns(static function (Request $request, Columns $columns): void {
-                $columns->id();
-            });
-    }
-
-    /**
-     * Get the form instance for the resource.
-     */
-    public function toForm(Request $request, Model $model): Form
-    {
-        return parent::toForm($request, $model)
-            ->withFields(static function (Request $request, Fields $fields): void {
-                //
-            });
+        ];
     }
 }

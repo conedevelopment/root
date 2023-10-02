@@ -2,24 +2,35 @@
 
 namespace Cone\Root\Resources;
 
-use Cone\Root\Form\Form;
-use Cone\Root\Interfaces\AsForm;
-use Cone\Root\Interfaces\AsTable;
-use Cone\Root\Table\Table;
+use Cone\Root\Actions\Action;
+use Cone\Root\Fields\Field;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Interfaces\Form;
+use Cone\Root\Interfaces\Table;
+use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesColumns;
+use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, AsForm, AsTable
+class Resource implements Arrayable, Form, Table
 {
+    use AsForm;
     use Authorizable;
+    use ResolvesActions;
+    use ResolvesColumns;
+    use ResolvesFilters;
     use ResolvesWidgets;
 
     /**
@@ -153,6 +164,14 @@ class Resource implements Arrayable, AsForm, AsTable
     }
 
     /**
+     * Resolve the filtered query for the given request.
+     */
+    public function resolveFilteredQuery(Request $request): Builder
+    {
+        return $this->resolveFilters($request)->apply($request, $this->resolveQuery($request));
+    }
+
+    /**
      * Resolve the route binding query.
      */
     public function resolveRouteBindingQuery(Request $request): Builder
@@ -198,26 +217,68 @@ class Resource implements Arrayable, AsForm, AsTable
     }
 
     /**
-     * Make a new form for the model.
+     * Handle the callback for the field resolution.
      */
-    public function toTable(Request $request, Builder $query): Table
+    protected function resolveField(Request $request, Field $field): void
     {
-        return (new Table($query))
-            ->rowUrl(function (Request $request, Model $model): string {
-                return $this->modelUrl($model);
-            });
+        $field->setForm($this);
+        $field->setApiUri(sprintf('/root/api/%s/fields/%s', $this->getKey(), $field->getUriKey()));
+        $field->setAttribute('form', $this->getKey());
     }
 
     /**
-     * Make a new form for the model.
+     * Handle the callback for the action resolution.
      */
-    public function toForm(Request $request, Model $model): Form
+    protected function resolveAction(Request $request, Action $action): void
     {
-        return new Form(
-            $model,
-            $this->modelUrl($model),
-            sprintf('/root/api/%s/form/fields', $this->getKey())
-        );
+        $action->setQuery($this->resolveFilteredQuery($request));
+        $action->setApiUri(sprintf('/root/api/%s/actions/%s', $this->getKey(), $action->getUriKey()));
+    }
+
+    /**
+     * Get the per page.
+     */
+    public function getPerPage(Request $request): ?int
+    {
+        return $request->input($this->getKey().':per_page');
+    }
+
+    /**
+     * Get the per page options.
+     */
+    public function getPerPageOptions(): array
+    {
+        return Collection::make([$this->getModelInstance()->getPerPage()])
+            ->merge([15, 25, 50, 100])
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Get the page name.
+     */
+    public function getPageName(): string
+    {
+        return sprintf('%s:page', $this->getKey());
+    }
+
+    /**
+     * Perform the query and the pagination.
+     */
+    public function paginate(Request $request): LengthAwarePaginator
+    {
+        return $this->resolveFilteredQuery($request)
+            ->latest()
+            ->paginate($this->getPerPage($request), ['*'], $this->getPageName())
+            ->withQueryString()
+            ->through(function (Model $model) use ($request): array {
+                return [
+                    'id' => $model->getKey(),
+                    'cells' => $this->resolveColumns($request)->mapToCells($model),
+                ];
+            });
     }
 
     /**
@@ -243,8 +304,18 @@ class Resource implements Arrayable, AsForm, AsTable
     {
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'table' => $this->toTable($request, $this->resolveQuery($request)),
+            'columns' => $this->resolveColumns($request)->all(),
+            'actions' => $this->resolveActions($request)->all(),
+            'data' => $this->paginate($request),
             'widgets' => $this->resolveWidgets($request)->all(),
+            'perPageOptions' => $this->getPerPageOptions(),
+            'filters' => $this->resolveFilters($request)
+                ->renderable()
+                ->map(static function (Filter $filter): Field {
+                    return $filter->toField();
+                })
+                ->all(),
+            'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
         ]);
     }
 
@@ -255,7 +326,14 @@ class Resource implements Arrayable, AsForm, AsTable
     {
         return array_merge($this->toArray(), [
             'title' => __('Create :model', ['model' => $this->getModelName()]),
-            'form' => $this->toForm($request, $this->getModelInstance()),
+            'model' => $model = $this->getModelInstance(),
+            'action' => $this->getUrl(),
+            'method' => 'POST',
+            'fields' => $this->resolveFields($request)
+                ->each(function (Field $field) use ($model): void {
+                    $field->setModel($model);
+                })
+                ->all(),
         ]);
     }
 
@@ -266,7 +344,14 @@ class Resource implements Arrayable, AsForm, AsTable
     {
         return array_merge($this->toArray(), [
             'title' => '',
-            'form' => $this->toForm($request, $model),
+            'model' => $model,
+            'action' => $this->modelUrl($model),
+            'method' => 'PATCH',
+            'fields' => $this->resolveFields($request)
+                ->each(static function (Field $field) use ($model): void {
+                    $field->setModel($model);
+                })
+                ->all(),
         ]);
     }
 }
