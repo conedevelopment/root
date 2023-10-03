@@ -29,14 +29,14 @@
             <div class="data-table__footer">
                 <div class="data-table__footer-column">
                     <div class="form-group">
-                        <label class="sr-only" for="{{ $key }}:per_page">
+                        <label class="sr-only" for="per_page">
                             {{ __('Number of results') }}
                         </label>
                         <select
                             form="{{ $key }}"
                             class="form-control form-control--sm"
-                            id="{{ $key }}:per_page"
-                            name="{{ $key }}:per_page"
+                            id="per_page"
+                            name="per_page"
                         >
                             @foreach($perPageOptions as $option)
                                 <option value="{{ $option }}" @selected($option === $data->perPage())>

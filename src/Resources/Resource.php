@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
+use Cone\Root\Columns\Column;
 use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Interfaces\Form;
@@ -217,6 +218,14 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
+     * Handle the callback for the column resolution.
+     */
+    protected function resolveColumn(Request $request, Column $column): void
+    {
+        $column->setTable($this);
+    }
+
+    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
@@ -236,14 +245,6 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
-     * Get the per page.
-     */
-    public function getPerPage(Request $request): ?int
-    {
-        return $request->input($this->getKey().':per_page');
-    }
-
-    /**
      * Get the per page options.
      */
     public function getPerPageOptions(): array
@@ -257,21 +258,13 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
-     * Get the page name.
-     */
-    public function getPageName(): string
-    {
-        return sprintf('%s:page', $this->getKey());
-    }
-
-    /**
      * Perform the query and the pagination.
      */
     public function paginate(Request $request): LengthAwarePaginator
     {
         return $this->resolveFilteredQuery($request)
             ->latest()
-            ->paginate($this->getPerPage($request), ['*'], $this->getPageName())
+            ->paginate($request->input('per_page'))
             ->withQueryString()
             ->through(function (Model $model) use ($request): array {
                 return [

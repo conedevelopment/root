@@ -4,9 +4,12 @@ namespace Cone\Root\Columns;
 
 use Closure;
 use Cone\Root\Columns\Cells\Cell;
+use Cone\Root\Interfaces\Table;
 use Cone\Root\Support\Element;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class Column extends Element
@@ -49,6 +52,11 @@ class Column extends Element
     protected string $modelAttribute;
 
     /**
+     * The table instance.
+     */
+    protected ?Table $table = null;
+
+    /**
      * Create a new column instance.
      */
     public function __construct(string $label, string $modelAttribute = null)
@@ -63,6 +71,16 @@ class Column extends Element
     public function getModelAttribute(): string
     {
         return $this->modelAttribute;
+    }
+
+    /**
+     * Set the table instance.
+     */
+    public function setTable(Table $table): static
+    {
+        $this->table = $table;
+
+        return $this;
     }
 
     /**
@@ -85,6 +103,21 @@ class Column extends Element
         }
 
         return $this->sortable;
+    }
+
+    /**
+     * Get the sort URL.
+     */
+    public function getSortUrl(Request $request): ?string
+    {
+        if (! $this->isSortable()) {
+            return null;
+        }
+
+        return match ($request->query('sort', 'asc')) {
+            'asc' => $request->fullUrlWithQuery(['sort' => 'desc', 'sort_by' => $this->getModelAttribute()]),
+            default => $request->fullUrlWithQuery(['sort' => 'asc', 'sort_by' => $this->getModelAttribute()]),
+        };
     }
 
     /**
@@ -156,10 +189,16 @@ class Column extends Element
      */
     public function toArray(): array
     {
-        return array_merge(parent::toArray(), [
-            'attribute' => $this->modelAttribute,
-            'label' => $this->label,
-            'sortable' => $this->isSortable(),
-        ]);
+        return array_merge(
+            parent::toArray(),
+            App::call(function (Request $request): array {
+                return [
+                    'attribute' => $this->modelAttribute,
+                    'label' => $this->label,
+                    'sortable' => $this->isSortable(),
+                    'sortUrl' => $this->getSortUrl($request),
+                ];
+            })
+        );
     }
 }

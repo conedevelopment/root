@@ -2,9 +2,9 @@
     @if($sortable)
         <div class="data-table-sort">
             {{ $label }}
-            <button class="data-table-sort__control" type="button" aria-label="Sort ascending">
+            <a href="{{ $sortUrl }}" class="data-table-sort__control" aria-label="Sort ascending">
                 <x-root::icon name="chevron-up-down" class="data-table-sort__icon" />
-            </button>
+            </a>
         </div>
     @else
         {{ $label }}
