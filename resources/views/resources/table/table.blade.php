@@ -5,7 +5,7 @@
     </div>
     <div class="app-card__body">
         <div class="data-table">
-            @includeWhen(! empty($actions), 'root::table.actions')
+            @includeWhen(! empty($actions), 'root::resources.table.actions')
             <div class="table-responsive">
                 <table class="table table--hover">
                     <thead>

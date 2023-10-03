@@ -5,9 +5,9 @@
             <button
                 type="button"
                 class="btn btn--primary btn--sm"
-                x-on:click="selection = {{ $items->pluck('id')->toJson() }}"
+                x-on:click="selection = {{ $data->pluck('id')->toJson() }}"
             >
-                {{ __('Select all') }} ({{ $items->total() }})
+                {{ __('Select all') }} ({{ $data->total() }})
             </button>
             <button
                 type="button"

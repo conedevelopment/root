@@ -92,7 +92,6 @@ class Editor extends Field
         return $this->config;
     }
 
-
     /**
      * Configure the media field.
      */

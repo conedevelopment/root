@@ -23,9 +23,9 @@ class {{ class }} extends Resource
      */
     public function columns(Request $request): array
     {
-        return [
+        return array_merge(parent::columns($request), [
             //
-        ];
+        ]);
     }
 
     /**
@@ -33,9 +33,9 @@ class {{ class }} extends Resource
      */
     public function fields(Request $request): array
     {
-        return [
+        return array_merge(parent::fields($request), [
             //
-        ];
+        ]);
     }
 
     /**
@@ -43,9 +43,9 @@ class {{ class }} extends Resource
      */
     public function filters(Request $request): array
     {
-        return [
+        return array_merge(parent::filters($request), [
             //
-        ];
+        ]);
     }
 
     /**
@@ -53,9 +53,9 @@ class {{ class }} extends Resource
      */
     public function actions(Request $request): array
     {
-        return [
+        return array_merge(parent::actions($request), [
             //
-        ];
+        ]);
     }
 
     /**
@@ -63,8 +63,8 @@ class {{ class }} extends Resource
      */
     public function widgets(Request $request): array
     {
-        return [
+        return array_merge(parent::widgets($request), [
             //
-        ];
+        ]);
     }
 }

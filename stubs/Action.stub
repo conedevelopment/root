@@ -15,4 +15,14 @@ class {{ class }} extends Action
     {
         //
     }
+
+    /**
+     * Define the fields.
+     */
+    public function fields(Request $request): array
+    {
+        return array_merge(parent::fields($request), [
+            //
+        ]);
+    }
 }

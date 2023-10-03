@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Interfaces\Form;
-
 class Range extends Number
 {
     /**

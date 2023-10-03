@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-
 use Illuminate\Http\Request;
 
 class Boolean extends Field

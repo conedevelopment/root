@@ -114,7 +114,9 @@ abstract class Field extends Element implements Responsable
      */
     public function getModel(): Model
     {
-        return $this->model ?: new class() extends Model {};
+        return $this->model ?: new class() extends Model
+        {
+        };
     }
 
     /**

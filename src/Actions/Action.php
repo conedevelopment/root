@@ -27,7 +27,7 @@ abstract class Action extends Element implements Form, Responsable
     /**
      * The Blade template.
      */
-    protected string $template = 'root::table.actions.action';
+    protected string $template = 'root::actions.action';
 
     /**
      * Indicates if the action is descrtuctive.
