@@ -94,7 +94,7 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
-        $resource->toForm($request, $model)->handle($request);
+        $resource->handleFormRequest($request, $model);
 
         return Redirect::to($resource->modelUrl($model))
             ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
