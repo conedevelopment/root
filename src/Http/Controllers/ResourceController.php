@@ -64,7 +64,7 @@ class ResourceController extends Controller
 
         $model = $resource->getModelInstance();
 
-        $resource->toForm($request, $model)->handle($request);
+        $resource->handleFormRequest($request, $model);
 
         return Redirect::to($resource->modelUrl($model))
             ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));

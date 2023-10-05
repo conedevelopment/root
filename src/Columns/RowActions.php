@@ -27,7 +27,7 @@ class RowActions extends Column
     public function toCell(Model $model): Cell
     {
         return $this->newCell($model)->value(function (Request $request, Model $model): string {
-            return '';
+            return $this->table->modelUrl($model);
         });
     }
 }

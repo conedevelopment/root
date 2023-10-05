@@ -14,12 +14,6 @@ class ResourceFieldController extends Controller
      */
     public function __invoke(Request $request, Resource $resource): JsonResponse
     {
-        $model = $request->has('model')
-            ? $resource->resolveRouteBinding($request, $request->query('model'))
-            : $resource->getModelInstance();
-
-        $form = $resource->toForm($request, $model);
-
         $field = $resource->findField(
             $request, $request->path()
         );

@@ -2,11 +2,11 @@
 
 namespace App\Root\Resources;
 
-use Cone\Root\Fields\Fields;
-use Cone\Root\Interfaces\Form;
+use Cone\Root\Columns\Column;
+use Cone\Root\Columns\ID;
+use Cone\Root\Fields\Email;
+use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Columns\Columns;
-use Cone\Root\Table\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,34 +19,68 @@ class UserResource extends Resource
     protected string $icon = 'users';
 
     /**
-     * {@inheritdoc}
+     * Define the columns.
      */
-    public function toTable(Request $request): Table
+    public function columns(Request $request): array
     {
-        return parent::toTable($request)
-            ->withColumns(static function (Request $request, Columns $columns): void {
-                $columns->id();
-                $columns->text(__('Name'), 'name');
-                $columns->text(__('Email'), 'email');
-            });
+        return array_merge(parent::columns($request), [
+            ID::make(),
+
+            Column::make(__('Name'), 'name')
+                ->searchable()
+                ->sortable(),
+
+            Column::make(__('Email'), 'email')
+                ->searchable()
+                ->sortable(),
+        ]);
     }
 
     /**
-     * {@inheritdoc}
+     * Define the fields.
      */
-    public function toForm(Request $request): Form
+    public function fields(Request $request): array
     {
-        return parent::toForm($request)
-            ->withFields(static function (Request $request, Fields $fields): void {
-                $fields->text(__('Name'), 'name')
-                    ->rules(['required', 'string', 'max:256']);
+        return array_merge(parent::fields($request), [
+            Text::make(__('Name'), 'name')
+                ->rules(['required', 'string', 'max:256']),
 
-                $fields->email(__('Email'), 'email')
-                    ->rules(['required', 'string', 'email', 'max:256'])
-                    ->createRules(['unique:users'])
-                    ->updateRules(static function (Request $request, Model $model): array {
-                        return [Rule::unique('users')->ignoreModel($model)];
-                    });
-            });
+            Email::make(__('Email'), 'email')
+                ->rules(['required', 'string', 'email', 'max:256'])
+                ->createRules(['unique:users'])
+                ->updateRules(static function (Request $request, Model $model): array {
+                    return [Rule::unique('users')->ignoreModel($model)];
+                }),
+        ]);
+    }
+
+    /**
+     * Define the filters.
+     */
+    public function filters(Request $request): array
+    {
+        return array_merge(parent::filters($request), [
+            //
+        ]);
+    }
+
+    /**
+     * Define the actions.
+     */
+    public function actions(Request $request): array
+    {
+        return array_merge(parent::actions($request), [
+            //
+        ]);
+    }
+
+    /**
+     * Define the widgets for the resource.
+     */
+    public function widgets(Request $request): array
+    {
+        return array_merge(parent::widgets($request), [
+            //
+        ]);
     }
 }
