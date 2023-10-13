@@ -22,6 +22,10 @@ class ResourceFieldController extends Controller
             throw new NotFoundHttpException();
         }
 
-        return $field->toResponse($request);
+        $model = $request->filled('model')
+            ? $resource->resolveRouteBinding($request, $request->input('model'))
+            : $resource->getModelInstance();
+
+        return $field->handleApiRequest($request, $model);
     }
 }

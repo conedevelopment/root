@@ -11,7 +11,7 @@
                     <thead>
                         <tr>
                             @foreach($columns as $column)
-                                {!! $column !!}
+                                @include($column['template'], $column)
                             @endforeach
                         </tr>
                     </thead>
@@ -19,7 +19,7 @@
                         @foreach($data as $row)
                             <tr>
                                 @foreach($row['cells'] as $cell)
-                                    {!! $cell !!}
+                                    @include($cell['template'], $cell)
                                 @endforeach
                             </tr>
                         @endforeach

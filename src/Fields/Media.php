@@ -2,14 +2,15 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Fields\Options\FileOption;
-use Cone\Root\Fields\Options\PendingFileOption;
 use Cone\Root\Models\Medium;
+use Cone\Root\Traits\HasMedia;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rule;
 
 class Media extends File
@@ -48,17 +49,36 @@ class Media extends File
     }
 
     /**
+     * Get the model.
+     */
+    public function getModel(): Model
+    {
+        return $this->model ?: new class() extends Model
+        {
+            use HasMedia;
+        };
+    }
+
+    /**
      * Paginate the results.
      */
-    public function paginate(Request $request): array
+    public function paginate(Request $request, Model $model): array
     {
-        return $this->resolveRelatableQuery($request)
+        return $this->resolveRelatableQuery($request, $model)
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
             ->setPath($this->apiUri)
-            ->through(function (Medium $related): array {
-                return $this->toOption($related)->toRenderedArray();
+            ->through(function (Medium $related) use ($request, $model): array {
+                $option = $this->toOption($request, $model, $related);
+
+                $option['fields'] = array_map(static function (Field $field) use ($request, $model): array {
+                    return $field->toFormComponent($request, $model);
+                }, $option['fields']);
+
+                return array_merge($option, [
+                    'html' => View::make('root::fields.file-option', $option)->render(),
+                ]);
             })
             ->toArray();
     }
@@ -66,15 +86,15 @@ class Media extends File
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->getModel()->saved(function () use ($request, $value): void {
-            $this->resolveHydrate($request, $value);
+        $model->saved(function (Model $model) use ($request, $value): void {
+            $this->resolveHydrate($request, $model, $value);
 
-            $keys = $this->getRelation()->sync($value);
+            $keys = $this->getRelation($model)->sync($value);
 
             if ($this->prunable && ! empty($keys['detached'])) {
-                $this->prune($request, $keys['detached']);
+                $this->prune($request, $model, $keys['detached']);
             }
         });
     }
@@ -82,7 +102,7 @@ class Media extends File
     /**
      * Handle the file upload.
      */
-    public function upload(Request $request): JsonResponse
+    public function upload(Request $request, Model $model): array
     {
         $accept = $this->getAttribute('accept');
 
@@ -92,15 +112,13 @@ class Media extends File
             Rule::when(! is_null($accept), ['mimetypes:'.$accept]),
         ]]);
 
-        $option = $this->store($request, $data['file']);
-
-        return new JsonResponse($option->toRenderedArray(), JsonResponse::HTTP_CREATED);
+        return $this->store($request, $model, $data['file']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function store(Request $request, UploadedFile $file): FileOption
+    public function store(Request $request, Model $model, UploadedFile $file): array
     {
         $disk = Storage::build([
             'driver' => 'local',
@@ -110,18 +128,21 @@ class Media extends File
         $disk->append($file->getClientOriginalName(), $file->get());
 
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return new PendingFileOption(new Medium(), '');
+            return array_merge($this->toOption($request, $model, new Medium()), [
+                'processing' => true,
+                'file_name' => null,
+            ]);
         }
 
-        return $this->stored($request, $disk->path($file->getClientOriginalName()));
+        return $this->stored($request, $model, $disk->path($file->getClientOriginalName()));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        $data = parent::toArray();
+        $data = parent::toFormComponent($request, $model);
 
         return array_merge($data, [
             'modalKey' => $this->getModalKey(),
@@ -130,8 +151,12 @@ class Media extends File
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
             ],
-            'selection' => array_map(function (FileOption $option): array {
-                return $option->toRenderedArray();
+            'selection' => array_map(static function (array $option) use ($request, $model): array {
+                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
+
+                return array_merge($option, [
+                    'html' => View::make('root::fields.file-option', $option)->render(),
+                ]);
             }, $data['options'] ?? []),
         ]);
     }
@@ -139,13 +164,13 @@ class Media extends File
     /**
      * {@inheritdoc}
      */
-    public function toResponse($request): JsonResponse
+    public function handleApiRequest(Request $request, Model $model): JsonResponse
     {
         return match ($request->method()) {
-            'GET' => new JsonResponse($this->paginate($request)),
-            'POST' => $this->upload($request),
-            'DELETE' => new JsonResponse(['deleted' => $this->prune($request, $request->input('ids', []))]),
-            default => parent::toResponse($request),
+            'GET' => new JsonResponse($this->paginate($request, $model)),
+            'POST' => new JsonResponse($this->upload($request, $model), JsonResponse::HTTP_CREATED),
+            'DELETE' => new JsonResponse(['deleted' => $this->prune($request, $model, $request->input('ids', []))]),
+            default => parent::handleApiRequest($request, $model),
         };
     }
 }

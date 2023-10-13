@@ -3,7 +3,6 @@
 namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
-use Cone\Root\Columns\Column;
 use Cone\Root\Fields\Field;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Interfaces\Form;
@@ -16,6 +15,7 @@ use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -218,21 +218,15 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
-     * Handle the callback for the column resolution.
-     */
-    protected function resolveColumn(Request $request, Column $column): void
-    {
-        $column->setTable($this);
-    }
-
-    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setForm($this);
         $field->setApiUri(sprintf('/root/api/%s/fields/%s', $this->getKey(), $field->getUriKey()));
         $field->setAttribute('form', $this->getKey());
+        $field->resolveErrorsUsing(function (Request $request): MessageBag {
+            return $this->errors($request);
+        });
     }
 
     /**
@@ -269,7 +263,7 @@ class Resource implements Arrayable, Form, Table
             ->through(function (Model $model) use ($request): array {
                 return [
                     'id' => $model->getKey(),
-                    'cells' => $this->resolveColumns($request)->mapToCells($model),
+                    'cells' => $this->resolveColumns($request)->mapToCells($request, $model),
                 ];
             });
     }
@@ -297,15 +291,15 @@ class Resource implements Arrayable, Form, Table
     {
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'columns' => $this->resolveColumns($request)->all(),
-            'actions' => $this->resolveActions($request)->all(),
+            'columns' => $this->resolveColumns($request)->mapToHeads($request),
+            'actions' => $this->resolveActions($request)->mapToTableComponents($request),
             'data' => $this->paginate($request),
             'widgets' => $this->resolveWidgets($request)->all(),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->renderable()
-                ->map(static function (Filter $filter): Field {
-                    return $filter->toField();
+                ->map(function (Filter $filter) use ($request): array {
+                    return $filter->toField()->toFormComponent($request, $this->getModelInstance());
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
@@ -322,11 +316,7 @@ class Resource implements Arrayable, Form, Table
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUrl(),
             'method' => 'POST',
-            'fields' => $this->resolveFields($request)
-                ->each(function (Field $field) use ($model): void {
-                    $field->setModel($model);
-                })
-                ->all(),
+            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
         ]);
     }
 
@@ -340,11 +330,7 @@ class Resource implements Arrayable, Form, Table
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
-            'fields' => $this->resolveFields($request)
-                ->each(static function (Field $field) use ($model): void {
-                    $field->setModel($model);
-                })
-                ->all(),
+            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
         ]);
     }
 }

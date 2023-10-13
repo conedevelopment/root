@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Actions;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
@@ -20,6 +22,26 @@ class Actions
     public function __construct(array $actions = [])
     {
         $this->actions = new Collection($actions);
+    }
+
+    /**
+     * Register the given actions.
+     */
+    public function register(array|Action $actions): static
+    {
+        foreach (Arr::wrap($actions) as $action) {
+            $this->actions->push($action);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Map the action to table components.
+     */
+    public function mapToTableComponents(Request $request): array
+    {
+        return $this->actions->map->toTableComponent($request)->all();
     }
 
     /**

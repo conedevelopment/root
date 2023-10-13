@@ -3,11 +3,11 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Interfaces\Form;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
@@ -38,18 +38,6 @@ class Editor extends Field
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setForm(Form $form): static
-    {
-        if (! is_null($this->media)) {
-            $this->media->setForm($form);
-        }
-
-        return parent::setForm($form);
     }
 
     /**
@@ -161,7 +149,16 @@ class Editor extends Field
     {
         return array_merge(parent::toArray(), [
             'config' => $this->config,
-            'media' => $this->media,
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toFormComponent(Request $request, Model $model): array
+    {
+        return array_merge(parent::toFormComponent($request, $model), [
+            'media' => $this->media?->toFormComponent($request, $model),
         ]);
     }
 }

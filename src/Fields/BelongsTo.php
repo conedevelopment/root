@@ -11,22 +11,22 @@ class BelongsTo extends Relation
     /**
      * {@inheritdoc}
      */
-    public function getRelation(): EloquentRelation
+    public function getRelation(Model $model): EloquentRelation
     {
-        return parent::getRelation();
+        return parent::getRelation($model);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $this->getRelation()->associate($value);
+                $this->getRelation($model)->associate($value);
             };
         }
 
-        parent::resolveHydrate($request, $value);
+        parent::resolveHydrate($request, $model, $value);
     }
 }

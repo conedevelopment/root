@@ -3,6 +3,7 @@
 namespace Cone\Root\Columns;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -55,9 +56,17 @@ class Columns
     /**
      * Map the columns to cells for the given model.
      */
-    public function mapToCells(Model $model): array
+    public function mapToHeads(Request $request): array
     {
-        return $this->columns->map->toCell($model)->all();
+        return $this->columns->map->toHead($request)->all();
+    }
+
+    /**
+     * Map the columns to cells for the given model.
+     */
+    public function mapToCells(Request $request, Model $model): array
+    {
+        return $this->columns->map->toCell($request, $model)->all();
     }
 
     /**

@@ -41,7 +41,7 @@
 @if(! empty($fields))
     <x-root::modal :title="$label" :key="$medium->uuid">
         @foreach($fields as $field)
-            {!! $field !!}
+            @include($field['template'], $field)
         @endforeach
 
         <x-slot:footer>

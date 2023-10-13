@@ -19,11 +19,6 @@ trait ResolvesModelValue
     protected ?Closure $valueResolver = null;
 
     /**
-     * Get the model.
-     */
-    abstract public function getModel(): ?Model;
-
-    /**
      * Get the model attribute.
      */
     abstract public function getModelAttribute(): string;
@@ -41,23 +36,23 @@ trait ResolvesModelValue
     /**
      * Resolve the value.
      */
-    public function resolveValue(Request $request): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
-        $value = $this->getValue();
+        $value = $this->getValue($model);
 
         if (is_null($this->valueResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->valueResolver, [$request, $this->getModel(), $value]);
+        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
     }
 
     /**
      * Get the default value from the model.
      */
-    public function getValue(): mixed
+    public function getValue(Model $model): mixed
     {
-        return $this->getModel()->getAttribute($this->getModelAttribute());
+        return $model->getAttribute($this->getModelAttribute());
     }
 
     /**
@@ -73,14 +68,14 @@ trait ResolvesModelValue
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request): mixed
+    public function resolveFormat(Request $request, Model $model): mixed
     {
-        $value = $this->resolveValue($request);
+        $value = $this->resolveValue($request, $model);
 
         if (is_null($this->formatResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->formatResolver, [$request, $this->getModel(), $value]);
+        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
 }

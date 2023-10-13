@@ -24,13 +24,19 @@ class Modal extends Component
     protected ?string $subtitle = null;
 
     /**
+     * The modal open state.
+     */
+    protected bool $open = false;
+
+    /**
      * Create a new component instance.
      */
-    public function __construct(string $title, string $subtitle = null, string $key = null)
+    public function __construct(string $title, string $subtitle = null, string $key = null, bool $open = false)
     {
         $this->title = $title;
         $this->subtitle = $subtitle;
         $this->key = strtolower($key ?: Str::random());
+        $this->open = $open;
     }
 
     /**
@@ -42,6 +48,7 @@ class Modal extends Component
             'key' => $this->key,
             'subtitle' => $this->subtitle,
             'title' => $this->title,
+            'open' => $this->open,
         ]);
     }
 }

@@ -57,7 +57,7 @@
         <div class="form-group-stack form-group-stack--bordered form-group-container">
             <div class="form-group--row">
                 @foreach($fields as $field)
-                    {!! $field !!}
+                    @include($field['template'], $field)
                 @endforeach
             </div>
         </div>

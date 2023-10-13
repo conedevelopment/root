@@ -2,7 +2,7 @@
     <div
         class="modal-backdrop"
         x-cloak
-        x-data="{ open: false }"
+        x-data="{ open: {{ json_encode($open) }} }"
         x-show="open"
         x-on:keydown.escape="open = false"
         x-on:open-{{ $key }}.window="open = true"

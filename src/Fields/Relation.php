@@ -3,14 +3,12 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\OptGroup;
-use Cone\Root\Fields\Options\RelationOption;
+use Cone\Root\Fields\Options\Option;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
@@ -76,13 +74,13 @@ abstract class Relation extends Field
     /**
      * Get the relation instance.
      */
-    public function getRelation(): EloquentRelation
+    public function getRelation(Model $model): EloquentRelation
     {
         if ($this->relation instanceof Closure) {
-            return call_user_func_array($this->relation, [$this->getModel()]);
+            return call_user_func_array($this->relation, [$model]);
         }
 
-        return call_user_func([$this->getModel(), $this->relation]);
+        return call_user_func([$model, $this->relation]);
     }
 
     /**
@@ -172,10 +170,8 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function getValue(): mixed
+    public function getValue(Model $model): mixed
     {
-        $model = $this->getModel();
-
         $name = $this->getRelationName();
 
         if ($this->relation instanceof Closure && ! $model->relationLoaded($name)) {
@@ -198,11 +194,9 @@ abstract class Relation extends Field
     /**
      * Resolve the related model's eloquent query.
      */
-    public function resolveRelatableQuery(Request $request): Builder
+    public function resolveRelatableQuery(Request $request, Model $model): Builder
     {
-        $model = $this->getModel();
-
-        $query = $this->getRelation()->getRelated()->newQuery();
+        $query = $this->getRelation($model)->getRelated()->newQuery();
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
             $query = call_user_func_array($scope, [$request, $query, $model]);
@@ -228,73 +222,73 @@ abstract class Relation extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request, Model $model): array
     {
-        $value = $this->resolveValue($request);
-
-        $mapCallback = function (Model $related) use ($value): RelationOption {
-            return $this->toOption($related)
-                ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
-        };
-
-        return $this->resolveRelatableQuery($request)
+        return $this->resolveRelatableQuery($request, $model)
             ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($mapCallback): Collection {
+            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
                 return $collection->groupBy($this->groupResolver)
-                    ->map(function ($group, $key) use ($mapCallback): OptGroup {
-                        return new OptGroup($key, $group->map($mapCallback)->all());
+                    ->map(function (Collection $group, string $key) use ($request, $model): array {
+                        return [
+                            'label' => $key,
+                            'options' => $group->map(function (Model $related) use ($request, $model): array {
+                                return $this->toOption($request, $model, $related);
+                            })->all(),
+                        ];
                     });
-            }, function (Collection $collection) use ($mapCallback): Collection {
-                return $collection->map($mapCallback);
+            }, function (Collection $collection) use ($request, $model): Collection {
+                return $collection->map(function (Model $related) use ($request, $model): array {
+                    return $this->toOption($request, $model, $related);
+                });
             })
-            ->all();
+            ->toArray();
     }
 
     /**
      * Make a new option instance.
      */
-    public function newOption(Model $related, string $label): RelationOption
+    public function newOption(Model $related, string $label): Option
     {
-        return new RelationOption($related, $label);
+        return new Option($related->getKey(), $label);
     }
 
     /**
      * Build the API URI.
      */
-    protected function buildApiUri(): ?string
+    protected function buildApiUri(Model $model): ?string
     {
         if (is_null($this->apiUri)) {
             return $this->apiUri;
         }
 
         return sprintf('%s?%s', $this->apiUri, http_build_query([
-            'model' => $this->getModel()->getKey(),
+            'model' => $model->getKey(),
         ]));
+    }
+
+    /**
+     * Get the option represenation of the model and the related model.
+     */
+    public function toOption(Request $request, Model $model, Model $related): array
+    {
+        $value = $this->resolveValue($request, $model);
+
+        $option = $this->newOption($related, $this->resolveDisplay($related))
+            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+
+        return $option->toArray();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'async' => $this->isAsync(),
-                    'nullable' => $this->isNullable(),
-                    'options' => $this->isAsync() ? [] : $this->resolveOptions($request),
-                    'url' => $this->isAsync() ? $this->buildApiUri() : null,
-                ];
-            })
-        );
-    }
-
-    /**
-     * Convert the related model to an option.
-     */
-    public function toOption(Model $related): RelationOption
-    {
-        return $this->newOption($related, $this->resolveDisplay($related));
+        return array_merge(parent::toFormComponent($request, $model), [
+            'async' => $this->isAsync(),
+            'nullable' => $this->isNullable(),
+            'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
+            'url' => $this->isAsync() ? $this->buildApiUri($model) : null,
+        ]);
     }
 }

@@ -26,9 +26,9 @@ trait AsForm
      */
     public function handleFormRequest(Request $request, Model $model): void
     {
-        $this->validate($request);
+        $this->validateFormRequest($request, $model);
 
-        $this->resolveFields($request)->persist($request);
+        $this->resolveFields($request)->persist($request, $model);
 
         $model->save();
     }
@@ -36,11 +36,11 @@ trait AsForm
     /**
      * Validate the request.
      */
-    public function validateFormRequest(Request $request): array
+    public function validateFormRequest(Request $request, Model $model): array
     {
         return $request->validateWithBag(
             $this->errorBag,
-            $this->resolveFields($request)->mapToValidate($request)
+            $this->resolveFields($request)->mapToValidate($request, $model)
         );
     }
 

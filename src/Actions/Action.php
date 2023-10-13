@@ -5,23 +5,25 @@ namespace Cone\Root\Actions;
 use Cone\Root\Fields\Field;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Support\Alert;
-use Cone\Root\Support\Element;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
-use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class Action extends Element implements Form, Responsable
+abstract class Action implements Arrayable, Form, JsonSerializable
 {
     use AsForm;
     use Authorizable;
+    use HasAttributes;
     use Makeable;
 
     /**
@@ -87,6 +89,14 @@ abstract class Action extends Element implements Form, Responsable
     }
 
     /**
+     * Get the Blade template.
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    /**
      * Set the API URI.
      */
     public function setApiUri(string $apiUri): static
@@ -119,9 +129,11 @@ abstract class Action extends Element implements Form, Responsable
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setForm($this);
         $field->setApiUri(sprintf('/%s/fields/%s', $this->getApiUri(), $field->getUriKey()));
         $field->setAttribute('form', $this->getKey());
+        $field->resolveErrorsUsing(function (Request $request): MessageBag {
+            return $this->errors($request);
+        });
     }
 
     /**
@@ -165,7 +177,7 @@ abstract class Action extends Element implements Form, Responsable
      */
     public function perform(Request $request): Response
     {
-        $this->validateFormRequest($request);
+        $this->validateFormRequest($request, $this->query->getModel());
 
         $this->handle(
             $request,
@@ -179,37 +191,38 @@ abstract class Action extends Element implements Form, Responsable
     }
 
     /**
-     * {@inheritdoc}
+     * Convert the element to a JSON serializable format.
      */
-    public function toArray(): array
+    public function jsonSerialize(): mixed
     {
-        return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'confirmable' => $this->isConfirmable(),
-                    'destructive' => $this->isDestructive(),
-                    'key' => $this->getKey(),
-                    'name' => $this->getName(),
-                    'url' => $this->getApiUri(),
-                    'modalKey' => $this->getModalKey(),
-                    'fields' => $this->resolveFields($request)
-                        ->each(function (Field $field): void {
-                            $field->setModel($this->query->getModel());
-                        })
-                        ->all(),
-                ];
-            })
-        );
+        return json_encode($this->toArray());
     }
 
     /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * Convert the action to an array.
      */
-    public function toResponse($request): Response
+    public function toArray(): array
     {
-        return $this->perform($request);
+        return [
+            'confirmable' => $this->isConfirmable(),
+            'destructive' => $this->isDestructive(),
+            'key' => $this->getKey(),
+            'modalKey' => $this->getModalKey(),
+            'name' => $this->getName(),
+            'template' => $this->getTemplate(),
+            'url' => $this->getApiUri(),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toTableComponent(Request $request): array
+    {
+        return array_merge($this->toArray(), [
+            'open' => $this->errors($request)->isNotEmpty(),
+            'fields' => $this->resolveFields($request)
+                ->mapToFormComponents($request, $this->query->getModel()),
+        ]);
     }
 }

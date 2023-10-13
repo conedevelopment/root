@@ -180,7 +180,7 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         return [];
     }
@@ -188,10 +188,8 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function getValue(): mixed
+    public function getValue(Model $model): mixed
     {
-        $model = $this->getModel();
-
         $name = $this->getRelationName();
 
         if (
@@ -207,13 +205,13 @@ class Meta extends MorphOne
             $model->setRelation($name, $value);
         }
 
-        return parent::getValue();
+        return parent::getValue($model);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(Request $request): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
             $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
@@ -221,17 +219,17 @@ class Meta extends MorphOne
             };
         }
 
-        return parent::resolveValue($request);
+        return parent::resolveValue($request, $model);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $related = $this->getValue();
+                $related = $this->getValue($model);
 
                 $related->setAttribute('value', $value);
 
@@ -239,7 +237,7 @@ class Meta extends MorphOne
             };
         }
 
-        parent::resolveHydrate($request, $value);
+        parent::resolveHydrate($request, $model, $value);
     }
 
     /**
@@ -261,8 +259,8 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function toValidate(Request $request): array
+    public function toValidate(Request $request, Model $model): array
     {
-        return $this->field->toValidate($request);
+        return $this->field->toValidate($request, $model);
     }
 }

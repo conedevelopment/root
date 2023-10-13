@@ -39,7 +39,7 @@ class Install extends Command
 
         $status = $this->call('vendor:publish', ['--tag' => ['root-provider', 'root-user-resource']]);
 
-        $this->registerRootServiceProvider();
+        $this->registerServiceProvider();
 
         return $status;
     }
@@ -47,7 +47,7 @@ class Install extends Command
     /**
      * Register the Root service provider in the application configuration file.
      */
-    protected function registerRootServiceProvider(): void
+    protected function registerServiceProvider(): void
     {
         $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
 

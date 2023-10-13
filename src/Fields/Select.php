@@ -4,9 +4,9 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Fields\Options\Option;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 
 class Select extends Field
 {
@@ -78,22 +78,22 @@ class Select extends Field
     /**
      * Resolve the options for the field.
      */
-    public function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request, Model $model): array
     {
         if (is_null($this->optionsResolver)) {
             return [];
         }
 
-        $options = call_user_func_array($this->optionsResolver, [$request, $this->getModel()]);
+        $options = call_user_func_array($this->optionsResolver, [$request, $model]);
 
-        $value = Arr::wrap($this->resolveValue($request));
+        $value = Arr::wrap($this->resolveValue($request, $model));
 
-        return array_map(function (mixed $label, mixed $option) use ($value): Option {
+        return array_map(function (mixed $label, mixed $option) use ($value): array {
             $option = $label instanceof Option ? $label : $this->newOption($option, $label);
 
             $option->selected(in_array($option->getAttribute('value'), $value));
 
-            return $option;
+            return $option->toArray();
         }, $options, array_keys($options));
     }
 
@@ -108,16 +108,11 @@ class Select extends Field
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'nullable' => $this->isNullable(),
-                    'options' => $this->resolveOptions($request),
-                ];
-            })
-        );
+        return array_merge(parent::toFormComponent($request, $model), [
+            'nullable' => $this->isNullable(),
+            'options' => $this->resolveOptions($request, $model),
+        ]);
     }
 }

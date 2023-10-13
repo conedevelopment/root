@@ -3,18 +3,20 @@
 namespace Cone\Root\Columns;
 
 use Closure;
-use Cone\Root\Columns\Cells\Cell;
-use Cone\Root\Interfaces\Table;
-use Cone\Root\Support\Element;
+use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\ResolvesModelValue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 
-class Column extends Element
+class Column
 {
+    use Conditionable;
+    use HasAttributes;
     use Makeable;
+    use ResolvesModelValue;
 
     /**
      * The label.
@@ -24,7 +26,7 @@ class Column extends Element
     /**
      * The Blade template.
      */
-    protected string $template = 'root::columns.column';
+    protected string $template = 'root::columns.cells.cell';
 
     /**
      * Indicates if the field is sortable.
@@ -52,11 +54,6 @@ class Column extends Element
     protected string $modelAttribute;
 
     /**
-     * The table instance.
-     */
-    protected ?Table $table = null;
-
-    /**
      * Create a new column instance.
      */
     public function __construct(string $label, string $modelAttribute = null)
@@ -74,13 +71,11 @@ class Column extends Element
     }
 
     /**
-     * Set the table instance.
+     * Get the Blade template.
      */
-    public function setTable(Table $table): static
+    public function getTemplate(): string
     {
-        $this->table = $table;
-
-        return $this;
+        return $this->template;
     }
 
     /**
@@ -143,62 +138,30 @@ class Column extends Element
     }
 
     /**
-     * Set the value resolver callback.
+     * * Conver the column to a table head.
      */
-    public function value(Closure $callback): static
+    public function toHead(Request $request): array
     {
-        $this->valueResolver = $callback;
-
-        return $this;
+        return [
+            'attribute' => $this->modelAttribute,
+            'label' => $this->label,
+            'sortable' => $this->isSortable(),
+            'sortUrl' => $this->getSortUrl($request),
+            'template' => 'root::columns.column',
+        ];
     }
 
     /**
-     * Set the format resolver callback.
+     * Conver the column to a cell.
      */
-    public function format(Closure $callback): static
+    public function toCell(Request $request, Model $model): array
     {
-        $this->formatResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Make a new cell instance.
-     */
-    public function newCell(Model $model): Cell
-    {
-        return new Cell($this, $model);
-    }
-
-    /**
-     * Convert the column to a cell.
-     */
-    public function toCell(Model $model): Cell
-    {
-        return $this->newCell($model)
-            ->when(! is_null($this->valueResolver), function (Cell $cell) {
-                $cell->value($this->valueResolver);
-            })
-            ->when(! is_null($this->formatResolver), function (Cell $cell) {
-                $cell->format($this->formatResolver);
-            });
-    }
-
-    /**
-     * The view data.
-     */
-    public function toArray(): array
-    {
-        return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'attribute' => $this->modelAttribute,
-                    'label' => $this->label,
-                    'sortable' => $this->isSortable(),
-                    'sortUrl' => $this->getSortUrl($request),
-                ];
-            })
-        );
+        return [
+            'attrs' => $this->newAttributeBag(),
+            'formattedValue' => $this->resolveFormat($request, $model),
+            'model' => $model,
+            'template' => $this->getTemplate(),
+            'value' => $this->resolveValue($request, $model),
+        ];
     }
 }

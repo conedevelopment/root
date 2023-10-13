@@ -2,19 +2,16 @@
 
 namespace Cone\Root\Fields\Options;
 
-use Cone\Root\Support\Element;
+use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
 
-class Option extends Element
+class Option implements Arrayable
 {
     use Conditionable;
+    use HasAttributes;
     use Makeable;
-
-    /**
-     * The Blade template.
-     */
-    protected string $template = 'root::fields.option';
 
     /**
      * The option label.
@@ -52,22 +49,11 @@ class Option extends Element
      */
     public function toArray(): array
     {
-        return array_merge(parent::toArray(), [
+        return [
+            'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
             'selected' => $this->getAttribute('selected'),
             'value' => $this->getAttribute('value'),
-        ]);
-    }
-
-    /**
-     * Get the array representation of the object that holds the rendered HTML.
-     */
-    public function toRenderedArray(): array
-    {
-        $view = $this->render();
-
-        return array_merge($view->getData(), [
-            'html' => $view->render(),
-        ]);
+        ];
     }
 }

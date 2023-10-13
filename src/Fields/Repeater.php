@@ -3,14 +3,11 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\RepeaterOption;
-use Cone\Root\Interfaces\Form;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class Repeater extends Field
@@ -63,20 +60,6 @@ class Repeater extends Field
     /**
      * {@inheritdoc}
      */
-    public function setForm(Form $form): static
-    {
-        if (! is_null($this->fields)) {
-            $this->fields->each(function (Field $field) use ($form): void {
-                $field->setForm($form);
-            });
-        }
-
-        return parent::setForm($form);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getValueForHydrate(Request $request): mixed
     {
         return array_values((array) parent::getValueForHydrate($request));
@@ -109,16 +92,12 @@ class Repeater extends Field
      */
     public function withFields(Closure $callback): static
     {
-        $this->optionFieldsResolver = function (Model $tmpModel) use ($callback): Fields {
+        $this->optionFieldsResolver = function (Request $request, Model $model, Model $tmpModel) use ($callback): Fields {
             $fields = new Fields([
                 Hidden::make(__('Key'), '_key'),
             ]);
 
-            App::call(static function (Request $request) use ($callback, $fields): void {
-                $fields->register(
-                    Arr::wrap(call_user_func_array($callback, [$request]))
-                );
-            });
+            $fields->register(call_user_func_array($callback, [$request, $model, $tmpModel]));
 
             $fields->each(function (Field $field) use ($tmpModel): void {
                 $attribute = sprintf(
@@ -129,7 +108,6 @@ class Repeater extends Field
                 );
 
                 $field->setModelAttribute($attribute)
-                    ->setForm($this->form)
                     ->name($attribute)
                     ->id($attribute)
                     ->value(function () use ($tmpModel, $key): mixed {
@@ -162,75 +140,82 @@ class Repeater extends Field
     /**
      * Resolve the repeater options.
      */
-    public function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request, Model $model): array
     {
-        $value = (array) $this->resolveValue($request);
+        $value = (array) $this->resolveValue($request, $model);
 
-        return array_map(function (array $option): RepeaterOption {
-            return $this->newOption($option, $this->getOptionName());
+        return array_map(function (array $option) use ($request, $model): array {
+            return $this->toOption($request, $model, $this->newTemporaryModel($option));
         }, $value);
-    }
-
-    /**
-     * Make a new option instance.
-     */
-    public function newOption(array $value, string $label): mixed
-    {
-        return (new RepeaterOption($this->newTemporaryModel($value), $label))
-            ->when(! is_null($this->optionFieldsResolver), function (RepeaterOption $option): void {
-                $option->withFields(call_user_func_array($this->optionFieldsResolver, [$option->model]));
-            });
     }
 
     /**
      * Build a new option.
      */
-    public function buildOption(Request $request): JsonResponse
+    public function buildOption(Request $request, Model $model): array
     {
-        return new JsonResponse(
-            $this->newOption([], $this->getOptionName())->toRenderedArray()
-        );
+        $option = $this->toOption($request, $model, $this->newTemporaryModel([]));
+
+        $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
+
+        $option['html'] = View::make('root::fields.repeater-option', $option)->render();
+
+        return $option;
+    }
+
+    /**
+     * Get the option represenation of the model and the temporary model.
+     */
+    public function toOption(Request $request, Model $model, Model $tmpModel): array
+    {
+        return [
+            'open' => true,
+            'value' => $tmpModel->getAttribute('_key'),
+            'label' => $this->getOptionName(),
+            'fields' => is_null($this->optionFieldsResolver)
+                ? new Fields()
+                : call_user_func_array($this->optionFieldsResolver, [$request, $model, $tmpModel]),
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
+    {
+        return array_merge(parent::toFormComponent($request, $model), [
+            'addNewLabel' => $this->getAddNewOptionLabel(),
+            'max' => $this->max,
+            'options' => array_map(static function (array $option) use ($request, $model): array {
+                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
+
+                return array_merge($option, [
+                    'html' => View::make('root::fields.repeater-option', $option)->render(),
+                ]);
+            }, $this->resolveOptions($request, $model)),
+            'url' => $this->getApiUri(),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toValidate(Request $request, Model $model): array
     {
         return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'addNewLabel' => $this->getAddNewOptionLabel(),
-                    'max' => $this->max,
-                    'options' => array_map(static function (RepeaterOption $option): array {
-                        return $option->toRenderedArray();
-                    }, $this->resolveOptions($request)),
-                    'url' => $this->getApiUri(),
-                ];
-            })
+            parent::toValidate($request, $model),
+            $this->resolveFields($request)->mapToValidate($request, $model)
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toValidate(Request $request): array
-    {
-        return array_merge(
-            parent::toValidate($request),
-            $this->resolveFields($request)->mapToValidate($request)
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toResponse($request): JsonResponse
+    public function handleApiRequest(Request $request, Model $model): JsonResponse
     {
         return match ($request->method()) {
-            'POST' => $this->buildOption($request),
-            default => parent::toResponse($request),
+            'POST' => new JsonResponse($this->buildOption($request, $model)),
+            default => parent::handleApiRequest($request, $model),
         };
     }
 }

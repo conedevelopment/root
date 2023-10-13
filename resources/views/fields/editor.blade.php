@@ -16,9 +16,9 @@
                 @include('root::fields.editor.align')
                 @include('root::fields.editor.list')
                 @include('root::fields.editor.link')
-                @isset($media)
-                    {!! $media !!}
-                @endisset
+                @if(! is_null($media))
+                    @include($media['template'], $media)
+                @endif
                 @include('root::fields.editor.blocks')
                 @include('root::fields.editor.history')
             </div>

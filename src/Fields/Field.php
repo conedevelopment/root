@@ -3,22 +3,24 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Interfaces\Form;
-use Cone\Root\Support\Element;
+use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
-use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\ViewErrorBag;
+use JsonSerializable;
 
-abstract class Field extends Element implements Responsable
+abstract class Field implements Arrayable, JsonSerializable
 {
     use Conditionable;
+    use HasAttributes;
     use Makeable;
     use ResolvesModelValue;
 
@@ -31,6 +33,11 @@ abstract class Field extends Element implements Responsable
      * The hydrate resolver callback.
      */
     protected ?Closure $hydrateResolver = null;
+
+    /**
+     * The errors resolver callback.
+     */
+    protected ?Closure $errorsResolver = null;
 
     /**
      * The validation rules.
@@ -82,11 +89,6 @@ abstract class Field extends Element implements Responsable
     protected ?string $apiUri = null;
 
     /**
-     * The form instance.
-     */
-    protected ?Form $form = null;
-
-    /**
      * Create a new field instance.
      */
     public function __construct(string $label, string $modelAttribute = null)
@@ -100,33 +102,11 @@ abstract class Field extends Element implements Responsable
     }
 
     /**
-     * Set the form instance.
+     * Get the template.
      */
-    public function setForm(Form $form): static
+    public function getTemplate(): string
     {
-        $this->form = $form;
-
-        return $this;
-    }
-
-    /**
-     * Get the model.
-     */
-    public function getModel(): Model
-    {
-        return $this->model ?: new class() extends Model
-        {
-        };
-    }
-
-    /**
-     * Set the model.
-     */
-    public function setModel(Model $model): static
-    {
-        $this->model = $model;
-
-        return $this;
+        return $this->template;
     }
 
     /**
@@ -187,6 +167,14 @@ abstract class Field extends Element implements Responsable
     public function getApiUri(): ?string
     {
         return $this->apiUri;
+    }
+
+    /**
+     * Handle the incoming API request.
+     */
+    public function handleApiRequest(Request $request, Model $model): JsonResponse
+    {
+        return new JsonResponse($this->toArray());
     }
 
     /**
@@ -284,17 +272,17 @@ abstract class Field extends Element implements Responsable
     /**
      * Resolve the value.
      */
-    public function resolveValue(Request $request): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
         $value = $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())
             ? $this->getOldValue($request)
-            : $this->getValue();
+            : $this->getValue($model);
 
         if (is_null($this->valueResolver)) {
             return $value;
         }
 
-        return call_user_func_array($this->valueResolver, [$request, $this->getModel(), $value]);
+        return call_user_func_array($this->valueResolver, [$request, $model, $value]);
     }
 
     /**
@@ -326,10 +314,10 @@ abstract class Field extends Element implements Responsable
     /**
      * Persist the request value on the model.
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->getModel()->saving(function () use ($request, $value): void {
-            $this->resolveHydrate($request, $value);
+        $model->saving(function (Model $model) use ($request, $value): void {
+            $this->resolveHydrate($request, $model, $value);
         });
     }
 
@@ -354,15 +342,15 @@ abstract class Field extends Element implements Responsable
     /**
      * Hydrate the model.
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function () use ($value): void {
-                $this->getModel()->setAttribute($this->getModelAttribute(), $value);
+            $this->hydrateResolver = function () use ($model, $value): void {
+                $model->setAttribute($this->getModelAttribute(), $value);
             };
         }
 
-        call_user_func_array($this->hydrateResolver, [$request, $this->getModel(), $value]);
+        call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
     }
 
     /**
@@ -392,11 +380,31 @@ abstract class Field extends Element implements Responsable
     }
 
     /**
+     * Set the error resolver callback.
+     */
+    public function resolveErrorsUsing(Closure $callback): static
+    {
+        $this->errorsResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the validation errors.
+     */
+    public function resolveErrors(Request $request): MessageBag
+    {
+        return is_null($this->errorsResolver)
+            ? $request->session()->get('errors', new ViewErrorBag())->getBag('default')
+            : call_user_func_array($this->errorsResolver, [$request]);
+    }
+
+    /**
      * Determine if the field is invalid.
      */
     public function invalid(Request $request): bool
     {
-        return $this->form?->errors($request)?->has($this->getValidationKey()) ?: false;
+        return $this->resolveErrors($request)->has($this->getValidationKey()) ?: false;
     }
 
     /**
@@ -404,7 +412,15 @@ abstract class Field extends Element implements Responsable
      */
     public function error(Request $request): ?string
     {
-        return $this->form?->errors($request)?->first($this->getValidationKey()) ?: null;
+        return $this->resolveErrors($request)->first($this->getValidationKey()) ?: null;
+    }
+
+    /**
+     * Convert the element to a JSON serializable format.
+     */
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 
     /**
@@ -412,30 +428,37 @@ abstract class Field extends Element implements Responsable
      */
     public function toArray(): array
     {
-        return App::call(function (Request $request): array {
-            return [
-                'attribute' => $this->getModelAttribute(),
-                'attrs' => $this->newAttributeBag()->class([
-                    'form-control--invalid' => $this->invalid($request),
-                ]),
-                'error' => $this->error($request),
-                'help' => $this->help,
-                'invalid' => $this->invalid($request),
-                'label' => $this->label,
-                'prefix' => $this->prefix,
-                'suffix' => $this->suffix,
-                'value' => $this->resolveValue($request),
-            ];
-        });
+        return [
+            'attrs' => $this->newAttributeBag(),
+            'attribute' => $this->getModelAttribute(),
+            'help' => $this->help,
+            'label' => $this->label,
+            'prefix' => $this->prefix,
+            'suffix' => $this->suffix,
+            'template' => $this->getTemplate(),
+        ];
+    }
+
+    /**
+     * Get the form component data.
+     */
+    public function toFormComponent(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'attrs' => $this->newAttributeBag()->class([
+                'form-control--invalid' => $this->invalid($request),
+            ]),
+            'error' => $this->error($request),
+            'invalid' => $this->invalid($request),
+            'value' => $this->resolveValue($request, $model),
+        ]);
     }
 
     /**
      * Get the validation representation of the field.
      */
-    public function toValidate(Request $request): array
+    public function toValidate(Request $request, Model $model): array
     {
-        $model = $this->getModel();
-
         $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(
@@ -446,13 +469,5 @@ abstract class Field extends Element implements Responsable
         );
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
-    }
-
-    /**
-     * Create an HTTP response that represents the object.
-     */
-    public function toResponse($request): JsonResponse
-    {
-        return new JsonResponse($this->toArray());
     }
 }

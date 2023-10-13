@@ -16,7 +16,7 @@ interface Form
     /**
      * Validate the request.
      */
-    public function validateFormRequest(Request $request): array;
+    public function validateFormRequest(Request $request, Model $model): array;
 
     /**
      * Get the errors.

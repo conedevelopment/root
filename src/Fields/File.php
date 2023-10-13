@@ -3,7 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\FileOption;
+use Cone\Root\Fields\Options\Option;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 
 class File extends MorphToMany
 {
@@ -94,11 +94,15 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(Request $request): array
+    public function resolveOptions(Request $request, Model $model): array
     {
-        return $this->resolveValue($request)
-            ->map(function (Medium $medium): FileOption {
-                return $this->toOption($medium)->selected();
+        return $this->resolveValue($request, $model)
+            ->map(function (Medium $medium) use ($request, $model): array {
+                $option = $this->toOption($request, $model, $medium);
+
+                return array_merge($option, [
+                    'html' => View::make('root::fields.file-option', $option)->render(),
+                ]);
             })
             ->all();
     }
@@ -106,16 +110,9 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function newOption(Model $value, string $label): FileOption
+    public function newOption(Model $related, string $label): Option
     {
-        $name = sprintf(
-            '%s[%s][%s]',
-            $this->getAttribute('name'),
-            $value->getKey(),
-            $this->getRelation()->getRelatedPivotKeyName()
-        );
-
-        return FileOption::make($value, $label)->setAttribute('name', $name);
+        return new Option($related, $label);
     }
 
     /**
@@ -131,7 +128,7 @@ class File extends MorphToMany
     /**
      * Store the uploaded file.
      */
-    public function store(Request $request, UploadedFile $file): FileOption
+    public function store(Request $request, Model $model, UploadedFile $file): array
     {
         $disk = Storage::build([
             'driver' => 'local',
@@ -140,13 +137,13 @@ class File extends MorphToMany
 
         $disk->put($file->getClientOriginalName(), $file);
 
-        return $this->stored($request, $disk->path($file->getClientOriginalName()));
+        return $this->stored($request, $model, $disk->path($file->getClientOriginalName()));
     }
 
     /**
      * Handle the stored event.
      */
-    protected function stored(Request $request, string $path): FileOption
+    protected function stored(Request $request, Model $model, string $path): array
     {
         $target = str_replace($request->header('X-Chunk-Hash', ''), '', $path);
 
@@ -165,7 +162,7 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return $this->toOption($medium);
+        return $this->toOption($request, $model, $medium);
     }
 
     /**
@@ -181,23 +178,23 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->getModel()->saved(function () use ($request, $value): void {
+        $model->saved(function (Model $model) use ($request, $value): void {
             $files = Arr::wrap($request->file($this->getRequestKey(), []));
 
-            $ids = array_map(function (UploadedFile $file) use ($request): int {
-                return $this->store($request, $file)->model->getKey();
+            $ids = array_map(function (UploadedFile $file) use ($request, $model): int {
+                return $this->store($request, $model, $file)['value'];
             }, $files);
 
             $value = array_merge((array) $value, $ids);
 
-            $this->resolveHydrate($request, $value);
+            $this->resolveHydrate($request, $model, $value);
 
-            $keys = $this->getRelation()->sync($value);
+            $keys = $this->getRelation($model)->sync($value);
 
             if ($this->prunable && ! empty($keys['detached'])) {
-                $this->prune($request, $keys['detached']);
+                $this->prune($request, $model, $keys['detached']);
             }
         });
     }
@@ -205,11 +202,11 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    protected function prune(Request $request, array $keys): int
+    protected function prune(Request $request, Model $model, array $keys): int
     {
         $count = 0;
 
-        $this->resolveRelatableQuery($request)
+        $this->resolveRelatableQuery($request, $model)
             ->whereIn('id', $keys)
             ->cursor()
             ->each(static function (Medium $medium) use (&$count): void {
@@ -222,17 +219,38 @@ class File extends MorphToMany
     }
 
     /**
+     * Create a new method.
+     */
+    public function toOption(Request $request, Model $model, Model $related): array
+    {
+        $option = parent::toOption($request, $model, $related);
+
+        $name = sprintf(
+            '%s[%s][%s]',
+            $this->getAttribute('name'),
+            $related->getKey(),
+            $this->getRelation($model)->getRelatedPivotKeyName()
+        );
+
+        $option['attrs']->merge(['name' => $name]);
+
+        return array_merge($option, [
+            'file_name' => $related->file_name,
+            'is_image' => $related->isImage,
+            'medium' => $related,
+            'processing' => false,
+            'url' => $related->getUrl('thumbnail') ?: $related->getUrl('original'),
+            'uuid' => $related->uuid,
+        ]);
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        return array_merge(
-            parent::toArray(),
-            App::call(function (Request $request): array {
-                return [
-                    'options' => $this->resolveOptions($request),
-                ];
-            })
-        );
+        return array_merge(parent::toFormComponent($request, $model), [
+            'options' => $this->resolveOptions($request, $model),
+        ]);
     }
 }

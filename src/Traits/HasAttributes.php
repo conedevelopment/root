@@ -14,6 +14,14 @@ trait HasAttributes
     protected array $attributes = [];
 
     /**
+     * Set the "id" HTML attribute.
+     */
+    public function id(string $value): static
+    {
+        return $this->setAttribute('id', strtolower($value));
+    }
+
+    /**
      * Get the attributes.
      */
     public function getAttributes(): array

@@ -3,14 +3,11 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\RelationOption;
-use Cone\Root\Interfaces\Form;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 
 class BelongsToMany extends Relation
 {
@@ -35,23 +32,9 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function setForm(Form $form): static
+    public function getRelation(Model $model): EloquentRelation
     {
-        if (! is_null($this->fields)) {
-            $this->fields->each(function (Field $field) use ($form): void {
-                $field->setForm($form);
-            });
-        }
-
-        return parent::setForm($form);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRelation(): EloquentRelation
-    {
-        $relation = parent::getRelation();
+        $relation = parent::getRelation($model);
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
     }
@@ -77,16 +60,12 @@ class BelongsToMany extends Relation
     {
         $this->withFields($callback);
 
-        $this->pivotFieldsResolver = function (Model $related) use ($callback): Fields {
+        $this->pivotFieldsResolver = function (Request $request, Model $model, Model $related) use ($callback): Fields {
             $fields = new Fields();
 
-            App::call(static function (Request $request) use ($callback, $fields): void {
-                $fields->register(
-                    Arr::wrap(call_user_func_array($callback, [$request]))
-                );
-            });
+            $fields->register(Arr::wrap(call_user_func_array($callback, [$request])));
 
-            $fields->each(function (Field $field) use ($related): void {
+            $fields->each(function (Field $field) use ($model, $related): void {
                 $attribute = sprintf(
                     '%s.%s.%s',
                     $this->getModelAttribute(),
@@ -95,11 +74,10 @@ class BelongsToMany extends Relation
                 );
 
                 $field->setModelAttribute($attribute)
-                    ->setForm($this->form)
                     ->name($attribute)
                     ->id($attribute)
-                    ->value(function () use ($related, $key): mixed {
-                        return $related->getRelation($this->getRelation()->getPivotAccessor())->getAttribute($key);
+                    ->value(function () use ($model, $related, $key): mixed {
+                        return $related->getRelation($this->getRelation($model)->getPivotAccessor())->getAttribute($key);
                     });
             });
 
@@ -112,19 +90,19 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function toOption(Model $related): RelationOption
+    public function toOption(Request $request, Model $model, Model $related): array
     {
-        $relation = $this->getRelation();
+        $relation = $this->getRelation($model);
 
         if (! $related->relationLoaded($relation->getPivotAccessor())) {
             $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
         }
 
-        $option = parent::toOption($related);
+        $option = parent::toOption($request, $model, $related);
 
-        if (! is_null($this->pivotFieldsResolver)) {
-            $option->withPivotFields(call_user_func_array($this->pivotFieldsResolver, [$related]));
-        }
+        $option['fields'] = is_null($this->pivotFieldsResolver)
+            ? new Fields()
+            : call_user_func_array($this->pivotFieldsResolver, [$request, $model, $related]);
 
         return $option;
     }
@@ -132,19 +110,19 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->getModel()->saved(function () use ($request, $value): void {
-            $this->resolveHydrate($request, $value);
+        $model->saved(function (Model $model) use ($request, $value): void {
+            $this->resolveHydrate($request, $model, $value);
 
-            $this->getRelation()->sync($value);
+            $this->getRelation($model)->sync($value);
         });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
@@ -152,9 +130,9 @@ class BelongsToMany extends Relation
 
                 $value = Arr::isList($value) ? array_fill_keys($value, []) : $value;
 
-                $relation = $this->getRelation();
+                $relation = $this->getRelation($model);
 
-                $results = $this->resolveRelatableQuery($request)
+                $results = $this->resolveRelatableQuery($request, $model)
                     ->findMany(array_keys($value))
                     ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
@@ -167,7 +145,7 @@ class BelongsToMany extends Relation
             };
         }
 
-        parent::resolveHydrate($request, $value);
+        parent::resolveHydrate($request, $model, $value);
     }
 
     /**
@@ -181,13 +159,29 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * Create a new method.
+     */
+    public function toFormComponent(Request $request, Model $model): array
+    {
+        $data = parent::toFormComponent($request, $model);
+
+        $data['options'] = array_map(static function (array $option) use ($request, $model): array {
+            return array_merge($option, [
+                'fields' => $option['fields']->mapToFormComponents($request, $model),
+            ]);
+        }, $data['options']);
+
+        return $data;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function toValidate(Request $request): array
+    public function toValidate(Request $request, Model $model): array
     {
         return array_merge(
-            parent::toValidate($request),
-            $this->resolveFields($request)->mapToValidate($request)
+            parent::toValidate($request, $model),
+            $this->resolveFields($request)->mapToValidate($request, $model)
         );
     }
 }

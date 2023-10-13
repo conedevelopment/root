@@ -17,7 +17,7 @@
                 {{ __('Clear') }}
             </button>
         </div>
-        <div class="data-table-alert__column">
+        <form class="data-table-alert__column" autocomplete="off">
             <select
                 class="form-control form-control--sm"
                 aria-label="{{ __('Actions') }}"
@@ -25,15 +25,12 @@
             >
                 <option value="">--- {{ __('Select Action') }} ---</option>
                 @foreach($actions as $action)
-                    <option value="{{ $action->getModalKey() }}">{{ $action->getName() }}</option>
+                    <option value="{{ $action['modalKey'] }}">{{ $action['name'] }}</option>
                 @endforeach
             </select>
-            <button type="button" class="btn btn--primary btn--sm">
-                {{ __('Run') }}
-            </button>
             @foreach($actions as $action)
-                {!! $action !!}
+                @include($action['template'], $action)
             @endforeach
-        </div>
+        </form>
     </div>
 </div>

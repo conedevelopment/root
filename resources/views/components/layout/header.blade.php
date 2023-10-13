@@ -19,7 +19,7 @@
                 </button> --}}
                 <x-root::layout.theme />
             </div>
-            <x-root::layout.breadcrumbs />
+            {{-- <x-root::layout.breadcrumbs /> --}}
         </div>
         <div class="app-header__actions">
             <x-root::layout.notifications />

@@ -12,18 +12,18 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function getRelation(): EloquentRelation
+    public function getRelation(Model $model): EloquentRelation
     {
-        return parent::getRelation();
+        return parent::getRelation($model);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->getModel()->saved(function (Model $model) use ($request, $value): void {
-            $relation = $this->getRelation();
+        $model->saved(function (Model $model) use ($request, $value): void {
+            $relation = $this->getRelation($model);
 
             $this->resolveHydrate($request, $value);
 
@@ -40,7 +40,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
@@ -50,6 +50,6 @@ abstract class HasOneOrMany extends Relation
             };
         }
 
-        parent::resolveHydrate($request, $value);
+        parent::resolveHydrate($request, $model, $value);
     }
 }

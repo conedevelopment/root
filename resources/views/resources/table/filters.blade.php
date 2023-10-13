@@ -15,7 +15,7 @@
             <div class="context-menu context-menu--inline-end" x-bind:class="{ 'is-open': open }">
                 <div class="form-group-stack form-group-stack--bordered form-group-container">
                     @foreach($filters as $filter)
-                        {!! $filter !!}
+                        @include($filter['template'], $filter)
                     @endforeach
                     <div class="data-table-filter__actions">
                         <button type="submit" class="btn btn--primary btn--sm">

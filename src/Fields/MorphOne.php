@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 
 class MorphOne extends MorphOneOrMany
@@ -9,8 +10,8 @@ class MorphOne extends MorphOneOrMany
     /**
      * {@inheritdoc}
      */
-    public function getRelation(): EloquentRelation
+    public function getRelation(Model $model): EloquentRelation
     {
-        return parent::getRelation();
+        return parent::getRelation($model);
     }
 }
