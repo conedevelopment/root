@@ -2,15 +2,21 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Fields\Options\RadioOption;
-
 class Radio extends Checkbox
 {
     /**
-     * Make a new option instance.
+     * {@inheritdoc}
      */
-    public function newOption(mixed $value, string $label): RadioOption
+    public function newOption(mixed $value, string $label): Option
     {
-        return RadioOption::make($value, $label)->name($this->getModelAttribute());
+        $option = parent::newOption($value, $label);
+
+        $option->setAttributes([
+            'type' => 'radio',
+            'class' => 'form-check__control',
+            'name' => $this->getModelAttribute(),
+        ]);
+
+        return $option;
     }
 }

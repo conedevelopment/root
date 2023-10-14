@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Fields\Options\CheckboxOption;
-
 class Checkbox extends Select
 {
     /**
@@ -12,10 +10,18 @@ class Checkbox extends Select
     protected string $template = 'root::fields.checkbox';
 
     /**
-     * Make a new option instance.
+     * {@inheritdoc}
      */
-    public function newOption(mixed $value, string $label): CheckboxOption
+    public function newOption(mixed $value, string $label): Option
     {
-        return CheckboxOption::make($value, $label)->name(sprintf('%s[]', $this->getModelAttribute()));
+        $option = parent::newOption($value, $label);
+
+        $option->setAttributes([
+            'type' => 'checkbox',
+            'class' => 'form-check__control',
+            'name' => sprintf('%s[]', $this->getModelAttribute()),
+        ]);
+
+        return $option;
     }
 }

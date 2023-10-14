@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\Option;
 use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;

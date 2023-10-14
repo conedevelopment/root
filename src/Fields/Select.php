@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\Option;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;

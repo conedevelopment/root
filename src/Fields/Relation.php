@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Fields\Options\Option;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;

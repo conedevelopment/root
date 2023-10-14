@@ -1,1 +1,0 @@
-<option {{ $attrs }}>{{ $label }}</option>

@@ -9,3 +9,6 @@ Route::apiResource('notifications', NotificationsController::class)->except(['st
 
 // Resource Fields
 Route::any('/{resource}/fields/{field}', ResourceFieldController::class)->where('field', '.*');
+
+// Actions
+// Action Fields

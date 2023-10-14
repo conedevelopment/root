@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Fields;
 
-use Cone\Root\Fields\Options\DropdownOption;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\View;
 
 class Dropdown extends Select
 {
@@ -23,33 +25,27 @@ class Dropdown extends Select
     }
 
     /**
-     * Make a new option instance.
-     */
-    public function newOption(mixed $value, string $label): DropdownOption
-    {
-        return new DropdownOption($value, $label);
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        $data = parent::toArray();
+        $data = parent::toFormComponent($request, $model);
 
         return array_merge($data, [
-            'options' => array_map(static function (DropdownOption $option): array {
-                return $option->toRenderedArray();
+            'options' => array_map(static function (array $option): array {
+                return array_merge($option, [
+                    'html' => View::make('root::fields.dropdown-option', $option)->render(),
+                ]);
             }, $data['options']),
             'selection' => Collection::make($data['options'])
-                ->filter(function (DropdownOption $option): bool {
-                    return $option->getAttribute('selected');
+                ->filter(fn (array $option): bool => $option['selected'] ?? false)
+                ->map(static function (array $option): array {
+                    return array_merge($option, [
+                        'html' => View::make('root::fields.dropdown-option', $option)->render(),
+                    ]);
                 })
                 ->values()
-                ->map(function (DropdownOption $option): array {
-                    return $option->toRenderedArray();
-                })
-                ->toArray(),
+                ->all(),
             'config' => [
                 'multiple' => $this->getAttribute('multiple'),
             ],

@@ -1,13 +1,14 @@
 <?php
 
-namespace Cone\Root\Fields\Options;
+namespace Cone\Root\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
+use JsonSerializable;
 
-class Option implements Arrayable
+class Option implements Arrayable, JsonSerializable
 {
     use Conditionable;
     use HasAttributes;
@@ -42,6 +43,14 @@ class Option implements Arrayable
     public function selected(bool $value = true): static
     {
         return $this->setAttribute('selected', $value);
+    }
+
+    /**
+     * Convert the element to a JSON serializable format.
+     */
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 
     /**
