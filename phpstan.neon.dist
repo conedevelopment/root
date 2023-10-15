@@ -1,11 +1,14 @@
 includes:
     - vendor/nunomaduro/larastan/extension.neon
 parameters:
-    level: 5
+    databaseMigrationsPath:
+        - database/migrations/
+        - vendor/orchestra/testbench-core/laravel/migrations/
     paths:
         - src/
         - config/
         - database/
         - routes/
+    level: 5
     ignoreErrors:
         - '#^Unsafe usage of new static#'
