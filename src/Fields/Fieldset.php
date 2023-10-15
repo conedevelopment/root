@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Cone\Root\Traits\ResolvesFields;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -28,7 +29,7 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, mixed $value): void
+    public function persist(Request $request, Model $model, mixed $value): void
     {
         $this->resolveFields($request)->each(static function (Field $field) use ($request): void {
             $field->persist($request, $field->getValueForHydrate($request));
@@ -38,7 +39,7 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveHydrate(Request $request, mixed $value): void
+    public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         $this->resolveFields($request)->each(static function (Field $field) use ($request): void {
             $field->resolveHydrate($request, $field->getValueForHydrate($request));
@@ -72,10 +73,10 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
-    public function toValidate(Request $request): array
+    public function toValidate(Request $request, Model $model): array
     {
         return array_merge(
-            parent::toValidate($request),
+            parent::toValidate($request, $model),
             $this->resolveFields($request)->mapToValidate($request)
         );
     }
