@@ -138,7 +138,7 @@ class Column
     }
 
     /**
-     * * Conver the column to a table head.
+     * * Convert the column to a table head.
      */
     public function toHead(Request $request): array
     {
@@ -152,7 +152,7 @@ class Column
     }
 
     /**
-     * Conver the column to a cell.
+     * Convert the column to a cell.
      */
     public function toCell(Request $request, Model $model): array
     {

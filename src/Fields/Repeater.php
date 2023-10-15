@@ -164,7 +164,7 @@ class Repeater extends Field
     }
 
     /**
-     * Get the option represenation of the model and the temporary model.
+     * Get the option representation of the model and the temporary model.
      */
     public function toOption(Request $request, Model $model, Model $tmpModel): array
     {
