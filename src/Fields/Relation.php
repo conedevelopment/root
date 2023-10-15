@@ -266,7 +266,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Get the option represenation of the model and the related model.
+     * Get the option representation of the model and the related model.
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
