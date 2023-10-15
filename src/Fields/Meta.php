@@ -54,7 +54,7 @@ class Meta extends MorphOne
      */
     public function as(string $field, Closure $callback = null): static
     {
-        $this->field = new $field($this->form, $this->label, $this->getModelAttribute());
+        $this->field = new $field($this->label, $this->getModelAttribute());
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);

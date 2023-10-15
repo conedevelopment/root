@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class Boolean extends Field
@@ -42,9 +43,9 @@ class Boolean extends Field
     /**
      * Create a new method.
      */
-    public function resolveValue(Request $request): mixed
+    public function resolveValue(Request $request, Model $model): mixed
     {
-        $value = parent::resolveValue($request);
+        $value = parent::resolveValue($request, $model);
 
         $this->checked(filter_var($value, FILTER_VALIDATE_BOOL));
 
