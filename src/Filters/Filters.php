@@ -8,6 +8,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 
+/**
+ * @mixin \Illuminate\Support\Collection
+ */
 class Filters
 {
     use ForwardsCalls;

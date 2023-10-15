@@ -10,5 +10,21 @@ parameters:
         - database/
         - routes/
     level: 5
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkAlwaysTrueLooseComparison: true
+    checkClassCaseSensitivity: false
+    checkDynamicProperties: true
+    checkExplicitMixed: false
+    checkImplicitMixed: false
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
     ignoreErrors:
         - '#^Unsafe usage of new static#'
+        # Tricky readonlys
+        - '#Assign it in the constructor\.$#'
+        - '#is assigned outside of the constructor\.$#'
+        # View vs. View contract
+        - '#render\(\) should return Illuminate\\View\\View but#'

@@ -6,6 +6,12 @@ use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * @property string $url
+ * @property string $label
+ * @property string $icon
+ * @property string $group
+ */
 class Item
 {
     use HasAttributes;
