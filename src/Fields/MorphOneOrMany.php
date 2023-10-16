@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOneOrMany as EloquentRelation;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\MorphOneOrMany
+ *
  * @extends \Cone\Root\Fields\HasOneOrMany<TRelation>
  */
 abstract class MorphOneOrMany extends HasOneOrMany

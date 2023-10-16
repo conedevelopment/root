@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\MorphOne
+ *
  * @extends \Cone\Root\Fields\MorphOneOrMany<TRelation>
  */
 class MorphOne extends MorphOneOrMany

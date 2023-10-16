@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsTo
+ *
  * @extends \Cone\Root\Fields\Relation<TRelation>
  */
 class BelongsTo extends Relation

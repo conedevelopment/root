@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsToMany
+ *
  * @extends \Cone\Root\Fields\Relation<TRelation>
  */
 class BelongsToMany extends Relation
