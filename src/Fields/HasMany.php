@@ -6,6 +6,9 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentRelation;
 
+/**
+ * @extends \Cone\Root\Fields\HasOneOrMany<\Illuminate\Database\Eloquent\Relations\HasMany>
+ */
 class HasMany extends HasOneOrMany
 {
     /**

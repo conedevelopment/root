@@ -9,6 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Throwable;
 
+/**
+ * @mixin \Illuminate\Support\Collection
+ */
 class Resources
 {
     use ForwardsCalls;

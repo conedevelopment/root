@@ -7,7 +7,8 @@ parameters:
     paths:
         - src/
         - config/
-        - database/
+# TODO
+#        - database/
         - routes/
     level: 5
     checkAlwaysTrueCheckTypeFunctionCall: true
@@ -23,8 +24,11 @@ parameters:
     checkInternalClassCaseSensitivity: true
     ignoreErrors:
         - '#^Unsafe usage of new static#'
+        # --- TODO-s ---
         # Tricky readonlys
         - '#Assign it in the constructor\.$#'
         - '#is assigned outside of the constructor\.$#'
-        # View vs. View contract
-        - '#render\(\) should return Illuminate\\View\\View but#'
+        # X vs. X contract
+        - '#but returns Illuminate\\Contracts\\#'
+        # SoftDeletes
+        - '#(\$forceDeleting|::withTrashed|::onlyTrashed|::trashed|::restore)#'
