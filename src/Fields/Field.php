@@ -89,6 +89,11 @@ abstract class Field implements Arrayable, JsonSerializable
     protected ?string $apiUri = null;
 
     /**
+     * Indicates if the field has been hydrated.
+     */
+    protected bool $hydrated = false;
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, string $modelAttribute = null)
@@ -274,9 +279,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function resolveValue(Request $request, Model $model): mixed
     {
-        $value = $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())
-            ? $this->getOldValue($request)
-            : $this->getValue($model);
+        if (! $this->hydrated && $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
+            $this->resolveHydrate($request, $model, $this->getOldValue($request));
+        }
+
+        $value = $this->getValue($model);
 
         if (is_null($this->valueResolver)) {
             return $value;
@@ -351,6 +358,8 @@ abstract class Field implements Arrayable, JsonSerializable
         }
 
         call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
+
+        $this->hydrated = true;
     }
 
     /**
