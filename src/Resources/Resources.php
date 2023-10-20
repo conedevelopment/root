@@ -6,33 +6,16 @@ use Cone\Root\Exceptions\ResourceResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\ForwardsCalls;
-use Throwable;
 
-class Resources
+class Resources extends Collection
 {
-    use ForwardsCalls;
-
-    /**
-     * The resources collections.
-     */
-    protected Collection $resources;
-
-    /**
-     * Create a new controller instance.
-     */
-    public function __construct(array $resources = [])
-    {
-        $this->resources = new Collection($resources);
-    }
-
     /**
      * Register the given resource into the collection.
      */
     public function register(array|Resource $resources): void
     {
         foreach (Arr::wrap($resources) as $resource) {
-            $this->resources->put($resource->getKey(), $resource);
+            $this->put($resource->getKey(), $resource);
         }
     }
 
@@ -41,27 +24,11 @@ class Resources
      */
     public function resolve(string $key): Resource
     {
-        if (! $this->resources->has($key)) {
+        if (! $this->has($key)) {
             throw new ResourceResolutionException();
         }
 
-        return $this->resources->get($key);
-    }
-
-    /**
-     * Resolve the current resource.
-     */
-    public function current(Request $request): ?Resource
-    {
-        if (empty($request->route()->action['__resource__'])) {
-            return null;
-        }
-
-        try {
-            return $this->resolve($request->route()->action['__resource__']);
-        } catch (Throwable $exception) {
-            return null;
-        }
+        return $this->get($key);
     }
 
     /**
@@ -69,14 +36,6 @@ class Resources
      */
     public function authorized(Request $request): static
     {
-        return $this->resources->filter->authorized($request)->values();
-    }
-
-    /**
-     * Handle the dynamic method call.
-     */
-    public function __call($method, $parameters): mixed
-    {
-        return $this->forwardCallTo($this->resources, $method, $parameters);
+        return $this->filter->authorized($request)->values();
     }
 }

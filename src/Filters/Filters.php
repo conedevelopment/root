@@ -6,32 +6,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\ForwardsCalls;
 
-class Filters
+class Filters extends Collection
 {
-    use ForwardsCalls;
-
-    /**
-     * The filters collection.
-     */
-    protected Collection $filters;
-
-    /**
-     * Create a new filters instance.
-     */
-    public function __construct(array $filters = [])
-    {
-        $this->filters = new Collection($filters);
-    }
-
     /**
      * Register the given filters.
      */
     public function register(array|Filter $filters): static
     {
         foreach (Arr::wrap($filters) as $filter) {
-            $this->filters->push($filter);
+            $this->push($filter);
         }
 
         return $this;
@@ -42,7 +26,7 @@ class Filters
      */
     public function apply(Request $request, Builder $query): Builder
     {
-        $this->filters->filter(static function (Filter $filter) use ($request): bool {
+        $this->filter(static function (Filter $filter) use ($request): bool {
             return $request->has($filter->getRequestKey());
         })->each(static function (Filter $filter) use ($query, $request): void {
             $filter->apply($request, $query, $filter->getValue($request));
@@ -54,25 +38,29 @@ class Filters
     /**
      * Filter the renderable filters.
      */
-    public function renderable(): Collection
+    public function renderable(): static
     {
-        return $this->filters->reject->isFunctional();
+        return $this->filter(static function (Filter $filter): bool {
+            return $filter instanceof RenderableFilter;
+        });
     }
 
     /**
      * Filter the functional filters.
      */
-    public function functional(): Collection
+    public function functional(): static
     {
-        return $this->filters->filter->isFunctional();
+        return $this->reject(static function (Filter $filter): bool {
+            return $filter instanceof RenderableFilter;
+        });
     }
 
     /**
      * Filter the active filters.
      */
-    public function active(Request $request): Collection
+    public function active(Request $request): static
     {
-        return $this->filters->filter->isActive($request);
+        return $this->filter->isActive($request);
     }
 
     /**
@@ -80,18 +68,8 @@ class Filters
      */
     public function mapToData(Request $request): array
     {
-        return $this->filters
-            ->mapWithKeys(static function (Filter $filter) use ($request): array {
-                return [$filter->getKey() => $filter->getValue($request)];
-            })
-            ->toArray();
-    }
-
-    /**
-     * Handle the dynamic method call.
-     */
-    public function __call($method, $parameters): mixed
-    {
-        return $this->forwardCallTo($this->filters, $method, $parameters);
+        return $this->mapWithKeys(static function (Filter $filter) use ($request): array {
+            return [$filter->getKey() => $filter->getValue($request)];
+        })->toArray();
     }
 }

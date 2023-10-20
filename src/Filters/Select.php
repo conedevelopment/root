@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 
-abstract class Select extends Filter
+abstract class Select extends RenderableFilter
 {
     /**
      * Indicates if multiple options can be selected.
