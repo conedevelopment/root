@@ -31,8 +31,8 @@ class Fieldset extends Field
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        $this->resolveFields($request)->each(static function (Field $field) use ($request): void {
-            $field->persist($request, $field->getValueForHydrate($request));
+        $this->resolveFields($request)->each(static function (Field $field) use ($request, $model): void {
+            $field->persist($request, $model, $field->getValueForHydrate($request));
         });
     }
 
@@ -41,8 +41,8 @@ class Fieldset extends Field
      */
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
-        $this->resolveFields($request)->each(static function (Field $field) use ($request): void {
-            $field->resolveHydrate($request, $field->getValueForHydrate($request));
+        $this->resolveFields($request)->each(static function (Field $field) use ($request, $model): void {
+            $field->resolveHydrate($request, $model, $field->getValueForHydrate($request));
         });
     }
 

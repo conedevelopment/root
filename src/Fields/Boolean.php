@@ -27,7 +27,7 @@ class Boolean extends Field
      */
     public function getValueForHydrate(Request $request): mixed
     {
-        return $request->boolean([$this->getRequestKey()]);
+        return $request->boolean($this->getRequestKey());
     }
 
     /**
