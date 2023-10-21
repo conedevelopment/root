@@ -233,7 +233,7 @@ class File extends MorphToMany
 
         $option['attrs']->merge(['name' => $name]);
 
-        /** @var \Cone\Root\Fields\File $related */
+        /** @var \Cone\Root\Models\Medium $related */
 
         return array_merge($option, [
             'file_name' => $related->file_name,
