@@ -25,9 +25,6 @@ parameters:
     ignoreErrors:
         - '#^Unsafe usage of new static#'
         # --- TODO-s ---
-        # Tricky readonlys
-        - '#Assign it in the constructor\.$#'
-        - '#is assigned outside of the constructor\.$#'
         # X vs. X contract
         - '#but returns Illuminate\\Contracts\\#'
         # SoftDeletes
