@@ -77,7 +77,7 @@ class Fieldset extends Field
     {
         return array_merge(
             parent::toValidate($request, $model),
-            $this->resolveFields($request)->mapToValidate($request)
+            $this->resolveFields($request)->mapToValidate($request, $model)
         );
     }
 }
