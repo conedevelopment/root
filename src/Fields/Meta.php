@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 use Illuminate\Http\Request;
 
+/**
+ * @extends \Cone\Root\Fields\MorphOne<\Illuminate\Database\Eloquent\Relations\MorphOne>
+ */
 class Meta extends MorphOne
 {
     /**

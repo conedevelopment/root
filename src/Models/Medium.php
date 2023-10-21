@@ -152,6 +152,8 @@ class Medium extends Model implements Contract
 
     /**
      * Determine if the file is image.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<bool, never>
      */
     protected function isImage(): Attribute
     {

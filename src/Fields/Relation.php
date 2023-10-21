@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\Relation
+ */
 abstract class Relation extends Field
 {
     /**
@@ -72,6 +75,8 @@ abstract class Relation extends Field
 
     /**
      * Get the relation instance.
+     *
+     * @phpstan-return TRelation
      */
     public function getRelation(Model $model): EloquentRelation
     {

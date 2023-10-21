@@ -7,8 +7,28 @@ parameters:
     paths:
         - src/
         - config/
-        - database/
+# TODO
+#        - database/
         - routes/
     level: 5
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkAlwaysTrueLooseComparison: true
+    checkClassCaseSensitivity: false
+    checkDynamicProperties: true
+    checkExplicitMixed: false
+    checkImplicitMixed: false
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
     ignoreErrors:
         - '#^Unsafe usage of new static#'
+        # --- TODO-s ---
+        # Tricky readonlys
+        - '#Assign it in the constructor\.$#'
+        - '#is assigned outside of the constructor\.$#'
+        # X vs. X contract
+        - '#but returns Illuminate\\Contracts\\#'
+        # SoftDeletes
+        - '#(\$forceDeleting|::withTrashed|::onlyTrashed|::trashed|::restore)#'

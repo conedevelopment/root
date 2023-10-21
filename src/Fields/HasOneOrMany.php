@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\HasOneOrMany
+ *
+ * @extends \Cone\Root\Fields\Relation<TRelation>
+ */
 abstract class HasOneOrMany extends Relation
 {
     /**

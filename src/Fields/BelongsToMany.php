@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsToMany
+ *
+ * @extends \Cone\Root\Fields\Relation<TRelation>
+ */
 class BelongsToMany extends Relation
 {
     use ResolvesFields;
