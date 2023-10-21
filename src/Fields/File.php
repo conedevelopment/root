@@ -222,8 +222,6 @@ class File extends MorphToMany
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
-        /** @var \Cone\Root\Fields\File $related */
-
         $option = parent::toOption($request, $model, $related);
 
         $name = sprintf(
@@ -234,6 +232,8 @@ class File extends MorphToMany
         );
 
         $option['attrs']->merge(['name' => $name]);
+
+        /** @var \Cone\Root\Fields\File $related */
 
         return array_merge($option, [
             'file_name' => $related->file_name,
