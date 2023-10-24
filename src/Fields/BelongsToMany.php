@@ -26,7 +26,6 @@ class BelongsToMany extends Relation
         parent::__construct($label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
-        $this->name($this->modelAttribute.'[]');
     }
 
     /**
@@ -97,6 +96,13 @@ class BelongsToMany extends Relation
         }
 
         $option = parent::toOption($request, $model, $related);
+
+        $option['attrs']['name'] = sprintf(
+            '%s[%s][%s]',
+            $this->getAttribute('name'),
+            $related->getKey(),
+            $this->getRelation($model)->getRelatedPivotKeyName()
+        );
 
         $option['fields'] = is_null($this->pivotFieldsResolver)
             ? new Fields()

@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -92,6 +91,14 @@ abstract class Resource implements Arrayable, Form, Table
     public function getUriKey(): string
     {
         return $this->getKey();
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return '_resource';
     }
 
     /**
@@ -283,14 +290,6 @@ abstract class Resource implements Arrayable, Form, Table
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveFields($request)->registerRoutes($request, $router);
         });
-    }
-
-    /**
-     * Handle the route matched event.
-     */
-    public function routeMatched(RouteMatched $event): void
-    {
-        //
     }
 
     /**

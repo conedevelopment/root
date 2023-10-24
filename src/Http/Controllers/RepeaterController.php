@@ -12,7 +12,7 @@ class RepeaterController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $resource = $request->route('resource');
+        $resource = $request->route('_resource');
 
         $field = $request->route('field');
 
