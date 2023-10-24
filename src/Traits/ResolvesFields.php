@@ -67,23 +67,4 @@ trait ResolvesFields
     {
         //
     }
-
-    /**
-     * Find the field with the given API URI.
-     */
-    public function findField(Request $request, string $apiUri): ?Field
-    {
-        foreach ($this->resolveFields($request)->all() as $field) {
-            if (trim($field->getApiUri(), '/') === trim($apiUri, '/')) {
-                return $field;
-            }
-
-            if (in_array(ResolvesFields::class, class_uses_recursive($field))
-                && ! is_null($subfield = $field->findField($request, $apiUri))) {
-                return $subfield;
-            }
-        }
-
-        return null;
-    }
 }

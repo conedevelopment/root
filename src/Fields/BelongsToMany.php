@@ -44,10 +44,8 @@ class BelongsToMany extends Relation
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        if (! is_null($this->apiUri)) {
-            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
-        }
-
+        $field->setAttribute('form', $this->getAttribute('form'));
+        $field->resolveErrorsUsing($this->errorsResolver);
         $field->setModelAttribute(
             sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
         );

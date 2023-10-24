@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -49,5 +51,19 @@ class Fields extends Collection
     public function mapToFormComponents(Request $request, Model $model): array
     {
         return $this->map->toFormComponent($request, $model)->all();
+    }
+
+    /**
+     * Register the field routes.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $router->prefix('fields')->group(function (Router $router) use ($request): void {
+            $this->each(static function (Field $field) use ($request, $router): void {
+                if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
+                    $field->registerRoutes($request, $router);
+                }
+            });
+        });
     }
 }

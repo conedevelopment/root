@@ -23,11 +23,6 @@ abstract class Relation extends Field
     protected bool $nullable = false;
 
     /**
-     * Indicates if the component is async.
-     */
-    protected bool $async = false;
-
-    /**
      * The Blade template.
      */
     protected string $template = 'root::fields.select';
@@ -147,26 +142,6 @@ abstract class Relation extends Field
     }
 
     /**
-     * Set the async attribute.
-     */
-    public function async(bool $value = true): static
-    {
-        $this->async = $value;
-
-        // $this->template = $value ? 'root::fields.dropdown' : 'root::fields.select';
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is asnyc.
-     */
-    public function isAsync(): bool
-    {
-        return $this->async;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getValue(Model $model): mixed
@@ -252,20 +227,6 @@ abstract class Relation extends Field
     }
 
     /**
-     * Build the API URI.
-     */
-    protected function buildApiUri(Model $model): ?string
-    {
-        if (is_null($this->apiUri)) {
-            return $this->apiUri;
-        }
-
-        return sprintf('%s?%s', $this->apiUri, http_build_query([
-            'model' => $model->getKey(),
-        ]));
-    }
-
-    /**
      * Get the option representation of the model and the related model.
      */
     public function toOption(Request $request, Model $model, Model $related): array
@@ -284,10 +245,8 @@ abstract class Relation extends Field
     public function toFormComponent(Request $request, Model $model): array
     {
         return array_merge(parent::toFormComponent($request, $model), [
-            'async' => $this->isAsync(),
             'nullable' => $this->isNullable(),
-            'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? $this->buildApiUri($model) : null,
+            'options' => $this->resolveOptions($request, $model),
         ]);
     }
 }

@@ -4,14 +4,19 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Models\Medium;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
 {
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
     use ResolvesFields;
 
     /**
@@ -41,17 +46,11 @@ class Editor extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Get the URI key.
      */
-    public function setApiUri(string $apiUri): static
+    public function getUriKey(): string
     {
-        if (! is_null($this->media)) {
-            $this->media->setApiUri(
-                sprintf('%s/%s', $apiUri, $this->media->getUriKey())
-            );
-        }
-
-        return parent::setApiUri($apiUri);
+        return str_replace('.', '-', $this->getRequestKey());
     }
 
     /**
@@ -140,6 +139,20 @@ class Editor extends Field
                 $this->multiple();
             }
         };
+    }
+
+    /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        if (! is_null($this->media)) {
+            $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+                $this->media->registerRoutes($request, $router);
+            });
+        }
     }
 
     /**

@@ -2,12 +2,15 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -15,10 +18,9 @@ use Illuminate\Validation\Rule;
 
 class Media extends File
 {
-    /**
-     * Indicates if the component is async.
-     */
-    protected bool $async = true;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
 
     /**
      * Indicates if the component is multiple.
@@ -29,6 +31,22 @@ class Media extends File
      * The Blade template.
      */
     protected string $template = 'root::fields.media';
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return 'field';
+    }
 
     /**
      * Get the modal key.
@@ -68,13 +86,11 @@ class Media extends File
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
-            ->setPath($this->apiUri)
+            ->setPath($this->getUri())
             ->through(function (Medium $related) use ($request, $model): array {
                 $option = $this->toOption($request, $model, $related);
 
-                $option['fields'] = array_map(static function (Field $field) use ($request, $model): array {
-                    return $field->toFormComponent($request, $model);
-                }, $option['fields']);
+                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
 
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
@@ -138,6 +154,38 @@ class Media extends File
     }
 
     /**
+     * Build the URI for the given request and model.
+     */
+    public function buildUri(Request $request, Model $model): ?string
+    {
+        $uri = sprintf('%s?%s', $this->getUri(), Arr::query(array_filter([
+            'model' => $model->getKey(),
+        ])));
+
+        return rtrim($uri, '?');
+    }
+
+    /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
+     * The routes that should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        $router->match(['GET', 'POST', 'DELETE'], '/', MediaController::class);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toFormComponent(Request $request, Model $model): array
@@ -158,19 +206,7 @@ class Media extends File
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
             }, $data['options'] ?? []),
+            'url' => $this->getUri() ? $this->buildUri($request, $model) : null,
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleApiRequest(Request $request, Model $model): JsonResponse
-    {
-        return match ($request->method()) {
-            'GET' => new JsonResponse($this->paginate($request, $model)),
-            'POST' => new JsonResponse($this->upload($request, $model), JsonResponse::HTTP_CREATED),
-            'DELETE' => new JsonResponse(['deleted' => $this->prune($request, $model, $request->input('ids', []))]),
-            default => parent::handleApiRequest($request, $model),
-        };
     }
 }
