@@ -3,6 +3,7 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Middleware\AuthorizeResource;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,10 +26,8 @@ class ResourceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request, Resource $resource): Response
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('viewAny', $resource->getModel());
         }
@@ -42,10 +41,8 @@ class ResourceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Response
+    public function create(Request $request, Resource $resource): Response
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
@@ -59,10 +56,8 @@ class ResourceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Resource $resource): RedirectResponse
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('create', $resource->getModel());
         }
@@ -78,10 +73,8 @@ class ResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, Model $model): Response
+    public function edit(Request $request, Resource $resource, Model $model): Response
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
@@ -95,10 +88,8 @@ class ResourceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Model $model): RedirectResponse
+    public function update(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('update', $model);
         }
@@ -112,10 +103,8 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Model $model): RedirectResponse
+    public function destroy(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = $request->route('resource');
-
         $trashed = in_array(SoftDeletes::class, class_uses_recursive($model)) && $model->trashed();
 
         if ($resource->getPolicy()) {
@@ -131,10 +120,8 @@ class ResourceController extends Controller
     /**
      * Restore the specified resource in storage.
      */
-    public function restore(Request $request, Model $model): RedirectResponse
+    public function restore(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource = $request->route('resource');
-
         if ($resource->getPolicy()) {
             $this->authorize('restore', $model);
         }

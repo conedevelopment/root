@@ -117,6 +117,10 @@ class RootServiceProvider extends ServiceProvider
 
         $root = $this->app->make(Root::class);
 
+        $this->app['router']->bind('resource', function (string $key) use ($root): Resource {
+            return $root->resources->resolve($key);
+        });
+
         $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
             return $route->parameter('resource')->resolveRouteBinding($this->app['request'], $id);
         });

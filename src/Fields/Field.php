@@ -312,7 +312,7 @@ abstract class Field implements Arrayable, JsonSerializable
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function () use ($model, $value): void {
+            $this->hydrateResolver = function (Request $request, Model $model, $value): void {
                 $model->setAttribute($this->getModelAttribute(), $value);
             };
         }
