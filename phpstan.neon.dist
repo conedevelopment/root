@@ -1,6 +1,6 @@
 includes:
     - vendor/nunomaduro/larastan/extension.neon
-#    - phpstan-baseline.neon
+    - phpstan-baseline.neon
 parameters:
     databaseMigrationsPath:
         - database/migrations/
@@ -11,8 +11,7 @@ parameters:
     paths:
         - src/
         - config/
-# TODO
-#        - database/
+        - database/
         - routes/
     level: 5
     checkAlwaysTrueCheckTypeFunctionCall: true
@@ -28,8 +27,7 @@ parameters:
     checkInternalClassCaseSensitivity: true
     ignoreErrors:
         - '#^Unsafe usage of new static#'
-        # --- TODO-s ---
-        # X vs. X contract
-        - '#but returns Illuminate\\Contracts\\#'
+        # Illuminate\View\View vs. Illuminate\Contracts\View\View
+        - '#^Method Cone\\\S+::render\(\) should return Illuminate\\View\\View but returns Illuminate\\Contracts\\View\\View\.$#'
         # SoftDeletes
         - '#(\$forceDeleting|::withTrashed|::onlyTrashed|::trashed|::restore)#'

@@ -12,7 +12,7 @@ class MediumFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<\Cone\Root\Models\Medium>
      */
     protected $model = Medium::class;
 
