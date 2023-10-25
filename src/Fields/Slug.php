@@ -33,6 +33,11 @@ class Slug extends Text
     protected bool $unique = false;
 
     /**
+     * Indicates if the slug field is nullable.
+     */
+    protected bool $nullable = false;
+
+    /**
      * The slug resolver.
      */
     protected ?Closure $generatorResolver = null;
@@ -50,14 +55,22 @@ class Slug extends Text
     }
 
     /**
+     * Set the "nullable" property.
+     */
+    public function nullable(bool $value = true): static
+    {
+        $this->nullable = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        if ($model->exists || ! empty($value)) {
-            parent::persist($request, $model, $value);
-        } else {
-            $model->saved(function (Model $model) use ($request, $value): void {
+        if (! $model->exists) {
+            $model->saved(function (Model $model) use ($request): void {
                 $value = $this->generate($request, $model);
 
                 $this->resolveHydrate($request, $model, $value);
@@ -67,6 +80,8 @@ class Slug extends Text
                 });
             });
         }
+
+        parent::persist($request, $model, $value);
     }
 
     /**
@@ -74,7 +89,13 @@ class Slug extends Text
      */
     public function getValueForHydrate(Request $request): mixed
     {
-        return Str::slug(parent::getValueForHydrate($request), $this->separator);
+        $value = parent::getValueForHydrate($request);
+
+        if (! $this->nullable && empty($value)) {
+            $value = Str::random();
+        }
+
+        return Str::slug($value, $this->separator);
     }
 
     /**

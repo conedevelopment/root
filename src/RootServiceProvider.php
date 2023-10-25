@@ -53,6 +53,10 @@ class RootServiceProvider extends ServiceProvider
         $this->app->afterResolving(EncryptCookies::class, static function (EncryptCookies $middleware): void {
             $middleware->disableFor('__root_theme');
         });
+
+        $this->app->booted(static function (Application $app): void {
+            $app->make(Root::class)->boot();
+        });
     }
 
     /**
@@ -113,7 +117,7 @@ class RootServiceProvider extends ServiceProvider
 
         $root = $this->app->make(Root::class);
 
-        $this->app['router']->bind('resource', static function (string $key) use ($root): Resource {
+        $this->app['router']->bind('resource', function (string $key) use ($root): Resource {
             return $root->resources->resolve($key);
         });
 
@@ -187,7 +191,7 @@ class RootServiceProvider extends ServiceProvider
         $this->app->make(Root::class)->booting(static function (Root $root): void {
             $root->resources->each(static function (Resource $resource): void {
                 Nav::location('sidebar')->new(
-                    $resource->getUrl(),
+                    $resource->getUri(),
                     $resource->getName(),
                     ['icon' => $resource->getIcon()]
                 );

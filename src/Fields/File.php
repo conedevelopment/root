@@ -107,14 +107,6 @@ class File extends MorphToMany
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function newOption(Model $related, string $label): Option
-    {
-        return new Option($related, $label);
-    }
-
-    /**
      * Set the storage resolver callback.
      */
     public function storeUsing(Closure $callback): static

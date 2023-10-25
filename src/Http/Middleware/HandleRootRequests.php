@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Middleware;
 
 use Closure;
-use Cone\Root\Root;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,8 +15,6 @@ class HandleRootRequests
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Root::instance()->boot();
-
         return $next($request);
     }
 }

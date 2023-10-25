@@ -14,7 +14,7 @@ class ActionController extends Controller
     public function __invoke(Request $request): RedirectResponse
     {
         /** @var \Cone\Root\Actions\Action $action */
-        $action = $request->route('rootAction');
+        $action = $request->route('action');
 
         Gate::allowIf($action->authorized($request));
 

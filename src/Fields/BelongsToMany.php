@@ -31,7 +31,6 @@ class BelongsToMany extends Relation
         parent::__construct($label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
-        $this->name($this->modelAttribute.'[]');
     }
 
     /**
@@ -49,10 +48,8 @@ class BelongsToMany extends Relation
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        if (! is_null($this->apiUri)) {
-            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
-        }
-
+        $field->setAttribute('form', $this->getAttribute('form'));
+        $field->resolveErrorsUsing($this->errorsResolver);
         $field->setModelAttribute(
             sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
         );
@@ -104,6 +101,13 @@ class BelongsToMany extends Relation
         }
 
         $option = parent::toOption($request, $model, $related);
+
+        $option['attrs']['name'] = sprintf(
+            '%s[%s][%s]',
+            $this->getAttribute('name'),
+            $related->getKey(),
+            $this->getRelation($model)->getRelatedPivotKeyName()
+        );
 
         $option['fields'] = is_null($this->pivotFieldsResolver)
             ? new Fields()

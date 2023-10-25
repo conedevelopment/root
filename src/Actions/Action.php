@@ -3,16 +3,19 @@
 namespace Cone\Root\Actions;
 
 use Cone\Root\Fields\Field;
+use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
@@ -25,6 +28,9 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     use Authorizable;
     use HasAttributes;
     use Makeable;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
 
     /**
      * The Blade template.
@@ -45,11 +51,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      * The Eloquent query.
      */
     protected ?Builder $query = null;
-
-    /**
-     * The API URI.
-     */
-    protected ?string $apiUri = null;
 
     /**
      * Handle the action.
@@ -97,24 +98,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
-     * Set the API URI.
-     */
-    public function setApiUri(string $apiUri): static
-    {
-        $this->apiUri = $apiUri;
-
-        return $this;
-    }
-
-    /**
-     * Get the API URI.
-     */
-    public function getApiUri(): ?string
-    {
-        return $this->apiUri;
-    }
-
-    /**
      * Set the Eloquent query.
      */
     public function setQuery(Builder $query): static
@@ -129,7 +112,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setApiUri(sprintf('/%s/fields/%s', $this->getApiUri(), $field->getUriKey()));
         $field->setAttribute('form', $this->getKey());
         $field->resolveErrorsUsing(function (Request $request): MessageBag {
             return $this->errors($request);
@@ -191,6 +173,26 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
+     * The routes that should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        $router->post('/', ActionController::class);
+    }
+
+    /**
      * Convert the element to a JSON serializable format.
      */
     public function jsonSerialize(): mixed
@@ -210,7 +212,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
             'template' => $this->getTemplate(),
-            'url' => $this->getApiUri(),
+            'url' => $this->getUri(),
         ];
     }
 

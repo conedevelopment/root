@@ -2,13 +2,16 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 
 class Fieldset extends Field
 {
+    use RegistersRoutes;
     use ResolvesFields;
 
     /**
@@ -17,13 +20,30 @@ class Fieldset extends Field
     protected string $template = 'root::fields.fieldset';
 
     /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        if (! is_null($this->apiUri)) {
-            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
-        }
+        $field->setAttribute('form', $this->getAttribute('form'));
+        $field->resolveErrorsUsing($this->errorsResolver);
+    }
+
+    /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
     }
 
     /**
