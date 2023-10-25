@@ -4,7 +4,7 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Interfaces\Table;
 use Cone\Root\Root;
@@ -322,7 +322,7 @@ abstract class Resource implements Arrayable, Form, Table
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->renderable()
-                ->map(function (Filter $filter) use ($request): array {
+                ->map(function (RenderableFilter $filter) use ($request): array {
                     return $filter->toField()->toFormComponent($request, $this->getModelInstance());
                 })
                 ->all(),
