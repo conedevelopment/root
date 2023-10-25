@@ -1,9 +1,12 @@
 includes:
     - vendor/nunomaduro/larastan/extension.neon
+#    - phpstan-baseline.neon
 parameters:
     databaseMigrationsPath:
         - database/migrations/
         - vendor/orchestra/testbench-core/laravel/migrations/
+    scanFiles:
+        - tests/phpstan/MetaDataModel.php
     paths:
         - src/
         - config/

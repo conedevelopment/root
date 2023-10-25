@@ -156,7 +156,9 @@ class File extends MorphToMany
             call_user_func_array($this->storageResolver, [$request, $medium, $path]);
         }
 
-        $request->user()->uploads()->save($medium);
+        /** @var \Illuminate\Foundation\Auth\User&\Cone\Root\Interfaces\Models\User $user */
+        $user = $request->user();
+        $user->uploads()->save($medium);
 
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
@@ -219,6 +221,8 @@ class File extends MorphToMany
 
     /**
      * Create a new method.
+     *
+     * @phpstan-param  \Cone\Root\Models\Medium  $related
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {

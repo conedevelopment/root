@@ -12,7 +12,7 @@
 /js-tests export-ignore
 /phpstan.neon.dist export-ignore
 /phpunit.xml.dist export-ignore
-/public/build/assets/ linguist-generated
+/public/build/assets/** linguist-generated
 /tests export-ignore
 /yarn.lock export-ignore linguist-generated
 /vite.config.js export-ignore
