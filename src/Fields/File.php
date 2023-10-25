@@ -239,6 +239,8 @@ class File extends MorphToMany
 
         $option['attrs']->merge(['name' => $name]);
 
+        /** @var \Cone\Root\Models\Medium $related */
+
         return array_merge($option, [
             'fileName' => $related->file_name,
             'isImage' => $related->isImage,
