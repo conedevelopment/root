@@ -60,7 +60,9 @@ class Meta extends MorphOne
             call_user_func_array($callback, [$this->field]);
         }
 
-        $this->field->value(fn (Request $request): mixed => $this->resolveValue($request));
+        $this->field->value(function (Request $request, Model $model): mixed {
+            return $this->resolveValue($request, $model);
+        });
 
         return $this;
     }
@@ -238,14 +240,6 @@ class Meta extends MorphOne
         }
 
         parent::resolveHydrate($request, $model, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function render(): View
-    {
-        return $this->field->render();
     }
 
     /**

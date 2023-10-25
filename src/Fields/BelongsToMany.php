@@ -126,7 +126,7 @@ class BelongsToMany extends Relation
 
                 $results = $this->resolveRelatableQuery($request, $model)
                     ->findMany(array_keys($value))
-                    ->each(function (Model $related) use ($relation, $value): void {
+                    ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
                             $relation->getPivotAccessor(),
                             $relation->newPivot($value[$related->getKey()])
