@@ -173,7 +173,7 @@ class Slug extends Text
         $value = is_null($match) ? $value : preg_replace_callback(
             sprintf('/%s([\d]+)?$/', preg_quote($this->separator)),
             static function (array $match): string {
-                return str_replace($match[1], ((int) $match[1]) + 1, $match[0]);
+                return str_replace($match[1], (string) (((int) $match[1]) + 1), $match[0]);
             },
             $match
         );
