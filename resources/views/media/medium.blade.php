@@ -16,10 +16,10 @@
             <span x-text="item.name" class="media-item__name"></span>
         </span>
     </template>
-    <template x-if="! item.processing && item.is_image">
+    <template x-if="! item.processing && item.isImage">
         <img x-bind:src="item.url" x-bind:alt="item.label">
     </template>
-    <template x-if="! item.processing && ! item.is_image">
+    <template x-if="! item.processing && ! item.isImage">
         <span class="media-item__background">
             <x-root::icon name="document" class="media-item__icon" />
             <span x-text="item.label" class="media-item__name"></span>

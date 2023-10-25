@@ -41,7 +41,7 @@ class Boolean extends Field
     }
 
     /**
-     * Create a new method.
+     * {@inheritdoc}
      */
     public function resolveValue(Request $request, Model $model): mixed
     {

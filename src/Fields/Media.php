@@ -90,8 +90,6 @@ class Media extends File
             ->through(function (Medium $related) use ($request, $model): array {
                 $option = $this->toOption($request, $model, $related);
 
-                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
-
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
@@ -146,7 +144,7 @@ class Media extends File
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
             return array_merge($this->toOption($request, $model, new Medium()), [
                 'processing' => true,
-                'file_name' => null,
+                'fileName' => null,
             ]);
         }
 
@@ -199,9 +197,7 @@ class Media extends File
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
             ],
-            'selection' => array_map(static function (array $option) use ($request, $model): array {
-                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
-
+            'selection' => array_map(static function (array $option): array {
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);

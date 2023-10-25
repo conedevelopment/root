@@ -79,6 +79,16 @@ class File extends MorphToMany
     }
 
     /**
+     * Set the collection pivot value.
+     */
+    public function collection(string $value): static
+    {
+        $this->pivotValues['collection'] = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveDisplay(Model $related): mixed
@@ -210,7 +220,7 @@ class File extends MorphToMany
     }
 
     /**
-     * Create a new method.
+     * {@inheritdoc}
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
@@ -226,11 +236,10 @@ class File extends MorphToMany
         $option['attrs']->merge(['name' => $name]);
 
         return array_merge($option, [
-            'file_name' => $related->file_name,
-            'is_image' => $related->isImage,
-            'medium' => $related,
+            'fileName' => $related->file_name,
+            'isImage' => $related->isImage,
             'processing' => false,
-            'url' => $related->getUrl('thumbnail') ?: $related->getUrl('original'),
+            'url' => $related->hasConversion('thumbnail') ? $related->getUrl('thumbnail') : $related->getUrl(),
             'uuid' => $related->uuid,
         ]);
     }
