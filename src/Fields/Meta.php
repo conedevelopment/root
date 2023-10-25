@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
@@ -248,6 +247,14 @@ class Meta extends MorphOne
     public function toArray(): array
     {
         return $this->field->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toFormComponent(Request $request, Model $model): array
+    {
+        return $this->field->toFormComponent($request, $model);
     }
 
     /**
