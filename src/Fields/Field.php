@@ -9,7 +9,6 @@ use Cone\Root\Traits\ResolvesModelValue;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -84,9 +83,9 @@ abstract class Field implements Arrayable, JsonSerializable
     protected bool $withOldValue = true;
 
     /**
-     * The API URI.
+     * Indicates if the field has been hydrated.
      */
-    protected ?string $apiUri = null;
+    protected bool $hydrated = false;
 
     /**
      * Create a new field instance.
@@ -141,40 +140,6 @@ abstract class Field implements Arrayable, JsonSerializable
     public function getValidationKey(): string
     {
         return $this->getRequestKey();
-    }
-
-    /**
-     * Get the URI key.
-     */
-    public function getUriKey(): string
-    {
-        return str_replace('.', '-', $this->getRequestKey());
-    }
-
-    /**
-     * Set the API URI.
-     */
-    public function setApiUri(string $apiUri): static
-    {
-        $this->apiUri = $apiUri;
-
-        return $this;
-    }
-
-    /**
-     * Get the API URI.
-     */
-    public function getApiUri(): ?string
-    {
-        return $this->apiUri;
-    }
-
-    /**
-     * Handle the incoming API request.
-     */
-    public function handleApiRequest(Request $request, Model $model): JsonResponse
-    {
-        return new JsonResponse($this->toArray());
     }
 
     /**
@@ -274,9 +239,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function resolveValue(Request $request, Model $model): mixed
     {
-        $value = $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())
-            ? $this->getOldValue($request)
-            : $this->getValue($model);
+        if (! $this->hydrated && $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
+            $this->resolveHydrate($request, $model, $this->getOldValue($request));
+        }
+
+        $value = $this->getValue($model);
 
         if (is_null($this->valueResolver)) {
             return $value;
@@ -345,12 +312,14 @@ abstract class Field implements Arrayable, JsonSerializable
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function () use ($model, $value): void {
+            $this->hydrateResolver = function (Request $request, Model $model, $value): void {
                 $model->setAttribute($this->getModelAttribute(), $value);
             };
         }
 
         call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
+
+        $this->hydrated = true;
     }
 
     /**

@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import Axios from 'axios';
 import focus from '@alpinejs/focus';
-import Cookie from './Cookie';
+import Cookie from '@conedevelopment/qkie';
 import './notifications';
 import './theme';
 
@@ -20,4 +20,4 @@ window.$http = Axios.create({
 });
 
 // Cookie
-window.$cookie = new Cookie();
+window.$cookie = new Cookie('__root_');

@@ -79,6 +79,16 @@ class File extends MorphToMany
     }
 
     /**
+     * Set the collection pivot value.
+     */
+    public function collection(string $value): static
+    {
+        $this->pivotValues['collection'] = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveDisplay(Model $related): mixed
@@ -104,14 +114,6 @@ class File extends MorphToMany
                 ]);
             })
             ->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function newOption(Model $related, string $label): Option
-    {
-        return new Option($related, $label);
     }
 
     /**
@@ -220,12 +222,12 @@ class File extends MorphToMany
     }
 
     /**
-     * Create a new method.
-     *
-     * @phpstan-param  \Cone\Root\Models\Medium  $related
+     * {@inheritdoc}
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
+        /** @var \Cone\Root\Models\Medium $related */
+
         $option = parent::toOption($request, $model, $related);
 
         $name = sprintf(
@@ -238,11 +240,10 @@ class File extends MorphToMany
         $option['attrs']->merge(['name' => $name]);
 
         return array_merge($option, [
-            'file_name' => $related->file_name,
-            'is_image' => $related->isImage,
-            'medium' => $related,
+            'fileName' => $related->file_name,
+            'isImage' => $related->isImage,
             'processing' => false,
-            'url' => $related->getUrl('thumbnail') ?: $related->getUrl('original'),
+            'url' => $related->hasConversion('thumbnail') ? $related->getUrl('thumbnail') : $related->getUrl(),
             'uuid' => $related->uuid,
         ]);
     }

@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Fields\Field;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,19 +14,9 @@ abstract class Filter
     use Makeable;
 
     /**
-     * Indicates whether the filter is functional.
-     */
-    protected bool $functional = false;
-
-    /**
      * Apply the filter on the query.
      */
     abstract public function apply(Request $request, Builder $query, mixed $value): Builder;
-
-    /**
-     * Convert the filter to a form field.
-     */
-    abstract public function toField(): Field;
 
     /**
      * Get the key.
@@ -67,13 +56,5 @@ abstract class Filter
     public function isActive(Request $request): bool
     {
         return $request->filled($this->getRequestKey());
-    }
-
-    /**
-     * Determine whether the filter is functional.
-     */
-    public function isFunctional(): bool
-    {
-        return $this->functional;
     }
 }

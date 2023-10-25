@@ -2,38 +2,21 @@
 
 namespace Cone\Root\Actions;
 
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\ForwardsCalls;
 
-/**
- * @mixin \Illuminate\Support\Collection
- */
-class Actions
+class Actions extends Collection
 {
-    use ForwardsCalls;
-
-    /**
-     * The actions collection.
-     */
-    protected Collection $actions;
-
-    /**
-     * Create a new actions instance.
-     */
-    public function __construct(array $actions = [])
-    {
-        $this->actions = new Collection($actions);
-    }
-
     /**
      * Register the given actions.
      */
     public function register(array|Action $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
-            $this->actions->push($action);
+            $this->push($action);
         }
 
         return $this;
@@ -44,14 +27,20 @@ class Actions
      */
     public function mapToTableComponents(Request $request): array
     {
-        return $this->actions->map->toTableComponent($request)->all();
+        return $this->map->toTableComponent($request)->all();
     }
 
     /**
-     * Handle the dynamic method call.
+     * Register the action routes.
      */
-    public function __call($method, $parameters): mixed
+    public function registerRoutes(Request $request, Router $router): void
     {
-        return $this->forwardCallTo($this->actions, $method, $parameters);
+        $router->prefix('actions')->group(function (Router $router) use ($request): void {
+            $this->each(static function (Action $action) use ($request, $router): void {
+                if (in_array(RegistersRoutes::class, class_uses_recursive($action))) {
+                    $action->registerRoutes($request, $router);
+                }
+            });
+        });
     }
 }

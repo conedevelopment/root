@@ -3,15 +3,20 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Http\Controllers\RepeaterController;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class Repeater extends Field
 {
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
     use ResolvesFields {
         ResolvesFields::withFields as __withFields;
     }
@@ -30,6 +35,22 @@ class Repeater extends Field
      * The maximum number of options.
      */
     protected ?int $max = null;
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return 'field';
+    }
 
     /**
      * Set the maximum number of options.
@@ -78,10 +99,6 @@ class Repeater extends Field
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        if (! is_null($this->apiUri)) {
-            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
-        }
-
         $field->setModelAttribute(
             sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
         );
@@ -164,6 +181,26 @@ class Repeater extends Field
     }
 
     /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
+     * The routes that should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        $router->post('/', RepeaterController::class);
+    }
+
+    /**
      * Get the option representation of the model and the temporary model.
      */
     public function toOption(Request $request, Model $model, Model $tmpModel): array
@@ -193,7 +230,7 @@ class Repeater extends Field
                     'html' => View::make('root::fields.repeater-option', $option)->render(),
                 ]);
             }, $this->resolveOptions($request, $model)),
-            'url' => $this->getApiUri(),
+            'url' => $this->getUri(),
         ]);
     }
 
@@ -206,16 +243,5 @@ class Repeater extends Field
             parent::toValidate($request, $model),
             $this->resolveFields($request)->mapToValidate($request, $model)
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleApiRequest(Request $request, Model $model): JsonResponse
-    {
-        return match ($request->method()) {
-            'POST' => new JsonResponse($this->buildOption($request, $model)),
-            default => parent::handleApiRequest($request, $model),
-        };
     }
 }

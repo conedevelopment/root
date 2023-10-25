@@ -4,11 +4,13 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Interfaces\Table;
+use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
@@ -20,15 +22,18 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Form, Table
+abstract class Resource implements Arrayable, Form, Table
 {
     use AsForm;
     use Authorizable;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
     use ResolvesActions;
     use ResolvesColumns;
     use ResolvesFilters;
@@ -55,6 +60,16 @@ class Resource implements Arrayable, Form, Table
     protected string $icon = 'archive';
 
     /**
+     * Boot the resource.
+     */
+    public function boot(Root $root): void
+    {
+        $root->routes(function (Router $router) use ($root): void {
+            $this->registerRoutes($root->app['request'], $router);
+        });
+    }
+
+    /**
      * Get the model for the resource.
      */
     public function getModel(): string
@@ -76,6 +91,14 @@ class Resource implements Arrayable, Form, Table
     public function getUriKey(): string
     {
         return $this->getKey();
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return '_resource';
     }
 
     /**
@@ -202,19 +225,11 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
-     * Get the resource URL.
-     */
-    public function getUrl(): string
-    {
-        return URL::route('root.resource.index', $this->getUriKey());
-    }
-
-    /**
      * Get the URL for the given model.
      */
     public function modelUrl(Model $model): string
     {
-        return URL::route($model->exists ? 'root.resource.update' : 'root.resource.store', [$this->getUriKey(), $model]);
+        return sprintf('%s/%s', $this->getUri(), $model->exists ? $model->getRouteKey() : '');
     }
 
     /**
@@ -222,11 +237,8 @@ class Resource implements Arrayable, Form, Table
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setApiUri(sprintf('/root/api/%s/fields/%s', $this->getKey(), $field->getUriKey()));
         $field->setAttribute('form', $this->getKey());
-        $field->resolveErrorsUsing(function (Request $request): MessageBag {
-            return $this->errors($request);
-        });
+        $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
     }
 
     /**
@@ -235,7 +247,6 @@ class Resource implements Arrayable, Form, Table
     protected function resolveAction(Request $request, Action $action): void
     {
         $action->setQuery($this->resolveFilteredQuery($request));
-        $action->setApiUri(sprintf('/root/api/%s/actions/%s', $this->getKey(), $action->getUriKey()));
     }
 
     /**
@@ -269,6 +280,19 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
+     * Register the routes.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveActions($request)->registerRoutes($request, $router);
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
      * Get the instance as an array.
      */
     public function toArray(): array
@@ -280,7 +304,7 @@ class Resource implements Arrayable, Form, Table
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
             'uriKey' => $this->getUriKey(),
-            'url' => $this->getUrl(),
+            'url' => $this->getUri(),
         ];
     }
 
@@ -298,7 +322,7 @@ class Resource implements Arrayable, Form, Table
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->renderable()
-                ->map(function (Filter $filter) use ($request): array {
+                ->map(function (RenderableFilter $filter) use ($request): array {
                     return $filter->toField()->toFormComponent($request, $this->getModelInstance());
                 })
                 ->all(),
@@ -314,7 +338,7 @@ class Resource implements Arrayable, Form, Table
         return array_merge($this->toArray(), [
             'title' => __('Create :model', ['model' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
-            'action' => $this->getUrl(),
+            'action' => $this->getUri(),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
         ]);

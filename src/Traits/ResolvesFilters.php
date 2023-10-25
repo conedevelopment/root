@@ -2,10 +2,13 @@
 
 namespace Cone\Root\Traits;
 
+use Cone\Root\Columns\Columns;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
 use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Filters\TrashStatus;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 trait ResolvesFilters
@@ -21,9 +24,7 @@ trait ResolvesFilters
     public function filters(Request $request): array
     {
         return [
-            new Search(),
-            // new Sort(),
-            new TrashStatus(),
+            //
         ];
     }
 
@@ -34,6 +35,22 @@ trait ResolvesFilters
     {
         if (is_null($this->filters)) {
             $this->filters = new Filters($this->filters($request));
+
+            $this->resolveColumns($request)
+                ->searchable()
+                ->whenNotEmpty(function (Columns $columns): void {
+                    $this->filters->prepend(new Search($columns));
+                });
+
+            $this->resolveColumns($request)
+                ->sortable()
+                ->whenNotEmpty(function (Columns $columns): void {
+                    $this->filters->register(new Sort($columns));
+                });
+
+            if (in_array(SoftDeletes::class, class_uses_recursive($this->getModel()))) {
+                $this->filters->register(new TrashStatus());
+            }
 
             $this->filters->each(function (Filter $filter) use ($request): void {
                 $this->resolveFilter($request, $filter);

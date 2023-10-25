@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
@@ -65,7 +64,9 @@ class Meta extends MorphOne
             call_user_func_array($callback, [$this->field]);
         }
 
-        $this->field->value(fn (Request $request): mixed => $this->resolveValue($request));
+        $this->field->value(function (Request $request, Model $model): mixed {
+            return $this->resolveValue($request, $model);
+        });
 
         return $this;
     }
@@ -248,17 +249,17 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function render(): View
+    public function toArray(): array
     {
-        return $this->field->render();
+        return $this->field->toArray();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toFormComponent(Request $request, Model $model): array
     {
-        return $this->field->toArray();
+        return $this->field->toFormComponent($request, $model);
     }
 
     /**

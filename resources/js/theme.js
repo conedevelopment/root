@@ -2,7 +2,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('theme', () => {
         return {
             systemMode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-            theme: window.$cookie.get('__root_theme', 'system'),
+            theme: window.$cookie.get('theme', 'system'),
             init() {
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
                     if (this.theme === 'system') {
@@ -23,7 +23,7 @@ document.addEventListener('alpine:init', () => {
             change(theme) {
                 document.documentElement.classList.add('no-transition');
 
-                window.$cookie.set('__root_theme', theme);
+                window.$cookie.set('theme', theme);
 
                 this.theme = theme;
 

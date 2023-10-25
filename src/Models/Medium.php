@@ -267,6 +267,14 @@ class Medium extends Model implements Contract
     }
 
     /**
+     * Check if the medium has the given conversion.
+     */
+    public function hasConversion(string $conversion): bool
+    {
+        return in_array($conversion, $this->properties['conversions'] ?? []);
+    }
+
+    /**
      * Scope the query only to the given search term.
      */
     public function scopeSearch(Builder $query, string $value = null): Builder

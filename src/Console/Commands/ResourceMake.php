@@ -59,7 +59,7 @@ class ResourceMake extends GeneratorCommand
     }
 
     /**
-     * Create a new method.
+     * Replace the model class.
      */
     public function replaceModel(string $class): string
     {
