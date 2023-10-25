@@ -227,7 +227,6 @@ class File extends MorphToMany
     public function toOption(Request $request, Model $model, Model $related): array
     {
         /** @var \Cone\Root\Models\Medium $related */
-
         $option = parent::toOption($request, $model, $related);
 
         $name = sprintf(
