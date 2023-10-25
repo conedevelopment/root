@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Tests;
 
 use Cone\Root\Traits\HasMetaData;
 use Illuminate\Database\Eloquent\Model;

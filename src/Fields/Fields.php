@@ -61,6 +61,7 @@ class Fields extends Collection
         $router->prefix('fields')->group(function (Router $router) use ($request): void {
             $this->each(static function (Field $field) use ($request, $router): void {
                 if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
+                    /** @var \Tests\FieldWithRoute $field */
                     $field->registerRoutes($request, $router);
                 }
             });
