@@ -28,7 +28,7 @@ class MediaController extends Controller
             'GET' => new JsonResponse($field->paginate($request, $model)),
             'POST' => new JsonResponse($field->upload($request, $model), JsonResponse::HTTP_CREATED),
             'DELETE' => new JsonResponse(['deleted' => $field->prune($request, $model, $request->input('ids', []))]),
-            default => throw new MethodNotAllowedHttpException(),
+            default => throw new MethodNotAllowedHttpException(['GET', 'POST', 'DELETE']),
         };
     }
 }
