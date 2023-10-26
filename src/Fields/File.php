@@ -203,7 +203,7 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    protected function prune(Request $request, Model $model, array $keys): int
+    public function prune(Request $request, Model $model, array $keys): int
     {
         $count = 0;
 
