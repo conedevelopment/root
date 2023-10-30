@@ -6,6 +6,7 @@ use Closure;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\ResolvesModelValue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -54,12 +55,17 @@ class Column
     protected string $modelAttribute;
 
     /**
+     * The search query resolver callback.
+     */
+    protected ?Closure $searchQueryResolver = null;
+
+    /**
      * Create a new column instance.
      */
     public function __construct(string $label, string $modelAttribute = null)
     {
         $this->label = $label;
-        $this->modelAttribute = $modelAttribute ??= Str::of($label)->lower()->snake()->value();
+        $this->modelAttribute = $modelAttribute ?: Str::of($label)->lower()->snake()->value();
     }
 
     /**
@@ -109,9 +115,9 @@ class Column
             return null;
         }
 
-        return match ($request->query('sort', 'asc')) {
-            'asc' => $request->fullUrlWithQuery(['sort' => 'desc', 'sort_by' => $this->getModelAttribute()]),
-            default => $request->fullUrlWithQuery(['sort' => 'asc', 'sort_by' => $this->getModelAttribute()]),
+        return match ($request->input('sort.order', 'asc')) {
+            'asc' => $request->fullUrlWithQuery(['sort' => ['order' => 'desc', 'sort' => $this->getModelAttribute()]]),
+            default => $request->fullUrlWithQuery(['sort' => ['order' => 'asc', 'by' => $this->getModelAttribute()]]),
         };
     }
 
@@ -135,6 +141,26 @@ class Column
         }
 
         return $this->searchable;
+    }
+
+    /**
+     * Set the search query resolver.
+     */
+    public function searchWithQuery(Closure $callback): static
+    {
+        $this->searchQueryResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the serach query.
+     */
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
+    {
+        return is_null($this->searchQueryResolver)
+            ? $query
+            : call_user_func_array($this->searchQueryResolver, [$request, $query, $value]);
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Filters;
 
+use Cone\Root\Columns\Column;
 use Cone\Root\Columns\Columns;
+use Cone\Root\Columns\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -27,7 +29,35 @@ class Search extends RenderableFilter
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        return $query;
+        $attributes = $this->columns->mapWithKeys(static function (Column $column): array {
+            return [
+                $column->getModelAttribute() => $column instanceof Relation ? $column->getSearchableRelationAttributes() : null,
+            ];
+        })->all();
+
+        if (empty($value) || empty($attributes)) {
+            return $query;
+        }
+
+        return $query->where(static function (Builder $query) use ($attributes, $value): void {
+            foreach ($attributes as $attribute => $columns) {
+                $operator = array_key_first($attributes) === $attribute ? 'and' : 'or';
+
+                if (is_array($columns)) {
+                    $query->has($attribute, '>=', 1, $operator, static function (Builder $query) use ($columns, $value): Builder {
+                        foreach ($columns as $column) {
+                            $operator = $columns[0] === $column ? 'and' : 'or';
+
+                            $query->where($query->qualifyColumn($column), 'like', "%{$value}%", $operator);
+                        }
+
+                        return $query;
+                    });
+                } else {
+                    $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $operator);
+                }
+            }
+        });
     }
 
     /**
@@ -36,9 +66,7 @@ class Search extends RenderableFilter
     public function toField(): SearchField
     {
         return SearchField::make($this->getName(), $this->getRequestKey())
-            ->value(function (Request $request, Model $model): ?string {
-                return $model->getAttribute($this->getKey());
-            })
+            ->value(fn (Request $request): ?string => $this->getValue($request))
             ->placeholder($this->getName().'...');
     }
 }
