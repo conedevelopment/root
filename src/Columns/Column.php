@@ -154,7 +154,7 @@ class Column
     }
 
     /**
-     * Resolve the serach query.
+     * Resolve the search query.
      */
     public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
     {
