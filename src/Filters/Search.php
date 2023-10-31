@@ -6,7 +6,6 @@ use Cone\Root\Columns\Column;
 use Cone\Root\Columns\Columns;
 use Cone\Root\Columns\Relation;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class Search extends RenderableFilter
