@@ -59,7 +59,7 @@ jobs:
                 - "lowest"
                 - "locked"
                 - "highest"
-        runs-on: "ubuntu-22.04"
+        runs-on: "${{ matrix.os }}"
         timeout-minutes: 5
         steps:
         -
