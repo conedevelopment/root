@@ -68,6 +68,7 @@ jobs:
             with:
                 php-version: "${{ matrix.php-version }}"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+                coverage: "pcov"
         -
             name: "Setup problem matcher for PHPUnit"
             run: |
