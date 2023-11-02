@@ -173,7 +173,7 @@ class Repeater extends Field
     {
         $option = $this->toOption($request, $model, $this->newTemporaryModel([]));
 
-        $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
+        $option['fields'] = $option['fields']->mapToInputs($request, $model);
 
         $option['html'] = View::make('root::fields.repeater-option', $option)->render();
 
@@ -218,13 +218,13 @@ class Repeater extends Field
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
+        return array_merge(parent::toInput($request, $model), [
             'addNewLabel' => $this->getAddNewOptionLabel(),
             'max' => $this->max,
             'options' => array_map(static function (array $option) use ($request, $model): array {
-                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
+                $option['fields'] = $option['fields']->mapToInputs($request, $model);
 
                 return array_merge($option, [
                     'html' => View::make('root::fields.repeater-option', $option)->render(),

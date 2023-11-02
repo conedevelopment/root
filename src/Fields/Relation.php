@@ -18,6 +18,16 @@ abstract class Relation extends Field
     protected Closure|string $relation;
 
     /**
+     * The searchable columns.
+     */
+    protected array $searchableColumns = ['id'];
+
+    /**
+     * The sortable column.
+     */
+    protected string $sortableColumn = 'id';
+
+    /**
      * Indicates if the field should be nullable.
      */
     protected bool $nullable = false;
@@ -111,6 +121,42 @@ abstract class Relation extends Field
     public function isNullable(): bool
     {
         return $this->nullable;
+    }
+
+    /**
+     * Set the searachable attribute.
+     */
+    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
+    {
+        $this->searchableColumns = $columns;
+
+        return parent::searchable($value);
+    }
+
+    /**
+     * Get the searchable columns.
+     */
+    public function getSearchableColumns(): array
+    {
+        return $this->searchableColumns;
+    }
+
+    /**
+     * Set the sortable attribute.
+     */
+    public function sortable(bool|Closure $value = true, string $column = 'id'): static
+    {
+        $this->sortableColumn = $column;
+
+        return parent::sortable($value);
+    }
+
+    /**
+     * Get the sortable columns.
+     */
+    public function getSortableColumn(): string
+    {
+        return $this->sortableColumn;
     }
 
     /**
@@ -242,9 +288,9 @@ abstract class Relation extends Field
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
+        return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
         ]);

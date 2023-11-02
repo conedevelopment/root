@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Columns\Column;
-use Cone\Root\Columns\Columns;
-use Cone\Root\Columns\Relation;
+use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Fields;
+use Cone\Root\Fields\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
@@ -13,16 +13,16 @@ use Illuminate\Http\Request;
 class Sort extends Filter
 {
     /**
-     * The sortable columns.
+     * The sortable fields.
      */
-    protected Columns $columns;
+    protected Fields $fields;
 
     /**
      * Create a new filter instance.
      */
-    public function __construct(Columns $columns)
+    public function __construct(Fields $fields)
     {
-        $this->columns = $columns;
+        $this->fields = $fields;
     }
 
     /**
@@ -32,9 +32,9 @@ class Sort extends Filter
     {
         $value = array_replace(['by' => 'id', 'order' => 'desc'], (array) $value);
 
-        $attributes = $this->columns->mapWithKeys(static function (Column $column): array {
+        $attributes = $this->fields->mapWithKeys(static function (Field $field): array {
             return [
-                $column->getModelAttribute() => $column instanceof Relation ? $column->getSortableRelationAttribute() : null,
+                $field->getModelAttribute() => $field instanceof Relation ? $field->getSortableColumn() : null,
             ];
         })->all();
 
@@ -57,7 +57,7 @@ class Sort extends Filter
                 ? $relation->getQualifiedOwnerKeyName()
                 : $relation->getQualifiedParentKeyName();
 
-            return $relation->whereColumn($relation->getQualifiedForeignKeyName(), '=', $key);
+            return $relation->whereField($relation->getQualifiedForeignKeyName(), '=', $key);
         });
 
         return $query->orderBy(

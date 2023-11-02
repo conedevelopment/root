@@ -252,9 +252,9 @@ class Meta extends MorphOne
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return $this->field->toFormComponent($request, $model);
+        return $this->field->toInput($request, $model);
     }
 
     /**

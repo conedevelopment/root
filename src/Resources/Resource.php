@@ -12,7 +12,6 @@ use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -31,13 +30,12 @@ abstract class Resource implements Arrayable, Form, Table
 {
     use AsForm;
     use Authorizable;
+    use ResolvesActions;
+    use ResolvesFilters;
+    use ResolvesWidgets;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
-    use ResolvesActions;
-    use ResolvesColumns;
-    use ResolvesFilters;
-    use ResolvesWidgets;
 
     /**
      * The model class.
@@ -274,7 +272,9 @@ abstract class Resource implements Arrayable, Form, Table
             ->through(function (Model $model) use ($request): array {
                 return [
                     'id' => $model->getKey(),
-                    'cells' => $this->resolveColumns($request)->mapToCells($request, $model),
+                    'url' => $this->modelUrl($model),
+                    'model' => $model,
+                    'fields' => $this->resolveFields($request)->mapToDisplay($request, $model),
                 ];
             });
     }
@@ -315,15 +315,14 @@ abstract class Resource implements Arrayable, Form, Table
     {
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'columns' => $this->resolveColumns($request)->mapToHeads($request),
-            'actions' => $this->resolveActions($request)->mapToTableComponents($request),
+            'actions' => $this->resolveActions($request)->mapToForms($request),
             'data' => $this->paginate($request),
             'widgets' => $this->resolveWidgets($request)->all(),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->renderable()
                 ->map(function (RenderableFilter $filter) use ($request): array {
-                    return $filter->toField()->toFormComponent($request, $this->getModelInstance());
+                    return $filter->toField()->toInput($request, $this->getModelInstance());
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
@@ -340,7 +339,7 @@ abstract class Resource implements Arrayable, Form, Table
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
             'method' => 'POST',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)->mapToInputs($request, $model),
         ]);
     }
 
@@ -354,7 +353,7 @@ abstract class Resource implements Arrayable, Form, Table
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)->mapToInputs($request, $model),
         ]);
     }
 }

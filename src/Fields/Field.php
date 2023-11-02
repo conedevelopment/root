@@ -3,11 +3,13 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use Cone\Root\Traits\ResolvesModelValue;
+use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -18,10 +20,11 @@ use JsonSerializable;
 
 abstract class Field implements Arrayable, JsonSerializable
 {
+    use Authorizable;
     use Conditionable;
     use HasAttributes;
     use Makeable;
-    use ResolvesModelValue;
+    use ResolvesVisibility;
 
     /**
      * The Blade template.
@@ -32,6 +35,16 @@ abstract class Field implements Arrayable, JsonSerializable
      * The hydrate resolver callback.
      */
     protected ?Closure $hydrateResolver = null;
+
+    /**
+     * The format resolver callback.
+     */
+    protected ?Closure $formatResolver = null;
+
+    /**
+     * The value resolver callback.
+     */
+    protected ?Closure $valueResolver = null;
 
     /**
      * The errors resolver callback.
@@ -86,6 +99,21 @@ abstract class Field implements Arrayable, JsonSerializable
      * Indicates if the field has been hydrated.
      */
     protected bool $hydrated = false;
+
+    /**
+     * Indicates if the field is sortable.
+     */
+    protected bool|Closure $sortable = false;
+
+    /**
+     * Indicates if the field is searchable.
+     */
+    protected bool|Closure $searchable = false;
+
+    /**
+     * The search query resolver callback.
+     */
+    protected ?Closure $searchQueryResolver = null;
 
     /**
      * Create a new field instance.
@@ -235,6 +263,80 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Set the sortable attribute.
+     */
+    public function sortable(bool|Closure $value = true): static
+    {
+        $this->sortable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is sortable.
+     */
+    public function isSortable(): bool
+    {
+        if ($this->sortable instanceof Closure) {
+            return call_user_func($this->sortable);
+        }
+
+        return $this->sortable;
+    }
+
+    /**
+     * Set the searachable attribute.
+     */
+    public function searchable(bool|Closure $value = true): static
+    {
+        $this->searchable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is searchable.
+     */
+    public function isSearchable(): bool
+    {
+        if ($this->searchable instanceof Closure) {
+            return call_user_func($this->searchable);
+        }
+
+        return $this->searchable;
+    }
+
+    /**
+     * Set the search query resolver.
+     */
+    public function searchWithQuery(Closure $callback): static
+    {
+        $this->searchQueryResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the serach query.
+     */
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
+    {
+        return is_null($this->searchQueryResolver)
+            ? $query
+            : call_user_func_array($this->searchQueryResolver, [$request, $query, $value]);
+    }
+
+    /**
+     * Set the value resolver.
+     */
+    public function value(Closure $callback): static
+    {
+        $this->valueResolver = $callback;
+
+        return $this;
+    }
+
+    /**
      * Resolve the value.
      */
     public function resolveValue(Request $request, Model $model): mixed
@@ -276,6 +378,38 @@ abstract class Field implements Arrayable, JsonSerializable
     public function withoutOldValue(): mixed
     {
         return $this->withOldValue(false);
+    }
+
+    /**
+     * Get the default value from the model.
+     */
+    public function getValue(Model $model): mixed
+    {
+        return $model->getAttribute($this->getModelAttribute());
+    }
+
+    /**
+     * Set the format resolver.
+     */
+    public function format(Closure $callback): static
+    {
+        $this->formatResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Format the value.
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        $value = $this->resolveValue($request, $model);
+
+        if (is_null($this->formatResolver)) {
+            return $value;
+        }
+
+        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
     }
 
     /**
@@ -405,21 +539,33 @@ abstract class Field implements Arrayable, JsonSerializable
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'template' => $this->getTemplate(),
+            'searchable' => $this->isSearchable(),
+            'sortable' => $this->isSortable(),
         ];
     }
 
     /**
      * Get the form component data.
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toDisplay(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'value' => $this->resolveValue($request, $model),
+            'formattedValue' => $this->resolveFormat($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the form component data.
+     */
+    public function toInput(Request $request, Model $model): array
+    {
+        return array_merge($this->toDisplay($request, $model), [
             'attrs' => $this->newAttributeBag()->class([
                 'form-control--invalid' => $this->invalid($request),
             ]),
             'error' => $this->error($request),
             'invalid' => $this->invalid($request),
-            'value' => $this->resolveValue($request, $model),
         ]);
     }
 
