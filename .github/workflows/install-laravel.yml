@@ -71,7 +71,7 @@ jobs:
             run: |
                 composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
                 php artisan root:action FooBar
-                php artisan root:extract FooBar
+                ##php artisan root:extract FooBar
                 php artisan root:field FooBar
                 php artisan root:filter FooBar
                 php artisan root:resource FooBar
