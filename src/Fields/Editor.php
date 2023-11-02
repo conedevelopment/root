@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
 {
-    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesFields;
 
     /**
      * The Blade template.

@@ -29,10 +29,10 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     use Authorizable;
     use HasAttributes;
     use Makeable;
-    use ResolvesVisibility;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesVisibility;
 
     /**
      * The Blade template.
