@@ -202,6 +202,30 @@ abstract class Relation extends Field
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = function (Request $request, Model $model): mixed {
+                $default = $this->getValue($model);
+
+                if ($default instanceof Model) {
+                    return $this->resolveDisplay($default);
+                } elseif ($default instanceof Collection) {
+                    return $default->map(function (Model $related): mixed {
+                        return $this->resolveDisplay($related);
+                    })->join(', ');
+                }
+
+                return $default;
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
+    }
+
+    /**
      * Set the query resolver.
      */
     public function withRelatableQuery(Closure $callback): static

@@ -129,14 +129,6 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
-     * Get the template.
-     */
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
-    /**
      * Get the model attribute.
      */
     public function getModelAttribute(): string
@@ -538,7 +530,7 @@ abstract class Field implements Arrayable, JsonSerializable
             'label' => $this->label,
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
-            'template' => $this->getTemplate(),
+            'template' => $this->template,
             'searchable' => $this->isSearchable(),
             'sortable' => $this->isSortable(),
         ];

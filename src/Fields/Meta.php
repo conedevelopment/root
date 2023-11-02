@@ -55,13 +55,13 @@ class Meta extends MorphOne
     {
         $this->field = new $field($this->label, $this->getModelAttribute());
 
-        if (! is_null($callback)) {
-            call_user_func_array($callback, [$this->field]);
-        }
-
         $this->field->value(function (Request $request, Model $model): mixed {
             return $this->resolveValue($request, $model);
         });
+
+        if (! is_null($callback)) {
+            call_user_func_array($callback, [$this->field]);
+        }
 
         return $this;
     }
@@ -247,6 +247,14 @@ class Meta extends MorphOne
     public function toArray(): array
     {
         return $this->field->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toDisplay(Request $request, Model $model): array
+    {
+        return $this->field->toDisplay($request, $model);
     }
 
     /**

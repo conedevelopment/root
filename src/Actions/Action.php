@@ -92,14 +92,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
-     * Get the Blade template.
-     */
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
-    /**
      * Set the Eloquent query.
      */
     public function setQuery(Builder $query): static
@@ -213,7 +205,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'key' => $this->getKey(),
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
-            'template' => $this->getTemplate(),
+            'template' => $this->template,
             'url' => $this->getUri(),
         ];
     }

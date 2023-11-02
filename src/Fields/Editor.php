@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Config;
 
 class Editor extends Field
 {
+    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
-    use ResolvesFields;
 
     /**
      * The Blade template.
@@ -43,6 +43,7 @@ class Editor extends Field
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');
+        $this->hiddenOn(['index']);
     }
 
     /**
