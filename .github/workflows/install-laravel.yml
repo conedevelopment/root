@@ -76,6 +76,7 @@ jobs:
                 php artisan root:filter FooBar
                 php artisan root:resource FooBar
                 php artisan root:widget FooBar
+                cat app/Root/Resources/FooBar.php
                 vendor/bin/phpstan analyze -c vendor/nunomaduro/larastan/extension.neon -l 5 $(find app/Root/ -type f -name FooBar.php)
         -
             name: "Install front-end dependencies"
