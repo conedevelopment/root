@@ -283,6 +283,21 @@ abstract class Resource implements Arrayable, Form, Table
     }
 
     /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+
+        $this->resolveFields($request)
+            ->authorized($request, $model)
+            ->visible($request->method() === 'POST' ? 'create' : 'update')
+            ->persist($request, $model);
+
+        $model->save();
+    }
+
+    /**
      * Register the routes.
      */
     public function registerRoutes(Request $request, Router $router): void
