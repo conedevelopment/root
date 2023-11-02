@@ -78,7 +78,7 @@ class ResourceMake extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['model', null, InputOption::VALUE_OPTIONAL, 'The Eloquent Model'],
+            ['model', null, InputOption::VALUE_REQUIRED, 'The Eloquent Model'],
         ];
     }
 }
