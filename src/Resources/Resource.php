@@ -374,6 +374,23 @@ abstract class Resource implements Arrayable, Form, Table
     /**
      * Get the edit representation of the resource.
      */
+    public function toShow(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'title' => sprintf('%s #%s', $this->getModelName(), $model->getKey()),
+            'model' => $model,
+            'action' => $this->modelUrl($model),
+            'method' => 'PATCH',
+            'fields' => $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->mapToDisplay($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     */
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [

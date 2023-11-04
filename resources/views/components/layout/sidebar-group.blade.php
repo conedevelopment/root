@@ -15,7 +15,7 @@
         <ul>
             @foreach($items as $item)
                 <li>
-                    <a href="{{ $item->url }}" @if($item->matched()) aria-current="page" @endif>
+                    <a href="{{ $item->url }}" @if($item->partiallyMatched()) aria-current="page" @endif>
                         @if($item->icon)
                             <x-root::icon :name="$item->icon" class="icon" />
                         @endif

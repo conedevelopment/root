@@ -47,8 +47,13 @@
                                     @endforeach
                                     <td>
                                         <div class="data-table__actions">
+                                            @can('view', $row['model'])
+                                                <a href="{{ $row['url'] }}" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('View') }}">
+                                                    <x-root::icon name="eye" class="btn__icon" />
+                                                </a>
+                                            @endcan
                                             @can('update', $row['model'])
-                                                <a href="{{ $row['url'] }}" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('Edit') }}">
+                                                <a href="{{ $row['url'] }}/edit" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('Edit') }}">
                                                     <x-root::icon name="edit" class="btn__icon" />
                                                 </a>
                                             @endcan
