@@ -2,59 +2,38 @@
 
 namespace Cone\Root\Widgets;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\ForwardsCalls;
 
-/**
- * @mixin \Illuminate\Support\Collection
- */
-class Widgets
+class Widgets extends Collection
 {
-    use ForwardsCalls;
-
-    /**
-     * The widgets collection.
-     */
-    protected Collection $widgets;
-
-    /**
-     * Create a new widgets instance.
-     */
-    public function __construct(array $widgets = [])
-    {
-        $this->widgets = new Collection($widgets);
-    }
-
     /**
      * Register the given widgets.
      */
     public function register(array|Widget $widgets): static
     {
         foreach (Arr::wrap($widgets) as $widget) {
-            $this->widgets->push($widget);
+            $this->push($widget);
         }
 
         return $this;
     }
 
     /**
-     * Make a new widget instance.
+     * Filter the fields that are available for the current request and model.
      */
-    public function widget(string $widget, ...$params): Widget
+    public function authorized(Request $request, Model $model = null): static
     {
-        $instance = new $widget(...$params);
-
-        $this->register($instance);
-
-        return $instance;
+        return $this->filter->authorized($request, $model)->values();
     }
 
     /**
-     * Handle the dynamic method call.
+     * Filter the fields that are visible in the given context.
      */
-    public function __call($method, $parameters): mixed
+    public function visible(string|array $context): static
     {
-        return $this->forwardCallTo($this->widgets, $method, $parameters);
+        return $this->filter->visible($context)->values();
     }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Root\Resources;
 
-use Cone\Root\Columns\Column;
-use Cone\Root\Columns\ID;
 use Cone\Root\Fields\Email;
+use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
@@ -19,29 +18,13 @@ class UserResource extends Resource
     protected string $icon = 'users';
 
     /**
-     * Define the columns.
-     */
-    public function columns(Request $request): array
-    {
-        return array_merge(parent::columns($request), [
-            ID::make(),
-
-            Column::make(__('Name'), 'name')
-                ->searchable()
-                ->sortable(),
-
-            Column::make(__('Email'), 'email')
-                ->searchable()
-                ->sortable(),
-        ]);
-    }
-
-    /**
      * Define the fields.
      */
     public function fields(Request $request): array
     {
         return array_merge(parent::fields($request), [
+            ID::make(),
+
             Text::make(__('Name'), 'name')
                 ->rules(['required', 'string', 'max:256']),
 

@@ -185,9 +185,9 @@ class Slug extends Text
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
+        return array_merge(parent::toInput($request, $model), [
             'help' => $this->help ?: __('Leave it empty for auto-generated slug.'),
         ]);
     }

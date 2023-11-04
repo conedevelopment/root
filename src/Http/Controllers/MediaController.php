@@ -5,6 +5,7 @@ namespace Cone\Root\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class MediaController extends Controller
 {
@@ -29,6 +30,7 @@ class MediaController extends Controller
             'GET' => new JsonResponse($field->paginate($request, $model)),
             'POST' => new JsonResponse($field->upload($request, $model), JsonResponse::HTTP_CREATED),
             'DELETE' => new JsonResponse(['deleted' => $field->prune($request, $model, $request->input('ids', []))]),
+            default => throw new MethodNotAllowedHttpException(['GET', 'POST', 'DELETE']),
         };
     }
 }

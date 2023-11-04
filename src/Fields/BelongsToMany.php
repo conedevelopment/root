@@ -167,7 +167,7 @@ class BelongsToMany extends Relation
 
         $option['fields'] = is_null($this->pivotFieldsResolver)
             ? []
-            : call_user_func_array($this->pivotFieldsResolver, [$request, $model, $related])->mapToFormComponents($request, $model);
+            : call_user_func_array($this->pivotFieldsResolver, [$request, $model, $related])->mapToInputs($request, $model);
 
         return $option;
     }

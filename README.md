@@ -25,7 +25,6 @@
 - [Filters](https://root.conedevelopment.com/docs/filters) - Filters are responsible for transforming the current request to a database query.
 - [Actions](https://root.conedevelopment.com/docs/actions) - Actions are responsible for performing a specific action on a set of models.
 - [Widgets](https://root.conedevelopment.com/docs/widgets) - Widgets are cards that display some information or any content you want to display.
-- [Extracts](https://root.conedevelopment.com/docs/extracts) - Extracts are layers on the top of the resource index.
 
 ## Contributing
 

@@ -36,6 +36,38 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the fields that are available for the current request and model.
+     */
+    public function authorized(Request $request, Model $model = null): static
+    {
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the fields that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
+    }
+
+    /**
+     * Filter the searchable fields.
+     */
+    public function searchable(): static
+    {
+        return $this->filter->isSearchable();
+    }
+
+    /**
+     * Filter the sortable fields.
+     */
+    public function sortable(): static
+    {
+        return $this->filter->isSortable();
+    }
+
+    /**
      * Map the fields to validate.
      */
     public function mapToValidate(Request $request, Model $model): array
@@ -46,11 +78,19 @@ class Fields extends Collection
     }
 
     /**
-     * Map the field to form components.
+     * Map the fields to displayable data.
      */
-    public function mapToFormComponents(Request $request, Model $model): array
+    public function mapToDisplay(Request $request, Model $model): array
     {
-        return $this->map->toFormComponent($request, $model)->all();
+        return $this->map->toDisplay($request, $model)->all();
+    }
+
+    /**
+     * Map the fields to form inputs.
+     */
+    public function mapToInputs(Request $request, Model $model): array
+    {
+        return $this->map->toInput($request, $model)->all();
     }
 
     /**

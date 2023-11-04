@@ -71,6 +71,21 @@ class ResourceController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, Resource $resource, Model $model): Response
+    {
+        if ($resource->getPolicy()) {
+            $this->authorize('view', $model);
+        }
+
+        return ResponseFactory::view(
+            'root::resources.show',
+            $resource->toShow($request, $model)
+        );
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Request $request, Resource $resource, Model $model): Response

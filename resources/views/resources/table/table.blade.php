@@ -11,17 +11,63 @@
                     <table class="table table--hover">
                         <thead>
                             <tr>
-                                @foreach($columns as $column)
-                                    @include($column['template'], $column)
+                                @if(! empty($actions))
+                                    <th style="inline-size: 3.25rem;" scope="col">
+                                        <span class="sr-only">{{ __('Select') }}</span>
+                                        <label class="form-check" aria-label="{{ __('Select all items') }}">
+                                            <input class="form-check__control" type="checkbox">
+                                        </label>
+                                    </th>
+                                @endif
+                                @foreach($data[0]['fields'] as $column)
+                                    @include('root::resources.table.column', $column)
                                 @endforeach
+                                <th scope="col">
+                                    <span class="sr-only">{{ __('Actions') }}</span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($data as $row)
                                 <tr>
-                                    @foreach($row['cells'] as $cell)
-                                        @include($cell['template'], $cell)
+                                    @if(! empty($actions))
+                                        <td>
+                                            <label class="form-check" aria-label="">
+                                                <input
+                                                    class="form-check__control"
+                                                    type="checkbox"
+                                                    value="{{ $row['id'] }}"
+                                                    x-model="selection"
+                                                >
+                                            </label>
+                                        </td>
+                                    @endif
+                                    @foreach($row['fields'] as $cell)
+                                        @include('root::resources.table.cell', $cell)
                                     @endforeach
+                                    <td>
+                                        <div class="data-table__actions">
+                                            @can('view', $row['model'])
+                                                <a href="{{ $row['url'] }}" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('View') }}">
+                                                    <x-root::icon name="eye" class="btn__icon" />
+                                                </a>
+                                            @endcan
+                                            @can('update', $row['model'])
+                                                <a href="{{ $row['url'] }}/edit" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('Edit') }}">
+                                                    <x-root::icon name="edit" class="btn__icon" />
+                                                </a>
+                                            @endcan
+                                            @can('delete', $row['model'])
+                                                <form action="{{ $row['url'] }}" method="POST" onsubmit="return window.confirm('{{ __('Are you sure?') }}');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn--delete btn--sm btn--icon" aria-label="{{ __('Delete') }}">
+                                                        <x-root::icon name="trash" class="btn__icon" />
+                                                    </button>
+                                                </form>
+                                            @endcan
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

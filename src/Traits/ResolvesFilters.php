@@ -2,7 +2,7 @@
 
 namespace Cone\Root\Traits;
 
-use Cone\Root\Columns\Columns;
+use Cone\Root\Fields\Fields;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
 use Cone\Root\Filters\Search;
@@ -36,16 +36,16 @@ trait ResolvesFilters
         if (is_null($this->filters)) {
             $this->filters = new Filters($this->filters($request));
 
-            $this->resolveColumns($request)
+            $this->resolveFields($request)
                 ->searchable()
-                ->whenNotEmpty(function (Columns $columns): void {
-                    $this->filters->prepend(new Search($columns));
+                ->whenNotEmpty(function (Fields $fields): void {
+                    $this->filters->prepend(new Search($fields));
                 });
 
-            $this->resolveColumns($request)
+            $this->resolveFields($request)
                 ->sortable()
-                ->whenNotEmpty(function (Columns $columns): void {
-                    $this->filters->register(new Sort($columns));
+                ->whenNotEmpty(function (Fields $fields): void {
+                    $this->filters->register(new Sort($fields));
                 });
 
             if (in_array(SoftDeletes::class, class_uses_recursive($this->getModel()))) {

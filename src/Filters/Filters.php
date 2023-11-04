@@ -22,6 +22,14 @@ class Filters extends Collection
     }
 
     /**
+     * Filter the filters that are available for the given request.
+     */
+    public function authorized(Request $request): static
+    {
+        return $this->filter->authorized($request)->values();
+    }
+
+    /**
      * Apply the filters on the query.
      */
     public function apply(Request $request, Builder $query): Builder

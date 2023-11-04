@@ -12,7 +12,6 @@ use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -35,7 +34,6 @@ abstract class Resource implements Arrayable, Form, Table
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
     use ResolvesActions;
-    use ResolvesColumns;
     use ResolvesFilters;
     use ResolvesWidgets;
 
@@ -274,9 +272,29 @@ abstract class Resource implements Arrayable, Form, Table
             ->through(function (Model $model) use ($request): array {
                 return [
                     'id' => $model->getKey(),
-                    'cells' => $this->resolveColumns($request)->mapToCells($request, $model),
+                    'url' => $this->modelUrl($model),
+                    'model' => $model,
+                    'fields' => $this->resolveFields($request)
+                        ->authorized($request, $model)
+                        ->visible('index')
+                        ->mapToDisplay($request, $model),
                 ];
             });
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+
+        $this->resolveFields($request)
+            ->authorized($request, $model)
+            ->visible($request->method() === 'POST' ? 'create' : 'update')
+            ->persist($request, $model);
+
+        $model->save();
     }
 
     /**
@@ -315,15 +333,21 @@ abstract class Resource implements Arrayable, Form, Table
     {
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'columns' => $this->resolveColumns($request)->mapToHeads($request),
-            'actions' => $this->resolveActions($request)->mapToTableComponents($request),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request)
+                ->visible('index')
+                ->mapToForms($request),
             'data' => $this->paginate($request),
-            'widgets' => $this->resolveWidgets($request)->all(),
+            'widgets' => $this->resolveWidgets($request)
+                ->authorized($request)
+                ->visible('index')
+                ->toArray(),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
+                ->authorized($request)
                 ->renderable()
                 ->map(function (RenderableFilter $filter) use ($request): array {
-                    return $filter->toField()->toFormComponent($request, $this->getModelInstance());
+                    return $filter->toField()->toInput($request, $this->getModelInstance());
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
@@ -340,7 +364,27 @@ abstract class Resource implements Arrayable, Form, Table
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
             'method' => 'POST',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible('update')
+                ->mapToInputs($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     */
+    public function toShow(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'title' => sprintf('%s #%s', $this->getModelName(), $model->getKey()),
+            'model' => $model,
+            'action' => $this->modelUrl($model),
+            'method' => 'PATCH',
+            'fields' => $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->mapToDisplay($request, $model),
         ]);
     }
 
@@ -350,11 +394,14 @@ abstract class Resource implements Arrayable, Form, Table
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => '',
+            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getModelName(), $model->getKey())]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible('update')
+                ->mapToInputs($request, $model),
         ]);
     }
 }

@@ -43,6 +43,7 @@ class Editor extends Field
 
         $this->config = Config::get('root.editor', []);
         $this->height('350px');
+        $this->hiddenOn(['index']);
     }
 
     /**
@@ -168,10 +169,10 @@ class Editor extends Field
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
-            'media' => $this->media?->toFormComponent($request, $model),
+        return array_merge(parent::toInput($request, $model), [
+            'media' => $this->media?->toInput($request, $model),
         ]);
     }
 }

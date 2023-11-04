@@ -10,6 +10,7 @@ use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,6 +32,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesVisibility;
 
     /**
      * The Blade template.
@@ -87,14 +89,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function getModalKey(): string
     {
         return sprintf('action-%s', $this->getKey());
-    }
-
-    /**
-     * Get the Blade template.
-     */
-    public function getTemplate(): string
-    {
-        return $this->template;
     }
 
     /**
@@ -211,7 +205,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'key' => $this->getKey(),
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
-            'template' => $this->getTemplate(),
+            'template' => $this->template,
             'url' => $this->getUri(),
         ];
     }
@@ -219,12 +213,12 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function toTableComponent(Request $request): array
+    public function toForm(Request $request): array
     {
         return array_merge($this->toArray(), [
             'open' => $this->errors($request)->isNotEmpty(),
             'fields' => $this->resolveFields($request)
-                ->mapToFormComponents($request, $this->query->getModel()),
+                ->mapToInputs($request, $this->query->getModel()),
         ]);
     }
 }

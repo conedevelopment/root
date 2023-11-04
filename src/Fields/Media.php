@@ -186,9 +186,9 @@ class Media extends File
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        $data = parent::toFormComponent($request, $model);
+        $data = parent::toInput($request, $model);
 
         return array_merge($data, [
             'modalKey' => $this->getModalKey(),
