@@ -1,13 +1,13 @@
 <div class="file-list-item">
     <div class="file-list-item__column">
         @if($isImage)
-            <img class="file-list-item__thumbnail" src="{{ $url }}" alt="{{ $label }}">
+            <img class="file-list-item__thumbnail" src="{{ $url }}" alt="{{ $fileName }}">
         @else
             <span class="file-list-item__icon">
                 <x-root::icon name="document" class="media-item__icon" />
             </span>
         @endif
-        <span id="{{ $uuid }}" class="file-list-item__name">{{ $label }}</span>
+        <span id="{{ $uuid }}" class="file-list-item__name">{{ $fileName }}</span>
         <input type="hidden" name="{{ $attrs->get('name') }}" value="{{ $attrs->get('value') }}">
     </div>
     <div class="file-list-item__actions">

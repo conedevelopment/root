@@ -334,9 +334,9 @@ abstract class Resource implements Arrayable, Form, Table
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
             'actions' => $this->resolveActions($request)
-                ->authorized($request)
+                ->authorized($request, $this->getModelInstance())
                 ->visible('index')
-                ->mapToForms($request),
+                ->mapToForms($request, $this->getModelInstance()),
             'data' => $this->paginate($request),
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request)
@@ -385,6 +385,14 @@ abstract class Resource implements Arrayable, Form, Table
                 ->authorized($request, $model)
                 ->visible('show')
                 ->mapToDisplay($request, $model),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->mapToForms($request, $model),
+            'widgets' => $this->resolveWidgets($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->toArray(),
         ]);
     }
 
