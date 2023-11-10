@@ -30,11 +30,11 @@ abstract class Resource implements Arrayable, Form, Table
 {
     use AsForm;
     use Authorizable;
+    use ResolvesActions;
+    use ResolvesFilters;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
-    use ResolvesActions;
-    use ResolvesFilters;
     use ResolvesWidgets;
 
     /**
@@ -366,7 +366,7 @@ abstract class Resource implements Arrayable, Form, Table
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->authorized($request, $model)
-                ->visible('update')
+                ->visible('create')
                 ->mapToInputs($request, $model),
         ]);
     }
