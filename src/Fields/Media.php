@@ -7,7 +7,6 @@ use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
 use Cone\Root\Filters\MediaSearch;
 use Cone\Root\Filters\RenderableFilter;
-use Cone\Root\Filters\Search;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
@@ -25,10 +24,10 @@ use Illuminate\Validation\Rule;
 
 class Media extends File
 {
-    use ResolvesFilters;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesFilters;
 
     /**
      * Indicates if the component is multiple.

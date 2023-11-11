@@ -30,11 +30,11 @@ abstract class Resource implements Arrayable, Form, Table
 {
     use AsForm;
     use Authorizable;
-    use ResolvesActions;
-    use ResolvesFilters;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesActions;
+    use ResolvesFilters;
     use ResolvesWidgets;
 
     /**

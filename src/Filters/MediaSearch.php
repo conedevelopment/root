@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Filters\SearchField;
-
 class MediaSearch extends Search
 {
     /**
