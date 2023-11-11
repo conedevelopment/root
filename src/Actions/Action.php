@@ -15,6 +15,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
@@ -213,12 +214,11 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function toForm(Request $request): array
+    public function toForm(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
             'open' => $this->errors($request)->isNotEmpty(),
-            'fields' => $this->resolveFields($request)
-                ->mapToInputs($request, $this->query->getModel()),
+            'fields' => $this->resolveFields($request)->mapToInputs($request, $model),
         ]);
     }
 }

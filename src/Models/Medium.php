@@ -247,7 +247,7 @@ class Medium extends Model implements Contract
     {
         $path = sprintf('%s/%s', $this->uuid, $this->file_name);
 
-        if (! is_null($conversion)) {
+        if (! is_null($conversion) && $conversion !== 'original') {
             $path = substr_replace(
                 $path, "-{$conversion}", -(mb_strlen(Str::afterLast($path, '.')) + 1), -mb_strlen("-{$conversion}")
             );

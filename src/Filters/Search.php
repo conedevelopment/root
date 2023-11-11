@@ -28,11 +28,7 @@ class Search extends RenderableFilter
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        $attributes = $this->fields->mapWithKeys(static function (Field $field): array {
-            return [
-                $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
-            ];
-        })->all();
+        $attributes = $this->getSearchableAttributes();
 
         if (empty($value) || empty($attributes)) {
             return $query;
@@ -57,6 +53,18 @@ class Search extends RenderableFilter
                 }
             }
         });
+    }
+
+    /**
+     * Get the serachable attributes.
+     */
+    public function getSearchableAttributes(): array
+    {
+        return $this->fields->mapWithKeys(static function (Field $field): array {
+            return [
+                $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
+            ];
+        })->all();
     }
 
     /**

@@ -40,11 +40,11 @@ class Actions extends Collection
     }
 
     /**
-     * Map the action to table components.
+     * Map the action to forms.
      */
-    public function mapToForms(Request $request): array
+    public function mapToForms(Request $request, Model $model): array
     {
-        return $this->map->toForm($request)->all();
+        return $this->map->toForm($request, $model)->all();
     }
 
     /**

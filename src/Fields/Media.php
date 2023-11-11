@@ -2,10 +2,16 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\Filters;
+use Cone\Root\Filters\MediaSearch;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
 use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +27,7 @@ class Media extends File
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesFilters;
 
     /**
      * Indicates if the component is multiple.
@@ -31,6 +38,11 @@ class Media extends File
      * The Blade template.
      */
     protected string $template = 'root::fields.media';
+
+    /**
+     * The filters resolver callback.
+     */
+    protected ?Closure $filtersResolver = null;
 
     /**
      * Get the URI key.
@@ -78,11 +90,54 @@ class Media extends File
     }
 
     /**
+     * Define the filters for the object.
+     */
+    public function filters(Request $request): array
+    {
+        return [
+            new MediaSearch(),
+        ];
+    }
+
+    /**
+     * Set the filters resolver callback.
+     */
+    public function withFilters(Closure $callback): static
+    {
+        $this->filtersResolver = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the filters collection.
+     */
+    public function resolveFilters(Request $request): Filters
+    {
+        if (is_null($this->filters)) {
+            $this->filters = new Filters($this->filters($request));
+
+            if (! is_null($this->filtersResolver)) {
+                $this->fields->register(
+                    Arr::wrap(call_user_func_array($this->filtersResolver, [$request]))
+                );
+            }
+
+            $this->filters->each(function (Filter $filter) use ($request): void {
+                $this->resolveFilter($request, $filter);
+            });
+        }
+
+        return $this->filters;
+    }
+
+    /**
      * Paginate the results.
      */
     public function paginate(Request $request, Model $model): array
     {
-        return $this->resolveRelatableQuery($request, $model)
+        return $this->resolveFilters($request)
+            ->apply($request, $this->resolveRelatableQuery($request, $model))
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
@@ -190,12 +245,15 @@ class Media extends File
     {
         $data = parent::toInput($request, $model);
 
+        $filters = $this->resolveFilters($request)->authorized($request);
+
         return array_merge($data, [
             'modalKey' => $this->getModalKey(),
             'config' => [
                 'accept' => $this->getAttribute('accept', '*'),
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
+                'query' => $filters->mapToData($request),
             ],
             'selection' => array_map(static function (array $option): array {
                 return array_merge($option, [
@@ -203,6 +261,17 @@ class Media extends File
                 ]);
             }, $data['options'] ?? []),
             'url' => $this->getUri() ? $this->buildUri($request, $model) : null,
+            'filters' => $filters->renderable()
+                ->map(function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()
+                        ->removeAttribute('name')
+                        ->setAttributes([
+                            'x-model.debounce.300ms' => $filter->getKey(),
+                            'x-bind:readonly' => 'processing',
+                        ])
+                        ->toInput($request, $this->getRelation($model)->getRelated());
+                })
+                ->all(),
         ]);
     }
 }

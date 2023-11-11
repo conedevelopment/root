@@ -37,6 +37,11 @@ class File extends MorphToMany
     protected string $disk;
 
     /**
+     * The displayable conversion name.
+     */
+    protected ?string $displayConversion = 'original';
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
@@ -94,7 +99,11 @@ class File extends MorphToMany
     public function resolveDisplay(Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
-            $this->display('file_name');
+            $this->display(function (Medium $related): string {
+                return $related->isImage
+                    ? sprintf('<img src="%s" width="30" height="30">', $related->getUrl($this->displayConversion))
+                    : sprintf('<a href="%s">%s</a>', $related->getUrl(), $related->file_name);
+            });
         }
 
         return parent::resolveDisplay($related);
