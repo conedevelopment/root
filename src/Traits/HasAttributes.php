@@ -44,7 +44,7 @@ trait HasAttributes
      */
     public function hasAttribute(string $key): bool
     {
-        return Arr::has($this->attributes, $key);
+        return array_key_exists($key, $this->attributes);
     }
 
     /**
@@ -52,7 +52,7 @@ trait HasAttributes
      */
     public function getAttribute(string $key, mixed $default = null): mixed
     {
-        return Arr::get($this->attributes, $key, $default);
+        return $this->attributes[$key] ?? $default;
     }
 
     /**
@@ -60,7 +60,7 @@ trait HasAttributes
      */
     public function setAttribute(string $key, mixed $value): static
     {
-        Arr::set($this->attributes, $key, $value);
+        $this->attributes[$key] = $value;
 
         return $this;
     }
@@ -70,7 +70,7 @@ trait HasAttributes
      */
     public function removeAttribute(string $key): static
     {
-        Arr::forget($this->attributes, $key);
+        unset($this->attributes[$key]);
 
         return $this;
     }

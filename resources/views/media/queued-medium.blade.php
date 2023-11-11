@@ -7,11 +7,11 @@
             <div
                 class="progressbar__inner"
                 role="progressbar"
-                x-bind:aria-labelledby="item.hash"
                 aria-valuemin="0"
-                aria-valuenow="68"
                 aria-valuemax="100"
                 aria-labelledby="progress-caption"
+                x-bind:aria-valuenow="item.progress"
+                x-bind:aria-labelledby="item.hash"
             >
                 <div class="progressbar__indicator" x-bind:style="item.progress && { inlineSize: item.progress + '%' }"></div>
             </div>

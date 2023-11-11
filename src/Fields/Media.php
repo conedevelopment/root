@@ -246,12 +246,15 @@ class Media extends File
     {
         $data = parent::toInput($request, $model);
 
+        $filters = $this->resolveFilters($request)->authorized($request);
+
         return array_merge($data, [
             'modalKey' => $this->getModalKey(),
             'config' => [
                 'accept' => $this->getAttribute('accept', '*'),
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
+                'query' => $filters->mapToData($request),
             ],
             'selection' => array_map(static function (array $option): array {
                 return array_merge($option, [
@@ -259,12 +262,14 @@ class Media extends File
                 ]);
             }, $data['options'] ?? []),
             'url' => $this->getUri() ? $this->buildUri($request, $model) : null,
-            'filters' => $this->resolveFilters($request)
-                ->authorized($request)
-                ->renderable()
+            'filters' => $filters->renderable()
                 ->map(function (RenderableFilter $filter) use ($request, $model): array {
                     return $filter->toField()
                         ->removeAttribute('name')
+                        ->setAttributes([
+                            'x-model.debounce.300ms' => $filter->getKey(),
+                            'x-bind:readonly' => 'processing',
+                        ])
                         ->toInput($request, $this->getRelation($model)->getRelated());
                 })
                 ->all(),

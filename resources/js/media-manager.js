@@ -10,17 +10,31 @@ document.addEventListener('alpine:init', () => {
             queue: [],
             items: [],
             nextPageUrl: url,
+            query: config.query,
             init() {
                 this.$root.querySelector('.modal__body').addEventListener('scroll', throttle((event) => {
                     if (this.shouldPaginate(event)) {
-                        this.fetch();
+                        this.paginate();
                     }
                 }));
+
+                this.$watch('query', () => this.fetch());
             },
             fetch() {
                 this.processing = true;
 
-                window.$http.get(this.nextPageUrl).then((response) => {
+                window.$http.get(url, { params: this.query }).then((response) => {
+                    this.items = response.data.data;
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            },
+            paginate() {
+                this.processing = true;
+
+                window.$http.get(this.nextPageUrl, { params: this.query }).then((response) => {
                     this.items.push(...response.data.data);
                     this.nextPageUrl = response.data.next_page_url;
                 }).catch((error) => {

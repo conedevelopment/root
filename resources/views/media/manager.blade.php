@@ -4,7 +4,6 @@
     class="modal--media"
     data-dropzone="{{ __('Drag & drop your images and files here') }}"
     x-data="mediaManager('{{ $url }}', {{ json_encode($config) }})"
-    x-model="selection"
     x-bind:class="{ 'modal--dropzone': dragging }"
     x-on:dragend.prevent="dragging = false"
     x-on:dragover.prevent="dragging = true"
