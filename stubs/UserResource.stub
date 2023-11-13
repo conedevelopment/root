@@ -22,48 +22,22 @@ class UserResource extends Resource
      */
     public function fields(Request $request): array
     {
-        return array_merge(parent::fields($request), [
+        return [
             ID::make(),
 
             Text::make(__('Name'), 'name')
+                ->searchable()
+                ->sortable()
                 ->rules(['required', 'string', 'max:256']),
 
             Email::make(__('Email'), 'email')
+                ->searchable()
+                ->sortable()
                 ->rules(['required', 'string', 'email', 'max:256'])
                 ->createRules(['unique:users'])
                 ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
-        ]);
-    }
-
-    /**
-     * Define the filters.
-     */
-    public function filters(Request $request): array
-    {
-        return array_merge(parent::filters($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the actions.
-     */
-    public function actions(Request $request): array
-    {
-        return array_merge(parent::actions($request), [
-            //
-        ]);
-    }
-
-    /**
-     * Define the widgets for the resource.
-     */
-    public function widgets(Request $request): array
-    {
-        return array_merge(parent::widgets($request), [
-            //
-        ]);
+        ];
     }
 }

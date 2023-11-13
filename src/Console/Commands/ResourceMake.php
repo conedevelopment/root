@@ -63,7 +63,8 @@ class ResourceMake extends GeneratorCommand
      */
     public function replaceModel(string $class): string
     {
-        $model = $this->option('model');
+        $model = $this->option('model')
+            ?: sprintf('%sModels\\%s', $this->laravel->getNamespace(), str_replace('Resource', '', $this->argument('name')));
 
         $model = str_replace('/', '\\', $model);
 
