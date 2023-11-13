@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Root;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
@@ -210,15 +211,17 @@ abstract class Relation extends Field
             $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($model);
 
-                if ($default instanceof Model) {
-                    return $this->resolveDisplay($default);
-                } elseif ($default instanceof Collection) {
-                    return $default->map(function (Model $related): mixed {
-                        return $this->resolveDisplay($related);
-                    })->join(', ');
-                }
+                return Collection::wrap($default)->map(function (Model $related) use ($request): mixed {
+                    $resource = Root::instance()->resources->forModel($related);
 
-                return $default;
+                    $value = $this->resolveDisplay($related);
+
+                    if (! is_null($resource) && $request->user()->can('view', $related)) {
+                        $value = sprintf('<a href="%s">%s</a>', $resource->modelUrl($related), $value);
+                    }
+
+                    return $value;
+                })->join(', ');
             };
         }
 
