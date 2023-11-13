@@ -22,5 +22,3 @@ window.$http = Axios.create({
 
 // Cookie
 window.$cookie = new Cookie('__root_');
-
-
