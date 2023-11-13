@@ -111,6 +111,11 @@ jobs:
             name: "Checkout repository"
             uses: "actions/checkout@v3"
         -
+            name: "Validate GitHub files"
+            uses: "szepeviktor/svg-validator@v1.0.0"
+            with:
+                svg_path: "resources/views/icons/*.blade.php"
+        -
             name: "Validate SVG files"
             uses: "szepeviktor/svg-validator@v1.0.0"
             with:
