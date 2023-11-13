@@ -20,7 +20,7 @@
                 x-on:click="$dispatch('open-{{ $uuid }}')"
             >
                 <x-root::icon name="edit" class="btn__icon" />
-            </a>
+            </button>
         @endif
         <button
             type="button"

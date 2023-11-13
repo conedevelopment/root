@@ -51,7 +51,7 @@
                     @foreach($alerts as $alert)
                         <x-root::alert :type="$alert['type']">
                             {!! $alert['message'] !!}
-                        </x-root>
+                        </x-root::alert>
                     @endforeach
                     @yield('content')
                 </div>

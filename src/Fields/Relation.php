@@ -306,10 +306,9 @@ abstract class Relation extends Field
     {
         $value = $this->resolveValue($request, $model);
 
-        $option = $this->newOption($related, $this->resolveDisplay($related))
-            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
-
-        return $option->toArray();
+        return $this->newOption($related, $this->resolveDisplay($related))
+            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related))
+            ->toArray();
     }
 
     /**
