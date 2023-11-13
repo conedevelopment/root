@@ -5,6 +5,7 @@ namespace Cone\Root\Navigation;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Illuminate\Support\Facades\URL;
+use LogicException;
 
 class Item
 {
@@ -80,8 +81,8 @@ class Item
         return $this->getAttribute($key);
     }
 
-    public __set(string $key, mixed $value): void
+    public function __set(string $key, mixed $value): void
     {
-        throw new \LogicException('Attributes cannot be set directly. Please call setAttribute.');
+        throw new LogicException("Attribute {$key} cannot be set directly. Please call setAttribute.");
     }
 }
