@@ -9,6 +9,7 @@
     "dependencies": {
         "@alpinejs/focus": "^3.12.3",
         "@conedevelopment/qkie": "^1.0.2",
+        "@hotwired/turbo": "^7.3.0",
         "@tiptap/extension-highlight": "^2.0.3",
         "@tiptap/extension-history": "^2.0.3",
         "@tiptap/extension-image": "^2.0.3",
