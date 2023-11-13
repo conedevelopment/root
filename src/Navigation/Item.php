@@ -79,4 +79,9 @@ class Item
     {
         return $this->getAttribute($key);
     }
+
+    public __set(string $key, mixed $value): void
+    {
+        throw new \LogicException('Attributes cannot be set directly. Please call setAttribute.');
+    }
 }
