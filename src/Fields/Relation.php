@@ -405,6 +405,16 @@ abstract class Relation extends Field
     }
 
     /**
+     * Create a new method.
+     */
+    public function toSubResource(Request $request, Model $model): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
      * Get the index representation of the relation.
      */
     public function toIndex(Request $request, Model $model): array

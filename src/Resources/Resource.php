@@ -6,6 +6,9 @@ use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
+use Cone\Root\Filters\TrashStatus;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
@@ -228,6 +231,24 @@ abstract class Resource implements Arrayable, Form
     public function modelUrl(Model $model): string
     {
         return sprintf('%s/%s', $this->getUri(), $model->exists ? $model->getRouteKey() : '');
+    }
+
+    /**
+     * Define the filters for the object.
+     */
+    public function filters(Request $request): array
+    {
+        $fields = $this->resolveFields($request)->authorized($request);
+
+        $searchables = $fields->searchable($request);
+
+        $sortables = $fields->sortable($request);
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? new Search($searchables) : null,
+            $sortables->isNotEmpty() ? new Sort($sortables) : null,
+            $this->isSoftDeletable() ? new TrashStatus() : null,
+        ]));
     }
 
     /**
