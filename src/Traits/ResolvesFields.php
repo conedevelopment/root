@@ -46,11 +46,11 @@ trait ResolvesFields
         if (is_null($this->fields)) {
             $this->fields = new Fields($this->fields($request));
 
-            if (! is_null($this->fieldsResolver)) {
-                $this->fields->register(
+            $this->fields->when(! is_null($this->fieldsResolver), function (Fields $fields) use ($request): void {
+                $fields->register(
                     Arr::wrap(call_user_func_array($this->fieldsResolver, [$request]))
                 );
-            }
+            });
 
             $this->fields->each(function (Field $field) use ($request): void {
                 $this->resolveField($request, $field);

@@ -68,6 +68,28 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the relation fields.
+     */
+    public function relation(): static
+    {
+        return $this->filter(static function (Field $field): bool {
+            return $field instanceof Relation;
+        });
+    }
+
+    /**
+     * Filter the subresource fields.
+     */
+    public function subResource(bool $value = true): static
+    {
+        return $this->filter(static function (Field $field) use ($value): bool {
+            return $value
+                ? $field instanceof Relation && $field->isSubResource()
+                : ! $field instanceof Relation || ! $field->isSubResource();
+        });
+    }
+
+    /**
      * Map the fields to validate.
      */
     public function mapToValidate(Request $request, Model $model): array
@@ -82,7 +104,7 @@ class Fields extends Collection
      */
     public function mapToDisplay(Request $request, Model $model): array
     {
-        return $this->map->toDisplay($request, $model)->all();
+        return $this->map->toDisplay($request, $model)->filter()->values()->all();
     }
 
     /**
@@ -90,7 +112,7 @@ class Fields extends Collection
      */
     public function mapToInputs(Request $request, Model $model): array
     {
-        return $this->map->toInput($request, $model)->all();
+        return $this->map->toInput($request, $model)->filter()->values()->all();
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Traits;
 
+use Closure;
 use Cone\Root\Fields\Fields;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
@@ -10,6 +11,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Filters\TrashStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 trait ResolvesFilters
 {
@@ -19,6 +21,11 @@ trait ResolvesFilters
     protected ?Filters $filters = null;
 
     /**
+     * The filters resolver callback.
+     */
+    protected ?Closure $filtersResolver = null;
+
+    /**
      * Define the filters for the object.
      */
     public function filters(Request $request): array
@@ -26,6 +33,16 @@ trait ResolvesFilters
         return [
             //
         ];
+    }
+
+    /**
+     * Set the filters resolver callback.
+     */
+    public function withFilters(Closure $callback): static
+    {
+        $this->filtersResolver = $callback;
+
+        return $this;
     }
 
     /**
@@ -41,6 +58,12 @@ trait ResolvesFilters
                 ->whenNotEmpty(function (Fields $fields): void {
                     $this->filters->prepend(new Search($fields));
                 });
+
+            $this->filters->when(! is_null($this->filtersResolver), function (Filters $filters) use ($request): void {
+                $filters->register(
+                    Arr::wrap(call_user_func_array($this->filtersResolver, [$request]))
+                );
+            });
 
             $this->resolveFields($request)
                 ->sortable()

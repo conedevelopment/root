@@ -3,7 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Http\Request;
@@ -11,8 +10,6 @@ use Illuminate\Support\Arr;
 
 class BelongsToMany extends Relation
 {
-    use ResolvesFields;
-
     /**
      * The pivot fields resolver callback.
      */

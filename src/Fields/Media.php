@@ -10,8 +10,6 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
-use Cone\Root\Traits\RegistersRoutes;
-use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -24,11 +22,6 @@ use Illuminate\Validation\Rule;
 
 class Media extends File
 {
-    use RegistersRoutes {
-        RegistersRoutes::registerRoutes as __registerRoutes;
-    }
-    use ResolvesFilters;
-
     /**
      * Indicates if the component is multiple.
      */
@@ -43,14 +36,6 @@ class Media extends File
      * The filters resolver callback.
      */
     protected ?Closure $filtersResolver = null;
-
-    /**
-     * Get the URI key.
-     */
-    public function getUriKey(): string
-    {
-        return str_replace('.', '-', $this->getRequestKey());
-    }
 
     /**
      * Get the route parameter name.
@@ -216,18 +201,6 @@ class Media extends File
         ])));
 
         return rtrim($uri, '?');
-    }
-
-    /**
-     * Register the routes using the given router.
-     */
-    public function registerRoutes(Request $request, Router $router): void
-    {
-        $this->__registerRoutes($request, $router);
-
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
-        });
     }
 
     /**

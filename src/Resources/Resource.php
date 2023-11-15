@@ -4,9 +4,9 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Relation;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Interfaces\Form;
-use Cone\Root\Interfaces\Table;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
@@ -26,7 +26,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
-abstract class Resource implements Arrayable, Form, Table
+abstract class Resource implements Arrayable, Form
 {
     use AsForm;
     use Authorizable;
@@ -275,6 +275,7 @@ abstract class Resource implements Arrayable, Form, Table
                     'url' => $this->modelUrl($model),
                     'model' => $model,
                     'fields' => $this->resolveFields($request)
+                        ->subResource(false)
                         ->authorized($request, $model)
                         ->visible('index')
                         ->mapToDisplay($request, $model),
@@ -365,6 +366,7 @@ abstract class Resource implements Arrayable, Form, Table
             'action' => $this->getUri(),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
+                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('create')
                 ->mapToInputs($request, $model),
@@ -382,6 +384,7 @@ abstract class Resource implements Arrayable, Form, Table
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
+                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('show')
                 ->mapToDisplay($request, $model),
@@ -393,6 +396,12 @@ abstract class Resource implements Arrayable, Form, Table
                 ->authorized($request, $model)
                 ->visible('show')
                 ->toArray(),
+            'relations' => $this->resolveFields($request)
+                ->subResource()
+                ->authorized($request, $model)
+                ->map(static function (Relation $relation) use ($request, $model): array {
+                    return $relation->toIndex($request, $model);
+                }),
         ]);
     }
 
@@ -407,6 +416,7 @@ abstract class Resource implements Arrayable, Form, Table
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
+                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('update')
                 ->mapToInputs($request, $model),

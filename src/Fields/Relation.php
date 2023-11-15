@@ -3,16 +3,29 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Root;
+use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field
 {
+    use ResolvesActions;
+    use ResolvesFilters;
+    use ResolvesFields;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
+
     /**
      * The relation name on the model.
      */
@@ -52,6 +65,11 @@ abstract class Relation extends Field
      * The option group resolver.
      */
     protected string|Closure|null $groupResolver = null;
+
+    /**
+     * Indicates wheter the relation is a sub resource.
+     */
+    protected bool $asSubResource = false;
 
     /**
      * The query scopes.
@@ -104,6 +122,32 @@ abstract class Relation extends Field
         return $this->relation instanceof Closure
             ? $this->getModelAttribute()
             : $this->relation;
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Set the as subresource attribute.
+     */
+    public function asSubResource(bool $value = true): static
+    {
+        $this->asSubResource = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the relation is a subresource.
+     */
+    public function isSubResource(): bool
+    {
+        return $this->asSubResource;
     }
 
     /**
@@ -300,6 +344,44 @@ abstract class Relation extends Field
     }
 
     /**
+     * Get the per page options.
+     */
+    public function getPerPageOptions(): array
+    {
+        return [5, 10, 15, 25];
+    }
+
+    /**
+     * Paginate the results.
+     */
+    public function paginate(Request $request, Model $model): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveFields($request)->registerRoutes($request, $router);
+        });
+    }
+
+    /**
+     * Register the routes.
+     */
+    public function routes(Router $router): void
+    {
+        //
+    }
+
+    /**
      * Get the option representation of the model and the related model.
      */
     public function toOption(Request $request, Model $model, Model $related): array
@@ -319,6 +401,30 @@ abstract class Relation extends Field
         return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the index representation of the relation.
+     */
+    public function toIndex(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'title' => $this->getRelatedName(),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $model)
+                ->visible('index')
+                ->mapToForms($request, $model),
+            'data' => $this->paginate($request, $model),
+            'perPageOptions' => $this->getPerPageOptions(),
+            'filters' => $this->resolveFilters($request)
+                ->authorized($request)
+                ->renderable()
+                ->map(static function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()->toInput($request, $model);
+                })
+                ->all(),
+            'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
         ]);
     }
 }
