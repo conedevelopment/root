@@ -67,7 +67,7 @@ abstract class Relation extends Field
     protected string|Closure|null $groupResolver = null;
 
     /**
-     * Indicates wheter the relation is a sub resource.
+     * Indicates whether the relation is a sub resource.
      */
     protected bool $asSubResource = false;
 
@@ -370,6 +370,7 @@ abstract class Relation extends Field
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
+            $this->resolveActions($request)->registerRoutes($request, $router);
         });
     }
 
@@ -378,7 +379,9 @@ abstract class Relation extends Field
      */
     public function routes(Router $router): void
     {
-        //
+        if ($this->isSubResource()) {
+            //
+        }
     }
 
     /**
@@ -405,7 +408,7 @@ abstract class Relation extends Field
     }
 
     /**
-     * Create a new method.
+     * Get the sub reosurce representation of the relation.
      */
     public function toSubResource(Request $request, Model $model): array
     {

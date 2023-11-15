@@ -17,7 +17,6 @@
                 {{-- <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
                     <x-root::icon name="search" class="btn__icon" />
                 </button> --}}
-                <x-root::layout.theme />
             </div>
             {{-- <x-root::layout.breadcrumbs /> --}}
         </div>
@@ -33,6 +32,11 @@
                     <x-root::icon name="chevron-down" class="open-search__icon" />
                 </button>
                 <ul class="context-menu" x-bind:class="{ 'is-open': open }">
+                    <li>
+                        <span class="context-menu__item">
+                            {{ __('Theme') }} <x-root::layout.theme />
+                        </span>
+                    </li>
                     <li>
                         <button type="submit" form="logout-form" class="context-menu__item">
                             {{ __('Logout') }}

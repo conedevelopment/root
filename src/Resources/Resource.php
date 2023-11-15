@@ -421,7 +421,7 @@ abstract class Resource implements Arrayable, Form
                 ->subResource()
                 ->authorized($request, $model)
                 ->map(static function (Relation $relation) use ($request, $model): array {
-                    return $relation->toIndex($request, $model);
+                    return $relation->toSubResource($request, $model);
                 }),
         ]);
     }
