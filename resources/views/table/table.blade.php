@@ -1,11 +1,11 @@
 <div class="app-card" x-data="{ selection: [], all: false }">
     <div class="app-card__header">
         <h2 class="app-card__title">{{ $title }}</h2>
-        @include('root::resources.table.filters')
+        @include('root::table.filters')
     </div>
     <div class="app-card__body">
         <div class="data-table">
-            @includeWhen(! empty($actions), 'root::resources.table.actions')
+            @includeWhen(! empty($actions), 'root::table.actions')
             @if($data->isNotEmpty())
                 <div class="table-responsive">
                     <table class="table table--hover">
@@ -20,7 +20,7 @@
                                     </th>
                                 @endif
                                 @foreach($data[0]['fields'] as $column)
-                                    @include('root::resources.table.column', $column)
+                                    @include('root::table.column', $column)
                                 @endforeach
                                 <th scope="col">
                                     <span class="sr-only">{{ __('Actions') }}</span>
@@ -43,7 +43,7 @@
                                         </td>
                                     @endif
                                     @foreach($row['fields'] as $cell)
-                                        @include('root::resources.table.cell', $cell)
+                                        @include('root::table.cell', $cell)
                                     @endforeach
                                     <td>
                                         <div class="data-table__actions">
@@ -99,7 +99,7 @@
                         </div>
                         <p>{{ __('Showing :from to :to of :total results', ['from' => $data->firstItem(), 'to' => $data->lastItem(), 'total' => $data->total()]) }}</p>
                     </div>
-                    {!! $data->links('root::resources.table.pagination') !!}
+                    {!! $data->links('root::table.pagination') !!}
                 </div>
             @else
                 <x-root::alert>

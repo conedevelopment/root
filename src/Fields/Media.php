@@ -10,6 +10,7 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -119,7 +120,7 @@ class Media extends File
     /**
      * Paginate the results.
      */
-    public function paginate(Request $request, Model $model): array
+    public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
         return $this->resolveFilters($request)
             ->apply($request, $this->resolveRelatableQuery($request, $model))
@@ -133,8 +134,7 @@ class Media extends File
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
-            })
-            ->toArray();
+            });
     }
 
     /**

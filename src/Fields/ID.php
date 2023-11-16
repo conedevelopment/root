@@ -11,6 +11,6 @@ class ID extends Field
     {
         parent::__construct($label, $modelAttribute);
 
-        $this->hiddenOn(['crate', 'update']);
+        $this->hiddenOn(['create', 'update']);
     }
 }

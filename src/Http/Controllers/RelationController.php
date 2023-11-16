@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\IndexRequest;
 use Cone\Root\Http\Requests\ResourceRequest;
 use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
@@ -12,23 +11,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 
-class HasOneOrManyController extends Controller
+class RelationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
-        $field = $request->resolved();
+        $resource = $request->route('_resource');
 
-        return Inertia::render(
-            'Relations/Index',
-            $field->toIndex($request, $model)
-        );
+        $field = $request->route('field');
+
+        // Gate::allowIf($field->authorized($request, $model));
+
+        $model = $resource->resolveRouteBinding($request, $request->input('model', ''));
+
+        return ResponseFactory::view('root::resources.relation', $field->toIndex($request, $model));
     }
 
     /**
@@ -55,7 +57,7 @@ class HasOneOrManyController extends Controller
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateRequest $request, Model $model): RedirectResponse
+    public function store(Request $request, Model $model): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -86,7 +88,7 @@ class HasOneOrManyController extends Controller
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Inertia\Response
      */
-    public function show(ShowRequest $request, Model $model, Model $related): Response
+    public function show(Request $request, Model $model, Model $related): Response
     {
         return Inertia::render(
             'Relations/Show',
@@ -101,7 +103,7 @@ class HasOneOrManyController extends Controller
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Inertia\Response
      */
-    public function edit(UpdateRequest $request, Model $model, Model $related): Response
+    public function edit(Request $request, Model $model, Model $related): Response
     {
         $field = $request->resolved();
 
@@ -147,7 +149,7 @@ class HasOneOrManyController extends Controller
      * @param  \Illuminate\Database\Eloquent\Model  $related
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ResourceRequest $request, Model $model, Model $related): RedirectResponse
+    public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
         $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();
 

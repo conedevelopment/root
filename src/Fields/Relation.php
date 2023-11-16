@@ -4,11 +4,15 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
+use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
 use Cone\Root\Traits\ResolvesFilters;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
@@ -17,8 +21,9 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field
+abstract class Relation extends Field // implements Form
 {
+    // use AsForm;
     use ResolvesActions;
     use ResolvesFilters;
     use ResolvesFields;
@@ -130,6 +135,14 @@ abstract class Relation extends Field
     public function getUriKey(): string
     {
         return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return 'field';
     }
 
     /**
@@ -352,13 +365,34 @@ abstract class Relation extends Field
     }
 
     /**
+     * Resolve the filtered query for the given request.
+     */
+    public function resolveFilteredQuery(Request $request, Model $model): Builder
+    {
+        return $this->resolveFilters($request)->apply($request, $this->getRelation($model)->getQuery());
+    }
+
+    /**
      * Paginate the results.
      */
-    public function paginate(Request $request, Model $model): array
+    public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
-        return [
-            //
-        ];
+        return $this->resolveFilteredQuery($request, $model)
+            ->latest()
+            ->paginate($request->input('per_page'))
+            ->withQueryString()
+            ->through(function (Model $model) use ($request): array {
+                return [
+                    'id' => $model->getKey(),
+                    'url' => '',
+                    'model' => $model,
+                    'fields' => $this->resolveFields($request)
+                        ->subResource(false)
+                        ->authorized($request, $model)
+                        ->visible('relation.index')
+                        ->mapToDisplay($request, $model),
+                ];
+            });
     }
 
     /**
@@ -380,7 +414,7 @@ abstract class Relation extends Field
     public function routes(Router $router): void
     {
         if ($this->isSubResource()) {
-            //
+            $router->get('/', [RelationController::class, 'index']);
         }
     }
 
@@ -408,13 +442,13 @@ abstract class Relation extends Field
     }
 
     /**
-     * Get the sub reosurce representation of the relation.
+     * Get the sub resource representation of the relation.
      */
     public function toSubResource(Request $request, Model $model): array
     {
-        return [
-            //
-        ];
+        return array_merge($this->toArray(), [
+            'url' => sprintf('%s?model=%s', $this->getUri(), $model->getRouteKey()),
+        ]);
     }
 
     /**
@@ -423,10 +457,11 @@ abstract class Relation extends Field
     public function toIndex(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => $this->getRelatedName(),
+            'key' => $this->modelAttribute,
+            'title' => $this->label,
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
-                ->visible('index')
+                ->visible('relation.index')
                 ->mapToForms($request, $model),
             'data' => $this->paginate($request, $model),
             'perPageOptions' => $this->getPerPageOptions(),
