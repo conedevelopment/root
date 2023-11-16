@@ -18,12 +18,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-abstract class Relation extends Field // implements Form
+abstract class Relation extends Field implements Form
 {
-    // use AsForm;
+    use AsForm;
     use ResolvesActions;
     use ResolvesFilters;
     use ResolvesFields;
@@ -273,7 +274,7 @@ abstract class Relation extends Field // implements Form
 
                     $value = $this->resolveDisplay($related);
 
-                    if (! is_null($resource) && $request->user()->can('view', $related)) {
+                    if (! is_null($resource) && $related->exists && $request->user()->can('view', $related)) {
                         $value = sprintf('<a href="%s">%s</a>', $resource->modelUrl($related), $value);
                     }
 
@@ -381,16 +382,16 @@ abstract class Relation extends Field // implements Form
             ->latest()
             ->paginate($request->input('per_page'))
             ->withQueryString()
-            ->through(function (Model $model) use ($request): array {
+            ->through(function (Model $related) use ($request, $model): array {
                 return [
-                    'id' => $model->getKey(),
-                    'url' => '',
-                    'model' => $model,
+                    'id' => $related->getKey(),
+                    'url' => sprintf('%s?%s', $this->getUri(), Arr::query(['model' => $model->getRouteKey(), 'related' => $related->getRouteKey()])),
+                    'model' => $related,
                     'fields' => $this->resolveFields($request)
                         ->subResource(false)
-                        ->authorized($request, $model)
+                        ->authorized($request, $related)
                         ->visible('relation.index')
-                        ->mapToDisplay($request, $model),
+                        ->mapToDisplay($request, $related),
                 ];
             });
     }
@@ -447,7 +448,7 @@ abstract class Relation extends Field // implements Form
     public function toSubResource(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'url' => sprintf('%s?model=%s', $this->getUri(), $model->getRouteKey()),
+            'url' => $this->replaceRoutePlaceholders($request->route()),
         ]);
     }
 

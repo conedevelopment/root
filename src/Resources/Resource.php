@@ -328,7 +328,10 @@ abstract class Resource implements Arrayable, Form
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
-            $this->resolveFields($request)->registerRoutes($request, $router);
+
+            $router->prefix('{resourceModel}')->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
         });
     }
 

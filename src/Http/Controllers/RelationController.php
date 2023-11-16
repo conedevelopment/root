@@ -3,8 +3,6 @@
 namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\ResourceRequest;
-use Cone\Root\Http\Requests\ShowRequest;
 use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -20,17 +18,16 @@ class RelationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(Request $request, Model $model): Response
     {
-        $resource = $request->route('_resource');
-
         $field = $request->route('field');
 
         // Gate::allowIf($field->authorized($request, $model));
 
-        $model = $resource->resolveRouteBinding($request, $request->input('model', ''));
-
-        return ResponseFactory::view('root::resources.relation', $field->toIndex($request, $model));
+        return ResponseFactory::view(
+            'root::resources.relation',
+            $field->toIndex($request, $model)
+        );
     }
 
     /**

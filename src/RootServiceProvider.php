@@ -122,7 +122,9 @@ class RootServiceProvider extends ServiceProvider
         });
 
         $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
-            return $route->parameter('resource')->resolveRouteBinding($this->app['request'], $id);
+            return $id === 'create'
+                ? $route->parameter('_resource')->getModelInstance()
+                : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id);
         });
 
         $this->app['router']

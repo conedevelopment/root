@@ -230,7 +230,7 @@ class Repeater extends Field
                     'html' => View::make('root::fields.repeater-option', $option)->render(),
                 ]);
             }, $this->resolveOptions($request, $model)),
-            'url' => $this->getUri(),
+            'url' => $this->replaceRoutePlaceholders($request->route()),
         ]);
     }
 

@@ -192,18 +192,6 @@ class Media extends File
     }
 
     /**
-     * Build the URI for the given request and model.
-     */
-    public function buildUri(Request $request, Model $model): ?string
-    {
-        $uri = sprintf('%s?%s', $this->getUri(), Arr::query(array_filter([
-            'model' => $model->getKey(),
-        ])));
-
-        return rtrim($uri, '?');
-    }
-
-    /**
      * The routes that should be registered.
      */
     public function routes(Router $router): void
@@ -233,7 +221,7 @@ class Media extends File
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
             }, $data['options'] ?? []),
-            'url' => $this->getUri() ? $this->buildUri($request, $model) : null,
+            'url' => $this->replaceRoutePlaceholders($request->route()),
             'filters' => $filters->renderable()
                 ->map(function (RenderableFilter $filter) use ($request, $model): array {
                     return $filter->toField()

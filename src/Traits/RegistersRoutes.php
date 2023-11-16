@@ -4,6 +4,7 @@ namespace Cone\Root\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -50,7 +51,7 @@ trait RegistersRoutes
         }
 
         $router->matched(function (RouteMatched $event): void {
-            if (str_starts_with(Str::start($event->request->path(), '/'), $this->getUri())) {
+            if (str_starts_with(Str::start($event->request->path(), '/'), $this->replaceRoutePlaceholders($event->route))) {
                 $this->routeMatched($event);
             }
         });
@@ -62,6 +63,20 @@ trait RegistersRoutes
     public function routeMatched(RouteMatched $event): void
     {
         $event->route->setParameter($this->getRouteParameterName(), $this);
+    }
+
+    /**
+     * Replace the route placeholders with the route parameters.
+     */
+    protected function replaceRoutePlaceholders(Route $route): string
+    {
+        $uri = $this->getUri();
+
+        foreach ($route->originalParameters() as $key => $value) {
+            $uri = str_replace("{{$key}}", $value, $uri);
+        }
+
+        return preg_replace('/\{.*?\}/', 'create', $uri);
     }
 
     /**
