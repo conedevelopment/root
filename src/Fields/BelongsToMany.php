@@ -3,8 +3,11 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -38,6 +41,29 @@ class BelongsToMany extends Relation
         $relation = parent::getRelation($model);
 
         return $relation->withPivot($relation->newPivot()->getKeyName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fields(Request $request): array
+    {
+        return [
+            BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
+                return $model->belongsTo(
+                    get_class($model->getRelation('related')),
+                    $model->getRelatedKey(),
+                    $model->getForeignKey(),
+                    'related'
+                );
+            })
+            ->withRelatableQuery(function (Request $request, Builder $query, Pivot $model): Builder {
+                return $this->resolveRelatableQuery($request, $model->pivotParent);
+            })
+            ->display(function (Model $model): mixed {
+                return $this->resolveDisplay($model);
+            }),
+        ];
     }
 
     /**
@@ -135,6 +161,20 @@ class BelongsToMany extends Relation
         }
 
         parent::resolveHydrate($request, $model, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mapRelated(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::mapRelated($request, $model, $pivot);
     }
 
     /**

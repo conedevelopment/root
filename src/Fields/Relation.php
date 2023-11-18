@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -126,7 +125,7 @@ abstract class Relation extends Field implements Form
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $this->getModelAttribute()
+            ? Str::afterLast($this->getModelAttribute(), '.')
             : $this->relation;
     }
 
@@ -307,11 +306,9 @@ abstract class Relation extends Field implements Form
             $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
-        if (! is_null($this->queryResolver)) {
-            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
-        }
-
-        return $query;
+        return $query->when(! is_null($this->queryResolver), function (Builder $query) use ($request, $model): Builder {
+            return call_user_func_array($this->queryResolver, [$request, $query, $model]);
+        });
     }
 
     /**
@@ -366,34 +363,30 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Resolve the filtered query for the given request.
-     */
-    public function resolveFilteredQuery(Request $request, Model $model): Builder
-    {
-        return $this->resolveFilters($request)->apply($request, $this->getRelation($model)->getQuery());
-    }
-
-    /**
-     * Paginate the results.
+     * Paginate the given query.
      */
     public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
-        return $this->resolveFilteredQuery($request, $model)
-            ->latest()
-            ->paginate($request->input('per_page'))
-            ->withQueryString()
-            ->through(function (Model $related) use ($request, $model): array {
-                return [
-                    'id' => $related->getKey(),
-                    'url' => sprintf('%s?%s', $this->getUri(), Arr::query(['model' => $model->getRouteKey(), 'related' => $related->getRouteKey()])),
-                    'model' => $related,
-                    'fields' => $this->resolveFields($request)
-                        ->subResource(false)
-                        ->authorized($request, $related)
-                        ->visible('relation.index')
-                        ->mapToDisplay($request, $related),
-                ];
-            });
+        return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
+            $this->resolveFilters($request)->apply($request, $relation->getQuery())->latest();
+        })->paginate($request->input('per_page'))->withQueryString();
+    }
+
+    /**
+     * Map a related model.
+     */
+    public function mapRelated(Request $request, Model $model, Model $related): array
+    {
+        return [
+            'id' => $related->getKey(),
+            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'model' => $related,
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('relation.index')
+                ->mapToDisplay($request, $related),
+        ];
     }
 
     /**
@@ -404,8 +397,11 @@ abstract class Relation extends Field implements Form
         $this->__registerRoutes($request, $router);
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
-            $this->resolveFields($request)->registerRoutes($request, $router);
             $this->resolveActions($request)->registerRoutes($request, $router);
+
+            $router->prefix('{resourceRelation}')->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
         });
     }
 
@@ -416,6 +412,8 @@ abstract class Relation extends Field implements Form
     {
         if ($this->isSubResource()) {
             $router->get('/', [RelationController::class, 'index']);
+            $router->get('/create', [RelationController::class, 'create']);
+            $router->get('/{resourceRelation}', [RelationController::class, 'show']);
         }
     }
 
@@ -425,6 +423,10 @@ abstract class Relation extends Field implements Form
     public function toOption(Request $request, Model $model, Model $related): array
     {
         $value = $this->resolveValue($request, $model);
+
+        if (is_null($value)) {
+            return [];
+        }
 
         return $this->newOption($related, $this->resolveDisplay($related))
             ->selected($value instanceof Model ? $value->is($related) : $value->contains($related))
@@ -448,6 +450,7 @@ abstract class Relation extends Field implements Form
     public function toSubResource(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'key' => $this->modelAttribute,
             'url' => $this->replaceRoutePlaceholders($request->route()),
         ]);
     }
@@ -457,14 +460,16 @@ abstract class Relation extends Field implements Form
      */
     public function toIndex(Request $request, Model $model): array
     {
-        return array_merge($this->toArray(), [
-            'key' => $this->modelAttribute,
+        return array_merge($this->toSubResource($request, $model), [
             'title' => $this->label,
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('relation.index')
                 ->mapToForms($request, $model),
-            'data' => $this->paginate($request, $model),
+            'data' => $this->paginate($request, $model)
+                ->through(function (Model $related) use ($request, $model): array {
+                    return $this->mapRelated($request, $model, $related);
+                }),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
@@ -474,6 +479,42 @@ abstract class Relation extends Field implements Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+        ]);
+    }
+
+    /**
+     * Get the create representation of the resource.
+     */
+    public function toCreate(Request $request, Model $model): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Create :model', ['model' => $this->getRelationName()]),
+            'model' => $related = $this->getRelation($model)->getRelated(),
+            'action' => $this->getUri(),
+            'method' => 'POST',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('create')
+                ->mapToInputs($request, $related),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     */
+    public function toEdit(Request $request, Model $model): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelationName(), $model->getKey())]),
+            'model' => $model,
+            'url' => '',
+            'method' => 'PATCH',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $model)
+                ->visible('update')
+                ->mapToInputs($request, $model),
         ]);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Requests\CreateRequest;
-use Cone\Root\Http\Requests\UpdateRequest;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,27 +30,19 @@ class RelationController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
-    public function create(CreateRequest $request, Model $model): Response
+    public function create(Request $request, Model $model): Response
     {
-        $field = $request->resolved();
+        $field = $request->route('field');
 
-        return Inertia::render(
-            'Relations/Form',
+        return ResponseFactory::view(
+            'root::resources.form',
             $field->toCreate($request, $model)
         );
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\CreateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request, Model $model): RedirectResponse
     {
@@ -80,45 +70,34 @@ class RelationController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\ShowRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function show(Request $request, Model $model, Model $related): Response
     {
-        return Inertia::render(
-            'Relations/Show',
-            $request->resolved()->toShow($request, $model, $related)
+        $field = $request->route('field');
+
+        return ResponseFactory::view(
+            'root::resources.form',
+            $field->toCreate($request, $model)
         );
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Inertia\Response
      */
     public function edit(Request $request, Model $model, Model $related): Response
     {
-        $field = $request->resolved();
+        $field = $request->route('field');
 
-        return Inertia::render(
-            'Relations/Form',
-            $field->toEdit($request, $model, $related)
+        return ResponseFactory::view(
+            'root::resources.form',
+            $field->toEdit($request, $model)
         );
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Cone\Root\Http\Requests\UpdateRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateRequest $request, Model $model, Model $related): RedirectResponse
+    public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
         $field = $request->resolved();
 
@@ -140,11 +119,6 @@ class RelationController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \Cone\Root\Http\Requests\ResourceRequest  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $related
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {

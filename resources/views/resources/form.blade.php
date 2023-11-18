@@ -38,10 +38,10 @@
     </div>
     @if($model->exists)
         <div class="app-actions__column">
-            <form method="POST" action="#">
+            <form method="POST" action="{{ $action }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn--delete">Delete</button>
+                <button type="submit" class="btn btn--delete">{{ __('Delete') }}</button>
             </form>
         </div>
     @endif
