@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        @if($model->exists)
+        @if($model->exists && isset($relations))
             <div class="l-row__column">
                 @foreach($relations as $relation)
                     <turbo-frame id="relation-{{ $relation['attribute'] }}" src="{{ $relation['url'] }}">

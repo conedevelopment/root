@@ -406,7 +406,6 @@ abstract class Resource implements Arrayable, Form
             'title' => sprintf('%s #%s', $this->getModelName(), $model->getKey()),
             'model' => $model,
             'action' => $this->modelUrl($model),
-            'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $model)

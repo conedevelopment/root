@@ -76,8 +76,8 @@ class RelationController extends Controller
         $field = $request->route('field');
 
         return ResponseFactory::view(
-            'root::resources.form',
-            $field->toCreate($request, $model)
+            'root::resources.show',
+            $field->toShow($request, $model, $related)
         );
     }
 
@@ -90,7 +90,7 @@ class RelationController extends Controller
 
         return ResponseFactory::view(
             'root::resources.form',
-            $field->toEdit($request, $model)
+            $field->toEdit($request, $model, $related)
         );
     }
 

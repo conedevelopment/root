@@ -224,4 +224,18 @@ class BelongsToMany extends Relation
             $this->resolveFields($request)->mapToValidate($request, $model)
         );
     }
+
+    /**
+     * Get the edit representation of the relation.
+     */
+    public function toShow(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::toShow($request, $model, $pivot);
+    }
 }

@@ -390,6 +390,14 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Resolve the resource model for a bound value.
+     */
+    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    {
+        return $this->getRelation($model)->findOrFail($id);
+    }
+
+    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Request $request, Router $router): void
@@ -414,6 +422,7 @@ abstract class Relation extends Field implements Form
             $router->get('/', [RelationController::class, 'index']);
             $router->get('/create', [RelationController::class, 'create']);
             $router->get('/{resourceRelation}', [RelationController::class, 'show']);
+            $router->get('/{resourceRelation}/edit', [RelationController::class, 'edit']);
         }
     }
 
@@ -488,33 +497,54 @@ abstract class Relation extends Field implements Form
     public function toCreate(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'title' => __('Create :model', ['model' => $this->getRelationName()]),
+            'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->getRelated(),
-            'action' => $this->getUri(),
+            'action' => $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey(),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
-                ->visible('create')
+                ->visible('relation.create')
                 ->mapToInputs($request, $related),
         ]);
     }
 
     /**
-     * Get the edit representation of the resource.
+     * Get the edit representation of the relation.
      */
-    public function toEdit(Request $request, Model $model): array
+    public function toShow(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelationName(), $model->getKey())]),
-            'model' => $model,
-            'url' => '',
+            'title' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey()),
+            'model' => $related,
+            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('relation.show')
+                ->mapToDisplay($request, $related),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $related)
+                ->visible('relation.show')
+                ->mapToForms($request, $related),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the relation.
+     */
+    public function toEdit(Request $request, Model $model, Model $related): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey())]),
+            'model' => $related,
+            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $model)
-                ->visible('update')
-                ->mapToInputs($request, $model),
+                ->authorized($request, $related)
+                ->visible('relation.update')
+                ->mapToInputs($request, $related),
         ]);
     }
 }
