@@ -34,7 +34,13 @@ class MorphToMany extends BelongsToMany
                 )->withDefault();
             })
             ->withRelatableQuery(function (Request $request, Builder $query, MorphPivot $model): Builder {
-                return $this->resolveRelatableQuery($request, $model->pivotParent);
+                return $this->resolveRelatableQuery($request, $model->pivotParent)
+                    ->unless($this->allowDuplicateRelations, function (Builder $query) use ($model): Builder {
+                        return $query->whereNotIn(
+                            $query->getModel()->getQualifiedKeyName(),
+                            $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
+                        );
+                    });
             })
             ->display(function (Model $model): mixed {
                 return $this->resolveDisplay($model);

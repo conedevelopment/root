@@ -26,6 +26,11 @@ class BelongsToMany extends Relation
     protected array $pivotValues = [];
 
     /**
+     * Indicates if the field allows duplicate relations.
+     */
+    protected bool $allowDuplicateRelations = false;
+
+    /**
      * Create a new relation field instance.
      */
     public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
@@ -64,12 +69,28 @@ class BelongsToMany extends Relation
                 )->withDefault();
             })
             ->withRelatableQuery(function (Request $request, Builder $query, Pivot $model): Builder {
-                return $this->resolveRelatableQuery($request, $model->pivotParent);
+                return $this->resolveRelatableQuery($request, $model->pivotParent)
+                    ->unless($this->allowDuplicateRelations, function (Builder $query) use ($model): Builder {
+                        return $query->whereNotIn(
+                            $query->getModel()->getQualifiedKeyName(),
+                            $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
+                        );
+                    });
             })
             ->display(function (Model $model): mixed {
                 return $this->resolveDisplay($model);
             }),
         ];
+    }
+
+    /**
+     * Allow duplciate relations.
+     */
+    public function allowDuplicateRelations(bool $value = true): static
+    {
+        $this->allowDuplicateRelations = $value;
+
+        return $this;
     }
 
     /**
