@@ -4,6 +4,7 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -51,7 +52,7 @@ class RelationController extends Controller
 
         $field->handleFormRequest($request, $related);
 
-        return Redirect::to(sprintf('%s/s', $field->get))
+        return Redirect::to($field->relatedUrl($model, $related))
             ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
@@ -90,7 +91,7 @@ class RelationController extends Controller
 
         $field->handleFormRequest($request, $related);
 
-        return Redirect::back()
+        return Redirect::to($field->relatedUrl($model, $related))
             ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
@@ -101,9 +102,11 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        //
+        $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();
 
-        return Redirect::to('')
+        $trashed ? $related->forceDelete() : $related->delete();
+
+        return Redirect::to($field->modelUrl($model))
             ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }
