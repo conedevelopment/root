@@ -230,7 +230,7 @@ abstract class Resource implements Arrayable, Form
      */
     public function modelUrl(Model $model): string
     {
-        return sprintf('%s/%s', $this->getUri(), $model->exists ? $model->getRouteKey() : '');
+        return sprintf('%s/%s', $this->getUri(), $model->exists ? $model->getKey() : '');
     }
 
     /**

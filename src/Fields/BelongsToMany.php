@@ -3,12 +3,14 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Http\Controllers\BelongsToManyController;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 
 class BelongsToMany extends Relation
@@ -170,7 +172,13 @@ class BelongsToMany extends Relation
     {
         $relation = $this->getRelation($model);
 
-        return $relation->wherePivot($relation->qualifyPivotColumn($relation->newPivot()->getRouteKeyName()), $id)->firstOrFail();
+        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+
+        return tap($related, static function (Model $related) use ($relation, $id): void {
+            $pivot = $related->getRelation($relation->getPivotAccessor());
+
+            $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
+        });
     }
 
     /**
@@ -185,6 +193,32 @@ class BelongsToMany extends Relation
         $pivot->setRelation('related', $related);
 
         return parent::mapRelated($request, $model, $pivot);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $model = $model instanceof Pivot ? $model : $this->getRelation($model)->newPivot();
+
+        parent::handleFormRequest($request, $model);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->isSubResource()) {
+            $router->get('/', [BelongsToManyController::class, 'index']);
+            $router->get('/create', [BelongsToManyController::class, 'create']);
+            $router->get('/{resourceRelation}', [BelongsToManyController::class, 'show']);
+            $router->post('/', [BelongsToManyController::class, 'store']);
+            $router->get('/{resourceRelation}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('/{resourceRelation}', [BelongsToManyController::class, 'update']);
+            $router->delete('/{resourceRelation}', [BelongsToManyController::class, 'destroy']);
+        }
     }
 
     /**

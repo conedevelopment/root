@@ -379,7 +379,7 @@ abstract class Relation extends Field implements Form
     {
         return [
             'id' => $related->getKey(),
-            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
             'model' => $related,
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -502,7 +502,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->getRelated(),
-            'action' => $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey(),
+            'action' => $this->replaceRoutePlaceholders($request->route()), $related->getKey(),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -520,7 +520,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey()),
             'model' => $related,
-            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
@@ -541,7 +541,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey())]),
             'model' => $related,
-            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)

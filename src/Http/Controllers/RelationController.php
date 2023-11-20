@@ -45,7 +45,9 @@ class RelationController extends Controller
      */
     public function store(Request $request, Model $model): RedirectResponse
     {
-        //
+        $field = $request->route('field');
+
+        // $field->handleFormRequest($request, $model);
 
         return Redirect::to('')
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
@@ -82,7 +84,9 @@ class RelationController extends Controller
      */
     public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
-        //
+        $field = $request->route('field');
+
+        // $field->handleFormRequest($request, $model);
 
         return Redirect::back()
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
@@ -93,6 +97,8 @@ class RelationController extends Controller
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
+        $field = $request->route('field');
+
         //
 
         return Redirect::to('')
