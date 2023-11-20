@@ -42,7 +42,11 @@ class BelongsToMany extends Relation
     {
         $relation = parent::getRelation($model);
 
-        return $relation->withPivot($relation->newPivot()->getKeyName());
+        return $relation->withPivot([
+            $relation->newPivot()->getKeyName(),
+            $relation->getForeignPivotKeyName(),
+            $relation->getRelatedPivotKeyName(),
+        ]);
     }
 
     /**
@@ -195,16 +199,6 @@ class BelongsToMany extends Relation
         $pivot->setRelation('related', $related);
 
         return parent::mapRelated($request, $model, $pivot);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleFormRequest(Request $request, Model $model): void
-    {
-        $model = $model instanceof Pivot ? $model : $this->getRelation($model)->newPivot();
-
-        parent::handleFormRequest($request, $model);
     }
 
     /**

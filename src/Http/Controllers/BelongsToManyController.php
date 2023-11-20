@@ -17,9 +17,19 @@ class BelongsToManyController extends RelationController
     {
         $field = $request->route('field');
 
-        $field->handleFormRequest($request, $model);
+        $relation = $field->getRelation($model);
 
-        return Redirect::to('')
+        $pivot = $relation->newPivot([
+            $relation->getForeignPivotKeyName() => $model->getKey(),
+        ]);
+
+        $pivot->setRelation('related', $relation->getRelated());
+
+        $pivot->incrementing = true;
+
+        $field->handleFormRequest($request, $pivot);
+
+        return Redirect::to($field->relatedUrl($model, $pivot))
             ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
@@ -30,9 +40,13 @@ class BelongsToManyController extends RelationController
     {
         $field = $request->route('field');
 
-        $field->handleFormRequest($request, $model);
+        $relation = $field->getRelation($model);
 
-        return Redirect::back()
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $field->handleFormRequest($request, $pivot);
+
+        return Redirect::to($field->relatedUrl($model, $pivot))
             ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
@@ -41,9 +55,15 @@ class BelongsToManyController extends RelationController
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
-        //
+        $field = $request->route('field');
 
-        return Redirect::to('')
+        $relation = $field->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->delete();
+
+        return Redirect::to($field->modelUrl($model))
             ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }

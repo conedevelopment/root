@@ -275,7 +275,7 @@ abstract class Relation extends Field implements Form
                     $value = $this->resolveDisplay($related);
 
                     if (! is_null($resource) && $related->exists && $request->user()->can('view', $related)) {
-                        $value = sprintf('<a href="%s">%s</a>', $resource->modelUrl($related), $value);
+                        $value = sprintf('<a href="%s" data-turbo-frame="_top">%s</a>', $resource->modelUrl($related), $value);
                     }
 
                     return $value;
@@ -384,7 +384,7 @@ abstract class Relation extends Field implements Form
     {
         return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
             $this->resolveFilters($request)->apply($request, $relation->getQuery())->latest();
-        })->paginate($request->input('per_page'))->withQueryString();
+        })->paginate($request->input('per_page', 5))->withQueryString();
     }
 
     /**

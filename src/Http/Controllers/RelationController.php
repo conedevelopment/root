@@ -52,7 +52,7 @@ class RelationController extends Controller
         $field->handleFormRequest($request, $related);
 
         return Redirect::to(sprintf('%s/s', $field->get))
-                    ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
+            ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
     /**
@@ -91,7 +91,7 @@ class RelationController extends Controller
         $field->handleFormRequest($request, $related);
 
         return Redirect::back()
-                    ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
+            ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
     /**
@@ -104,6 +104,6 @@ class RelationController extends Controller
         //
 
         return Redirect::to('')
-                    ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
+            ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }
