@@ -166,6 +166,16 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
+    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    {
+        $relation = $this->getRelation($model);
+
+        return $relation->wherePivot($relation->qualifyPivotColumn($relation->newPivot()->getRouteKeyName()), $id)->firstOrFail();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function mapRelated(Request $request, Model $model, Model $related): array
     {
         $relation = $this->getRelation($model);
@@ -226,7 +236,19 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the edit representation of the relation.
+     * Get the create representation of the relation.
+     */
+    public function toCreate(Request $request, Model $model): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $relation->newPivot();
+
+        return parent::toShow($request, $model, $pivot);
+    }
+
+    /**
+     * Get the show representation of the relation.
      */
     public function toShow(Request $request, Model $model, Model $related): array
     {
@@ -237,5 +259,19 @@ class BelongsToMany extends Relation
         $pivot->setRelation('related', $related);
 
         return parent::toShow($request, $model, $pivot);
+    }
+
+    /**
+     * Get the edit representation of the relation.
+     */
+    public function toEdit(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::toEdit($request, $model, $pivot);
     }
 }

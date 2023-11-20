@@ -4,7 +4,6 @@ namespace Cone\Root\Http\Controllers;
 
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -46,25 +45,9 @@ class RelationController extends Controller
      */
     public function store(Request $request, Model $model): RedirectResponse
     {
-        $field = $request->resolved();
+        //
 
-        $relation = $field->getRelation($model);
-
-        $related = tap($relation->getRelated(), static function (Model $related) use ($model): void {
-            $related->setRelation('parent', $model);
-        });
-
-        $fields = $field->resolveFields($request)->available($request, $model, $related);
-
-        $request->validate($fields->mapToValidate($request, $related));
-
-        $fields->each->persist($request, $related);
-
-        $relation->save($related);
-
-        $path = sprintf('%s/%s', $request->resolved()->resolveUri($request), $related->getKey());
-
-        return Redirect::to($path)
+        return Redirect::to('')
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
@@ -99,21 +82,9 @@ class RelationController extends Controller
      */
     public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
-        $field = $request->resolved();
+        //
 
-        $related->setRelation('parent', $model);
-
-        $fields = $field->resolveFields($request)->available($request, $model, $related);
-
-        $request->validate($fields->mapToValidate($request, $related));
-
-        $fields->each->persist($request, $related);
-
-        $related->save();
-
-        $path = sprintf('%s/%s/edit', $request->resolved()->resolveUri($request), $related->getKey());
-
-        return Redirect::to($path)
+        return Redirect::back()
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
     }
 
@@ -122,13 +93,9 @@ class RelationController extends Controller
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
-        $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();
+        //
 
-        $trashed ? $related->forceDelete() : $related->delete();
-
-        $path = $request->resolved()->resolveUri($request);
-
-        return Redirect::to($path)
+        return Redirect::to('')
                     ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
 }

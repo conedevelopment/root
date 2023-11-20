@@ -1,3 +1,3 @@
-<turbo-frame id="relation-{{ $attribute }}" data-turbo-action="advance">
+<turbo-frame id="relation-{{ $attribute }}">
     @include('root::table.table')
 </turbo-frame>

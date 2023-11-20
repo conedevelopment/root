@@ -422,7 +422,10 @@ abstract class Relation extends Field implements Form
             $router->get('/', [RelationController::class, 'index']);
             $router->get('/create', [RelationController::class, 'create']);
             $router->get('/{resourceRelation}', [RelationController::class, 'show']);
+            $router->post('/', [RelationController::class, 'store']);
             $router->get('/{resourceRelation}/edit', [RelationController::class, 'edit']);
+            $router->patch('/{resourceRelation}', [RelationController::class, 'update']);
+            $router->delete('/{resourceRelation}', [RelationController::class, 'destroy']);
         }
     }
 
@@ -538,7 +541,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey())]),
             'model' => $related,
-            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
+            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getRouteKey()),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
