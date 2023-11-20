@@ -31,7 +31,7 @@ class MorphToMany extends BelongsToMany
                     $model->getMorphType(),
                     $model->getRelatedKey(),
                     $model->getForeignKey(),
-                );
+                )->withDefault();
             })
             ->withRelatableQuery(function (Request $request, Builder $query, MorphPivot $model): Builder {
                 return $this->resolveRelatableQuery($request, $model->pivotParent);

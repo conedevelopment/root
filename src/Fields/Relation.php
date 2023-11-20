@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
 abstract class Relation extends Field implements Form
@@ -283,6 +284,20 @@ abstract class Relation extends Field implements Form
         }
 
         return parent::resolveFormat($request, $model);
+    }
+
+    /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveField(Request $request, Field $field): void
+    {
+        if ($this->isSubResource()) {
+            $field->setAttribute('form', $this->modelAttribute);
+            $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
+        } else {
+            $field->setAttribute('form', $this->getAttribute('form'));
+            $field->resolveErrorsUsing($this->errorsResolver);
+        }
     }
 
     /**

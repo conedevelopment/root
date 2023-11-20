@@ -57,7 +57,7 @@ class BelongsToMany extends Relation
                     $model->getRelatedKey(),
                     $model->getForeignKey(),
                     'related'
-                );
+                )->withDefault();
             })
             ->withRelatableQuery(function (Request $request, Builder $query, Pivot $model): Builder {
                 return $this->resolveRelatableQuery($request, $model->pivotParent);
@@ -69,15 +69,17 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Handle the callback for the field resolution.
+     * {@inheritdoc}
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setAttribute('form', $this->getAttribute('form'));
-        $field->resolveErrorsUsing($this->errorsResolver);
-        $field->setModelAttribute(
-            sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
-        );
+        if (! $this->isSubResource()) {
+            $field->setModelAttribute(
+                sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
+            );
+        }
+
+        parent::resolveField($request, $field);
     }
 
     /**
@@ -270,7 +272,7 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the create representation of the relation.
+     * {@inheritdoc}
      */
     public function toCreate(Request $request, Model $model): array
     {
@@ -278,11 +280,23 @@ class BelongsToMany extends Relation
 
         $pivot = $relation->newPivot();
 
-        return parent::toShow($request, $model, $pivot);
+        $pivot->setRelation('related', $relation->getRelated());
+
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
+            'model' => $pivot,
+            'action' => $this->modelUrl($model),
+            'method' => 'POST',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $pivot)
+                ->visible('relation.create')
+                ->mapToInputs($request, $pivot),
+        ]);
     }
 
     /**
-     * Get the show representation of the relation.
+     * {@inheritdoc}
      */
     public function toShow(Request $request, Model $model, Model $related): array
     {
@@ -296,7 +310,7 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the edit representation of the relation.
+     * {@inheritdoc}
      */
     public function toEdit(Request $request, Model $model, Model $related): array
     {

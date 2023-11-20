@@ -17,6 +17,8 @@ class BelongsToManyController extends RelationController
     {
         $field = $request->route('field');
 
+        dd($request->all());
+
         $field->handleFormRequest($request, $model);
 
         return Redirect::to('')
