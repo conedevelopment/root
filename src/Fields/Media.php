@@ -188,7 +188,7 @@ class Media extends File
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
             }, $data['options'] ?? []),
-            'url' => $this->replaceRoutePlaceholders($request->route()),
+            'url' => $this->modelUrl($model),
             'filters' => $filters->renderable()
                 ->map(function (RenderableFilter $filter) use ($request, $model): array {
                     return $filter->toField()

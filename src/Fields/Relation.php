@@ -379,7 +379,7 @@ abstract class Relation extends Field implements Form
     {
         return [
             'id' => $related->getKey(),
-            'url' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
+            'url' => $this->relatedUrl($model, $related),
             'model' => $related,
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -387,6 +387,22 @@ abstract class Relation extends Field implements Form
                 ->visible('relation.index')
                 ->mapToDisplay($request, $related),
         ];
+    }
+
+    /**
+     * Get the model URL.
+     */
+    public function modelUrl(Model $model): string
+    {
+        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+    }
+
+    /**
+     * Get the related URL.
+     */
+    public function relatedUrl(Model $model, Model $related): string
+    {
+        return sprintf('%s/%s', $this->modelUrl($model), $related->getKey());
     }
 
     /**
@@ -463,7 +479,7 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
-            'url' => $this->replaceRoutePlaceholders($request->route()),
+            'url' => $this->modelUrl($model),
         ]);
     }
 
@@ -478,10 +494,9 @@ abstract class Relation extends Field implements Form
                 ->authorized($request, $model)
                 ->visible('relation.index')
                 ->mapToForms($request, $model),
-            'data' => $this->paginate($request, $model)
-                ->through(function (Model $related) use ($request, $model): array {
-                    return $this->mapRelated($request, $model, $related);
-                }),
+            'data' => $this->paginate($request, $model)->through(function (Model $related) use ($request, $model): array {
+                return $this->mapRelated($request, $model, $related);
+            }),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
@@ -502,7 +517,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->getRelated(),
-            'action' => $this->replaceRoutePlaceholders($request->route()), $related->getKey(),
+            'action' => $this->modelUrl($model),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -520,7 +535,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey()),
             'model' => $related,
-            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
+            'action' => $this->relatedUrl($model, $related),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
@@ -541,7 +556,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey())]),
             'model' => $related,
-            'action' => sprintf('%s/%s', $this->replaceRoutePlaceholders($request->route()), $related->getKey()),
+            'action' => $this->relatedUrl($model, $related),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)

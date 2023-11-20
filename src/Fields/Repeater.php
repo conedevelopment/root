@@ -181,6 +181,14 @@ class Repeater extends Field
     }
 
     /**
+     * Get the model URL.
+     */
+    public function modelUrl(Model $model): string
+    {
+        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+    }
+
+    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Request $request, Router $router): void
@@ -230,7 +238,7 @@ class Repeater extends Field
                     'html' => View::make('root::fields.repeater-option', $option)->render(),
                 ]);
             }, $this->resolveOptions($request, $model)),
-            'url' => $this->replaceRoutePlaceholders($request->route()),
+            'url' => $this->modelUrl($model),
         ]);
     }
 

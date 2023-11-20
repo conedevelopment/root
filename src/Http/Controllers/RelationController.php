@@ -47,9 +47,11 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        // $field->handleFormRequest($request, $model);
+        $related = $field->getRelation($model)->getRelated();
 
-        return Redirect::to('')
+        $field->handleFormRequest($request, $related);
+
+        return Redirect::to(sprintf('%s/s', $field->get))
                     ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
     }
 
@@ -86,7 +88,7 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        // $field->handleFormRequest($request, $model);
+        $field->handleFormRequest($request, $related);
 
         return Redirect::back()
                     ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
