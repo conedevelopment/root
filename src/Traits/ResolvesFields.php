@@ -46,11 +46,11 @@ trait ResolvesFields
         if (is_null($this->fields)) {
             $this->fields = new Fields($this->fields($request));
 
-            if (! is_null($this->fieldsResolver)) {
-                $this->fields->register(
+            $this->fields->when(! is_null($this->fieldsResolver), function (Fields $fields) use ($request): void {
+                $fields->register(
                     Arr::wrap(call_user_func_array($this->fieldsResolver, [$request]))
                 );
-            }
+            });
 
             $this->fields->each(function (Field $field) use ($request): void {
                 $this->resolveField($request, $field);
@@ -66,24 +66,5 @@ trait ResolvesFields
     protected function resolveField(Request $request, Field $field): void
     {
         //
-    }
-
-    /**
-     * Find the field with the given API URI.
-     */
-    public function findField(Request $request, string $apiUri): ?Field
-    {
-        foreach ($this->resolveFields($request)->all() as $field) {
-            if (trim($field->getApiUri(), '/') === trim($apiUri, '/')) {
-                return $field;
-            }
-
-            if (in_array(ResolvesFields::class, class_uses_recursive($field))
-                && ! is_null($subfield = $field->findField($request, $apiUri))) {
-                return $subfield;
-            }
-        }
-
-        return null;
     }
 }

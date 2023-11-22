@@ -2,8 +2,10 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Traits\RegistersRoutes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -34,6 +36,60 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the fields that are available for the current request and model.
+     */
+    public function authorized(Request $request, Model $model = null): static
+    {
+        return $this->filter->authorized($request, $model)->values();
+    }
+
+    /**
+     * Filter the fields that are visible in the given context.
+     */
+    public function visible(string|array $context): static
+    {
+        return $this->filter->visible($context)->values();
+    }
+
+    /**
+     * Filter the searchable fields.
+     */
+    public function searchable(): static
+    {
+        return $this->filter->isSearchable();
+    }
+
+    /**
+     * Filter the sortable fields.
+     */
+    public function sortable(): static
+    {
+        return $this->filter->isSortable();
+    }
+
+    /**
+     * Filter the relation fields.
+     */
+    public function relation(): static
+    {
+        return $this->filter(static function (Field $field): bool {
+            return $field instanceof Relation;
+        });
+    }
+
+    /**
+     * Filter the subresource fields.
+     */
+    public function subResource(bool $value = true): static
+    {
+        return $this->filter(static function (Field $field) use ($value): bool {
+            return $value
+                ? $field instanceof Relation && $field->isSubResource()
+                : ! $field instanceof Relation || ! $field->isSubResource();
+        });
+    }
+
+    /**
      * Map the fields to validate.
      */
     public function mapToValidate(Request $request, Model $model): array
@@ -44,10 +100,32 @@ class Fields extends Collection
     }
 
     /**
-     * Map the field to form components.
+     * Map the fields to displayable data.
      */
-    public function mapToFormComponents(Request $request, Model $model): array
+    public function mapToDisplay(Request $request, Model $model): array
     {
-        return $this->map->toFormComponent($request, $model)->all();
+        return $this->map->toDisplay($request, $model)->filter()->values()->all();
+    }
+
+    /**
+     * Map the fields to form inputs.
+     */
+    public function mapToInputs(Request $request, Model $model): array
+    {
+        return $this->map->toInput($request, $model)->filter()->values()->all();
+    }
+
+    /**
+     * Register the field routes.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $router->prefix('fields')->group(function (Router $router) use ($request): void {
+            $this->each(static function (Field $field) use ($request, $router): void {
+                if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
+                    $field->registerRoutes($request, $router);
+                }
+            });
+        });
     }
 }

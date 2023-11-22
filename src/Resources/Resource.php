@@ -4,13 +4,17 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
-use Cone\Root\Filters\Filter;
+use Cone\Root\Fields\Relation;
+use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
+use Cone\Root\Filters\TrashStatus;
 use Cone\Root\Interfaces\Form;
-use Cone\Root\Interfaces\Table;
+use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
-use Cone\Root\Traits\ResolvesColumns;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -20,17 +24,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class Resource implements Arrayable, Form, Table
+abstract class Resource implements Arrayable, Form
 {
     use AsForm;
     use Authorizable;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
     use ResolvesActions;
-    use ResolvesColumns;
     use ResolvesFilters;
     use ResolvesWidgets;
 
@@ -55,6 +61,16 @@ class Resource implements Arrayable, Form, Table
     protected string $icon = 'archive';
 
     /**
+     * Boot the resource.
+     */
+    public function boot(Root $root): void
+    {
+        $root->routes(function (Router $router) use ($root): void {
+            $this->registerRoutes($root->app['request'], $router);
+        });
+    }
+
+    /**
      * Get the model for the resource.
      */
     public function getModel(): string
@@ -76,6 +92,14 @@ class Resource implements Arrayable, Form, Table
     public function getUriKey(): string
     {
         return $this->getKey();
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return '_resource';
     }
 
     /**
@@ -202,19 +226,37 @@ class Resource implements Arrayable, Form, Table
     }
 
     /**
-     * Get the resource URL.
-     */
-    public function getUrl(): string
-    {
-        return URL::route('root.resource.index', $this->getUriKey());
-    }
-
-    /**
      * Get the URL for the given model.
      */
     public function modelUrl(Model $model): string
     {
-        return URL::route($model->exists ? 'root.resource.update' : 'root.resource.store', [$this->getUriKey(), $model]);
+        return sprintf('%s/%s', $this->getUri(), $model->exists ? $model->getKey() : '');
+    }
+
+    /**
+     * Get the title for the model.
+     */
+    public function modelTitle(Model $model): string
+    {
+        return sprintf('#%s', $model->getKey());
+    }
+
+    /**
+     * Define the filters for the object.
+     */
+    public function filters(Request $request): array
+    {
+        $fields = $this->resolveFields($request)->authorized($request);
+
+        $searchables = $fields->searchable($request);
+
+        $sortables = $fields->sortable($request);
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? new Search($searchables) : null,
+            $sortables->isNotEmpty() ? new Sort($sortables) : null,
+            $this->isSoftDeletable() ? new TrashStatus() : null,
+        ]));
     }
 
     /**
@@ -222,11 +264,8 @@ class Resource implements Arrayable, Form, Table
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        $field->setApiUri(sprintf('/root/api/%s/fields/%s', $this->getKey(), $field->getUriKey()));
         $field->setAttribute('form', $this->getKey());
-        $field->resolveErrorsUsing(function (Request $request): MessageBag {
-            return $this->errors($request);
-        });
+        $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
     }
 
     /**
@@ -235,7 +274,6 @@ class Resource implements Arrayable, Form, Table
     protected function resolveAction(Request $request, Action $action): void
     {
         $action->setQuery($this->resolveFilteredQuery($request));
-        $action->setApiUri(sprintf('/root/api/%s/actions/%s', $this->getKey(), $action->getUriKey()));
     }
 
     /**
@@ -263,9 +301,46 @@ class Resource implements Arrayable, Form, Table
             ->through(function (Model $model) use ($request): array {
                 return [
                     'id' => $model->getKey(),
-                    'cells' => $this->resolveColumns($request)->mapToCells($request, $model),
+                    'url' => $this->modelUrl($model),
+                    'model' => $model,
+                    'fields' => $this->resolveFields($request)
+                        ->subResource(false)
+                        ->authorized($request, $model)
+                        ->visible('index')
+                        ->mapToDisplay($request, $model),
                 ];
             });
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+
+        $this->resolveFields($request)
+            ->authorized($request, $model)
+            ->visible($request->isMethod('POST') ? 'create' : 'update')
+            ->persist($request, $model);
+
+        $model->save();
+    }
+
+    /**
+     * Register the routes.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveActions($request)->registerRoutes($request, $router);
+
+            $router->prefix('{resourceModel}')->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
+        });
     }
 
     /**
@@ -280,7 +355,7 @@ class Resource implements Arrayable, Form, Table
             'modelName' => $this->getModelName(),
             'name' => $this->getName(),
             'uriKey' => $this->getUriKey(),
-            'url' => $this->getUrl(),
+            'url' => $this->getUri(),
         ];
     }
 
@@ -291,15 +366,21 @@ class Resource implements Arrayable, Form, Table
     {
         return array_merge($this->toArray(), [
             'title' => $this->getName(),
-            'columns' => $this->resolveColumns($request)->mapToHeads($request),
-            'actions' => $this->resolveActions($request)->mapToTableComponents($request),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $this->getModelInstance())
+                ->visible('index')
+                ->mapToForms($request, $this->getModelInstance()),
             'data' => $this->paginate($request),
-            'widgets' => $this->resolveWidgets($request)->all(),
+            'widgets' => $this->resolveWidgets($request)
+                ->authorized($request)
+                ->visible('index')
+                ->toArray(),
             'perPageOptions' => $this->getPerPageOptions(),
             'filters' => $this->resolveFilters($request)
+                ->authorized($request)
                 ->renderable()
-                ->map(function (Filter $filter) use ($request): array {
-                    return $filter->toField()->toFormComponent($request, $this->getModelInstance());
+                ->map(function (RenderableFilter $filter) use ($request): array {
+                    return $filter->toField()->toInput($request, $this->getModelInstance());
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
@@ -314,9 +395,44 @@ class Resource implements Arrayable, Form, Table
         return array_merge($this->toArray(), [
             'title' => __('Create :model', ['model' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
-            'action' => $this->getUrl(),
+            'action' => $this->getUri(),
             'method' => 'POST',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $model)
+                ->visible('create')
+                ->mapToInputs($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the resource.
+     */
+    public function toShow(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'title' => sprintf('%s %s', $this->getModelName(), $this->modelTitle($model)),
+            'model' => $model,
+            'action' => $this->modelUrl($model),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->mapToDisplay($request, $model),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->mapToForms($request, $model),
+            'widgets' => $this->resolveWidgets($request)
+                ->authorized($request, $model)
+                ->visible('show')
+                ->toArray(),
+            'relations' => $this->resolveFields($request)
+                ->subResource()
+                ->authorized($request, $model)
+                ->map(static function (Relation $relation) use ($request, $model): array {
+                    return $relation->toSubResource($request, $model);
+                }),
         ]);
     }
 
@@ -326,11 +442,15 @@ class Resource implements Arrayable, Form, Table
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => '',
+            'title' => __('Edit :model', ['model' => sprintf('%s %s', $this->modelTitle($model))]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
-            'fields' => $this->resolveFields($request)->mapToFormComponents($request, $model),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $model)
+                ->visible('update')
+                ->mapToInputs($request, $model),
         ]);
     }
 }

@@ -2,13 +2,7 @@
 
 namespace {{ namespace }};
 
-use Cone\Root\Fields\Fields;
-use Cone\Root\Interfaces\Form;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Columns\Columns;
-use Cone\Root\Table\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Resource
@@ -19,23 +13,13 @@ class {{ class }} extends Resource
     protected string $model = {{ model }};
 
     /**
-     * Define the columns.
-     */
-    public function columns(Request $request): array
-    {
-        return array_merge(parent::columns($request), [
-            //
-        ]);
-    }
-
-    /**
      * Define the fields.
      */
     public function fields(Request $request): array
     {
-        return array_merge(parent::fields($request), [
+        return [
             //
-        ]);
+        ];
     }
 
     /**
@@ -43,9 +27,9 @@ class {{ class }} extends Resource
      */
     public function filters(Request $request): array
     {
-        return array_merge(parent::filters($request), [
+        return [
             //
-        ]);
+        ];
     }
 
     /**
@@ -53,9 +37,9 @@ class {{ class }} extends Resource
      */
     public function actions(Request $request): array
     {
-        return array_merge(parent::actions($request), [
+        return [
             //
-        ]);
+        ];
     }
 
     /**
@@ -63,8 +47,8 @@ class {{ class }} extends Resource
      */
     public function widgets(Request $request): array
     {
-        return array_merge(parent::widgets($request), [
+        return [
             //
-        ]);
+        ];
     }
 }

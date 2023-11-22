@@ -3,7 +3,6 @@
 namespace Cone\Root\Filters;
 
 use Cone\Root\Fields\Select as Field;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -49,7 +48,7 @@ abstract class Select extends RenderableFilter
             ->options(App::call(function (Request $request): array {
                 return $this->options($request);
             }))
-            ->value(fn (Request $request, Model $model): mixed => $model->getAttribute($this->getKey()))
+            ->value(fn (Request $request): mixed => $this->getValue($request))
             ->multiple($this->multiple);
     }
 }

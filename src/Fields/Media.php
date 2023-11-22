@@ -2,12 +2,16 @@
 
 namespace Cone\Root\Fields;
 
+use Cone\Root\Filters\MediaSearch;
+use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -15,11 +19,6 @@ use Illuminate\Validation\Rule;
 
 class Media extends File
 {
-    /**
-     * Indicates if the component is async.
-     */
-    protected bool $async = true;
-
     /**
      * Indicates if the component is multiple.
      */
@@ -29,6 +28,14 @@ class Media extends File
      * The Blade template.
      */
     protected string $template = 'root::fields.media';
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return 'field';
+    }
 
     /**
      * Get the modal key.
@@ -60,27 +67,41 @@ class Media extends File
     }
 
     /**
-     * Paginate the results.
+     * {@inheritdoc}
      */
-    public function paginate(Request $request, Model $model): array
+    public function fields(Request $request): array
     {
-        return $this->resolveRelatableQuery($request, $model)
-            ->latest()
+        return [
+            //
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filters(Request $request): array
+    {
+        return [
+            new MediaSearch(),
+        ];
+    }
+
+    /**
+     * Paginate the relatable models.
+     */
+    public function paginateRelatable(Request $request, Model $model): LengthAwarePaginator
+    {
+        return $this->resolveFilters($request)
+            ->apply($request, $this->resolveRelatableQuery($request, $model))
             ->paginate($request->input('per_page'))
             ->withQueryString()
-            ->setPath($this->apiUri)
             ->through(function (Medium $related) use ($request, $model): array {
                 $option = $this->toOption($request, $model, $related);
-
-                $option['fields'] = array_map(static function (Field $field) use ($request, $model): array {
-                    return $field->toFormComponent($request, $model);
-                }, $option['fields']);
 
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
-            })
-            ->toArray();
+            });
     }
 
     /**
@@ -130,7 +151,7 @@ class Media extends File
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
             return array_merge($this->toOption($request, $model, new Medium()), [
                 'processing' => true,
-                'file_name' => null,
+                'fileName' => null,
             ]);
         }
 
@@ -138,11 +159,21 @@ class Media extends File
     }
 
     /**
+     * The routes that should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        $router->match(['GET', 'POST', 'DELETE'], '/', MediaController::class);
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        $data = parent::toFormComponent($request, $model);
+        $data = parent::toInput($request, $model);
+
+        $filters = $this->resolveFilters($request)->authorized($request);
 
         return array_merge($data, [
             'modalKey' => $this->getModalKey(),
@@ -150,27 +181,25 @@ class Media extends File
                 'accept' => $this->getAttribute('accept', '*'),
                 'multiple' => $this->multiple,
                 'chunk_size' => Config::get('root.media.chunk_size'),
+                'query' => $filters->mapToData($request),
             ],
-            'selection' => array_map(static function (array $option) use ($request, $model): array {
-                $option['fields'] = $option['fields']->mapToFormComponents($request, $model);
-
+            'selection' => array_map(static function (array $option): array {
                 return array_merge($option, [
                     'html' => View::make('root::fields.file-option', $option)->render(),
                 ]);
             }, $data['options'] ?? []),
+            'url' => $this->modelUrl($model),
+            'filters' => $filters->renderable()
+                ->map(function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()
+                        ->removeAttribute('name')
+                        ->setAttributes([
+                            'x-model.debounce.300ms' => $filter->getKey(),
+                            'x-bind:readonly' => 'processing',
+                        ])
+                        ->toInput($request, $this->getRelation($model)->getRelated());
+                })
+                ->all(),
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleApiRequest(Request $request, Model $model): JsonResponse
-    {
-        return match ($request->method()) {
-            'GET' => new JsonResponse($this->paginate($request, $model)),
-            'POST' => new JsonResponse($this->upload($request, $model), JsonResponse::HTTP_CREATED),
-            'DELETE' => new JsonResponse(['deleted' => $this->prune($request, $model, $request->input('ids', []))]),
-            default => parent::handleApiRequest($request, $model),
-        };
     }
 }

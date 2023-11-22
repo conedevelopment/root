@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class Select extends Field
 {
@@ -59,6 +60,28 @@ class Select extends Field
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): string {
+                $options = array_column(
+                    $this->resolveOptions($request, $model), 'label', 'value'
+                );
+
+                return Collection::make($value)
+                    ->map(static function (mixed $value) use ($options): mixed {
+                        return $options[$value] ?? $value;
+                    })
+                    ->implode(', ');
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
+    }
+
+    /**
      * Set the options attribute.
      */
     public function options(array|Closure $value): static
@@ -107,9 +130,9 @@ class Select extends Field
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
+        return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
         ]);

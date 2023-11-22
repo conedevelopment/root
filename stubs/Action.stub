@@ -21,8 +21,8 @@ class {{ class }} extends Action
      */
     public function fields(Request $request): array
     {
-        return array_merge(parent::fields($request), [
+        return [
             //
-        ]);
+        ];
     }
 }

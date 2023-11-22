@@ -2,24 +2,25 @@
 
 namespace Cone\Root\Filters;
 
-use Cone\Root\Columns\Columns;
+use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Fields;
+use Cone\Root\Fields\Relation;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class Search extends RenderableFilter
 {
     /**
-     * The searchable columns.
+     * The searchable fields.
      */
-    protected Columns $columns;
+    protected Fields $fields;
 
     /**
      * Create a new filter instance.
      */
-    public function __construct(Columns $columns)
+    public function __construct(Fields $fields)
     {
-        $this->columns = $columns;
+        $this->fields = $fields;
     }
 
     /**
@@ -27,7 +28,43 @@ class Search extends RenderableFilter
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        return $query;
+        $attributes = $this->getSearchableAttributes();
+
+        if (empty($value) || empty($attributes)) {
+            return $query;
+        }
+
+        return $query->where(static function (Builder $query) use ($attributes, $value): void {
+            foreach ($attributes as $attribute => $fields) {
+                $operator = array_key_first($attributes) === $attribute ? 'and' : 'or';
+
+                if (is_array($fields)) {
+                    $query->has($attribute, '>=', 1, $operator, static function (Builder $query) use ($fields, $value): Builder {
+                        foreach ($fields as $field) {
+                            $operator = $fields[0] === $field ? 'and' : 'or';
+
+                            $query->where($query->qualifyColumn($field), 'like', "%{$value}%", $operator);
+                        }
+
+                        return $query;
+                    });
+                } else {
+                    $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $operator);
+                }
+            }
+        });
+    }
+
+    /**
+     * Get the serachable attributes.
+     */
+    public function getSearchableAttributes(): array
+    {
+        return $this->fields->mapWithKeys(static function (Field $field): array {
+            return [
+                $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
+            ];
+        })->all();
     }
 
     /**
@@ -36,9 +73,7 @@ class Search extends RenderableFilter
     public function toField(): SearchField
     {
         return SearchField::make($this->getName(), $this->getRequestKey())
-            ->value(function (Request $request, Model $model): ?string {
-                return $model->getAttribute($this->getKey());
-            })
+            ->value(fn (Request $request): ?string => $this->getValue($request))
             ->placeholder($this->getName().'...');
     }
 }

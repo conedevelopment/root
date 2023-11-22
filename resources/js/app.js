@@ -4,6 +4,7 @@ import focus from '@alpinejs/focus';
 import Cookie from '@conedevelopment/qkie';
 import './notifications';
 import './theme';
+import * as Turbo from '@hotwired/turbo';
 
 // Alpine
 Alpine.plugin(focus);
@@ -20,4 +21,4 @@ window.$http = Axios.create({
 });
 
 // Cookie
-window.$cookie = new Cookie();
+window.$cookie = new Cookie('__root_');

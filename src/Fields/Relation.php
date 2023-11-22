@@ -3,32 +3,57 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Interfaces\Form;
+use Cone\Root\Root;
+use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\RegistersRoutes;
+use Cone\Root\Traits\ResolvesActions;
+use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Traits\ResolvesFilters;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\Relation
  */
-abstract class Relation extends Field
+abstract class Relation extends Field implements Form
 {
+    use AsForm;
+    use ResolvesActions;
+    use ResolvesFilters;
+    use ResolvesFields;
+    use RegistersRoutes {
+        RegistersRoutes::registerRoutes as __registerRoutes;
+    }
+
     /**
      * The relation name on the model.
      */
     protected Closure|string $relation;
 
     /**
+     * The searchable columns.
+     */
+    protected array $searchableColumns = ['id'];
+
+    /**
+     * The sortable column.
+     */
+    protected string $sortableColumn = 'id';
+
+    /**
      * Indicates if the field should be nullable.
      */
     protected bool $nullable = false;
-
-    /**
-     * Indicates if the component is async.
-     */
-    protected bool $async = false;
 
     /**
      * The Blade template.
@@ -49,6 +74,11 @@ abstract class Relation extends Field
      * The option group resolver.
      */
     protected string|Closure|null $groupResolver = null;
+
+    /**
+     * Indicates whether the relation is a sub resource.
+     */
+    protected bool $asSubResource = false;
 
     /**
      * The query scopes.
@@ -101,8 +131,42 @@ abstract class Relation extends Field
     public function getRelationName(): string
     {
         return $this->relation instanceof Closure
-            ? $this->getModelAttribute()
+            ? Str::afterLast($this->getModelAttribute(), '.')
             : $this->relation;
+    }
+
+    /**
+     * Get the URI key.
+     */
+    public function getUriKey(): string
+    {
+        return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Get the route parameter name.
+     */
+    public function getRouteParameterName(): string
+    {
+        return 'field';
+    }
+
+    /**
+     * Set the as subresource attribute.
+     */
+    public function asSubResource(bool $value = true): static
+    {
+        $this->asSubResource = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the relation is a subresource.
+     */
+    public function isSubResource(): bool
+    {
+        return $this->asSubResource;
     }
 
     /**
@@ -121,6 +185,42 @@ abstract class Relation extends Field
     public function isNullable(): bool
     {
         return $this->nullable;
+    }
+
+    /**
+     * Set the searachable attribute.
+     */
+    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
+    {
+        $this->searchableColumns = $columns;
+
+        return parent::searchable($value);
+    }
+
+    /**
+     * Get the searchable columns.
+     */
+    public function getSearchableColumns(): array
+    {
+        return $this->searchableColumns;
+    }
+
+    /**
+     * Set the sortable attribute.
+     */
+    public function sortable(bool|Closure $value = true, string $column = 'id'): static
+    {
+        $this->sortableColumn = $column;
+
+        return parent::sortable($value);
+    }
+
+    /**
+     * Get the sortable columns.
+     */
+    public function getSortableColumn(): string
+    {
+        return $this->sortableColumn;
     }
 
     /**
@@ -152,26 +252,6 @@ abstract class Relation extends Field
     }
 
     /**
-     * Set the async attribute.
-     */
-    public function async(bool $value = true): static
-    {
-        $this->async = $value;
-
-        // $this->template = $value ? 'root::fields.dropdown' : 'root::fields.select';
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is asnyc.
-     */
-    public function isAsync(): bool
-    {
-        return $this->async;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getValue(Model $model): mixed
@@ -183,6 +263,46 @@ abstract class Relation extends Field
         }
 
         return $model->getAttribute($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): mixed
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = function (Request $request, Model $model): mixed {
+                $default = $this->getValue($model);
+
+                return Collection::wrap($default)->map(function (Model $related) use ($request): mixed {
+                    $resource = Root::instance()->resources->forModel($related);
+
+                    $value = $this->resolveDisplay($related);
+
+                    if (! is_null($resource) && $related->exists && $request->user()->can('view', $related)) {
+                        $value = sprintf('<a href="%s" data-turbo-frame="_top">%s</a>', $resource->modelUrl($related), $value);
+                    }
+
+                    return $value;
+                })->join(', ');
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
+    }
+
+    /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveField(Request $request, Field $field): void
+    {
+        if ($this->isSubResource()) {
+            $field->setAttribute('form', $this->modelAttribute);
+            $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
+        } else {
+            $field->setAttribute('form', $this->getAttribute('form'));
+            $field->resolveErrorsUsing($this->errorsResolver);
+        }
     }
 
     /**
@@ -206,11 +326,9 @@ abstract class Relation extends Field
             $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
-        if (! is_null($this->queryResolver)) {
-            $query = call_user_func_array($this->queryResolver, [$request, $query, $model]);
-        }
-
-        return $query;
+        return $query->when(! is_null($this->queryResolver), function (Builder $query) use ($request, $model): Builder {
+            return call_user_func_array($this->queryResolver, [$request, $query, $model]);
+        });
     }
 
     /**
@@ -257,17 +375,109 @@ abstract class Relation extends Field
     }
 
     /**
-     * Build the API URI.
+     * Get the per page options.
      */
-    protected function buildApiUri(Model $model): ?string
+    public function getPerPageOptions(): array
     {
-        if (is_null($this->apiUri)) {
-            return $this->apiUri;
-        }
+        return [5, 10, 15, 25];
+    }
 
-        return sprintf('%s?%s', $this->apiUri, http_build_query([
-            'model' => $model->getKey(),
-        ]));
+    /**
+     * Paginate the given query.
+     */
+    public function paginate(Request $request, Model $model): LengthAwarePaginator
+    {
+        return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
+            $this->resolveFilters($request)->apply($request, $relation->getQuery())->latest();
+        })->paginate($request->input('per_page', 5))->withQueryString();
+    }
+
+    /**
+     * Map a related model.
+     */
+    public function mapRelated(Request $request, Model $model, Model $related): array
+    {
+        return [
+            'id' => $related->getKey(),
+            'url' => $this->relatedUrl($model, $related),
+            'model' => $related,
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('index')
+                ->mapToDisplay($request, $related),
+        ];
+    }
+
+    /**
+     * Get the model URL.
+     */
+    public function modelUrl(Model $model): string
+    {
+        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+    }
+
+    /**
+     * Get the related URL.
+     */
+    public function relatedUrl(Model $model, Model $related): string
+    {
+        return sprintf('%s/%s', $this->modelUrl($model), $related->getKey());
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+
+        $this->resolveFields($request)
+            ->authorized($request, $model)
+            ->visible($request->isMethod('POST') ? 'create' : 'update')
+            ->persist($request, $model);
+
+        $model->save();
+    }
+
+    /**
+     * Resolve the resource model for a bound value.
+     */
+    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    {
+        return $this->getRelation($model)->findOrFail($id);
+    }
+
+    /**
+     * Register the routes using the given router.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $this->__registerRoutes($request, $router);
+
+        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+            $this->resolveActions($request)->registerRoutes($request, $router);
+
+            $router->prefix('{resourceRelation}')->group(function (Router $router) use ($request): void {
+                $this->resolveFields($request)->registerRoutes($request, $router);
+            });
+        });
+    }
+
+    /**
+     * Register the routes.
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->isSubResource()) {
+            $router->get('/', [RelationController::class, 'index']);
+            $router->get('/create', [RelationController::class, 'create']);
+            $router->get('/{resourceRelation}', [RelationController::class, 'show']);
+            $router->post('/', [RelationController::class, 'store']);
+            $router->get('/{resourceRelation}/edit', [RelationController::class, 'edit']);
+            $router->patch('/{resourceRelation}', [RelationController::class, 'update']);
+            $router->delete('/{resourceRelation}', [RelationController::class, 'destroy']);
+        }
     }
 
     /**
@@ -277,22 +487,117 @@ abstract class Relation extends Field
     {
         $value = $this->resolveValue($request, $model);
 
-        $option = $this->newOption($related, $this->resolveDisplay($related))
-            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related));
+        if (is_null($value)) {
+            return [];
+        }
 
-        return $option->toArray();
+        return $this->newOption($related, $this->resolveDisplay($related))
+            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related))
+            ->toArray();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
-            'async' => $this->isAsync(),
+        return array_merge(parent::toInput($request, $model), [
             'nullable' => $this->isNullable(),
-            'options' => $this->isAsync() ? [] : $this->resolveOptions($request, $model),
-            'url' => $this->isAsync() ? $this->buildApiUri($model) : null,
+            'options' => $this->resolveOptions($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the sub resource representation of the
+     */
+    public function toSubResource(Request $request, Model $model): array
+    {
+        return array_merge($this->toArray(), [
+            'key' => $this->modelAttribute,
+            'url' => $this->modelUrl($model),
+        ]);
+    }
+
+    /**
+     * Get the index representation of the
+     */
+    public function toIndex(Request $request, Model $model): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => $this->label,
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $model)
+                ->visible('index')
+                ->mapToForms($request, $model),
+            'data' => $this->paginate($request, $model)->through(function (Model $related) use ($request, $model): array {
+                return $this->mapRelated($request, $model, $related);
+            }),
+            'perPageOptions' => $this->getPerPageOptions(),
+            'filters' => $this->resolveFilters($request)
+                ->authorized($request)
+                ->renderable()
+                ->map(static function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()->toInput($request, $model);
+                })
+                ->all(),
+            'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+        ]);
+    }
+
+    /**
+     * Get the create representation of the resource.
+     */
+    public function toCreate(Request $request, Model $model): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Create :model', ['model' => $this->getRelatedName()]),
+            'model' => $related = $this->getRelation($model)->getRelated(),
+            'action' => $this->modelUrl($model),
+            'method' => 'POST',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('create')
+                ->mapToInputs($request, $related),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the
+     */
+    public function toShow(Request $request, Model $model, Model $related): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => $this->resolveDisplay($related),
+            'model' => $related,
+            'action' => $this->relatedUrl($model, $related),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('show')
+                ->mapToDisplay($request, $related),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $related)
+                ->visible('show')
+                ->mapToForms($request, $related),
+        ]);
+    }
+
+    /**
+     * Get the edit representation of the
+     */
+    public function toEdit(Request $request, Model $model, Model $related): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
+            'model' => $related,
+            'action' => $this->relatedUrl($model, $related),
+            'method' => 'PATCH',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('update')
+                ->mapToInputs($request, $related),
         ]);
     }
 }

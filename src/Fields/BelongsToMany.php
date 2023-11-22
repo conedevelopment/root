@@ -3,10 +3,14 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Traits\ResolvesFields;
+use Cone\Root\Http\Controllers\BelongsToManyController;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 
 /**
@@ -16,12 +20,20 @@ use Illuminate\Support\Arr;
  */
 class BelongsToMany extends Relation
 {
-    use ResolvesFields;
-
     /**
      * The pivot fields resolver callback.
      */
     protected ?Closure $pivotFieldsResolver = null;
+
+    /**
+     * The default pivot values that should be saved.
+     */
+    protected array $pivotValues = [];
+
+    /**
+     * Indicates if the field allows duplicate relations.
+     */
+    protected bool $allowDuplicateRelations = false;
 
     /**
      * Create a new relation field instance.
@@ -31,7 +43,6 @@ class BelongsToMany extends Relation
         parent::__construct($label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
-        $this->name($this->modelAttribute.'[]');
     }
 
     /**
@@ -41,21 +52,64 @@ class BelongsToMany extends Relation
     {
         $relation = parent::getRelation($model);
 
-        return $relation->withPivot($relation->newPivot()->getKeyName());
+        return $relation->withPivot([
+            $relation->newPivot()->getKeyName(),
+            $relation->getForeignPivotKeyName(),
+            $relation->getRelatedPivotKeyName(),
+        ]);
     }
 
     /**
-     * Handle the callback for the field resolution.
+     * {@inheritdoc}
+     */
+    public function fields(Request $request): array
+    {
+        return [
+            BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
+                return $model->belongsTo(
+                    get_class($model->getRelation('related')),
+                    $model->getRelatedKey(),
+                    $model->getForeignKey(),
+                    'related'
+                )->withDefault();
+            })
+            ->withRelatableQuery(function (Request $request, Builder $query, Pivot $model): Builder {
+                return $this->resolveRelatableQuery($request, $model->pivotParent)
+                    ->unless($this->allowDuplicateRelations, function (Builder $query) use ($model): Builder {
+                        return $query->whereNotIn(
+                            $query->getModel()->getQualifiedKeyName(),
+                            $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
+                        );
+                    });
+            })
+            ->display(function (Model $model): mixed {
+                return $this->resolveDisplay($model);
+            }),
+        ];
+    }
+
+    /**
+     * Allow duplciate relations.
+     */
+    public function allowDuplicateRelations(bool $value = true): static
+    {
+        $this->allowDuplicateRelations = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     protected function resolveField(Request $request, Field $field): void
     {
-        if (! is_null($this->apiUri)) {
-            $field->setApiUri(sprintf('%s/%s', $this->apiUri, $field->getUriKey()));
+        if (! $this->isSubResource()) {
+            $field->setModelAttribute(
+                sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
+            );
         }
 
-        $field->setModelAttribute(
-            sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
-        );
+        parent::resolveField($request, $field);
     }
 
     /**
@@ -95,21 +149,15 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
-    public function toOption(Request $request, Model $model, Model $related): array
+    public function getValueForHydrate(Request $request): mixed
     {
-        $relation = $this->getRelation($model);
+        $value = (array) parent::getValueForHydrate($request);
 
-        if (! $related->relationLoaded($relation->getPivotAccessor())) {
-            $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
-        }
+        $value = Arr::isList($value) ? array_fill_keys($value, []) : $value;
 
-        $option = parent::toOption($request, $model, $related);
-
-        $option['fields'] = is_null($this->pivotFieldsResolver)
-            ? new Fields()
-            : call_user_func_array($this->pivotFieldsResolver, [$request, $model, $related]);
-
-        return $option;
+        return array_map(function (array $pivot): array {
+            return array_merge($this->pivotValues, $pivot);
+        }, $value);
     }
 
     /**
@@ -131,10 +179,6 @@ class BelongsToMany extends Relation
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $value = (array) $value;
-
-                $value = Arr::isList($value) ? array_fill_keys($value, []) : $value;
-
                 $relation = $this->getRelation($model);
 
                 $results = $this->resolveRelatableQuery($request, $model)
@@ -156,27 +200,84 @@ class BelongsToMany extends Relation
     /**
      * {@inheritdoc}
      */
+    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    {
+        $relation = $this->getRelation($model);
+
+        $related = $relation->wherePivot($relation->newPivot()->getQualifiedKeyName(), $id)->firstOrFail();
+
+        return tap($related, static function (Model $related) use ($relation, $id): void {
+            $pivot = $related->getRelation($relation->getPivotAccessor());
+
+            $pivot->setRelation('related', $related)->setAttribute($pivot->getKeyName(), $id);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mapRelated(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::mapRelated($request, $model, $pivot);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->isSubResource()) {
+            $router->get('/', [BelongsToManyController::class, 'index']);
+            $router->get('/create', [BelongsToManyController::class, 'create']);
+            $router->get('/{resourceRelation}', [BelongsToManyController::class, 'show']);
+            $router->post('/', [BelongsToManyController::class, 'store']);
+            $router->get('/{resourceRelation}/edit', [BelongsToManyController::class, 'edit']);
+            $router->patch('/{resourceRelation}', [BelongsToManyController::class, 'update']);
+            $router->delete('/{resourceRelation}', [BelongsToManyController::class, 'destroy']);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toOption(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        if (! $related->relationLoaded($relation->getPivotAccessor())) {
+            $related->setRelation($relation->getPivotAccessor(), $relation->newPivot());
+        }
+
+        $option = parent::toOption($request, $model, $related);
+
+        $option['attrs']['name'] = sprintf(
+            '%s[%s][%s]',
+            $this->getAttribute('name'),
+            $related->getKey(),
+            $this->getRelation($model)->getRelatedPivotKeyName()
+        );
+
+        $option['fields'] = is_null($this->pivotFieldsResolver)
+            ? []
+            : call_user_func_array($this->pivotFieldsResolver, [$request, $model, $related])->mapToInputs($request, $model);
+
+        return $option;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'relatedName' => $this->getRelatedName(),
         ]);
-    }
-
-    /**
-     * Create a new method.
-     */
-    public function toFormComponent(Request $request, Model $model): array
-    {
-        $data = parent::toFormComponent($request, $model);
-
-        $data['options'] = array_map(static function (array $option) use ($request, $model): array {
-            return array_merge($option, [
-                'fields' => $option['fields']->mapToFormComponents($request, $model),
-            ]);
-        }, $data['options']);
-
-        return $data;
     }
 
     /**
@@ -188,5 +289,57 @@ class BelongsToMany extends Relation
             parent::toValidate($request, $model),
             $this->resolveFields($request)->mapToValidate($request, $model)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toCreate(Request $request, Model $model): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $relation->newPivot();
+
+        $pivot->setRelation('related', $relation->getRelated());
+
+        return array_merge($this->toSubResource($request, $model), [
+            'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
+            'model' => $pivot,
+            'action' => $this->modelUrl($model),
+            'method' => 'POST',
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $pivot)
+                ->visible('relation.create')
+                ->mapToInputs($request, $pivot),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toShow(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::toShow($request, $model, $pivot);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toEdit(Request $request, Model $model, Model $related): array
+    {
+        $relation = $this->getRelation($model);
+
+        $pivot = $related->getRelation($relation->getPivotAccessor());
+
+        $pivot->setRelation('related', $related);
+
+        return parent::toEdit($request, $model, $pivot);
     }
 }

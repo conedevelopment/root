@@ -15,5 +15,5 @@
         <button type="button" class="btn btn--outline-primary" x-on:click="open = false">
             {{ __('Cancel') }}
         </button>
-    </x-slot>
+    </x-slot:footer>
 </x-root::modal>

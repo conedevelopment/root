@@ -8,9 +8,12 @@
 
     {{-- Styles --}}
     <link rel="icon" href="{{ URL::asset('vendor/root/favicon.png') }}" sizes="32x32">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=Open+Sans:wght@400;700&display=swap">
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/manrope-v14-latin-regular.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/manrope-v14-latin-500.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/manrope-v14-latin-600.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/manrope-v14-latin-800.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/open-sans-v35-latin-regular.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ URL::asset('vendor/root/fonts/open-sans-v35-latin-700.woff2') }}" crossorigin>
     {{
         Vite::withEntryPoints('resources/sass/app.scss')
             ->useBuildDirectory('vendor/root/build')
@@ -51,7 +54,7 @@
                     @foreach($alerts as $alert)
                         <x-root::alert :type="$alert['type']">
                             {!! $alert['message'] !!}
-                        </x-root>
+                        </x-root::alert>
                     @endforeach
                     @yield('content')
                 </div>

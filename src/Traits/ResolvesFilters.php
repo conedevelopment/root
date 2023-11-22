@@ -2,14 +2,11 @@
 
 namespace Cone\Root\Traits;
 
-use Cone\Root\Columns\Columns;
+use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
-use Cone\Root\Filters\Search;
-use Cone\Root\Filters\Sort;
-use Cone\Root\Filters\TrashStatus;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 trait ResolvesFilters
 {
@@ -17,6 +14,11 @@ trait ResolvesFilters
      * The filters collection.
      */
     protected ?Filters $filters = null;
+
+    /**
+     * The filters resolver callback.
+     */
+    protected ?Closure $filtersResolver = null;
 
     /**
      * Define the filters for the object.
@@ -29,6 +31,16 @@ trait ResolvesFilters
     }
 
     /**
+     * Set the filters resolver callback.
+     */
+    public function withFilters(Closure $callback): static
+    {
+        $this->filtersResolver = $callback;
+
+        return $this;
+    }
+
+    /**
      * Resolve the filters collection.
      */
     public function resolveFilters(Request $request): Filters
@@ -36,21 +48,11 @@ trait ResolvesFilters
         if (is_null($this->filters)) {
             $this->filters = new Filters($this->filters($request));
 
-            $this->resolveColumns($request)
-                ->searchable()
-                ->whenNotEmpty(function (Columns $columns): void {
-                    $this->filters->prepend(new Search($columns));
-                });
-
-            $this->resolveColumns($request)
-                ->sortable()
-                ->whenNotEmpty(function (Columns $columns): void {
-                    $this->filters->register(new Sort($columns));
-                });
-
-            if (in_array(SoftDeletes::class, class_uses_recursive($this->getModel()))) {
-                $this->filters->register(new TrashStatus());
-            }
+            $this->filters->when(! is_null($this->filtersResolver), function (Filters $filters) use ($request): void {
+                $filters->register(
+                    Arr::wrap(call_user_func_array($this->filtersResolver, [$request]))
+                );
+            });
 
             $this->filters->each(function (Filter $filter) use ($request): void {
                 $this->resolveFilter($request, $filter);

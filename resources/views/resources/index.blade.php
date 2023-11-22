@@ -18,10 +18,10 @@
     @if(! empty($widgets))
         <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
             @foreach($widgets as $widget)
-                {!! $widget !!}
+                @include($widget['template'], $widget)
             @endforeach
         </div>
     @endif
 
-    @include('root::resources.table.table')
+    @include('root::table.table')
 @endsection

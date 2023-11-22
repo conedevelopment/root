@@ -18,3 +18,7 @@
 [x-cloak] {
     visibility: hidden !important;
 }
+
+img {
+    border-radius: config('border-radius-sm', $display);
+}

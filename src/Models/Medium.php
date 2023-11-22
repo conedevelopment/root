@@ -241,7 +241,7 @@ class Medium extends Model implements Contract
     {
         $path = sprintf('%s/%s', $this->uuid, $this->file_name);
 
-        if (! is_null($conversion)) {
+        if (! is_null($conversion) && $conversion !== 'original') {
             $path = substr_replace(
                 $path, "-{$conversion}", -(mb_strlen(Str::afterLast($path, '.')) + 1), -mb_strlen("-{$conversion}")
             );
@@ -264,6 +264,14 @@ class Medium extends Model implements Contract
     public function getUrl(string $conversion = null): string
     {
         return URL::to(Storage::disk($this->disk)->url($this->getPath($conversion)));
+    }
+
+    /**
+     * Check if the medium has the given conversion.
+     */
+    public function hasConversion(string $conversion): bool
+    {
+        return in_array($conversion, $this->properties['conversions'] ?? []);
     }
 
     /**

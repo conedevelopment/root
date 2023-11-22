@@ -37,6 +37,11 @@ class File extends MorphToMany
     protected string $disk;
 
     /**
+     * The displayable conversion name.
+     */
+    protected ?string $displayConversion = 'original';
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
@@ -79,12 +84,26 @@ class File extends MorphToMany
     }
 
     /**
+     * Set the collection pivot value.
+     */
+    public function collection(string $value): static
+    {
+        $this->pivotValues['collection'] = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveDisplay(Model $related): mixed
     {
         if (is_null($this->displayResolver)) {
-            $this->display('file_name');
+            $this->display(function (Medium $related): string {
+                return $related->isImage
+                    ? sprintf('<img src="%s" width="30" height="30">', $related->getUrl($this->displayConversion))
+                    : sprintf('<a href="%s">%s</a>', $related->getUrl(), $related->file_name);
+            });
         }
 
         return parent::resolveDisplay($related);
@@ -104,14 +123,6 @@ class File extends MorphToMany
                 ]);
             })
             ->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function newOption(Model $related, string $label): Option
-    {
-        return new Option($related, $label);
     }
 
     /**
@@ -201,7 +212,7 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    protected function prune(Request $request, Model $model, array $keys): int
+    public function prune(Request $request, Model $model, array $keys): int
     {
         $count = 0;
 
@@ -218,7 +229,7 @@ class File extends MorphToMany
     }
 
     /**
-     * Create a new method.
+     * {@inheritdoc}
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
@@ -236,11 +247,10 @@ class File extends MorphToMany
         /** @var \Cone\Root\Models\Medium $related */
 
         return array_merge($option, [
-            'file_name' => $related->file_name,
-            'is_image' => $related->isImage,
-            'medium' => $related,
+            'fileName' => $related->file_name,
+            'isImage' => $related->isImage,
             'processing' => false,
-            'url' => $related->getUrl('thumbnail') ?: $related->getUrl('original'),
+            'url' => $related->hasConversion('thumbnail') ? $related->getUrl('thumbnail') : $related->getUrl(),
             'uuid' => $related->uuid,
         ]);
     }
@@ -248,9 +258,9 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function toFormComponent(Request $request, Model $model): array
+    public function toInput(Request $request, Model $model): array
     {
-        return array_merge(parent::toFormComponent($request, $model), [
+        return array_merge(parent::toInput($request, $model), [
             'options' => $this->resolveOptions($request, $model),
         ]);
     }

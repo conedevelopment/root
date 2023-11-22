@@ -1,16 +1,16 @@
 <?php
 
-namespace Cone\Root\Columns;
+namespace Cone\Root\Fields;
 
-class ID extends Column
+class ID extends Field
 {
     /**
-     * Create a new column instance.
+     * Create a new field instance.
      */
     public function __construct(string $label = 'ID', string $modelAttribute = 'id')
     {
         parent::__construct($label, $modelAttribute);
 
-        $this->sortable();
+        $this->hiddenOn(['create', 'update']);
     }
 }

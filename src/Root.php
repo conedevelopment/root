@@ -3,7 +3,6 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
 use Illuminate\Contracts\Foundation\Application;
@@ -65,6 +64,8 @@ class Root
      */
     public function boot(): void
     {
+        $this->resources->each->boot($this);
+
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
@@ -119,13 +120,5 @@ class Root
     public function getDomain(): string
     {
         return (string) Config::get('root.domain', null);
-    }
-
-    /**
-     * Get the current resource.
-     */
-    public function getCurrentResource(): ?Resource
-    {
-        return $this->resources->current($this->app['request']);
     }
 }

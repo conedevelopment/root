@@ -4,6 +4,7 @@ extend-exclude = [
     "composer.lock",
     "yarn.lock",
     "public/build/assets/",
+    "public/build/manifest.json",
 ]
 ignore-hidden = false
 
