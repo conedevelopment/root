@@ -17,6 +17,10 @@ abstract class TestCase extends BaseTestCase
 
         $this->app['router']->getRoutes()->refreshNameLookups();
 
+        $this->startSession();
+
+        $this->app['request']->setLaravelSession($this->app['session']);
+
         $this->withoutVite();
 
         Storage::fake('local');

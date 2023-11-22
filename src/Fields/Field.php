@@ -524,7 +524,6 @@ abstract class Field implements Arrayable, JsonSerializable
     public function toArray(): array
     {
         return [
-            'attrs' => $this->newAttributeBag(),
             'attribute' => $this->getModelAttribute(),
             'help' => $this->help,
             'label' => $this->label,
