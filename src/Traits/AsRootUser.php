@@ -39,6 +39,8 @@ trait AsRootUser
 
     /**
      * Get the avatar attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
      */
     protected function avatar(): Attribute
     {

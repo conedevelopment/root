@@ -166,6 +166,8 @@ class Medium extends Model implements Contract
 
     /**
      * Get the conversion URLs.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<array<string, string>, never>
      */
     protected function urls(): Attribute
     {
@@ -184,6 +186,8 @@ class Medium extends Model implements Contract
 
     /**
      * Get the formatted size attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string, never>
      */
     protected function formattedSize(): Attribute
     {
@@ -204,6 +208,8 @@ class Medium extends Model implements Contract
 
     /**
      * Get the dimensions attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
      */
     protected function dimensions(): Attribute
     {

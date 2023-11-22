@@ -12,8 +12,10 @@ class RepeaterController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
+        /** @var \Cone\Root\Resources\Resource $resource */
         $resource = $request->route('_resource');
 
+        /** @var \Cone\Root\Fields\Repeater $field */
         $field = $request->route('field');
 
         // Gate::allowIf($field->authorized($request, $model));

@@ -11,7 +11,7 @@ class MetaFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<\Cone\Root\Models\Meta>
      */
     protected $model = Meta::class;
 
