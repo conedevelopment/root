@@ -399,7 +399,7 @@ abstract class Relation extends Field implements Form
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
-                ->visible('relation.index')
+                ->visible('index')
                 ->mapToDisplay($request, $related),
         ];
     }
@@ -418,6 +418,21 @@ abstract class Relation extends Field implements Form
     public function relatedUrl(Model $model, Model $related): string
     {
         return sprintf('%s/%s', $this->modelUrl($model), $related->getKey());
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+
+        $this->resolveFields($request)
+            ->authorized($request, $model)
+            ->visible($request->isMethod('POST') ? 'create' : 'update')
+            ->persist($request, $model);
+
+        $model->save();
     }
 
     /**
@@ -488,7 +503,7 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Get the sub resource representation of the relation.
+     * Get the sub resource representation of the
      */
     public function toSubResource(Request $request, Model $model): array
     {
@@ -499,7 +514,7 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Get the index representation of the relation.
+     * Get the index representation of the
      */
     public function toIndex(Request $request, Model $model): array
     {
@@ -507,7 +522,7 @@ abstract class Relation extends Field implements Form
             'title' => $this->label,
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
-                ->visible('relation.index')
+                ->visible('index')
                 ->mapToForms($request, $model),
             'data' => $this->paginate($request, $model)->through(function (Model $related) use ($request, $model): array {
                 return $this->mapRelated($request, $model, $related);
@@ -537,46 +552,46 @@ abstract class Relation extends Field implements Form
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
-                ->visible('relation.create')
+                ->visible('create')
                 ->mapToInputs($request, $related),
         ]);
     }
 
     /**
-     * Get the edit representation of the relation.
+     * Get the edit representation of the
      */
     public function toShow(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'title' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey()),
+            'title' => $this->resolveDisplay($related),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
-                ->visible('relation.show')
+                ->visible('show')
                 ->mapToDisplay($request, $related),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $related)
-                ->visible('relation.show')
+                ->visible('show')
                 ->mapToForms($request, $related),
         ]);
     }
 
     /**
-     * Get the edit representation of the relation.
+     * Get the edit representation of the
      */
     public function toEdit(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getRelatedName(), $related->getKey())]),
+            'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),
             'method' => 'PATCH',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
-                ->visible('relation.update')
+                ->visible('update')
                 ->mapToInputs($request, $related),
         ]);
     }

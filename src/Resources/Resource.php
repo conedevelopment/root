@@ -234,6 +234,14 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the title for the model.
+     */
+    public function modelTitle(Model $model): string
+    {
+        return sprintf('#%s', $model->getKey());
+    }
+
+    /**
      * Define the filters for the object.
      */
     public function filters(Request $request): array
@@ -313,7 +321,7 @@ abstract class Resource implements Arrayable, Form
 
         $this->resolveFields($request)
             ->authorized($request, $model)
-            ->visible($request->method() === 'POST' ? 'create' : 'update')
+            ->visible($request->isMethod('POST') ? 'create' : 'update')
             ->persist($request, $model);
 
         $model->save();
@@ -403,7 +411,7 @@ abstract class Resource implements Arrayable, Form
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => sprintf('%s #%s', $this->getModelName(), $model->getKey()),
+            'title' => sprintf('%s %s', $this->getModelName(), $this->modelTitle($model)),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'fields' => $this->resolveFields($request)
@@ -434,7 +442,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Edit :model', ['model' => sprintf('%s #%s', $this->getModelName(), $model->getKey())]),
+            'title' => __('Edit :model', ['model' => sprintf('%s %s', $this->modelTitle($model))]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
