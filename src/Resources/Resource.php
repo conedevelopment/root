@@ -248,9 +248,9 @@ abstract class Resource implements Arrayable, Form
     {
         $fields = $this->resolveFields($request)->authorized($request);
 
-        $searchables = $fields->searchable($request);
+        $searchables = $fields->searchable();
 
-        $sortables = $fields->sortable($request);
+        $sortables = $fields->sortable();
 
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,
@@ -442,7 +442,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Edit :model', ['model' => sprintf('%s %s', $this->modelTitle($model))]),
+            'title' => __('Edit :model', ['model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
