@@ -25,12 +25,12 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
-    use ResolvesActions;
-    use ResolvesFilters;
-    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesActions;
+    use ResolvesFields;
+    use ResolvesFilters;
 
     /**
      * The relation name on the model.
@@ -136,6 +136,14 @@ abstract class Relation extends Field implements Form
     public function getUriKey(): string
     {
         return str_replace('.', '-', $this->getRequestKey());
+    }
+
+    /**
+     * Get the related model's route key name.
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
     }
 
     /**
@@ -438,9 +446,9 @@ abstract class Relation extends Field implements Form
     /**
      * Resolve the resource model for a bound value.
      */
-    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    public function resolveRouteBinding(Request $request, string $id): Model
     {
-        return $this->getRelation($model)->findOrFail($id);
+        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
     }
 
     /**
@@ -453,10 +461,12 @@ abstract class Relation extends Field implements Form
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
 
-            $router->prefix('{resourceRelation}')->group(function (Router $router) use ($request): void {
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($request, $router);
             });
         });
+
+        $this->registerRouteConstraints($request, $router);
     }
 
     /**
@@ -467,12 +477,24 @@ abstract class Relation extends Field implements Form
         if ($this->isSubResource()) {
             $router->get('/', [RelationController::class, 'index']);
             $router->get('/create', [RelationController::class, 'create']);
-            $router->get('/{resourceRelation}', [RelationController::class, 'show']);
+            $router->get("/{{$this->getRouteKeyName()}}", [RelationController::class, 'show']);
             $router->post('/', [RelationController::class, 'store']);
-            $router->get('/{resourceRelation}/edit', [RelationController::class, 'edit']);
-            $router->patch('/{resourceRelation}', [RelationController::class, 'update']);
-            $router->delete('/{resourceRelation}', [RelationController::class, 'destroy']);
+            $router->get("/{{$this->getRouteKeyName()}}/edit", [RelationController::class, 'edit']);
+            $router->patch("/{{$this->getRouteKeyName()}}", [RelationController::class, 'update']);
+            $router->delete("/{{$this->getRouteKeyName()}}", [RelationController::class, 'destroy']);
         }
+    }
+
+    /**
+     * Register the route constraints.
+     */
+    public function registerRouteConstraints(Request $request, Router $router): void
+    {
+        $router->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+            return $id === 'create'
+                ? $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->getRelated()
+                : $this->resolveRouteBinding($request, $id);
+        });
     }
 
     /**

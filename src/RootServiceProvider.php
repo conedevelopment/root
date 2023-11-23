@@ -127,12 +127,6 @@ class RootServiceProvider extends ServiceProvider
                 : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id);
         });
 
-        $this->app['router']->bind('resourceRelation', function (string $id, Route $route): Model {
-            return $id === 'create'
-                ? $route->parameter('field')->getRelation($route->parameter('resourceModel'))->getRelated()
-                : $route->parameter('field')->resolveRouteBinding($this->app['request'], $route->parameter('resourceModel'), $id);
-        });
-
         $this->app['router']
             ->middleware(['web'])
             ->domain($root->getDomain())

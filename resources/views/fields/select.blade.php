@@ -5,7 +5,11 @@
             <span class="required-marker">*</span>
         @endif
     </label>
-    <select {{ $attrs }}>
+    <div class="form-group--stacked">
+        @if($prefix)
+            <div class="form-group-label">{!! $prefix !!}</div>
+        @endif
+        <select {{ $attrs }}>
         @if($nullable)
             <option value="">--- {{ $label }} ---</option>
         @endif
@@ -21,4 +25,14 @@
             @endif
         @endforeach
     </select>
+        @if($suffix)
+            <div class="form-group-label">{!! $suffix !!}</div>
+        @endif
+    </div>
+    @if($invalid)
+        <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
+    @endif
+    @if($help)
+        <span class="form-description">{!! $help !!}</span>
+    @endif
 </div>

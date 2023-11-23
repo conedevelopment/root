@@ -6,6 +6,9 @@ import './notifications';
 import './theme';
 import * as Turbo from '@hotwired/turbo';
 
+// Turbo
+window.Turbo = Turbo;
+
 // Alpine
 Alpine.plugin(focus);
 window.Alpine = Alpine;
