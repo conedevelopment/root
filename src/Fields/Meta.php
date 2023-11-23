@@ -18,7 +18,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->make();
