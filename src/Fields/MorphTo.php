@@ -106,11 +106,9 @@ class MorphTo extends BelongsTo
      */
     public function toInput(Request $request, Model $model): array
     {
-        $relation = $this->getRelation($model);
-
         return array_merge(parent::toInput($request, $model), [
             'url' => $this->replaceRoutePlaceholders($request->route()),
-            'morphTypeName' => $name = $relation->getMorphType(),
+            'morphTypeName' => $name = $this->getRelation($model)->getMorphType(),
             'morphType' => $model->getAttribute($name),
         ]);
     }
