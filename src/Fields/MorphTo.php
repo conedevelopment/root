@@ -56,9 +56,9 @@ class MorphTo extends BelongsTo
 
         $model->setAttribute($this->getRelation($model)->getMorphType(), $value[0]);
 
-        $related = new $value[0];
-
-        $related->forceFill([$related->getKeyName() => $value[1]]);
+        $related = tap(new $value[0], static function (Model $related) use ($value): void {
+            $related->forceFill([$related->getKeyName() => $value[1]]);
+        });
 
         parent::resolveHydrate($request, $model, $related);
     }
