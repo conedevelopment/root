@@ -201,7 +201,7 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Set the searachable attribute.
+     * {@inheritdoc}
      */
     public function searchable(bool|Closure $value = true, array $columns = ['id']): static
     {
@@ -216,6 +216,18 @@ abstract class Relation extends Field implements Form
     public function getSearchableColumns(): array
     {
         return $this->searchableColumns;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSearchable(): bool
+    {
+        if ($this->isSubResource()) {
+            return false;
+        }
+
+        return parent::isSearchable();
     }
 
     /**
@@ -234,6 +246,18 @@ abstract class Relation extends Field implements Form
     public function getSortableColumn(): string
     {
         return $this->sortableColumn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSortable(): bool
+    {
+        if ($this->isSubResource()) {
+            return false;
+        }
+
+        return parent::isSortable();
     }
 
     /**
