@@ -197,7 +197,7 @@ class Media extends File
                             'x-model.debounce.300ms' => $filter->getKey(),
                             'x-bind:readonly' => 'processing',
                         ])
-                        ->toInput($request, $this->getRelation($model)->getRelated());
+                        ->toInput($request, $this->getRelation($model)->make());
                 })
                 ->all(),
         ]);

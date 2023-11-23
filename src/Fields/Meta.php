@@ -21,7 +21,7 @@ class Meta extends MorphOne
     public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
-            $related = $model->metaData()->getRelated();
+            $related = $model->metaData()->make();
 
             return $model->metaData()
                 ->one()

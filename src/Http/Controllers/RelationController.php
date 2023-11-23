@@ -48,7 +48,7 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        $related = $field->getRelation($model)->getRelated();
+        $related = $field->getRelation($model)->make();
 
         $field->handleFormRequest($request, $related);
 

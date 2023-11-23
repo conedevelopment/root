@@ -78,6 +78,16 @@ abstract class Relation extends Field implements Form
     protected bool $asSubResource = false;
 
     /**
+     * The relations to eager load on every query.
+     */
+    protected array $with = [];
+
+    /**
+     * The relations to eager load on every query.
+     */
+    protected array $withCount = [];
+
+    /**
      * The query scopes.
      */
     protected static array $scopes = [];
@@ -386,12 +396,36 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * The relations to be eagerload.
+     */
+    public function with(array $with): static
+    {
+        $this->with = $with;
+
+        return $this;
+    }
+
+    /**
+     * The relation counts to be eagerload.
+     */
+    public function withCount(array $withCount): static
+    {
+        $this->withCount = $withCount;
+
+        return $this;
+    }
+
+    /**
      * Paginate the given query.
      */
     public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
         return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
-            $this->resolveFilters($request)->apply($request, $relation->getQuery())->latest();
+            $this->resolveFilters($request)
+                ->apply($request, $relation->getQuery())
+                ->with($this->with)
+                ->withCount($this->withCount)
+                ->latest();
         })->paginate($request->input('per_page', 5))->withQueryString();
     }
 
@@ -492,7 +526,7 @@ abstract class Relation extends Field implements Form
     {
         $router->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
             return $id === 'create'
-                ? $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->getRelated()
+                ? $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->make()
                 : $this->resolveRouteBinding($request, $id);
         });
     }
@@ -568,7 +602,7 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
-            'model' => $related = $this->getRelation($model)->getRelated(),
+            'model' => $related = $this->getRelation($model)->make(),
             'action' => $this->modelUrl($model),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
