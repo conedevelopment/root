@@ -21,6 +21,8 @@ class Search extends RenderableFilter
     public function __construct(Fields $fields)
     {
         $this->fields = $fields;
+
+        parent::__construct();
     }
 
     /**

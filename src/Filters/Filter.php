@@ -14,16 +14,37 @@ abstract class Filter
     use Makeable;
 
     /**
+     * The filter key.
+     */
+    protected string $key;
+
+    /**
+     * Create a new filter instance.
+     */
+    public function __construct()
+    {
+        $this->key = Str::of(static::class)->classBasename()->snake()->value();
+    }
+
+    /**
      * Apply the filter on the query.
      */
     abstract public function apply(Request $request, Builder $query, mixed $value): Builder;
+
+    /**
+     * Set the filter key.
+     */
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
+    }
 
     /**
      * Get the key.
      */
     public function getKey(): string
     {
-        return Str::of(static::class)->classBasename()->snake()->value();
+        return $this->key;
     }
 
     /**

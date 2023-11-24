@@ -83,7 +83,7 @@
                                 form="{{ $key }}"
                                 class="form-control form-control--sm"
                                 id="per_page"
-                                name="per_page"
+                                name="{{ $perPageKey }}"
                                 onchange="this.form.requestSubmit()"
                             >
                                 @foreach($perPageOptions as $option)

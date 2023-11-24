@@ -23,6 +23,8 @@ class Sort extends Filter
     public function __construct(Fields $fields)
     {
         $this->fields = $fields;
+
+        parent::__construct();
     }
 
     /**

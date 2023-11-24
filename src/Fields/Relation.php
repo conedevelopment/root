@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
@@ -362,6 +363,14 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Handle the callback for the filter resolution.
+     */
+    protected function resolveFilter(Request $request, Filter $filter): void
+    {
+        $filter->setKey(sprintf('%s:%s', $this->getRequestKey(), $filter->getKey()));
+    }
+
+    /**
      * Set the query resolver.
      */
     public function withRelatableQuery(Closure $callback): static
@@ -439,6 +448,14 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the per page key.
+     */
+    public function getPerPageKey(): string
+    {
+        return sprintf('%s:per_page', $this->getRequestKey());
+    }
+
+    /**
      * The relations to be eagerload.
      */
     public function with(array $with): static
@@ -469,7 +486,7 @@ abstract class Relation extends Field implements Form
                 ->with($this->with)
                 ->withCount($this->withCount)
                 ->latest();
-        })->paginate($request->input('per_page', 5))->withQueryString();
+        })->paginate($request->input($this->getPerPageKey(), 5))->withQueryString();
     }
 
     /**
@@ -627,6 +644,7 @@ abstract class Relation extends Field implements Form
                 return $this->mapRelated($request, $model, $related);
             }),
             'perPageOptions' => $this->getPerPageOptions(),
+            'perPageKey' => $this->getPerPageKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
@@ -635,6 +653,7 @@ abstract class Relation extends Field implements Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+            'url' => $this->modelUrl($model),
         ]);
     }
 

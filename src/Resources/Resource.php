@@ -5,6 +5,7 @@ namespace Cone\Root\Resources;
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
@@ -269,6 +270,14 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Handle the callback for the filter resolution.
+     */
+    protected function resolveFilter(Request $request, Filter $filter): void
+    {
+        $filter->setKey(sprintf('%s:%s', $this->getKey(), $filter->getKey()));
+    }
+
+    /**
      * Handle the callback for the action resolution.
      */
     protected function resolveAction(Request $request, Action $action): void
@@ -290,13 +299,21 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the per page key.
+     */
+    public function getPerPageKey(): string
+    {
+        return sprintf('%s:per_page', $this->getKey());
+    }
+
+    /**
      * Perform the query and the pagination.
      */
     public function paginate(Request $request): LengthAwarePaginator
     {
         return $this->resolveFilteredQuery($request)
             ->latest()
-            ->paginate($request->input('per_page'))
+            ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
             ->through(function (Model $model) use ($request): array {
                 return [
@@ -376,6 +393,7 @@ abstract class Resource implements Arrayable, Form
                 ->visible('index')
                 ->toArray(),
             'perPageOptions' => $this->getPerPageOptions(),
+            'perPageKey' => $this->getPerPageKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
@@ -384,6 +402,7 @@ abstract class Resource implements Arrayable, Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+            'url' => trim(sprintf('%s?%s', $this->getUri(), $request->getQueryString()), '?'),
         ]);
     }
 
@@ -431,7 +450,9 @@ abstract class Resource implements Arrayable, Form
                 ->subResource()
                 ->authorized($request, $model)
                 ->map(static function (Relation $relation) use ($request, $model): array {
-                    return $relation->toSubResource($request, $model);
+                    return array_merge($relation->toSubResource($request, $model), [
+                        'url' => trim(sprintf('%s?%s', $relation->modelUrl($model), $request->getQueryString()), '?'),
+                    ]);
                 }),
         ]);
     }
