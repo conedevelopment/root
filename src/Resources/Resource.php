@@ -402,7 +402,7 @@ abstract class Resource implements Arrayable, Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
-            'url' => trim(sprintf('%s?%s', $this->getUri(), $request->getQueryString()), '?'),
+            'url' => $this->getUri(),
         ]);
     }
 
