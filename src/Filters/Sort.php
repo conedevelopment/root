@@ -8,7 +8,6 @@ use Cone\Root\Fields\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 
 class Sort extends Filter

@@ -84,6 +84,7 @@
                                 class="form-control form-control--sm"
                                 id="per_page"
                                 name="per_page"
+                                onchange="this.form.requestSubmit()"
                             >
                                 @foreach($perPageOptions as $option)
                                     <option value="{{ $option }}" @selected($option === $data->perPage())>

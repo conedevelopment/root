@@ -4,6 +4,8 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
@@ -326,6 +328,23 @@ abstract class Relation extends Field implements Form
         }
 
         return parent::resolveFormat($request, $model);
+    }
+
+    /**
+     * Define the filters for the object.
+     */
+    public function filters(Request $request): array
+    {
+        $fields = $this->resolveFields($request)->authorized($request);
+
+        $searchables = $fields->searchable();
+
+        $sortables = $fields->sortable();
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? new Search($searchables) : null,
+            $sortables->isNotEmpty() ? new Sort($sortables) : null,
+        ]));
     }
 
     /**
