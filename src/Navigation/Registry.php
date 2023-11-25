@@ -2,9 +2,7 @@
 
 namespace Cone\Root\Navigation;
 
-use Cone\Root\Interfaces\Navigation\Manager as Contract;
-
-class Manager implements Contract
+class Registry
 {
     /**
      * The navigation locations.

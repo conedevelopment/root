@@ -69,6 +69,12 @@ abstract class Resource implements Arrayable, Form
         $root->routes(function (Router $router) use ($root): void {
             $this->registerRoutes($root->app['request'], $router);
         });
+
+        $root->navigation->location('sidebar')->new(
+            $this->getUri(),
+            $this->getName(),
+            ['icon' => $this->getIcon()]
+        );
     }
 
     /**

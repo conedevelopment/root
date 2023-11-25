@@ -1,12 +1,12 @@
 <?php
 
-namespace Cone\Root\Support;
+namespace Cone\Root\Breadcrumbs;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
-class Breadcrumbs
+class Registry
 {
     /**
      * The registered patterns.

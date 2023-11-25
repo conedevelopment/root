@@ -3,6 +3,8 @@
 namespace Cone\Root;
 
 use Closure;
+use Cone\Root\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
 use Illuminate\Contracts\Foundation\Application;
@@ -42,6 +44,16 @@ class Root
     public readonly Widgets $widgets;
 
     /**
+     * The navigation instance.
+     */
+    public readonly Navigation $navigation;
+
+    /**
+     * The breadcrumbs instance.
+     */
+    public readonly Breadcrumbs $breadcrumbs;
+
+    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -49,6 +61,8 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
+        $this->navigation = new Navigation();
+        $this->breadcrumbs = new Breadcrumbs();
     }
 
     /**

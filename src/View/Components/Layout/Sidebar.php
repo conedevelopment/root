@@ -2,7 +2,7 @@
 
 namespace Cone\Root\View\Components\Layout;
 
-use Cone\Root\Support\Facades\Navigation;
+use Cone\Root\Root;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
@@ -14,7 +14,7 @@ class Sidebar extends Component
     public function render(): View
     {
         return $this->view('root::components.layout.sidebar', [
-            'groups' => Navigation::location('sidebar')->groups(),
+            'groups' => Root::instance()->navigation->location('sidebar')->groups(),
         ]);
     }
 }
