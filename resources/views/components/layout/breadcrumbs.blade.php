@@ -1,8 +1,11 @@
 <ol class="breadcrumb-list app-header__breadcrumb">
-    <li>
-        <a href="/">Dashboard</a>
-    </li>
-    <li>
-        <span aria-current="page">Products</span>
-    </li>
+    @foreach($breadcrumbs as $item)
+        <li>
+            @if($loop->last)
+                <span aria-current="page">{{ $item['label'] }}</span>
+            @else
+                <a href="{{ $item['uri'] }}">{{ $item['label'] }}</a>
+            @endif
+        </li>
+    @endforeach
 </ol>

@@ -83,6 +83,8 @@ class Root
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
+
+        $this->breadcrumbs->pattern($this->getPath(), __('Dashboard'));
     }
 
     /**
