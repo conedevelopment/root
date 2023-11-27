@@ -84,7 +84,17 @@ class Root
             call_user_func_array($callback, [$this]);
         }
 
-        $this->breadcrumbs->pattern($this->getPath(), __('Dashboard'));
+        $this->breadcrumbs->patterns([
+            $this->getPath() => __('Dashboard'),
+            sprintf('%s/{resource}', $this->getPath()) => static function (Request $request): string {
+                return $request->route('_resource')->getName();
+            },
+            sprintf('%s/{resource}/create', $this->getPath()) => __('Create'),
+            sprintf('%s/{resource}/{resourceModel}', $this->getPath()) => static function (Request $request): string {
+                return $request->route('_resource')->modelTitle($request->route('resourceModel'));
+            },
+            sprintf('%s/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
+        ]);
     }
 
     /**

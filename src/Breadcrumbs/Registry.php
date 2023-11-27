@@ -36,8 +36,10 @@ class Registry
     {
         $items = [];
 
+        $route = $request->path();
+
         foreach ($this->patterns as $uri => $label) {
-            if (str_contains($request->route()->uri(), trim($uri, '/'))) {
+            if (str_starts_with($route, trim($this->replaceRoutePlaceholders($uri, $request->route()), '/'))) {
                 $items[] = [
                     'uri' => $this->replaceRoutePlaceholders($uri, $request->route()),
                     'label' => $label instanceof Closure ? call_user_func_array($label, [$request]) : $label,
@@ -55,7 +57,7 @@ class Registry
      */
     protected function replaceRoutePlaceholders(string $uri, Route $route): string
     {
-        foreach ($route->originalParameters() as $key => $value) {
+        foreach (array_merge($route->defaults, $route->originalParameters()) as $key => $value) {
             $uri = str_replace("{{$key}}", $value, $uri);
         }
 

@@ -23,7 +23,7 @@ class RelationController extends Controller
         // Gate::allowIf($field->authorized($request, $model));
 
         return ResponseFactory::view(
-            'root::resources.relation',
+            $request->hasHeader('Turbo-Frame') ? 'root::resources.relation' : 'root::resources.index',
             $field->toIndex($request, $model)
         );
     }

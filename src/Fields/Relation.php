@@ -480,13 +480,15 @@ abstract class Relation extends Field implements Form
      */
     public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
-        return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
-            $this->resolveFilters($request)
-                ->apply($request, $relation->getQuery())
-                ->with($this->with)
-                ->withCount($this->withCount)
-                ->latest();
-        })->paginate($request->input($this->getPerPageKey(), 5))->withQueryString();
+        $relation = $this->getRelation($model);
+
+        return $this->resolveFilters($request)
+            ->apply($request, $relation->getQuery())
+            ->with($this->with)
+            ->withCount($this->withCount)
+            ->latest()
+            ->paginate($request->input($this->getPerPageKey(), $request->hasHeader('Turbo-Frame') ? 5 : $relation->getRelated()->getPerPage()))
+            ->withQueryString();
     }
 
     /**
@@ -561,6 +563,15 @@ abstract class Relation extends Field implements Form
         });
 
         $this->registerRouteConstraints($request, $router);
+
+        Root::instance()->breadcrumbs->patterns([
+            $this->getUri() => $this->label,
+            sprintf('%s/create', $this->getUri()) => __('Add'),
+            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
+                return $this->resolveDisplay($request->route($this->getRouteKeyName()));
+            },
+            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+        ]);
     }
 
     /**
@@ -636,6 +647,8 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toSubResource($request, $model), [
             'title' => $this->label,
+            'model' => $this->getRelation($model)->make(),
+            'modelName' => $this->getRelatedName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('index')

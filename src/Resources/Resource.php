@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -36,6 +37,7 @@ abstract class Resource implements Arrayable, Form
     use Authorizable;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
+        RegistersRoutes::routeMatched as __routeMatched;
     }
     use ResolvesActions;
     use ResolvesFilters;
@@ -245,7 +247,7 @@ abstract class Resource implements Arrayable, Form
      */
     public function modelTitle(Model $model): string
     {
-        return sprintf('#%s', $model->getKey());
+        return $model->getKey();
     }
 
     /**
@@ -367,6 +369,16 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Handle the route matched event.
+     */
+    public function routeMatched(RouteMatched $event): void
+    {
+        $event->route->defaults('resource', $this->getKey());
+
+        $this->__routeMatched($event);
+    }
+
+    /**
      * Get the instance as an array.
      */
     public function toArray(): array
@@ -418,7 +430,7 @@ abstract class Resource implements Arrayable, Form
     public function toCreate(Request $request): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Create :model', ['model' => $this->getModelName()]),
+            'title' => __('Create :resource', ['resource' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
             'method' => 'POST',
@@ -436,7 +448,7 @@ abstract class Resource implements Arrayable, Form
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => sprintf('%s %s', $this->getModelName(), $this->modelTitle($model)),
+            'title' => sprintf('%s: %s', $this->getModelName(), $this->modelTitle($model)),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'fields' => $this->resolveFields($request)
@@ -469,7 +481,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Edit :model', ['model' => $this->modelTitle($model)]),
+            'title' => __('Edit :resource: :model', ['resource' => $this->getModelName(), 'model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
