@@ -82,7 +82,7 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Allow duplciate relations.
+     * Allow duplicate relations.
      */
     public function allowDuplicateRelations(bool $value = true): static
     {
