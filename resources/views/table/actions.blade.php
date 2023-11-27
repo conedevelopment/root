@@ -1,11 +1,19 @@
 <div x-cloak x-show="selection.length > 0" class="alert alert--info data-table-alert">
-    <span><span x-text="selection.length"></span> {{ __('items selected.') }}</span>
+    <span>
+        <template x-if="all">
+            <span>{{ $data->total() }}</span>
+        </template>
+        <template x-if="! all">
+            <span x-text="selection.length"></span>
+        </template>
+        {{ __('items selected.') }}
+    </span>
     <div class="data-table-alert__actions">
         <div class="data-table-alert__column">
             <button
                 type="button"
                 class="btn btn--primary btn--sm"
-                x-on:click="selection = {{ $data->pluck('id')->toJson() }}"
+                x-on:click="selection = {{ $data->pluck('id')->toJson() }}; all = true"
             >
                 {{ __('Select all') }} ({{ $data->total() }})
             </button>
