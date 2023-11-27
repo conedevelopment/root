@@ -64,6 +64,11 @@ abstract class Resource implements Arrayable, Form
     protected string $icon = 'archive';
 
     /**
+     * The group for the resource.
+     */
+    protected string $group = 'General';
+
+    /**
      * Boot the resource.
      */
     public function boot(Root $root): void
@@ -75,7 +80,7 @@ abstract class Resource implements Arrayable, Form
         $root->navigation->location('sidebar')->new(
             $this->getUri(),
             $this->getName(),
-            ['icon' => $this->getIcon()]
+            ['icon' => $this->getIcon(), 'group' => __($this->group)],
         );
     }
 

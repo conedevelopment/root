@@ -20,7 +20,6 @@ class Item
         $this->url($url);
         $this->label($label);
         $this->icon('archive');
-        $this->group(__('General'));
         $this->setAttributes($attributes);
     }
 
