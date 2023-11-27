@@ -1,7 +1,9 @@
-<div class="app-card" x-data="{ selection: [], all: false }">
+<div class="app-card" x-data="table()">
     <div class="app-card__header">
         <h2 class="app-card__title">{{ $title }}</h2>
-        @include('root::table.filters')
+        <div class="app-card__actions">
+            @include('root::table.filters')
+        </div>
     </div>
     <div class="app-card__body">
         <div class="data-table">
@@ -18,7 +20,7 @@
                                             <input
                                                 class="form-check__control"
                                                 type="checkbox"
-                                                x-on:change="selection = event.target.checked ? {{ json_encode($data->pluck('id')) }} : []"
+                                                x-on:change="selection = event.target.checked ? {{ $data->pluck('id')->toJson() }} : []"
                                             >
                                         </label>
                                     </th>
@@ -108,9 +110,18 @@
                 </div>
             @else
                 <x-root::alert>
-                    {{ __('No resust found.') }}
+                    {{ __('No results found.') }}
                 </x-root::alert>
             @endif
         </div>
     </div>
 </div>
+
+{{-- Script --}}
+@pushOnce('scripts')
+    {{
+        Vite::withEntryPoints('resources/js/table.js')
+            ->useBuildDirectory('vendor/root/build')
+            ->useHotFile(public_path('vendor/root/hot'))
+    }}
+@endpushOnce

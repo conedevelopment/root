@@ -367,7 +367,7 @@ abstract class Relation extends Field implements Form
      */
     protected function resolveFilter(Request $request, Filter $filter): void
     {
-        $filter->setKey(sprintf('%s:%s', $this->getRequestKey(), $filter->getKey()));
+        $filter->setKey(sprintf('%s_%s', $this->getRequestKey(), $filter->getKey()));
     }
 
     /**

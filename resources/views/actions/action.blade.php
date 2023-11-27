@@ -6,8 +6,11 @@
                 @include($field['template'], $field)
             @endforeach
         </div>
+        <template x-for="selected in selection">
+            <input type="hidden" name="models[]" x-bind:value="selected">
+        </template>
+        <input type="hidden" name="all" x-bind:value="all">
     </form>
-
     <x-slot:footer>
         <button form="{{ $key }}" type="submit" class="btn btn--primary">
             {{ __('Run') }}
