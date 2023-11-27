@@ -609,12 +609,8 @@ abstract class Relation extends Field implements Form
     {
         $value = $this->resolveValue($request, $model);
 
-        if (is_null($value)) {
-            return [];
-        }
-
         return $this->newOption($related, $this->resolveDisplay($related))
-            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related))
+            ->selected(! is_null($value) && ($value instanceof Model ? $value->is($related) : $value->contains($related)))
             ->toArray();
     }
 
