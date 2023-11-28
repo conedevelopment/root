@@ -316,7 +316,15 @@ abstract class Resource implements Arrayable, Form
      */
     public function getPerPageKey(): string
     {
-        return sprintf('%s:per_page', $this->getKey());
+        return sprintf('%s_per_page', $this->getKey());
+    }
+
+    /**
+     * Get the sort key.
+     */
+    public function getSortKey(): string
+    {
+        return sprintf('%s_sort', $this->getKey());
     }
 
     /**
@@ -417,6 +425,7 @@ abstract class Resource implements Arrayable, Form
                 ->toArray(),
             'perPageOptions' => $this->getPerPageOptions(),
             'perPageKey' => $this->getPerPageKey(),
+            'sortKey' => $this->getSortKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
