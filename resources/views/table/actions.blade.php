@@ -1,9 +1,9 @@
 <div x-cloak x-show="selection.length > 0" class="alert alert--info data-table-alert">
     <span>
-        <template x-if="all">
+        <template x-if="selectedAllMatchingQuery">
             <span>{{ $data->total() }}</span>
         </template>
-        <template x-if="! all">
+        <template x-if="! selectedAllMatchingQuery">
             <span x-text="selection.length"></span>
         </template>
         {{ __('items selected.') }}
@@ -13,14 +13,14 @@
             <button
                 type="button"
                 class="btn btn--primary btn--sm"
-                x-on:click="selection = {{ $data->pluck('id')->toJson() }}; all = true"
+                x-on:click="selection = {{ $data->pluck('id')->toJson() }}; selectedAllMatchingQuery = true"
             >
                 {{ __('Select all') }} ({{ $data->total() }})
             </button>
             <button
                 type="button"
                 class="btn btn--primary btn--sm"
-                x-on:click="selection = []; all = false"
+                x-on:click="selection = []; selectedAllMatchingQuery = false"
             >
                 {{ __('Clear') }}
             </button>

@@ -1,4 +1,4 @@
-<div class="app-card" x-data="table()">
+<div class="app-card" x-data="table({ models: {{ $data->pluck('id')->toJson() }} })">
     <div class="app-card__header">
         <h2 class="app-card__title">{{ $title }}</h2>
         <div class="app-card__actions">

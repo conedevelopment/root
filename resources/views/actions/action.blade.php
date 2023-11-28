@@ -9,7 +9,7 @@
         <template x-for="selected in selection">
             <input type="hidden" name="models[]" x-bind:value="selected">
         </template>
-        <input type="hidden" name="all" x-bind:value="all">
+        <input type="hidden" name="all" x-bind:value="selectedAllMatchingQuery">
     </form>
     <x-slot:footer>
         <button form="{{ $key }}" type="submit" class="btn btn--primary">

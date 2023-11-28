@@ -1,5 +1,5 @@
 <turbo-frame id="relation-{{ $attribute }}">
-    <div class="app-card" x-data="table()">
+    <div class="app-card" x-data="table({ models: {{ $data->pluck('id')->toJson() }} })">
         <div class="app-card__header">
             <h2 class="app-card__title">
                 <a href="{{ $url }}" data-turbo-frame="_top">{{ $title }}</a>

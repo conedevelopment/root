@@ -13,7 +13,9 @@
                                         <input
                                             class="form-check__control"
                                             type="checkbox"
-                                            x-on:change="selection = event.target.checked ? {{ $data->pluck('id')->toJson() }} : []"
+                                            x-ref="selectCheckbox"
+                                            x-bind:checked="selectedAllModels"
+                                            x-on:change="selection = event.target.checked ? models : []"
                                         >
                                     </label>
                                 </th>
