@@ -171,11 +171,11 @@ class Meta extends MorphOne
     }
 
     /**
-     * {@inheritdoc}
+     * Set the meta field as URL.
      */
-    public function async(bool $value = true): static
+    public function asUrl(Closure $callback = null): static
     {
-        return $this;
+        return $this->as(URL::class, $callback);
     }
 
     /**

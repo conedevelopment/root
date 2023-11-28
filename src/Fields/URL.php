@@ -52,7 +52,7 @@ class URL extends Text
                 }
 
                 return sprintf(
-                    '<a href="%s"%s>%s</a>',
+                    '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
                     $value,
                     $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',
                     call_user_func_array($this->textResolver, [$model])
