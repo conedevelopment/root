@@ -5,6 +5,7 @@ namespace Cone\Root\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -33,5 +34,29 @@ class BelongsTo extends Relation
         }
 
         parent::resolveHydrate($request, $model, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function asSubResource(bool $value = true): static
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSubResource(): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function routes(Router $router): void
+    {
+        //
     }
 }

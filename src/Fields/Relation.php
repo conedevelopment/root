@@ -3,7 +3,10 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Filters\Search;
+use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
@@ -28,12 +31,12 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
-    use ResolvesActions;
-    use ResolvesFilters;
-    use ResolvesFields;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
+    use ResolvesActions;
+    use ResolvesFields;
+    use ResolvesFilters;
 
     /**
      * The relation name on the model.
@@ -81,6 +84,16 @@ abstract class Relation extends Field implements Form
     protected bool $asSubResource = false;
 
     /**
+     * The relations to eager load on every query.
+     */
+    protected array $with = [];
+
+    /**
+     * The relations to eager load on every query.
+     */
+    protected array $withCount = [];
+
+    /**
      * The query scopes.
      */
     protected static array $scopes = [];
@@ -88,7 +101,7 @@ abstract class Relation extends Field implements Form
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
     {
         parent::__construct($label, $modelAttribute);
 
@@ -144,6 +157,14 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the related model's route key name.
+     */
+    public function getRouteKeyName(): string
+    {
+        return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
+    }
+
+    /**
      * Get the route parameter name.
      */
     public function getRouteParameterName(): string
@@ -188,7 +209,7 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Set the searachable attribute.
+     * {@inheritdoc}
      */
     public function searchable(bool|Closure $value = true, array $columns = ['id']): static
     {
@@ -203,6 +224,18 @@ abstract class Relation extends Field implements Form
     public function getSearchableColumns(): array
     {
         return $this->searchableColumns;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSearchable(): bool
+    {
+        if ($this->isSubResource()) {
+            return false;
+        }
+
+        return parent::isSearchable();
     }
 
     /**
@@ -221,6 +254,18 @@ abstract class Relation extends Field implements Form
     public function getSortableColumn(): string
     {
         return $this->sortableColumn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSortable(): bool
+    {
+        if ($this->isSubResource()) {
+            return false;
+        }
+
+        return parent::isSortable();
     }
 
     /**
@@ -292,6 +337,23 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Define the filters for the object.
+     */
+    public function filters(Request $request): array
+    {
+        $fields = $this->resolveFields($request)->authorized($request);
+
+        $searchables = $fields->searchable();
+
+        $sortables = $fields->sortable();
+
+        return array_values(array_filter([
+            $searchables->isNotEmpty() ? new Search($searchables) : null,
+            $sortables->isNotEmpty() ? new Sort($sortables) : null,
+        ]));
+    }
+
+    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
@@ -303,6 +365,14 @@ abstract class Relation extends Field implements Form
             $field->setAttribute('form', $this->getAttribute('form'));
             $field->resolveErrorsUsing($this->errorsResolver);
         }
+    }
+
+    /**
+     * Handle the callback for the filter resolution.
+     */
+    protected function resolveFilter(Request $request, Filter $filter): void
+    {
+        $filter->setKey(sprintf('%s_%s', $this->getRequestKey(), $filter->getKey()));
     }
 
     /**
@@ -383,13 +453,55 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the per page key.
+     */
+    public function getPerPageKey(): string
+    {
+        return sprintf('%s_per_page', $this->getRequestKey());
+    }
+
+    /**
+     * Get the sort key.
+     */
+    public function getSortKey(): string
+    {
+        return sprintf('%s_sort', $this->getRequestKey());
+    }
+
+    /**
+     * The relations to be eagerload.
+     */
+    public function with(array $with): static
+    {
+        $this->with = $with;
+
+        return $this;
+    }
+
+    /**
+     * The relation counts to be eagerload.
+     */
+    public function withCount(array $withCount): static
+    {
+        $this->withCount = $withCount;
+
+        return $this;
+    }
+
+    /**
      * Paginate the given query.
      */
     public function paginate(Request $request, Model $model): LengthAwarePaginator
     {
-        return tap($this->getRelation($model), function (EloquentRelation $relation) use ($request): void {
-            $this->resolveFilters($request)->apply($request, $relation->getQuery())->latest();
-        })->paginate($request->input('per_page', 5))->withQueryString();
+        $relation = $this->getRelation($model);
+
+        return $this->resolveFilters($request)
+            ->apply($request, $relation->getQuery())
+            ->with($this->with)
+            ->withCount($this->withCount)
+            ->latest()
+            ->paginate($request->input($this->getPerPageKey(), $request->hasHeader('Turbo-Frame') ? 5 : $relation->getRelated()->getPerPage()))
+            ->withQueryString();
     }
 
     /**
@@ -443,9 +555,9 @@ abstract class Relation extends Field implements Form
     /**
      * Resolve the resource model for a bound value.
      */
-    public function resolveRouteBinding(Request $request, Model $model, string $id): Model
+    public function resolveRouteBinding(Request $request, string $id): Model
     {
-        return $this->getRelation($model)->findOrFail($id);
+        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
     }
 
     /**
@@ -458,10 +570,21 @@ abstract class Relation extends Field implements Form
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
 
-            $router->prefix('{resourceRelation}')->group(function (Router $router) use ($request): void {
+            $router->prefix("{{$this->getRouteKeyName()}}")->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($request, $router);
             });
         });
+
+        $this->registerRouteConstraints($request, $router);
+
+        Root::instance()->breadcrumbs->patterns([
+            $this->getUri() => $this->label,
+            sprintf('%s/create', $this->getUri()) => __('Add'),
+            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
+                return $this->resolveDisplay($request->route($this->getRouteKeyName()));
+            },
+            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+        ]);
     }
 
     /**
@@ -472,12 +595,24 @@ abstract class Relation extends Field implements Form
         if ($this->isSubResource()) {
             $router->get('/', [RelationController::class, 'index']);
             $router->get('/create', [RelationController::class, 'create']);
-            $router->get('/{resourceRelation}', [RelationController::class, 'show']);
+            $router->get("/{{$this->getRouteKeyName()}}", [RelationController::class, 'show']);
             $router->post('/', [RelationController::class, 'store']);
-            $router->get('/{resourceRelation}/edit', [RelationController::class, 'edit']);
-            $router->patch('/{resourceRelation}', [RelationController::class, 'update']);
-            $router->delete('/{resourceRelation}', [RelationController::class, 'destroy']);
+            $router->get("/{{$this->getRouteKeyName()}}/edit", [RelationController::class, 'edit']);
+            $router->patch("/{{$this->getRouteKeyName()}}", [RelationController::class, 'update']);
+            $router->delete("/{{$this->getRouteKeyName()}}", [RelationController::class, 'destroy']);
         }
+    }
+
+    /**
+     * Register the route constraints.
+     */
+    public function registerRouteConstraints(Request $request, Router $router): void
+    {
+        $router->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+            return $id === 'create'
+                ? $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->make()
+                : $this->resolveRouteBinding($request, $id);
+        });
     }
 
     /**
@@ -487,12 +622,8 @@ abstract class Relation extends Field implements Form
     {
         $value = $this->resolveValue($request, $model);
 
-        if (is_null($value)) {
-            return [];
-        }
-
         return $this->newOption($related, $this->resolveDisplay($related))
-            ->selected($value instanceof Model ? $value->is($related) : $value->contains($related))
+            ->selected(! is_null($value) && ($value instanceof Model ? $value->is($related) : $value->contains($related)))
             ->toArray();
     }
 
@@ -525,6 +656,8 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toSubResource($request, $model), [
             'title' => $this->label,
+            'model' => $this->getRelation($model)->make(),
+            'modelName' => $this->getRelatedName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('index')
@@ -533,6 +666,8 @@ abstract class Relation extends Field implements Form
                 return $this->mapRelated($request, $model, $related);
             }),
             'perPageOptions' => $this->getPerPageOptions(),
+            'perPageKey' => $this->getPerPageKey(),
+            'sortKey' => $this->getSortKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
@@ -541,6 +676,7 @@ abstract class Relation extends Field implements Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+            'url' => $this->modelUrl($model),
         ]);
     }
 
@@ -551,7 +687,7 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toSubResource($request, $model), [
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
-            'model' => $related = $this->getRelation($model)->getRelated(),
+            'model' => $related = $this->getRelation($model)->make(),
             'action' => $this->modelUrl($model),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)

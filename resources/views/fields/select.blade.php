@@ -5,20 +5,34 @@
             <span class="required-marker">*</span>
         @endif
     </label>
-    <select {{ $attrs }}>
-        @if($nullable)
-            <option value="">--- {{ $label }} ---</option>
+    <div class="form-group--stacked">
+        @if($prefix)
+            <div class="form-group-label">{!! $prefix !!}</div>
         @endif
-        @foreach($options as $option)
-            @if(isset($option['options']))
-                <optgroup label="{{ $option['label'] }}">
-                    @foreach($option['options'] as $o)
-                        <option {{ $o['attrs'] }}>{{ $o['label'] }}</option>
-                    @endforeach
-                </optgroup>
-            @else
-                <option {{ $option['attrs'] }}>{{ $option['label'] }}</option>
+        <select {{ $attrs }}>
+            @if($nullable)
+                <option value="">--- {{ $label }} ---</option>
             @endif
-        @endforeach
-    </select>
+            @foreach($options as $option)
+                @if(isset($option['options']))
+                    <optgroup label="{{ $option['label'] }}">
+                        @foreach($option['options'] as $o)
+                            <option {{ $o['attrs'] }}>{{ $o['label'] }}</option>
+                        @endforeach
+                    </optgroup>
+                @else
+                    <option {{ $option['attrs'] }}>{{ $option['label'] }}</option>
+                @endif
+            @endforeach
+        </select>
+        @if($suffix)
+            <div class="form-group-label">{!! $suffix !!}</div>
+        @endif
+    </div>
+    @if($invalid)
+        <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
+    @endif
+    @if($help)
+        <span class="form-description">{!! $help !!}</span>
+    @endif
 </div>

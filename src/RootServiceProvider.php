@@ -3,7 +3,6 @@
 namespace Cone\Root;
 
 use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Facades\Navigation as Nav;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
@@ -32,7 +31,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
-        Interfaces\Navigation\Manager::class => Navigation\Manager::class,
+        Interfaces\Navigation\Registry::class => Navigation\Registry::class,
     ];
 
     /**
@@ -72,7 +71,6 @@ class RootServiceProvider extends ServiceProvider
 
         $this->registerViews();
         $this->registerRoutes();
-        $this->registerNavigation();
     }
 
     /**
@@ -125,12 +123,6 @@ class RootServiceProvider extends ServiceProvider
             return $id === 'create'
                 ? $route->parameter('_resource')->getModelInstance()
                 : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id);
-        });
-
-        $this->app['router']->bind('resourceRelation', function (string $id, Route $route): Model {
-            return $id === 'create'
-                ? $route->parameter('field')->getRelation($route->parameter('resourceModel'))->getRelated()
-                : $route->parameter('field')->resolveRouteBinding($this->app['request'], $route->parameter('resourceModel'), $id);
         });
 
         $this->app['router']
@@ -188,22 +180,6 @@ class RootServiceProvider extends ServiceProvider
                 'alerts' => $request->session()->get('alerts', []),
                 'user' => $request->user(),
             ]);
-        });
-    }
-
-    /**
-     * Register the navigation.
-     */
-    protected function registerNavigation(): void
-    {
-        $this->app->make(Root::class)->booting(static function (Root $root): void {
-            $root->resources->each(static function (Resource $resource): void {
-                Nav::location('sidebar')->new(
-                    $resource->getUri(),
-                    $resource->getName(),
-                    ['icon' => $resource->getIcon()]
-                );
-            });
         });
     }
 }

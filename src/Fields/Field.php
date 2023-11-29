@@ -116,16 +116,24 @@ abstract class Field implements Arrayable, JsonSerializable
     protected ?Closure $searchQueryResolver = null;
 
     /**
+     * Determine if the field is computed.
+     */
+    protected bool $computed = false;
+
+    /**
      * Create a new field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null)
     {
-        $this->modelAttribute = $modelAttribute ?: Str::of($label)->lower()->snake()->value();
+        $this->computed = $modelAttribute instanceof Closure;
+
+        $this->modelAttribute = $this->computed ? Str::random() : ($modelAttribute ?: Str::of($label)->lower()->snake()->value());
 
         $this->label($label);
         $this->name($this->modelAttribute);
         $this->id($this->modelAttribute);
         $this->setAttribute('class', 'form-control');
+        $this->value($this->computed ? $modelAttribute : null);
     }
 
     /**
@@ -269,11 +277,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function isSortable(): bool
     {
-        if ($this->sortable instanceof Closure) {
-            return call_user_func($this->sortable);
+        if ($this->computed) {
+            return false;
         }
 
-        return $this->sortable;
+        return $this->sortable instanceof Closure ? call_user_func($this->sortable) : $this->sortable;
     }
 
     /**
@@ -291,11 +299,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function isSearchable(): bool
     {
-        if ($this->searchable instanceof Closure) {
-            return call_user_func($this->searchable);
+        if ($this->computed) {
+            return false;
         }
 
-        return $this->searchable;
+        return $this->searchable instanceof Closure ? call_user_func($this->searchable) : $this->searchable;
     }
 
     /**
@@ -321,7 +329,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the value resolver.
      */
-    public function value(Closure $callback): static
+    public function value(Closure $callback = null): static
     {
         $this->valueResolver = $callback;
 
@@ -383,7 +391,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the format resolver.
      */
-    public function format(Closure $callback): static
+    public function format(Closure $callback = null): static
     {
         $this->formatResolver = $callback;
 
@@ -437,6 +445,10 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
+        if ($this->computed) {
+            return;
+        }
+
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, $value): void {
                 $model->setAttribute($this->getModelAttribute(), $value);
@@ -551,6 +563,10 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function toInput(Request $request, Model $model): array
     {
+        if ($this->computed) {
+            return [];
+        }
+
         return array_merge($this->toDisplay($request, $model), [
             'attrs' => $this->newAttributeBag()->class([
                 'form-control--invalid' => $this->invalid($request),

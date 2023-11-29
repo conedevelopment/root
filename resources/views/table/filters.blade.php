@@ -1,4 +1,4 @@
-<form method="GET" action="{{ URL::full() }}" id="{{ $key }}" class="app-card__actions">
+<form method="GET" action="{{ $url }}" id="{{ $key }}" onchange="this.requestSubmit()">
     @if(! empty($filters))
         <div class="data-table-filter" x-data="{ open: false }" x-on:click.outside="open = false">
             <button

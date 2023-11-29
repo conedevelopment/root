@@ -8,7 +8,7 @@
     @can('create', $model)
         <a href="{{ $url }}/create" class="btn btn--primary btn--icon">
             <x-root::icon name="plus" class="btn__icon" />
-            {{ __('Add :model', ['model' => $modelName]) }}
+            {{ __('Add :resource', ['resource' => $modelName]) }}
         </a>
     @endcan
 @endsection

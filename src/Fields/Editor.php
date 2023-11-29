@@ -37,7 +37,7 @@ class Editor extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 

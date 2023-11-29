@@ -17,8 +17,8 @@
                 {{-- <button class="btn btn--outline-dark btn--sm btn--icon display--none:md" aria-label="Open search">
                     <x-root::icon name="search" class="btn__icon" />
                 </button> --}}
+                <x-root::layout.breadcrumbs />
             </div>
-            {{-- <x-root::layout.breadcrumbs /> --}}
         </div>
         <div class="app-header__actions">
             <x-root::layout.notifications />

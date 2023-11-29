@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,16 @@ class Fieldset extends Field
      * The Blade template.
      */
     protected string $template = 'root::fields.fieldset';
+
+    /**
+     * Create a new field instance.
+     */
+    public function __construct(string $label, Closure|string $modelAttribute = null)
+    {
+        parent::__construct($label, $modelAttribute);
+
+        $this->hiddenOn(['index', 'show']);
+    }
 
     /**
      * Get the URI key.

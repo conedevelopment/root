@@ -3,6 +3,8 @@
 namespace Cone\Root;
 
 use Closure;
+use Cone\Root\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
 use Illuminate\Contracts\Foundation\Application;
@@ -42,6 +44,16 @@ class Root
     public readonly Widgets $widgets;
 
     /**
+     * The navigation instance.
+     */
+    public readonly Navigation $navigation;
+
+    /**
+     * The breadcrumbs instance.
+     */
+    public readonly Breadcrumbs $breadcrumbs;
+
+    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -49,6 +61,8 @@ class Root
         $this->app = $app;
         $this->resources = new Resources();
         $this->widgets = new Widgets();
+        $this->navigation = new Navigation();
+        $this->breadcrumbs = new Breadcrumbs();
     }
 
     /**
@@ -69,6 +83,18 @@ class Root
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
+
+        $this->breadcrumbs->patterns([
+            $this->getPath() => __('Dashboard'),
+            sprintf('%s/{resource}', $this->getPath()) => static function (Request $request): string {
+                return $request->route('_resource')->getName();
+            },
+            sprintf('%s/{resource}/create', $this->getPath()) => __('Create'),
+            sprintf('%s/{resource}/{resourceModel}', $this->getPath()) => static function (Request $request): string {
+                return $request->route('_resource')->modelTitle($request->route('resourceModel'));
+            },
+            sprintf('%s/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
+        ]);
     }
 
     /**

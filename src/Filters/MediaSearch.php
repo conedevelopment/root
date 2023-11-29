@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Filters;
 
+use Cone\Root\Fields\Fields;
+
 class MediaSearch extends Search
 {
     /**
@@ -17,6 +19,8 @@ class MediaSearch extends Search
     public function __construct(array $attributes = ['file_name'])
     {
         $this->attributes = $attributes;
+
+        parent::__construct(new Fields());
     }
 
     /**

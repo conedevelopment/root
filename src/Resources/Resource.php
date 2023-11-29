@@ -5,6 +5,7 @@ namespace Cone\Root\Resources;
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -35,6 +37,7 @@ abstract class Resource implements Arrayable, Form
     use Authorizable;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
+        RegistersRoutes::routeMatched as __routeMatched;
     }
     use ResolvesActions;
     use ResolvesFilters;
@@ -61,6 +64,11 @@ abstract class Resource implements Arrayable, Form
     protected string $icon = 'archive';
 
     /**
+     * The group for the resource.
+     */
+    protected string $group = 'General';
+
+    /**
      * Boot the resource.
      */
     public function boot(Root $root): void
@@ -68,6 +76,12 @@ abstract class Resource implements Arrayable, Form
         $root->routes(function (Router $router) use ($root): void {
             $this->registerRoutes($root->app['request'], $router);
         });
+
+        $root->navigation->location('sidebar')->new(
+            $this->getUri(),
+            $this->getName(),
+            ['icon' => $this->getIcon(), 'group' => __($this->group)],
+        );
     }
 
     /**
@@ -238,7 +252,7 @@ abstract class Resource implements Arrayable, Form
      */
     public function modelTitle(Model $model): string
     {
-        return sprintf('#%s', $model->getKey());
+        return $model->getKey();
     }
 
     /**
@@ -248,9 +262,9 @@ abstract class Resource implements Arrayable, Form
     {
         $fields = $this->resolveFields($request)->authorized($request);
 
-        $searchables = $fields->searchable($request);
+        $searchables = $fields->searchable();
 
-        $sortables = $fields->sortable($request);
+        $sortables = $fields->sortable();
 
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,
@@ -266,6 +280,14 @@ abstract class Resource implements Arrayable, Form
     {
         $field->setAttribute('form', $this->getKey());
         $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
+    }
+
+    /**
+     * Handle the callback for the filter resolution.
+     */
+    protected function resolveFilter(Request $request, Filter $filter): void
+    {
+        $filter->setKey(sprintf('%s:%s', $this->getKey(), $filter->getKey()));
     }
 
     /**
@@ -290,13 +312,29 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the per page key.
+     */
+    public function getPerPageKey(): string
+    {
+        return sprintf('%s_per_page', $this->getKey());
+    }
+
+    /**
+     * Get the sort key.
+     */
+    public function getSortKey(): string
+    {
+        return sprintf('%s_sort', $this->getKey());
+    }
+
+    /**
      * Perform the query and the pagination.
      */
     public function paginate(Request $request): LengthAwarePaginator
     {
         return $this->resolveFilteredQuery($request)
             ->latest()
-            ->paginate($request->input('per_page'))
+            ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
             ->through(function (Model $model) use ($request): array {
                 return [
@@ -344,6 +382,16 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Handle the route matched event.
+     */
+    public function routeMatched(RouteMatched $event): void
+    {
+        $event->route->defaults('resource', $this->getKey());
+
+        $this->__routeMatched($event);
+    }
+
+    /**
      * Get the instance as an array.
      */
     public function toArray(): array
@@ -376,6 +424,8 @@ abstract class Resource implements Arrayable, Form
                 ->visible('index')
                 ->toArray(),
             'perPageOptions' => $this->getPerPageOptions(),
+            'perPageKey' => $this->getPerPageKey(),
+            'sortKey' => $this->getSortKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
@@ -384,6 +434,7 @@ abstract class Resource implements Arrayable, Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
+            'url' => $this->getUri(),
         ]);
     }
 
@@ -393,7 +444,7 @@ abstract class Resource implements Arrayable, Form
     public function toCreate(Request $request): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Create :model', ['model' => $this->getModelName()]),
+            'title' => __('Create :resource', ['resource' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
             'method' => 'POST',
@@ -411,7 +462,7 @@ abstract class Resource implements Arrayable, Form
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => sprintf('%s %s', $this->getModelName(), $this->modelTitle($model)),
+            'title' => sprintf('%s: %s', $this->getModelName(), $this->modelTitle($model)),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'fields' => $this->resolveFields($request)
@@ -431,7 +482,9 @@ abstract class Resource implements Arrayable, Form
                 ->subResource()
                 ->authorized($request, $model)
                 ->map(static function (Relation $relation) use ($request, $model): array {
-                    return $relation->toSubResource($request, $model);
+                    return array_merge($relation->toSubResource($request, $model), [
+                        'url' => trim(sprintf('%s?%s', $relation->modelUrl($model), $request->getQueryString()), '?'),
+                    ]);
                 }),
         ]);
     }
@@ -442,7 +495,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
-            'title' => __('Edit :model', ['model' => sprintf('%s %s', $this->modelTitle($model))]),
+            'title' => __('Edit :resource: :model', ['resource' => $this->getModelName(), 'model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',

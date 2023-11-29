@@ -19,7 +19,8 @@ class FieldTest extends TestCase
 
         $this->field = new Text('Title');
 
-        $this->model = new class(['title' => 'Test Model']) extends Model {
+        $this->model = new class(['title' => 'Test Model']) extends Model
+        {
             protected $guarded = [];
 
             public function save(array $options = []): bool

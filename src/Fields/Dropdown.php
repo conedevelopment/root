@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ class Dropdown extends Select
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 

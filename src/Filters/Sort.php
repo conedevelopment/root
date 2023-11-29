@@ -23,6 +23,8 @@ class Sort extends Filter
     public function __construct(Fields $fields)
     {
         $this->fields = $fields;
+
+        parent::__construct();
     }
 
     /**
@@ -53,11 +55,12 @@ class Sort extends Filter
         $relation = EloquentRelation::noConstraints(static function () use ($query, $value): EloquentRelation {
             $relation = call_user_func([$query->getModel(), $value['by']]);
 
-            $key = $relation instanceof BelongsTo
-                ? $relation->getQualifiedOwnerKeyName()
-                : $relation->getQualifiedParentKeyName();
+            $key = match (true) {
+                $relation instanceof BelongsTo => $relation->getQualifiedOwnerKeyName(),
+                default => $relation->getQualifiedParentKeyName(),
+            };
 
-            return $relation->whereField($relation->getQualifiedForeignKeyName(), '=', $key);
+            return $relation->whereColumn($relation->getQualifiedForeignKeyName(), $key);
         });
 
         return $query->orderBy(

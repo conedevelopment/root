@@ -21,11 +21,11 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             /** @phpstan-var \Tests\MetaDataModel $model */
-            $related = $model->metaData()->getRelated();
+            $related = $model->metaData()->make();
 
             return $model->metaData()
                 ->one()
@@ -175,11 +175,11 @@ class Meta extends MorphOne
     }
 
     /**
-     * {@inheritdoc}
+     * Set the meta field as URL.
      */
-    public function async(bool $value = true): static
+    public function asUrl(Closure $callback = null): static
     {
-        return $this;
+        return $this->as(URL::class, $callback);
     }
 
     /**

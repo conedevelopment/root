@@ -23,7 +23,7 @@ class BelongsToManyController extends RelationController
             $relation->getForeignPivotKeyName() => $model->getKey(),
         ]);
 
-        $pivot->setRelation('related', $relation->getRelated());
+        $pivot->setRelation('related', $relation->make());
 
         $pivot->incrementing = true;
 
