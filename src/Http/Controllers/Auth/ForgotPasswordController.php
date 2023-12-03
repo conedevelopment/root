@@ -1,0 +1,34 @@
+<?php
+
+namespace Cone\Root\Http\Controllers\Auth;
+
+use Cone\Root\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response as ResponseFactory;
+
+class ForgotPasswordController extends Controller
+{
+    /**
+     * Display the form to request a password reset link.
+     */
+    public function show(): Response
+    {
+        return ResponseFactory::view('root::auth.forgot-password');
+    }
+
+    /**
+     * Send a reset link to the given user.
+     */
+    public function send(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['email' => ['required', 'string', 'email']]);
+
+        Password::broker()->sendResetLink($data);
+
+        return Redirect::back()->with('status', __(Password::RESET_LINK_SENT));
+    }
+}

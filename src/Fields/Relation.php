@@ -634,7 +634,7 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Get the sub resource representation of the
+     * Get the sub resource representation of the relation
      */
     public function toSubResource(Request $request, Model $model): array
     {
@@ -645,7 +645,17 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Get the index representation of the
+     * Get the fragment representation of the relation.
+     */
+    public function toFragment(Request $request, Model $model): array
+    {
+        return array_merge($this->toSubResource($request, $model), [
+            //
+        ]);
+    }
+
+    /**
+     * Get the index representation of the relation.
      */
     public function toIndex(Request $request, Model $model): array
     {
