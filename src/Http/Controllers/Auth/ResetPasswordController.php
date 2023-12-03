@@ -47,7 +47,7 @@ class ResetPasswordController extends Controller
         );
 
         return $response == Password::PASSWORD_RESET
-            ? Redirect::route('root.dashboard')->with('message', __($response))
+            ? Redirect::route('root.dashboard')->with('status', __($response))
             : Redirect::back()->withInput($request->only(['email']))->withErrors(['email' => __($response)]);
     }
 
