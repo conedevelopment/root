@@ -3,6 +3,8 @@
 namespace Cone\Root\Http\Controllers\Auth;
 
 use Cone\Root\Http\Controllers\Controller;
+use Cone\Root\Notifications\ResetPassword;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,7 +29,9 @@ class ForgotPasswordController extends Controller
     {
         $data = $request->validate(['email' => ['required', 'string', 'email']]);
 
-        Password::broker()->sendResetLink($data);
+        Password::broker()->sendResetLink($data, static function (User $user, string $token): void {
+            $user->notify(new ResetPassword($token));
+        });
 
         return Redirect::back()->with('status', __(Password::RESET_LINK_SENT));
     }
