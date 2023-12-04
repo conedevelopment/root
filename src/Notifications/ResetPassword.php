@@ -3,10 +3,14 @@
 namespace Cone\Root\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword as Notification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\URL;
 
-class ResetPassword extends Notification
+class ResetPassword extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     /**
      * Get the reset URL for the given notifiable.
      */
