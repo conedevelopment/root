@@ -26,16 +26,21 @@
             </button>
         </div>
         <form class="data-table-alert__column" autocomplete="off">
-            <select
-                class="form-control form-control--sm"
-                aria-label="{{ __('Actions') }}"
-                x-on:change="$dispatch('open-'+$event.target.value)"
-            >
-                <option value="">--- {{ __('Select Action') }} ---</option>
-                @foreach($actions as $action)
-                    <option value="{{ $action['modalKey'] }}">{{ $action['name'] }}</option>
-                @endforeach
-            </select>
+            <div class="form-group--stacked">
+                <select x-ref="actions" class="form-control form-control--sm" aria-label="{{ __('Actions') }}">
+                    <option value="" disabled selected>{{ __('Select Action') }}</option>
+                    @foreach($actions as $action)
+                        <option value="{{ $action['modalKey'] }}">{{ $action['name'] }}</option>
+                    @endforeach
+                </select>
+                <button
+                    type="button"
+                    class="btn btn--primary btn--sm"
+                    x-on:click="$dispatch('open-'+$refs.actions.value)"
+                >
+                    {{ __('Run') }}
+                </button>
+            </div>
             @foreach($actions as $action)
                 @include($action['template'], $action)
             @endforeach
