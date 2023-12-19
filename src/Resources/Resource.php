@@ -18,6 +18,8 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Widgets\Metric;
+use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
@@ -299,6 +301,16 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Handle the callback for the widget resolution.
+     */
+    protected function resolveWidget(Request $request, Widget $widget): void
+    {
+        if ($widget instanceof Metric) {
+            $widget->setQuery($this->resolveFilteredQuery($request));
+        }
+    }
+
+    /**
      * Get the per page options.
      */
     public function getPerPageOptions(): array
@@ -374,6 +386,7 @@ abstract class Resource implements Arrayable, Form
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
+            $this->resolveWidgets($request)->registerRoutes($request, $router);
 
             $router->prefix('{resourceModel}')->group(function (Router $router) use ($request): void {
                 $this->resolveFields($request)->registerRoutes($request, $router);

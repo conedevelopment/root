@@ -5,7 +5,7 @@
 
 {{-- Content --}}
 @section('content')
-<p>Hey there, welcome back!</p>
+<p>{{ __('Hey there, welcome back!') }}</p>
 <form method="POST" action="{{ URL::route('root.auth.login') }}">
     @csrf
     <div class="form-group-stack">
@@ -25,7 +25,8 @@
         </div>
         <div class="form-group">
             <label class="form-label form-label--space-between" for="password">
-                {{ __('Password') }} <a href="#">{{ __('Forgot your password?') }}</a>
+                {{ __('Password') }}
+                <a href="{{ URL::route('root.auth.password.request') }}">{{ __('Forgot your password?') }}</a>
             </label>
             <input
                 @class(['form-control', 'form-control--lg', 'form-control--invalid' => $errors->has('password')])

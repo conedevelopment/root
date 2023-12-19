@@ -3,10 +3,12 @@
 namespace Cone\Root\Http\Controllers\Auth;
 
 use Cone\Root\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response as ResponseFactory;
 use Illuminate\Support\Facades\URL;
@@ -55,6 +57,10 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
+
+        Event::dispatch(
+            new Login(Auth::getDefaultDriver(), $request->user(), $request->filled('remember'))
+        );
 
         return Redirect::intended(URL::route('root.dashboard'));
     }

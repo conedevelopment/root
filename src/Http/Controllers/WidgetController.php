@@ -14,10 +14,10 @@ class WidgetController extends Controller
     public function __invoke(Request $request): Response
     {
         /** @var \Cone\Root\Widgets\Widget $widget */
-        $widget = $request->route('rootWidget');
+        $widget = $request->route('widget');
 
-        Gate::allowIf($widget->authorized($request));
+        // Gate::allowIf($widget->authorized($request));
 
-        return new Response($widget->render());
+        return $widget->toResponse($request);
     }
 }

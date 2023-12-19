@@ -5,7 +5,7 @@ namespace Cone\Root\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class NotificationsController extends Controller
+class NotificationController extends Controller
 {
     /**
      * Display a listing of the resource.
