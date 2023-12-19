@@ -4,6 +4,7 @@ namespace Cone\Root\Widgets;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -35,5 +36,17 @@ class Widgets extends Collection
     public function visible(string|array $context): static
     {
         return $this->filter->visible($context)->values();
+    }
+
+    /**
+     * Register the widget routes.
+     */
+    public function registerRoutes(Request $request, Router $router): void
+    {
+        $router->prefix('widgets')->group(function (Router $router) use ($request): void {
+            $this->each(static function (Widget $widget) use ($request, $router): void {
+                $widget->registerRoutes($request, $router);
+            });
+        });
     }
 }
