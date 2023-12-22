@@ -25,7 +25,7 @@ class Date extends Field
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 
@@ -73,7 +73,7 @@ class Date extends Field
     /**
      * Set the timezone.
      */
-    public function timezone(string $value = null): static
+    public function timezone(?string $value = null): static
     {
         $this->timezone = $value;
 

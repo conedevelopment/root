@@ -1,1 +1,3 @@
-<div class="app-widget"></div>
+<turbo-frame id="widget-{{ $key }}">
+    <div {{ $attrs }}></div>
+</turbo-frame>

@@ -18,7 +18,9 @@
     @if(! empty($widgets))
         <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
             @foreach($widgets as $widget)
-                @include($widget['template'], $widget)
+                <turbo-frame id="widget-{{ $widget['key'] }}" src="{{ $widget['url'] }}">
+                    @include('root::widgets.pending-widget', $widget)
+                </furbo-frame>
             @endforeach
         </div>
     @endif

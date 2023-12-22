@@ -18,7 +18,7 @@ class Meta extends MorphOne
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
             $related = $model->metaData()->make();
@@ -51,7 +51,7 @@ class Meta extends MorphOne
     /**
      * Set the field class.
      */
-    public function as(string $field, Closure $callback = null): static
+    public function as(string $field, ?Closure $callback = null): static
     {
         $this->field = new $field($this->label, $this->getModelAttribute());
 
@@ -69,7 +69,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as boolean.
      */
-    public function asBoolean(Closure $callback = null): static
+    public function asBoolean(?Closure $callback = null): static
     {
         return $this->as(Boolean::class, $callback);
     }
@@ -77,7 +77,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as checkbox.
      */
-    public function asCheckbox(Closure $callback = null): static
+    public function asCheckbox(?Closure $callback = null): static
     {
         return $this->as(Checkbox::class, $callback);
     }
@@ -85,7 +85,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as color.
      */
-    public function asColor(Closure $callback = null): static
+    public function asColor(?Closure $callback = null): static
     {
         return $this->as(Color::class, $callback);
     }
@@ -93,7 +93,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as date.
      */
-    public function asDate(Closure $callback = null): static
+    public function asDate(?Closure $callback = null): static
     {
         return $this->as(Date::class, $callback);
     }
@@ -101,7 +101,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as editor.
      */
-    public function asEditor(Closure $callback = null): static
+    public function asEditor(?Closure $callback = null): static
     {
         return $this->as(Editor::class, $callback);
     }
@@ -109,7 +109,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as hidden.
      */
-    public function asHidden(Closure $callback = null): static
+    public function asHidden(?Closure $callback = null): static
     {
         return $this->as(Hidden::class, $callback);
     }
@@ -117,7 +117,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as number.
      */
-    public function asNumber(Closure $callback = null): static
+    public function asNumber(?Closure $callback = null): static
     {
         return $this->as(Number::class, $callback);
     }
@@ -125,7 +125,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as radio.
      */
-    public function asRadio(Closure $callback = null): static
+    public function asRadio(?Closure $callback = null): static
     {
         return $this->as(Radio::class, $callback);
     }
@@ -133,7 +133,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as range.
      */
-    public function asRange(Closure $callback = null): static
+    public function asRange(?Closure $callback = null): static
     {
         return $this->as(Range::class, $callback);
     }
@@ -141,7 +141,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as select.
      */
-    public function asSelect(Closure $callback = null): static
+    public function asSelect(?Closure $callback = null): static
     {
         return $this->as(Select::class, $callback);
     }
@@ -149,7 +149,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as tag.
      */
-    public function asTag(Closure $callback = null): static
+    public function asTag(?Closure $callback = null): static
     {
         return $this->as(Tag::class, $callback);
     }
@@ -157,7 +157,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as text.
      */
-    public function asText(Closure $callback = null): static
+    public function asText(?Closure $callback = null): static
     {
         return $this->as(Text::class, $callback);
     }
@@ -165,7 +165,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as textarea.
      */
-    public function asTextarea(Closure $callback = null): static
+    public function asTextarea(?Closure $callback = null): static
     {
         return $this->as(Textarea::class, $callback);
     }
@@ -173,7 +173,7 @@ class Meta extends MorphOne
     /**
      * Set the meta field as URL.
      */
-    public function asUrl(Closure $callback = null): static
+    public function asUrl(?Closure $callback = null): static
     {
         return $this->as(URL::class, $callback);
     }

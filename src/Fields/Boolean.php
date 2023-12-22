@@ -16,7 +16,7 @@ class Boolean extends Field
     /**
      * Create a new file field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 

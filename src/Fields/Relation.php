@@ -98,7 +98,7 @@ abstract class Relation extends Field implements Form
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         parent::__construct($label, $modelAttribute);
 

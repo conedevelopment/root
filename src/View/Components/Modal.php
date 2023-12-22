@@ -31,7 +31,7 @@ class Modal extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(string $title, string $subtitle = null, string $key = null, bool $open = false)
+    public function __construct(string $title, ?string $subtitle = null, ?string $key = null, bool $open = false)
     {
         $this->title = $title;
         $this->subtitle = $subtitle;

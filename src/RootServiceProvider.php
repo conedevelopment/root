@@ -2,6 +2,7 @@
 
 namespace Cone\Root;
 
+use Carbon\CarbonImmutable;
 use Cone\Root\Resources\Resource;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -71,6 +73,8 @@ class RootServiceProvider extends ServiceProvider
 
         $this->registerViews();
         $this->registerRoutes();
+
+        Date::use(CarbonImmutable::class);
     }
 
     /**

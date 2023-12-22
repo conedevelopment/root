@@ -31,6 +31,14 @@ abstract class Widget implements Arrayable, Responsable
     protected string $template = 'root::widgets.widget';
 
     /**
+     * Create a new widget instance.
+     */
+    public function __construct()
+    {
+        $this->setAttribute('class', 'app-widget');
+    }
+
+    /**
      * Get the key.
      */
     public function getKey(): string
@@ -88,6 +96,7 @@ abstract class Widget implements Arrayable, Responsable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->template,
+            'url' => $this->getUri(),
         ];
     }
 
