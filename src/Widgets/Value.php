@@ -76,50 +76,60 @@ abstract class Value extends Metric
     /**
      * Aggregate count values.
      */
-    public function count(Request $request, Builder $query, string $column = '*'): ValueResult
+    protected function count(Request $request, Builder $query, string $column = '*'): ValueResult
     {
         return $this->toResult(
-            $query->selectRaw(sprintf('count(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+            $this->aggregate($query, 'count', $column)
         );
     }
 
     /**
      * Aggregate average values.
      */
-    public function avg(Request $request, Builder $query, string $column): ValueResult
+    protected function avg(Request $request, Builder $query, string $column): ValueResult
     {
         return $this->toResult(
-            $query->selectRaw(sprintf('avg(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+            $this->aggregate($query, 'avg', $column)
         );
     }
 
     /**
      * Aggregate min values.
      */
-    public function min(Request $request, Builder $query, string $column): ValueResult
+    protected function min(Request $request, Builder $query, string $column): ValueResult
     {
         return $this->toResult(
-            $query->selectRaw(sprintf('min(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+            $this->aggregate($query, 'min', $column)
         );
     }
 
     /**
      * Aggregate max values.
      */
-    public function max(Request $request, Builder $query, string $column): ValueResult
+    protected function max(Request $request, Builder $query, string $column): ValueResult
     {
         return $this->toResult(
-            $query->selectRaw(sprintf('max(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+            $this->aggregate($query, 'max', $column)
         );
     }
 
     /**
      * Aggregate sum values.
      */
-    public function sum(Request $request, Builder $query, string $column): ValueResult
+    protected function sum(Request $request, Builder $query, string $column): ValueResult
     {
         return $this->toResult(
-            $query->selectRaw(sprintf('sum(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+            $this->aggregate($query, 'sum', $column)
+        );
+    }
+
+    /**
+     * Apply the aggregate function on the query.
+     */
+    protected function aggregate(Builder $query, string $fn, string $column): Builder
+    {
+        return $query->selectRaw(
+            sprintf('%s(%s) as `__value`', $fn, $query->getQuery()->getGrammar()->wrap($column))
         );
     }
 
