@@ -4,6 +4,7 @@ namespace Cone\Root\Widgets;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Widgets\Results\Result;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ abstract class Metric extends Widget
     /**
      * Calculate the metric data.
      */
-    abstract public function calculate(Request $request): array;
+    abstract public function calculate(Request $request): Result;
 
     /**
      * Set the query.
@@ -89,12 +90,13 @@ abstract class Metric extends Widget
     }
 
     /**
-     * Create a new method.
+     * Calculate the range.
      */
     protected function range(DateTimeInterface $date, string $range): mixed
     {
         return match ($range) {
             'TODAY' => $date->startOfDay(),
+            'DAY' => $date->subDay(),
             'WEEK' => $date->subWeek(),
             'MONTH' => $date->subMonth(),
             'QUARTER' => $date->subQuarter(),
@@ -126,7 +128,7 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
-            'data' => $this->calculate($request),
+            'data' => $this->calculate($request)->toArray(),
         ]);
     }
 }

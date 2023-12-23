@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Widgets;
 
+use Cone\Root\Widgets\Results\ValueResult;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -43,7 +44,9 @@ abstract class Value extends Metric
     {
         $from = $this->from($request);
 
-        return $this->range($from, $this->getCurrentRange($request));
+        $range = $this->getCurrentRange($request);
+
+        return $this->range($from, $range === 'TODAY' ? 'DAY' : $range);
     }
 
     /**
@@ -61,44 +64,51 @@ abstract class Value extends Metric
 
                 $column = $query->getModel()->getQualifiedCreatedAtColumn();
 
-                return $query->whereBetween($column, [$previous, $to])->groupByRaw(sprintf(
-                    "(case when %s between '%s' and '%s' then 0 else 1 end)",
+                return $query->selectRaw(sprintf(
+                    "(case when %s between '%s' and '%s' then 'previous' else 'current' end) as `__interval`",
                     $query->getQuery()->getGrammar()->wrap($column),
                     (string) $previous,
                     (string) $from
-                ));
+                ))->whereBetween($column, [$previous, $to])->groupBy('__interval');
             });
     }
 
     /**
-     * Count values.
+     * Aggregate count values.
      */
-    public function count(Request $request, string $column = '*'): array
+    public function count(Request $request, Builder $query, string $column = '*'): ValueResult
     {
-        return $this->resolveQuery($request)
-            ->getQuery()
-            ->selectRaw(sprintf('count(%s) as `total`', $column))
-            ->get()
-            ->pluck('total')
-            ->toArray();
+        return $this->toResult(
+            $query->selectRaw(sprintf('count(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+        );
+    }
+
+    /**
+     * Aggregate average values.
+     */
+    public function avg(Request $request, Builder $query, string $column): ValueResult
+    {
+        return $this->toResult(
+            $query->selectRaw(sprintf('avg(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+        );
     }
 
     /**
      * Calculate the metric data.
      */
-    public function calculate(Request $request): array
+    public function calculate(Request $request): ValueResult
     {
-        $data = $this->count($request);
+        return $this->avg($request, $this->resolveQuery($request), 'discount');
+    }
 
-        $previous = count($data) === 1 ? 0 : $data[0];
+    /**
+     * Convert the query to result.
+     */
+    public function toResult(Builder $query): ValueResult
+    {
+        $data = $query->getQuery()->get()->pluck('__value', '__interval')->all();
 
-        $current = count($data) === 1 ? $data[0] : $data[1];
-
-        return [
-            'previous' => $previous,
-            'current' => $current,
-            'trend' => $previous === 0 ? 0 : round(($current - $previous) / (($current + $previous) / 2) * 100, 1),
-        ];
+        return new ValueResult($data['current'] ?? 0, $data['previous'] ?? 0);
     }
 
     /**
