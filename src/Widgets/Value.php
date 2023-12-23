@@ -94,11 +94,41 @@ abstract class Value extends Metric
     }
 
     /**
+     * Aggregate min values.
+     */
+    public function min(Request $request, Builder $query, string $column): ValueResult
+    {
+        return $this->toResult(
+            $query->selectRaw(sprintf('min(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+        );
+    }
+
+    /**
+     * Aggregate max values.
+     */
+    public function max(Request $request, Builder $query, string $column): ValueResult
+    {
+        return $this->toResult(
+            $query->selectRaw(sprintf('max(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+        );
+    }
+
+    /**
+     * Aggregate sum values.
+     */
+    public function sum(Request $request, Builder $query, string $column): ValueResult
+    {
+        return $this->toResult(
+            $query->selectRaw(sprintf('sum(%s) as `__value`', $query->getQuery()->getGrammar()->wrap($column)))
+        );
+    }
+
+    /**
      * Calculate the metric data.
      */
     public function calculate(Request $request): ValueResult
     {
-        return $this->avg($request, $this->resolveQuery($request), 'discount');
+        return $this->count($request, $this->resolveQuery($request));
     }
 
     /**
