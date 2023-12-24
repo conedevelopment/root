@@ -8,14 +8,6 @@
         <div class="app-widget__column">
             <h2 class="app-widget__title">
                 {{ $name }}
-                <div class="form-group">
-                    <label class="form-label sr-only" for="widget-{{ $key }}-interval">{{ __('Interval') }}</label>
-                    <select class="form-control form-control--sm" id="widget-{{ $key }}-interval">
-                        <option value="this-week">This Week</option>
-                        <option value="last-week">Last Week</option>
-                        <option value="last-month">Last Month</option>
-                    </select>
-                </div>
             </h2>
             <p class="app-widget__data">{{ $data['current'] }}</p>
             @if($data['trend'] < 0)
@@ -29,9 +21,6 @@
                     <x-root::icon name="trending-up" class="trending__icon" />
                 </div>
             @endif
-        </div>
-        <div class="app-widget__chart">
-            <div id="chart01"></div>
         </div>
     </div>
 </turbo-frame>

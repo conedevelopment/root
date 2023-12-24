@@ -3,7 +3,9 @@
 namespace Cone\Root\Widgets;
 
 use Cone\Root\Widgets\Results\ValueResult;
-use DateTimeInterface;
+use DateInterval;
+use DatePeriod;
+use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -40,13 +42,19 @@ abstract class Value extends Metric
     /**
      * Get the previous period.
      */
-    public function previous(Request $request): DateTimeInterface
+    public function previousPeriod(string $range): DatePeriod
     {
-        $from = $this->from($request);
+        $current = $this->currentPeriod($range);
 
-        $range = $this->getCurrentRange($request);
+        $range = $range === 'TODAY' ? 'DAY' : $range;
 
-        return $this->range($from, $range === 'TODAY' ? 'DAY' : $range);
+        return new DatePeriod(
+            (new DateTimeImmutable())->setTimestamp(
+                $this->rangeToTimestamp($range, $current->getStartDate()->getTimestamp())
+            ),
+            new DateInterval('P1D'),
+            new DateTimeImmutable($current->getStartDate()->format('c'))
+        );
     }
 
     /**
@@ -54,22 +62,25 @@ abstract class Value extends Metric
      */
     public function resolveQuery(Request $request): Builder
     {
+        $range = $this->getCurrentRange($request);
+
         return parent::resolveQuery($request)
-            ->when(! empty($this->ranges()) && $this->getCurrentRange($request) !== 'ALL', function (Builder $query) use ($request): Builder {
-                $from = $this->from($request);
+            ->when(! empty($this->ranges()) && $range !== 'ALL', function (Builder $query) use ($range): Builder {
+                $current = $this->currentPeriod($range);
 
-                $to = $this->to($request);
-
-                $previous = $this->previous($request);
+                $previous = $this->previousPeriod($range);
 
                 $column = $query->getModel()->getQualifiedCreatedAtColumn();
 
                 return $query->selectRaw(sprintf(
                     "(case when %s between '%s' and '%s' then 'previous' else 'current' end) as `__interval`",
                     $query->getQuery()->getGrammar()->wrap($column),
-                    (string) $previous,
-                    (string) $from
-                ))->whereBetween($column, [$previous, $to])->groupBy('__interval');
+                    $previous->getStartDate()->format('Y-m-d H:i:s'),
+                    $current->getStartDate()->format('Y-m-d H:i:s')
+                ))->whereBetween($column, [
+                    $previous->getStartDate()->format('Y-m-d H:i:s'),
+                    $current->getEndDate()->format('Y-m-d H:i:s'),
+                ])->groupBy('__interval');
             });
     }
 
@@ -148,7 +159,10 @@ abstract class Value extends Metric
     {
         $data = $query->getQuery()->get()->pluck('__value', '__interval')->all();
 
-        return new ValueResult($data['current'] ?? 0, $data['previous'] ?? 0);
+        return new ValueResult(
+            $data['current'] ?? array_values($data)[0] ?? 0,
+            $data['previous'] ?? null
+        );
     }
 
     /**

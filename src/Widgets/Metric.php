@@ -5,10 +5,11 @@ namespace Cone\Root\Widgets;
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Widgets\Results\Result;
-use DateTimeInterface;
+use DateInterval;
+use DatePeriod;
+use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 
 abstract class Metric extends Widget
 {
@@ -62,26 +63,6 @@ abstract class Metric extends Widget
     }
 
     /**
-     * Get the to date.
-     */
-    public function to(Request $request): DateTimeInterface
-    {
-        return Date::now();
-    }
-
-    /**
-     * Get the from date.
-     */
-    public function from(Request $request): DateTimeInterface
-    {
-        $to = $this->to($request);
-
-        $range = empty($this->ranges()) ? 'ALL' : $this->getCurrentRange($request);
-
-        return $this->range($to, $range);
-    }
-
-    /**
      * Get the current range.
      */
     public function getCurrentRange(Request $request): string
@@ -92,17 +73,29 @@ abstract class Metric extends Widget
     /**
      * Calculate the range.
      */
-    protected function range(DateTimeInterface $date, string $range): mixed
+    protected function currentPeriod(string $range): DatePeriod
+    {
+        return new DatePeriod(
+            (new DateTimeImmutable())->setTimestamp($this->rangeToTimestamp($range)),
+            new DateInterval('P1D'),
+            new DateTimeImmutable()
+        );
+    }
+
+    /**
+     * Convert the range to timestamp.
+     */
+    protected function rangeToTimestamp(string|int $range, ?int $base = null): int
     {
         return match ($range) {
-            'TODAY' => $date->startOfDay(),
-            'DAY' => $date->subDay(),
-            'WEEK' => $date->subWeek(),
-            'MONTH' => $date->subMonth(),
-            'QUARTER' => $date->subQuarter(),
-            'YEAR' => $date->subYear(),
-            'ALL' => Date::parse('0000-01-01'),
-            default => $date->subDays((int) $range),
+            'TODAY' => strtotime('today', $base),
+            'DAY' => strtotime('-1 day', $base),
+            'WEEK' => strtotime('-1 week', $base),
+            'MONTH' => strtotime('-1 month', $base),
+            'QUARTER' => strtotime('-3 months', $base),
+            'YEAR' => strtotime('-1 year', $base),
+            'ALL' => 0,
+            default => strtotime(sprintf('-%d days', (int) $range), $base),
         };
     }
 

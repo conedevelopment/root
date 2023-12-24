@@ -12,15 +12,15 @@ class ValueResult extends Result
     /**
      * The previous value.
      */
-    protected float $previous;
+    protected ?float $previous = null;
 
     /**
      * Create a new result instance.
      */
-    public function __construct(float $current, float $previous = 0)
+    public function __construct(float $current, ?float $previous = null)
     {
         $this->current = round($current, 2);
-        $this->previous = round($previous, 2);
+        $this->previous = is_null($previous) ? $previous : round($previous, 2);
     }
 
     /**
@@ -28,7 +28,9 @@ class ValueResult extends Result
      */
     public function trend(): float
     {
-        return $this->previous === 0 ? 0 : round(($this->current - $this->previous) / (($this->current + $this->previous) / 2) * 100, 1);
+        return is_null($this->previous)
+            ? 0
+            : round(($this->current - $this->previous) / (($this->current + $this->previous) / 2) * 100, 1);
     }
 
     /**
