@@ -26,6 +26,7 @@ export default defineConfig({
                 'resources/js/repeater.js',
                 'resources/js/dropdown.js',
                 'resources/js/table.js',
+                'resources/js/chart.js',
                 'resources/sass/app.scss',
             ],
             refresh: true,

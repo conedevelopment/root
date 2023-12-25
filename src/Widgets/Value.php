@@ -70,7 +70,7 @@ abstract class Value extends Metric
 
                 $previous = $this->previousPeriod($range);
 
-                $column = $query->getModel()->getQualifiedCreatedAtColumn();
+                $column = $query->qualifyColumn($this->dateColumn);
 
                 return $query->selectRaw(sprintf(
                     "(case when %s between '%s' and '%s' then 'previous' else 'current' end) as `__interval`",
@@ -85,77 +85,9 @@ abstract class Value extends Metric
     }
 
     /**
-     * Aggregate count values.
-     */
-    protected function count(Request $request, Builder $query, string $column = '*'): ValueResult
-    {
-        return $this->toResult(
-            $this->aggregate($query, 'count', $column)
-        );
-    }
-
-    /**
-     * Aggregate average values.
-     */
-    protected function avg(Request $request, Builder $query, string $column): ValueResult
-    {
-        return $this->toResult(
-            $this->aggregate($query, 'avg', $column)
-        );
-    }
-
-    /**
-     * Aggregate min values.
-     */
-    protected function min(Request $request, Builder $query, string $column): ValueResult
-    {
-        return $this->toResult(
-            $this->aggregate($query, 'min', $column)
-        );
-    }
-
-    /**
-     * Aggregate max values.
-     */
-    protected function max(Request $request, Builder $query, string $column): ValueResult
-    {
-        return $this->toResult(
-            $this->aggregate($query, 'max', $column)
-        );
-    }
-
-    /**
-     * Aggregate sum values.
-     */
-    protected function sum(Request $request, Builder $query, string $column): ValueResult
-    {
-        return $this->toResult(
-            $this->aggregate($query, 'sum', $column)
-        );
-    }
-
-    /**
-     * Apply the aggregate function on the query.
-     */
-    protected function aggregate(Builder $query, string $fn, string $column): Builder
-    {
-        return $query->selectRaw(
-            sprintf('%s(%s) as `__value`', $fn, $query->getQuery()->getGrammar()->wrap($column))
-        );
-    }
-
-    /**
-     * Calculate the metric data.
-     */
-    public function calculate(Request $request): ValueResult
-    {
-        return $this->count($request, $this->resolveQuery($request));
-    }
-
-    /**
      * Convert the query to result.
      */
-    public function toResult(Builder $query): ValueResult
+    public function toResult(Request $request, Builder $query): ValueResult
     {
         $data = $query->getQuery()->get()->pluck('__value', '__interval')->all();
 

@@ -5,13 +5,9 @@
                 {{ $name }}
             </h2>
             <p class="app-widget__data">65</p>
-            <div class="trending trending--up app-widget__trending">
-                <span class="trending__caption">+12%</span>
-                <x-root::icon name="trending-up" class="trending__icon" />
-            </div>
         </div>
         <div class="app-widget__chart">
-            <div x-init=""></div>
+            <div x-data="trend({{ json_encode($config) }})"></div>
         </div>
     </div>
 </turbo-frame>

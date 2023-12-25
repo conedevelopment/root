@@ -24,9 +24,14 @@ abstract class Metric extends Widget
     protected ?Closure $queryResolver = null;
 
     /**
-     * Calculate the metric data.
+     * The date column.
      */
-    abstract public function calculate(Request $request): Result;
+    protected string $dateColumn = 'created_at';
+
+    /**
+     * Convert the query to result.
+     */
+    abstract public function toResult(Request $request, Builder $query): Result;
 
     /**
      * Set the query.
@@ -77,9 +82,18 @@ abstract class Metric extends Widget
     {
         return new DatePeriod(
             (new DateTimeImmutable())->setTimestamp($this->rangeToTimestamp($range)),
-            new DateInterval('P1D'),
-            new DateTimeImmutable()
+            new DateInterval($this->duration()),
+            new DateTimeImmutable(),
+            DatePeriod::INCLUDE_END_DATE
         );
+    }
+
+    /**
+     * Get the date interval duration.
+     */
+    public function duration(): string
+    {
+        return 'P1D';
     }
 
     /**
@@ -123,5 +137,73 @@ abstract class Metric extends Widget
             'ranges' => $this->ranges(),
             'data' => $this->calculate($request)->toArray(),
         ]);
+    }
+
+    /**
+     * Aggregate count values.
+     */
+    protected function count(Request $request, Builder $query, string $column = '*'): Result
+    {
+        return $this->toResult(
+            $request, $this->aggregate($query, 'count', $column)
+        );
+    }
+
+    /**
+     * Aggregate average values.
+     */
+    protected function avg(Request $request, Builder $query, string $column): Result
+    {
+        return $this->toResult(
+            $request, $this->aggregate($query, 'avg', $column)
+        );
+    }
+
+    /**
+     * Aggregate min values.
+     */
+    protected function min(Request $request, Builder $query, string $column): Result
+    {
+        return $this->toResult(
+            $request, $this->aggregate($query, 'min', $column)
+        );
+    }
+
+    /**
+     * Aggregate max values.
+     */
+    protected function max(Request $request, Builder $query, string $column): Result
+    {
+        return $this->toResult(
+            $request, $this->aggregate($query, 'max', $column)
+        );
+    }
+
+    /**
+     * Aggregate sum values.
+     */
+    protected function sum(Request $request, Builder $query, string $column): Result
+    {
+        return $this->toResult(
+            $request, $this->aggregate($query, 'sum', $column)
+        );
+    }
+
+    /**
+     * Apply the aggregate function on the query.
+     */
+    protected function aggregate(Builder $query, string $fn, string $column): Builder
+    {
+        return $query->selectRaw(
+            sprintf('%s(%s) as `__value`', $fn, $query->getQuery()->getGrammar()->wrap($column))
+        );
+    }
+
+    /**
+     * Calculate the metric data.
+     */
+    public function calculate(Request $request): Result
+    {
+        return $this->count($request, $this->resolveQuery($request));
     }
 }
