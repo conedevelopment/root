@@ -201,6 +201,20 @@ abstract class Trend extends Metric
     }
 
     /**
+     * Get the data.
+     */
+    public function data(Request $request): array
+    {
+        return array_replace_recursive([
+            'ranges' => $this->ranges(),
+            'data' => [
+                'chart' => $request->hasHeader('Turbo-Frame') ? $this->config : [],
+                'value' => null,
+            ],
+        ], parent::data($request));
+    }
+
+    /**
      * Convert the query to result.
      */
     public function toResult(Request $request, Builder $query): TrendResult
@@ -216,15 +230,5 @@ abstract class Trend extends Metric
         return new TrendResult(
             array_replace($dates, $data)
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray(): array
-    {
-        return array_merge(parent::toArray(), [
-            'config' => $this->config,
-        ]);
     }
 }

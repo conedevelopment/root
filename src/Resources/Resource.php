@@ -435,7 +435,7 @@ abstract class Resource implements Arrayable, Form
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request)
                 ->visible('index')
-                ->toArray(),
+                ->mapToDisplay($request),
             'perPageOptions' => $this->getPerPageOptions(),
             'perPageKey' => $this->getPerPageKey(),
             'sortKey' => $this->getSortKey(),
@@ -490,7 +490,7 @@ abstract class Resource implements Arrayable, Form
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request, $model)
                 ->visible('show')
-                ->toArray(),
+                ->mapToDisplay($request),
             'relations' => $this->resolveFields($request)
                 ->subResource()
                 ->authorized($request, $model)

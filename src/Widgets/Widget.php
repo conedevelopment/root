@@ -75,7 +75,9 @@ abstract class Widget implements Arrayable, Responsable
      */
     public function data(Request $request): array
     {
-        return $this->toArray();
+        return array_merge($this->toArray(), [
+            'isTurbo' => $request->hasHeader('Turbo-Frame'),
+        ]);
     }
 
     /**

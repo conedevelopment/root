@@ -135,7 +135,7 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
-            'data' => $this->calculate($request)->toArray(),
+            'data' => $request->hasHeader('Turbo-Frame') ? $this->calculate($request)->toArray() : [],
         ]);
     }
 
@@ -205,5 +205,15 @@ abstract class Metric extends Widget
     public function calculate(Request $request): Result
     {
         return $this->count($request, $this->resolveQuery($request));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return array_merge(parent::toArray(), [
+            'data' => [],
+        ]);
     }
 }

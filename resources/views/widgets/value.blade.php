@@ -1,4 +1,4 @@
-<turbo-frame id="widget-{{ $key }}">
+<turbo-frame id="widget-{{ $key }}" @if(! $isTurbo) src="{{ $url }}" @endif>
     <div {{ $attrs }}>
         @if(! is_null($icon))
             <div class="app-widget__icon">
@@ -9,17 +9,19 @@
             <h2 class="app-widget__title">
                 {{ $name }}
             </h2>
-            <p class="app-widget__data">{{ $data['current'] }}</p>
-            @if($data['trend'] < 0)
-                <div class="trending trending--down app-widget__trending">
-                    <span class="trending__caption">{{ $data['trend'] }}%</span>
-                    <x-root::icon name="trending-down" class="trending__icon" />
-                </div>
-            @elseif($data['trend'] > 0)
-                <div class="trending trending--up app-widget__trending">
-                    <span class="trending__caption">+{{ $data['trend'] }}%</span>
-                    <x-root::icon name="trending-up" class="trending__icon" />
-                </div>
+            @if(! empty($data))
+                <p class="app-widget__data">{{ $data['current'] }}</p>
+                @if($data['trend'] < 0)
+                    <div class="trending trending--down app-widget__trending">
+                        <span class="trending__caption">{{ $data['trend'] }}%</span>
+                        <x-root::icon name="trending-down" class="trending__icon" />
+                    </div>
+                @elseif($data['trend'] > 0)
+                    <div class="trending trending--up app-widget__trending">
+                        <span class="trending__caption">+{{ $data['trend'] }}%</span>
+                        <x-root::icon name="trending-up" class="trending__icon" />
+                    </div>
+                @endif
             @endif
         </div>
     </div>

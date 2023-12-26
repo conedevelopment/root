@@ -22,6 +22,17 @@ class TrendResult extends Result
      */
     public function toArray(): array
     {
-        return $this->data;
+        return [
+            'current' => array_sum($this->data),
+            'chart' => [
+                'series' => [
+                    [
+                        'name' => __('Value'),
+                        'data' => array_values($this->data),
+                    ],
+                ],
+                'labels' => array_keys($this->data),
+            ],
+        ];
     }
 }

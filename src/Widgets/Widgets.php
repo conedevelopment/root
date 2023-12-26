@@ -39,6 +39,14 @@ class Widgets extends Collection
     }
 
     /**
+     * Map the widgets to display.
+     */
+    public function mapToDisplay(Request $request): array
+    {
+        return $this->map->data($request)->all();
+    }
+
+    /**
      * Register the widget routes.
      */
     public function registerRoutes(Request $request, Router $router): void
