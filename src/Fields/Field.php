@@ -132,7 +132,7 @@ abstract class Field implements Arrayable, JsonSerializable
         $this->label($label);
         $this->name($this->modelAttribute);
         $this->id($this->modelAttribute);
-        $this->setAttribute('class', 'form-control');
+        $this->class('form-control');
         $this->value($this->computed ? $modelAttribute : null);
     }
 

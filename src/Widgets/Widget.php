@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Widgets;
 
-use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
@@ -13,7 +12,6 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\View as ViewFactory;
 use Illuminate\Support\Str;
 
@@ -28,14 +26,14 @@ abstract class Widget implements Arrayable, Responsable
     /**
      * The Blade template.
      */
-    protected string $template = 'root::widgets.widget';
+    protected string $template;
 
     /**
      * Create a new widget instance.
      */
     public function __construct()
     {
-        $this->setAttribute('class', 'app-widget');
+        $this->class('app-widget');
     }
 
     /**
@@ -78,14 +76,6 @@ abstract class Widget implements Arrayable, Responsable
         return array_merge($this->toArray(), [
             'isTurbo' => $request->hasHeader('Turbo-Frame'),
         ]);
-    }
-
-    /**
-     * The routes should be registered.
-     */
-    public function routes(Router $router): void
-    {
-        $router->get('/', WidgetController::class);
     }
 
     /**

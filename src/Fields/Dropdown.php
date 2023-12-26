@@ -22,7 +22,7 @@ class Dropdown extends Select
     {
         parent::__construct($label, $modelAttribute);
 
-        $this->setAttribute('class', 'form-control combobox__control');
+        $this->class(['form-control', 'combobox__control']);
     }
 
     /**

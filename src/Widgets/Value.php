@@ -26,7 +26,9 @@ abstract class Value extends Metric
      */
     public function __construct()
     {
-        $this->setAttribute('class', 'app-widget app-widget--summary');
+        parent::__construct();
+
+        $this->class('app-widget--summary');
     }
 
     /**

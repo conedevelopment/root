@@ -25,16 +25,16 @@ abstract class Trend extends Metric
     /**
      * The interval.
      */
-    protected string $interval = 'day';
+    protected string $interval = 'month';
 
     /**
      * Create a new trend chart instance.
      */
     public function __construct()
     {
-        $this->config = Config::get('root.widgets.trend', []);
+        parent::__construct();
 
-        $this->setAttribute('class', 'app-widget');
+        $this->config = Config::get('root.widgets.trend', []);
     }
 
     /**

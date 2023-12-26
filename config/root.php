@@ -147,7 +147,7 @@ return [
             ],
             'xaxis' => ['type' => 'datetime'],
             'yaxis' => ['min' => 0],
-            'colors' => ['#fff'],
+            'colors' => ['var(--root-base-color-heading)'],
             'tooltip' => [
                 'enabled' => true,
                 'marker' => ['show' => false],

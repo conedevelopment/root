@@ -4,12 +4,14 @@ namespace Cone\Root\Widgets;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Widgets\Results\Result;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
 abstract class Metric extends Widget
 {
@@ -72,7 +74,19 @@ abstract class Metric extends Widget
      */
     public function getCurrentRange(Request $request): string
     {
-        return $request->input('range', 'MONTH');
+        $default = $this->getDetaultRange();
+
+        $range = $request->input('range', $default);
+
+        return in_array($range, array_keys($this->ranges())) ? $range : $default;
+    }
+
+    /**
+     * Get the default range.
+     */
+    public function getDetaultRange(): string
+    {
+        return 'MONTH';
     }
 
     /**
@@ -205,6 +219,14 @@ abstract class Metric extends Widget
     public function calculate(Request $request): Result
     {
         return $this->count($request, $this->resolveQuery($request));
+    }
+
+    /**
+     * The routes should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        $router->get('/', WidgetController::class);
     }
 
     /**
