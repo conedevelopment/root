@@ -76,7 +76,7 @@ class ClassList implements Arrayable, Stringable
     }
 
     /**
-     * Determine whether the class is peresent in the class list.
+     * Determine whether the class is present in the class list.
      */
     public function contains(string $value): bool
     {

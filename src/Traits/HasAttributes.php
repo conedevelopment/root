@@ -5,7 +5,6 @@ namespace Cone\Root\Traits;
 use Closure;
 use Cone\Root\Support\ClassList;
 use Illuminate\Support\Arr;
-
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasAttributes
