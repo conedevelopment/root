@@ -4,7 +4,6 @@ namespace Cone\Root\Tests\Fields;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Text;
-use Cone\Root\Support\ClassList;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 
