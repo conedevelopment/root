@@ -74,7 +74,7 @@ abstract class Metric extends Widget
      */
     public function getCurrentRange(Request $request): string
     {
-        $default = $this->getDetaultRange();
+        $default = $this->getDefaultRange();
 
         $range = $request->input('range', $default);
 
@@ -84,7 +84,7 @@ abstract class Metric extends Widget
     /**
      * Get the default range.
      */
-    public function getDetaultRange(): string
+    public function getDefaultRange(): string
     {
         return 'MONTH';
     }
