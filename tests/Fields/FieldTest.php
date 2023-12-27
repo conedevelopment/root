@@ -43,7 +43,7 @@ class FieldTest extends TestCase
         $this->assertFalse($this->field->hasAttribute('foo'));
 
         $this->assertSame(
-            ['name' => 'title', 'id' => 'title', 'class' => new ClassList(['form-control']), 'type' => 'text'],
+            ['name' => 'title', 'id' => 'title', 'class' => $this->field->classList(), 'type' => 'text'],
             $this->field->getAttributes()
         );
 
