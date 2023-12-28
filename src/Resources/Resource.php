@@ -306,7 +306,7 @@ abstract class Resource implements Arrayable, Form
     protected function resolveWidget(Request $request, Widget $widget): void
     {
         if ($widget instanceof Metric) {
-            $widget->setQuery($this->resolveFilteredQuery($request));
+            $widget->setQuery($this->resolveFilteredQuery($request)->clone()->withoutEagerLoads());
         }
     }
 

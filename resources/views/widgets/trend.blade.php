@@ -4,8 +4,8 @@
             <h2 class="app-widget__title">
                 {{ $name }}
             </h2>
-            @if(! is_null($data['value']))
-                <p class="app-widget__data">{{ $value }}</p>
+            @if(! is_null($data['current']))
+                <p class="app-widget__data">{{ $data['current'] }}</p>
             @endif
         </div>
         <div class="app-widget__chart">

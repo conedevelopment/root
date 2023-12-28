@@ -2,16 +2,12 @@
 
 namespace Cone\Root\Widgets;
 
-use Closure;
-use Cone\Root\Exceptions\QueryResolutionException;
-use Cone\Root\Http\Controllers\WidgetController;
-use Cone\Root\Widgets\Results\Result;
 use DateInterval;
 use DatePeriod;
-use DateTimeImmutable;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 
 abstract class Metric extends Widget
 {
@@ -21,52 +17,23 @@ abstract class Metric extends Widget
     protected ?Builder $query = null;
 
     /**
-     * The query resolver callback.
+     * The metric timezone.
      */
-    protected ?Closure $queryResolver = null;
+    protected string $timezone = 'UTC';
 
     /**
-     * The date column.
+     * Indicates whether the widget is async loaded.
      */
-    protected string $dateColumn = 'created_at';
-
-    /**
-     * Convert the query to result.
-     */
-    abstract public function toResult(Request $request, Builder $query): Result;
+    protected bool $async = true;
 
     /**
      * Set the query.
      */
     public function setQuery(Builder $query): static
     {
-        $this->query = $query->clone()->withoutEagerLoads();
+        $this->query = $query;
 
         return $this;
-    }
-
-    /**
-     * Set the query resolver.
-     */
-    public function withQuery(Closure $callback): static
-    {
-        $this->queryResolver = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Resolve the query.
-     */
-    public function resolveQuery(Request $request): Builder
-    {
-        if (is_null($this->query)) {
-            throw new QueryResolutionException();
-        }
-
-        return is_null($this->queryResolver)
-            ? $this->query
-            : call_user_func_array($this->queryResolver, [$request, $this->query]);
     }
 
     /**
@@ -90,41 +57,54 @@ abstract class Metric extends Widget
     }
 
     /**
-     * Calculate the range.
+     * Create a new date period.
      */
-    protected function currentPeriod(string $range): DatePeriod
+    public function period(string $start, string $end, string $duration = 'P1D'): DatePeriod
     {
         return new DatePeriod(
-            (new DateTimeImmutable())->setTimestamp($this->rangeToTimestamp($range)),
-            new DateInterval($this->duration()),
-            new DateTimeImmutable(),
+            new DateTime($start, $this->timezone()),
+            new DateInterval($duration),
+            new DateTime($end, $this->timezone()),
             DatePeriod::INCLUDE_END_DATE
         );
     }
 
     /**
-     * Get the date interval duration.
+     * Make a new timezone instance.
      */
-    public function duration(): string
+    public function timezone(): DateTimeZone
     {
-        return 'P1D';
+        return new DateTimeZone($this->timezone);
     }
 
     /**
-     * Convert the range to timestamp.
+     * Create a new period form the given request.
      */
-    protected function rangeToTimestamp(string|int $range, ?int $base = null): int
+    public function periodFromRequest(Request $request): DatePeriod
     {
-        return match ($range) {
-            'TODAY' => strtotime('today', $base),
-            'DAY' => strtotime('-1 day', $base),
-            'WEEK' => strtotime('-1 week', $base),
-            'MONTH' => strtotime('-1 month', $base),
-            'QUARTER' => strtotime('-3 months', $base),
-            'YEAR' => strtotime('-1 year', $base),
-            'ALL' => 0,
-            default => strtotime(sprintf('-%d days', (int) $range), $base),
+        return $this->period(
+            $this->rangeToDateTime($this->getCurrentRange($request)),
+            'now'
+        );
+    }
+
+    /**
+     * Convert the range to date time object.
+     */
+    protected function rangeToDateTime(string|int $range): string
+    {
+        $value = match ($range) {
+            'TODAY' => strtotime('today'),
+            'DAY' => strtotime('-1 day'),
+            'WEEK' => strtotime('-1 week'),
+            'MONTH' => strtotime('-1 month'),
+            'QUARTER' => strtotime('-3 months'),
+            'YEAR' => strtotime('-1 year'),
+            'ALL' => strtotime('1970-01-01 00:00:00'),
+            default => strtotime(sprintf('-%d days', (int) $range)),
         };
+
+        return date('c', $value);
     }
 
     /**
@@ -149,93 +129,92 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
-            'data' => $request->hasHeader('Turbo-Frame') ? $this->calculate($request)->toArray() : [],
+            'data' => ! $this->async || $this->isTurboRequest($request) ? $this->calculate($request) : [],
         ]);
     }
 
     /**
      * Aggregate count values.
      */
-    protected function count(Request $request, Builder $query, string $column = '*'): Result
+    protected function count(Request $request, Builder $query, string $column = '*', ?string $dateColumn = null): array
     {
-        return $this->toResult(
-            $request, $this->aggregate($query, 'count', $column)
+        return $this->result(
+            $this->aggregate($query, $this->periodFromRequest($request), 'count', $column, $dateColumn)
         );
     }
 
     /**
      * Aggregate average values.
      */
-    protected function avg(Request $request, Builder $query, string $column): Result
+    protected function avg(Request $request, Builder $query, string $column, ?string $dateColumn = null): array
     {
-        return $this->toResult(
-            $request, $this->aggregate($query, 'avg', $column)
+        return $this->result(
+            $this->aggregate($query, $this->periodFromRequest($request), 'avg', $column, $dateColumn)
         );
     }
 
     /**
      * Aggregate min values.
      */
-    protected function min(Request $request, Builder $query, string $column): Result
+    protected function min(Request $request, Builder $query, string $column, ?string $dateColumn = null): array
     {
-        return $this->toResult(
-            $request, $this->aggregate($query, 'min', $column)
+        return $this->result(
+            $this->aggregate($query, $this->periodFromRequest($request), 'min', $column, $dateColumn)
         );
     }
 
     /**
      * Aggregate max values.
      */
-    protected function max(Request $request, Builder $query, string $column): Result
+    protected function max(Request $request, Builder $query, string $column, ?string $dateColumn = null): array
     {
-        return $this->toResult(
-            $request, $this->aggregate($query, 'max', $column)
+        return $this->result(
+            $this->aggregate($query, $this->periodFromRequest($request), 'max', $column, $dateColumn)
         );
     }
 
     /**
      * Aggregate sum values.
      */
-    protected function sum(Request $request, Builder $query, string $column): Result
+    protected function sum(Request $request, Builder $query, string $column, ?string $dateColumn = null): array
     {
-        return $this->toResult(
-            $request, $this->aggregate($query, 'sum', $column)
+        return $this->result(
+            $this->aggregate($query, $this->periodFromRequest($request), 'sum', $column, $dateColumn)
         );
     }
 
     /**
      * Apply the aggregate function on the query.
      */
-    protected function aggregate(Builder $query, string $fn, string $column): Builder
+    protected function aggregate(Builder $query, DatePeriod $period, string $fn, string $column, ?string $dateColumn = null): Builder
     {
-        return $query->selectRaw(
-            sprintf('%s(%s) as `__value`', $fn, $query->getQuery()->getGrammar()->wrap($column))
-        );
+        $dateColumn ??= $query->getModel()->getCreatedAtColumn();
+
+        $column = $column === '*' ? $column : $query->qualifyColumn($column);
+
+        return $query->whereBetween($query->qualifyColumn($dateColumn), [
+            $period->getStartDate()->format('Y-m-d H:i:s'),
+            $period->getEndDate()->format('Y-m-d H:i:s'),
+        ])->selectRaw(sprintf(
+            '%s(%s) as `__value`',
+            $fn,
+            $query->getQuery()->getGrammar()->wrap($column)
+        ));
     }
 
     /**
-     * Calculate the metric data.
+     * Get the query result.
      */
-    public function calculate(Request $request): Result
+    public function result(Builder $query): array
     {
-        return $this->count($request, $this->resolveQuery($request));
+        return $query->toBase()->pluck('__value', '__interval')->all();
     }
 
     /**
-     * The routes should be registered.
+     * Calculate the results.
      */
-    public function routes(Router $router): void
+    public function calculate(Request $request): array
     {
-        $router->get('/', WidgetController::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray(): array
-    {
-        return array_merge(parent::toArray(), [
-            'data' => [],
-        ]);
+        return $this->count($request, $this->query);
     }
 }

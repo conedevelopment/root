@@ -5,6 +5,7 @@ namespace Cone\Root\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Response as ResponseFactory;
 
 class WidgetController extends Controller
 {
@@ -17,6 +18,8 @@ class WidgetController extends Controller
 
         // Gate::allowIf($widget->authorized($request));
 
-        return $widget->toResponse($request);
+        $data = $widget->data($request);
+
+        return ResponseFactory::view($data['template'], $data);
     }
 }

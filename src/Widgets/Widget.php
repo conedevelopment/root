@@ -2,20 +2,18 @@
 
 namespace Cone\Root\Widgets;
 
+use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\View as ViewFactory;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Responsable
+abstract class Widget implements Arrayable
 {
     use Authorizable;
     use HasAttributes;
@@ -27,6 +25,11 @@ abstract class Widget implements Arrayable, Responsable
      * The Blade template.
      */
     protected string $template;
+
+    /**
+     * Indicates whether the widget is async loaded.
+     */
+    protected bool $async = false;
 
     /**
      * Create a new widget instance.
@@ -61,21 +64,32 @@ abstract class Widget implements Arrayable, Responsable
     }
 
     /**
-     * Render the widget.
-     */
-    public function render(): View
-    {
-        return ViewFactory::make($this->template);
-    }
-
-    /**
      * Get the view data.
      */
     public function data(Request $request): array
     {
         return array_merge($this->toArray(), [
-            'isTurbo' => $request->hasHeader('Turbo-Frame'),
+            'isTurbo' => $this->isTurboRequest($request),
         ]);
+    }
+
+    /**
+     * Determine if the request is Turbo request.
+     */
+    public function isTurboRequest(Request $request): bool
+    {
+        return true;
+        return $request->hasHeader('Turbo-Frame');
+    }
+
+    /**
+     * The routes should be registered.
+     */
+    public function routes(Router $router): void
+    {
+        if ($this->async) {
+            $router->get('/', WidgetController::class);
+        }
     }
 
     /**
@@ -90,15 +104,5 @@ abstract class Widget implements Arrayable, Responsable
             'template' => $this->template,
             'url' => $this->getUri(),
         ];
-    }
-
-    /**
-     * Convert the widget to an HTTP Response.
-     */
-    public function toResponse($request): Response
-    {
-        return new Response(
-            $this->render()->with($this->data($request))->render()
-        );
     }
 }
