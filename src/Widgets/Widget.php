@@ -78,7 +78,6 @@ abstract class Widget implements Arrayable
      */
     public function isTurboRequest(Request $request): bool
     {
-        return true;
         return $request->hasHeader('Turbo-Frame');
     }
 
