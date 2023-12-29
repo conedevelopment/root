@@ -401,7 +401,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         $value = $this->resolveValue($request, $model);
 

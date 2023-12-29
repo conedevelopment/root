@@ -308,7 +308,7 @@ abstract class Relation extends Field implements Form
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model): mixed {
