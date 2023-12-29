@@ -21,6 +21,7 @@ class Boolean extends Field
         parent::__construct($label, $modelAttribute);
 
         $this->type('checkbox');
+        $this->class(['form-switch__control']);
     }
 
     /**
@@ -51,5 +52,23 @@ class Boolean extends Field
         $this->checked(filter_var($value, FILTER_VALIDATE_BOOL));
 
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): ?string
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = static function (Request $request, Model $model, ?bool $value): string {
+                return sprintf(
+                    '<span class="status %s">%s</span>',
+                    $value ? 'status--success' : 'status--danger',
+                    $value ? __('Yes') : __('No')
+                );
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
     }
 }

@@ -18,6 +18,10 @@ class Range extends Number
     {
         parent::__construct($label, $modelAttribute);
 
-        $this->type('range')->step(1)->min(0)->max(100);
+        $this->type('range');
+        $this->step(1);
+        $this->min(0);
+        $this->max(100);
+        $this->class(['form-range', 'range-group__control']);
     }
 }

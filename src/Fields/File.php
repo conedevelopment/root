@@ -48,8 +48,9 @@ class File extends MorphToMany
     {
         parent::__construct($label, $modelAttribute, $relation);
 
-        $this->type('file')->multiple(false);
-
+        $this->type('file');
+        $this->multiple(false);
+        $this->class(['form-file']);
         $this->disk(Config::get('root.media.disk', 'public'));
     }
 

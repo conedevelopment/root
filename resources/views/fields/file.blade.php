@@ -5,7 +5,7 @@
             <span class="required-marker">*</span>
         @endif
     </label>
-    <input {{ $attrs->class(['form-file']) }}>
+    <input {{ $attrs }}>
     @if(! empty($options))
         <ul class="file-list__items">
             @foreach($options as $option)

@@ -16,7 +16,7 @@
             >
                 <x-root::icon name="minus" class="btn__icon" />
             </button>
-            <input {{ $attrs->class(['form-range', 'range-group__control']) }} value="{{ $value }}" x-model="value">
+            <input {{ $attrs }} value="{{ $value }}" x-model="value">
             <button
                 type="button"
                 class="btn btn--primary btn--sm btn--icon"

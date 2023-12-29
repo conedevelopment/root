@@ -12,6 +12,16 @@ class Textarea extends Field
     protected string $template = 'root::fields.textarea';
 
     /**
+     * Create a new field instance.
+     */
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
+    {
+        parent::__construct($label, $modelAttribute);
+
+        $this->class(['form-control']);
+    }
+
+    /**
      * Set the rows attribute.
      */
     public function rows(int|Closure $value): static
