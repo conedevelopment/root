@@ -521,7 +521,7 @@ abstract class Relation extends Field implements Form
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
     }
 
     /**
