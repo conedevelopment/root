@@ -67,13 +67,27 @@ abstract class Value extends Metric
      */
     public function result(Builder $query): array
     {
-        $result = array_merge(['current' => 0, 'pervious' => 0], parent::result($query));
+        $result = array_merge(['current' => 0, 'previous' => 0], parent::result($query));
 
         return [
             'current' => round($result['current'], 2),
-            'pervious' => round($result['previous'], 2),
-            'trend' => round(($result['current'] - $result['previous']) / (($result['current'] + $result['previous']) / 2) * 100, 1),
+            'previous' => round($result['previous'], 2),
+            'trend' => $this->trend($result),
         ];
+    }
+
+    /**
+     * Calculate the trend value.
+     */
+    protected function trend(array $result): float
+    {
+        $divider = ($result['current'] + $result['previous']);
+
+        if ($divider == 0) {
+            return 0;
+        }
+
+        return round(($result['current'] - $result['previous']) / ($divider / 2) * 100, 1);
     }
 
     /**
