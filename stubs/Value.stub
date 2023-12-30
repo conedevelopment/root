@@ -1,0 +1,17 @@
+<?php
+
+namespace {{ namespace }};
+
+use Cone\Root\Widgets\Value;
+use Illuminate\Http\Request;
+
+class {{ class }} extends Value
+{
+    /**
+     * Calculate the results.
+     */
+    public function calculate(Request $request): array
+    {
+        return $this->count($request, $this->query);
+    }
+}
