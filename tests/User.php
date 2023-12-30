@@ -18,7 +18,7 @@ class User extends Model implements MustVerifyEmail, RootUser
 
     protected static function newFactory(): UserFactory
     {
-        return new class () extends UserFactory
+        return new class() extends UserFactory
         {
             protected $model = User::class;
         };

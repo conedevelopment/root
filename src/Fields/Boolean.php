@@ -45,11 +45,11 @@ class Boolean extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(Request $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): bool
     {
-        $value = parent::resolveValue($request, $model);
+        $value = filter_var(parent::resolveValue($request, $model), FILTER_VALIDATE_BOOL);
 
-        $this->checked(filter_var($value, FILTER_VALIDATE_BOOL));
+        $this->checked($value);
 
         return $value;
     }

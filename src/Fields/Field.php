@@ -171,6 +171,14 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Get the blade template.
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    /**
      * Set the label attribute.
      */
     public function label(string $value): static
