@@ -18,6 +18,11 @@ class BooleanTest extends TestCase
         $this->field = new Boolean('Admin');
     }
 
+    public function test_a_boolean_field_has_boolean_template(): void
+    {
+        $this->assertSame('root::fields.boolean', $this->field->getTemplate());
+    }
+
     public function test_a_boolean_field_has_checkbox_type(): void
     {
         $this->assertSame('checkbox', $this->field->getAttribute('type'));
@@ -32,11 +37,6 @@ class BooleanTest extends TestCase
 
         $this->field->checked(false);
         $this->assertFalse($this->field->getAttribute('checked'));
-    }
-
-    public function test_a_boolean_field_has_boolean_template(): void
-    {
-        $this->assertSame('root::fields.boolean', $this->field->getTemplate());
     }
 
     public function test_a_boolean_field_gets_value_for_hydrate(): void

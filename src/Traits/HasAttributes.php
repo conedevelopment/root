@@ -89,7 +89,7 @@ trait HasAttributes
     public function setAttribute(string $key, mixed $value): static
     {
         match ($key) {
-            'class' => $this->classList()->clear()->add((array) $value),
+            'class' => $this->classList()->clear()->add($value),
             default => $this->attributes[$key] = $value,
         };
 

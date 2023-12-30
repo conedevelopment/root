@@ -26,8 +26,10 @@ class ClassList implements Arrayable, Stringable
      */
     public function add(string|array $value): static
     {
+        $value = is_array($value) ? $value : explode(' ', $value);
+
         $this->classes = array_values(array_unique(
-            array_merge($this->classes, (array) $value)
+            array_merge($this->classes, $value)
         ));
 
         return $this;
