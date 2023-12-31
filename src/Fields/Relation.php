@@ -497,7 +497,7 @@ abstract class Relation extends Field implements Form
             ->with($this->with)
             ->withCount($this->withCount)
             ->latest()
-            ->paginate($request->input($this->getPerPageKey(), $this->isTurboRequest($request) ? 5 : $relation->getRelated()->getPerPage()))
+            ->paginate($request->input($this->getPerPageKey(), $this->isTurboFrameRequest($request) ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
     }
 
@@ -563,6 +563,8 @@ abstract class Relation extends Field implements Form
     public function registerRoutes(Request $request, Router $router): void
     {
         $this->__registerRoutes($request, $router);
+
+        // Gate::allowIf($field->authorized($request, $model));
 
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
@@ -660,6 +662,7 @@ abstract class Relation extends Field implements Form
     public function toIndex(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => $this->isTurboFrameRequest($request) ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
             'model' => $this->getRelation($model)->make(),
             'modelName' => $this->getRelatedName(),
@@ -691,6 +694,7 @@ abstract class Relation extends Field implements Form
     public function toCreate(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->make(),
             'action' => $this->modelUrl($model),
@@ -709,6 +713,7 @@ abstract class Relation extends Field implements Form
     public function toShow(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.show',
             'title' => $this->resolveDisplay($related),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),
@@ -730,6 +735,7 @@ abstract class Relation extends Field implements Form
     public function toEdit(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
             'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),

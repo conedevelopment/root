@@ -426,6 +426,7 @@ abstract class Resource implements Arrayable, Form
     public function toIndex(Request $request): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.index',
             'title' => $this->getName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $this->getModelInstance())
@@ -457,6 +458,7 @@ abstract class Resource implements Arrayable, Form
     public function toCreate(Request $request): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.form',
             'title' => __('Create :resource', ['resource' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
@@ -475,6 +477,7 @@ abstract class Resource implements Arrayable, Form
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.show',
             'title' => sprintf('%s: %s', $this->getModelName(), $this->modelTitle($model)),
             'model' => $model,
             'action' => $this->modelUrl($model),
@@ -508,6 +511,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.form',
             'title' => __('Edit :resource: :model', ['resource' => $this->getModelName(), 'model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),

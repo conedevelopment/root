@@ -458,7 +458,7 @@ abstract class Trend extends Metric
     {
         return array_replace_recursive([
             'data' => [
-                'chart' => $this->isTurboRequest($request) ? $this->config : [],
+                'chart' => $this->isTurboFrameRequest($request) ? $this->config : [],
                 'current' => null,
             ],
         ], parent::data($request));

@@ -71,7 +71,7 @@ abstract class Widget implements Arrayable
     public function data(Request $request): array
     {
         return array_merge($this->toArray(), [
-            'isTurbo' => $this->isTurboRequest($request),
+            'isTurbo' => $this->isTurboFrameRequest($request),
         ]);
     }
 

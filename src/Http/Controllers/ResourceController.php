@@ -32,9 +32,10 @@ class ResourceController extends Controller
             $this->authorize('viewAny', $resource->getModel());
         }
 
+        $data = $resource->toIndex($request);
+
         return ResponseFactory::view(
-            'root::resources.index',
-            $resource->toIndex($request)
+            $data['template'], $data
         );
     }
 
@@ -47,9 +48,10 @@ class ResourceController extends Controller
             $this->authorize('create', $resource->getModel());
         }
 
+        $data = $resource->toCreate($request);
+
         return ResponseFactory::view(
-            'root::resources.form',
-            $resource->toCreate($request)
+            $data['template'], $data
         );
     }
 
@@ -79,9 +81,10 @@ class ResourceController extends Controller
             $this->authorize('view', $model);
         }
 
+        $data = $resource->toShow($request, $model);
+
         return ResponseFactory::view(
-            'root::resources.show',
-            $resource->toShow($request, $model)
+            $data['template'], $data
         );
     }
 
@@ -94,9 +97,10 @@ class ResourceController extends Controller
             $this->authorize('update', $model);
         }
 
+        $data = $resource->toEdit($request, $model);
+
         return ResponseFactory::view(
-            'root::resources.form',
-            $resource->toEdit($request, $model)
+            $data['template'], $data
         );
     }
 

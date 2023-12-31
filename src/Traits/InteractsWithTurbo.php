@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 trait InteractsWithTurbo
 {
     /**
-     * Determine if the request is Turbo request.
+     * Determine if the request is Turbo Frame request.
      */
-    public function isTurboRequest(Request $request): bool
+    public function isTurboFrameRequest(Request $request): bool
     {
         return $request->hasHeader('Turbo-Frame');
     }
