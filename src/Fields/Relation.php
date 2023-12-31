@@ -11,6 +11,7 @@ use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\InteractsWithTurbo;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -28,6 +29,7 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
+    use InteractsWithTurbo;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -495,7 +497,7 @@ abstract class Relation extends Field implements Form
             ->with($this->with)
             ->withCount($this->withCount)
             ->latest()
-            ->paginate($request->input($this->getPerPageKey(), $request->hasHeader('Turbo-Frame') ? 5 : $relation->getRelated()->getPerPage()))
+            ->paginate($request->input($this->getPerPageKey(), $this->isTurboRequest($request) ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
     }
 
@@ -572,6 +574,14 @@ abstract class Relation extends Field implements Form
 
         $this->registerRouteConstraints($request, $router);
 
+        $this->routesRegistered($request);
+    }
+
+    /**
+     * Handle the routes registered event.
+     */
+    protected function routesRegistered(Request $request): void
+    {
         Root::instance()->breadcrumbs->patterns([
             $this->getUri() => $this->label,
             sprintf('%s/create', $this->getUri()) => __('Add'),
@@ -641,16 +651,6 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
             'url' => $this->modelUrl($model),
-        ]);
-    }
-
-    /**
-     * Get the fragment representation of the relation.
-     */
-    public function toFragment(Request $request, Model $model): array
-    {
-        return array_merge($this->toSubResource($request, $model), [
-            //
         ]);
     }
 
