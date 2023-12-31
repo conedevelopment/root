@@ -9,14 +9,11 @@ class Radio extends Checkbox
      */
     public function newOption(mixed $value, string $label): Option
     {
-        $option = parent::newOption($value, $label);
-
-        $option->setAttributes([
-            'type' => 'radio',
-            'class' => 'form-check__control',
-            'name' => $this->getModelAttribute(),
-        ]);
-
-        return $option;
+        return parent::newOption($value, $label)
+            ->class('form-check__control')
+            ->setAttributes([
+                'type' => 'radio',
+                'name' => $this->getModelAttribute(),
+            ]);
     }
 }
