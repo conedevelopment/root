@@ -5,6 +5,7 @@ namespace Cone\Root\Widgets;
 use Cone\Root\Http\Controllers\WidgetController;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
+use Cone\Root\Traits\InteractsWithTurbo;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
@@ -17,6 +18,7 @@ abstract class Widget implements Arrayable
 {
     use Authorizable;
     use HasAttributes;
+    use InteractsWithTurbo;
     use Makeable;
     use RegistersRoutes;
     use ResolvesVisibility;
@@ -71,14 +73,6 @@ abstract class Widget implements Arrayable
         return array_merge($this->toArray(), [
             'isTurbo' => $this->isTurboRequest($request),
         ]);
-    }
-
-    /**
-     * Determine if the request is Turbo request.
-     */
-    public function isTurboRequest(Request $request): bool
-    {
-        return $request->hasHeader('Turbo-Frame');
     }
 
     /**
