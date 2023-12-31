@@ -20,8 +20,8 @@ class CheckboxTest extends TestCase
     {
         $option = $this->field->newOption('test', 'Test');
 
-        $this->assertTrue(
-            empty(array_diff(['value' => 'test'], $option->jsonSerialize()))
+        $this->assertEmpty(
+            array_diff(['value' => 'test'], $option->jsonSerialize())
         );
     }
 }

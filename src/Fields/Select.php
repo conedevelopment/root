@@ -71,7 +71,7 @@ class Select extends Field
                 );
 
                 return Collection::make($value)
-                    ->map(static function (mixed $value) use ($options): mixed {
+                    ->map(static function (mixed $value) use ($options): string {
                         return $options[$value] ?? $value;
                     })
                     ->implode(', ');
@@ -86,13 +86,9 @@ class Select extends Field
      */
     public function options(array|Closure $value): static
     {
-        if (is_array($value)) {
-            $value = static function () use ($value): array {
-                return $value;
-            };
-        }
-
-        $this->optionsResolver = $value;
+        $this->optionsResolver = is_callable($value) ? $value : static function () use ($value): array {
+            return $value;
+        };
 
         return $this;
     }

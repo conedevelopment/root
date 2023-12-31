@@ -52,34 +52,30 @@ class BooleanTest extends TestCase
 
     public function test_a_boolean_field_resolves_value(): void
     {
-        $request = Request::createFrom($this->app['request']);
-
         $model = new User();
-        $this->assertFalse($this->field->resolveValue($request, $model));
+        $this->assertFalse($this->field->resolveValue($this->app['request'], $model));
 
         $model->forceFill(['admin' => false]);
-        $this->assertFalse($this->field->resolveValue($request, $model));
+        $this->assertFalse($this->field->resolveValue($this->app['request'], $model));
 
         $model->forceFill(['admin' => true]);
-        $this->assertTrue($this->field->resolveValue($request, $model));
+        $this->assertTrue($this->field->resolveValue($this->app['request'], $model));
     }
 
     public function test_a_boolean_field_resolves_format(): void
     {
-        $request = Request::createFrom($this->app['request']);
-
         $model = new User();
 
         $model->forceFill(['admin' => false]);
         $this->assertSame(
             '<span class="status status--danger">No</span>',
-            $this->field->resolveFormat($request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
 
         $model->forceFill(['admin' => true]);
         $this->assertSame(
             '<span class="status status--success">Yes</span>',
-            $this->field->resolveFormat($request, $model)
+            $this->field->resolveFormat($this->app['request'], $model)
         );
     }
 }
