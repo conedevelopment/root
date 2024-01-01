@@ -11,7 +11,6 @@ use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
-use Cone\Root\Traits\InteractsWithTurbo;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -29,7 +28,6 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
-    use InteractsWithTurbo;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -497,7 +495,7 @@ abstract class Relation extends Field implements Form
             ->with($this->with)
             ->withCount($this->withCount)
             ->latest()
-            ->paginate($request->input($this->getPerPageKey(), $this->isTurboFrameRequest($request) ? 5 : $relation->getRelated()->getPerPage()))
+            ->paginate($request->input($this->getPerPageKey(), $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
     }
 
@@ -662,7 +660,7 @@ abstract class Relation extends Field implements Form
     public function toIndex(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
-            'template' => $this->isTurboFrameRequest($request) ? 'root::resources.relation' : 'root::resources.index',
+            'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
             'model' => $this->getRelation($model)->make(),
             'modelName' => $this->getRelatedName(),

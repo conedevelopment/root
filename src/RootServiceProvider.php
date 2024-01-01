@@ -57,6 +57,10 @@ class RootServiceProvider extends ServiceProvider
         $this->app->booted(static function (Application $app): void {
             $app->make(Root::class)->boot();
         });
+
+        $this->app['request']->macro('isTurboFrameRequest', function (): bool {
+            return $this->hasHeader('Turbo-Frame');
+        });
     }
 
     /**
