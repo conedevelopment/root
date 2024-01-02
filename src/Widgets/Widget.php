@@ -3,6 +3,7 @@
 namespace Cone\Root\Widgets;
 
 use Cone\Root\Http\Controllers\WidgetController;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
@@ -71,6 +72,16 @@ abstract class Widget implements Arrayable
         return array_merge($this->toArray(), [
             'isTurbo' => $request->isTurboFrameRequest(),
         ]);
+    }
+
+    /**
+     * Get the route middleware for the regsitered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            Authorize::class.':widget',
+        ];
     }
 
     /**

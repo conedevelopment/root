@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -15,14 +14,6 @@ use Illuminate\Support\Facades\Response as ResponseFactory;
 
 class ResourceController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware(AuthorizeResource::class);
-    }
-
     /**
      * Display a listing of the resource.
      */

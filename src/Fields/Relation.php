@@ -8,6 +8,7 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
@@ -562,8 +563,6 @@ abstract class Relation extends Field implements Form
     {
         $this->__registerRoutes($request, $router);
 
-        // Gate::allowIf($field->authorized($request, $model));
-
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
 
@@ -575,6 +574,16 @@ abstract class Relation extends Field implements Form
         $this->registerRouteConstraints($request, $router);
 
         $this->routesRegistered($request);
+    }
+
+    /**
+     * Get the route middleware for the regsitered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            sprintf('%s:field,resourceModel,%s', Authorize::class, $this->getRouteKeyName()),
+        ];
     }
 
     /**

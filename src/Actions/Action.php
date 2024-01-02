@@ -4,6 +4,7 @@ namespace Cone\Root\Actions;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
@@ -177,6 +178,16 @@ abstract class Action implements Arrayable, Form, JsonSerializable
         $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
             $this->resolveFields($request)->registerRoutes($request, $router);
         });
+    }
+
+    /**
+     * Get the route middleware for the regsitered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            Authorize::class.':action',
+        ];
     }
 
     /**

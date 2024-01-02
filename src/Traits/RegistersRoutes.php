@@ -38,6 +38,14 @@ trait RegistersRoutes
     }
 
     /**
+     * Get the route middleware for the regsitered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [];
+    }
+
+    /**
      * Register the routes using the given router.
      */
     public function registerRoutes(Request $request, Router $router): void
@@ -45,7 +53,10 @@ trait RegistersRoutes
         $this->uri = Str::start(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getUriKey()), '/');
 
         if (! App::routesAreCached()) {
-            $router->prefix($this->getUriKey())->group(function (Router $router): void {
+            $router->group([
+                'prefix' => $this->getUriKey(),
+                'middleware' => $this->getRouteMiddleware(),
+            ], function (Router $router): void {
                 $this->routes($router);
             });
         }

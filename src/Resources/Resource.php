@@ -10,6 +10,7 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Filters\TrashStatus;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
@@ -384,7 +385,10 @@ abstract class Resource implements Arrayable, Form
     {
         $this->__registerRoutes($request, $router);
 
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+        $router->group([
+            'prefix' => $this->getUriKey(),
+            'middleware' => $this->getRouteMiddleware(),
+        ], function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
 
@@ -392,6 +396,16 @@ abstract class Resource implements Arrayable, Form
                 $this->resolveFields($request)->registerRoutes($request, $router);
             });
         });
+    }
+
+    /**
+     * Get the route middleware for the regsitered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            Authorize::class.':_resource',
+        ];
     }
 
     /**
