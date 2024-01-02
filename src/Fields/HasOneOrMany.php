@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany as EloquentRelation;
 use Illuminate\Http\Request;
@@ -44,9 +45,13 @@ abstract class HasOneOrMany extends Relation
     {
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
-                $related = $this->resolveRelatableQuery($request, $model)->find($value);
+                $related = $this->resolveRelatableQuery($request, $model)
+                    ->where(function (Builder $query) use ($model, $value): Builder {
+                        return $query->whereIn($this->getRelation($model)->getRelated()->getQualifiedKeyName(), (array) $value);
+                    })
+                    ->get();
 
-                $model->setRelation($this->getRelationName(), $related);
+                $model->setRelation($this->getRelationName(), is_array($value) ? $related : $related->first());
             };
         }
 
