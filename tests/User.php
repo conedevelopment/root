@@ -9,6 +9,7 @@ use Cone\Root\Traits\HasMedia;
 use Cone\Root\Traits\HasMetaData;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Model implements MustVerifyEmail, RootUser
 {
@@ -22,5 +23,10 @@ class User extends Model implements MustVerifyEmail, RootUser
         {
             protected $model = User::class;
         };
+    }
+
+    public function latestUpload(): HasOne
+    {
+        return $this->uploads()->one()->ofMany();
     }
 }
