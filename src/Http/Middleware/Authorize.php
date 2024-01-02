@@ -15,11 +15,11 @@ class Authorize
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, string $name, ...$parmeters): mixed
+    public function handle(Request $request, Closure $next, string $name, ...$parameters): mixed
     {
         Gate::allowIf($request->route($name)->authorized(
             $request,
-            ...array_values(Arr::only($request->route()->parameters(), $parmeters))
+            ...array_values(Arr::only($request->route()->parameters(), $parameters))
         ));
 
         return $next($request);

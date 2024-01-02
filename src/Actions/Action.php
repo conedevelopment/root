@@ -181,7 +181,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
-     * Get the route middleware for the regsitered routes.
+     * Get the route middleware for the registered routes.
      */
     public function getRouteMiddleware(): array
     {
