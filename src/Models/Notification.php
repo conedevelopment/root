@@ -53,6 +53,14 @@ class Notification extends DatabaseNotification implements Contract
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMorphClass(): string
+    {
+        return static::getProxiedClass();
+    }
+
+    /**
      * Get the subject attribute.
      */
     protected function subject(): Attribute

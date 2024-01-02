@@ -135,6 +135,14 @@ class Medium extends Model implements Contract
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMorphClass(): string
+    {
+        return static::getProxiedClass();
+    }
+
+    /**
      * Get the columns that should receive a unique identifier.
      */
     public function uniqueIds(): array
