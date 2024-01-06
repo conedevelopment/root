@@ -20,10 +20,6 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        // if ($field->getPolicy()) {
-        //     $this->authorize('viewAny', $field->getModel());
-        // }
-
         $data = $field->toIndex($request, $model);
 
         return ResponseFactory::view(

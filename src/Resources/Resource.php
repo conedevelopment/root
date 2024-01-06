@@ -15,6 +15,7 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
@@ -38,6 +39,7 @@ abstract class Resource implements Arrayable, Form
 {
     use AsForm;
     use Authorizable;
+    use MapsAbilities;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
         RegistersRoutes::routeMatched as __routeMatched;
@@ -414,6 +416,10 @@ abstract class Resource implements Arrayable, Form
     public function routeMatched(RouteMatched $event): void
     {
         $event->route->defaults('resource', $this->getKey());
+
+        $event->route->getController()->middleware(
+            $this->getRouteMiddleware()
+        );
 
         $this->__routeMatched($event);
     }
