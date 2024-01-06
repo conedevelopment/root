@@ -5,12 +5,6 @@
 
 {{-- Content --}}
 @section('content')
-    @if($errors->isNotEmpty())
-        <x-root::alert type="danger">
-            {{ __('Some error occurred when submitting the form!') }}
-        </x-root::alert>
-    @endif
-
     <form id="{{ $key }}" method="POST" action="{{ $action }}" autocomplete="off">
         @csrf
         @method($method)
@@ -18,7 +12,9 @@
             <div class="l-row__column">
                 <div class="app-card app-card--edit">
                     <div class="app-card__header">
-                        <h2 class="app-card__title">General</h2>
+                        <h2 class="app-card__title">
+                            {{ __(':resource Details', ['resource' => $modelName]) }}
+                        </h2>
                     </div>
                     <div class="app-card__body">
                         <div class="form-group-stack form-group-stack--bordered form-group-container">
@@ -36,7 +32,7 @@
             <button type="submit" class="btn btn--primary" form="{{ $key }}">{{ __('Save') }}</button>
             <a href="{{ $action }}" class="btn btn--light">{{ __('Cancel') }}</a>
         </div>
-        @if($model->exists)
+        @can('delete', $model)
             <div class="app-actions__column">
                 <form method="POST" action="{{ $action }}" onsubmit="return window.confirm('{{ __('Are you sure?') }}');">
                     @csrf
@@ -44,6 +40,6 @@
                     <button type="submit" class="btn btn--delete">{{ __('Delete') }}</button>
                 </form>
             </div>
-        @endif
+        @endcan
     </div>
 @endsection

@@ -52,6 +52,11 @@
             </div>
             <div class="container">
                 <div class="app-body">
+                    @if($errors->isNotEmpty())
+                        <x-root::alert type="danger">
+                            {{ __('Some error occurred when submitting the form!') }}
+                        </x-root::alert>
+                    @endif
                     @foreach($alerts as $alert)
                         <x-root::alert :type="$alert['type']">
                             {!! $alert['message'] !!}
