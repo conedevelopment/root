@@ -425,9 +425,7 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($request, $value): void {
-            $this->resolveHydrate($request, $model, $value);
-        });
+        $this->resolveHydrate($request, $model, $value);
     }
 
     /**
