@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentRelation;
 use Illuminate\Http\Request;
 
+/**
+ * @extends \Cone\Root\Fields\MorphOne<\Illuminate\Database\Eloquent\Relations\MorphOne>
+ */
 class Meta extends MorphOne
 {
     /**
@@ -21,6 +24,7 @@ class Meta extends MorphOne
     public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
+            /** @phpstan-var \Tests\MetaDataModel $model */
             $related = $model->metaData()->make();
 
             return $model->metaData()

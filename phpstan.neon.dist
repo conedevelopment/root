@@ -4,11 +4,29 @@ parameters:
     databaseMigrationsPath:
         - database/migrations/
         - vendor/orchestra/testbench-core/laravel/migrations/
+    scanFiles:
+        - tests/phpstan/FieldWithRoute.php
+        - tests/phpstan/MetaDataModel.php
     paths:
         - src/
         - config/
         - database/
         - routes/
     level: 5
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkAlwaysTrueLooseComparison: true
+    checkClassCaseSensitivity: false
+    checkDynamicProperties: true
+    checkExplicitMixed: false
+    checkImplicitMixed: false
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
     ignoreErrors:
         - '#^Unsafe usage of new static#'
+        # Illuminate\View\View vs. Illuminate\Contracts\View\View
+        - '#^Method Cone\\\S+::render\(\) should return Illuminate\\View\\View but returns Illuminate\\Contracts\\View\\View\.$#'
+        # SoftDeletes
+        - '#(\$forceDeleting|::withTrashed|::onlyTrashed|::trashed|::restore)#'

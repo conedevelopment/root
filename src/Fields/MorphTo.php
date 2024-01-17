@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 
+/**
+ * @extends \Cone\Root\Fields\BelongsTo<\Illuminate\Database\Eloquent\Relations\MorphTo>
+ */
 class MorphTo extends BelongsTo
 {
     /**

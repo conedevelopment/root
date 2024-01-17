@@ -62,6 +62,8 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the subject attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
      */
     protected function subject(): Attribute
     {
@@ -72,6 +74,8 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the formatted created at attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
      */
     protected function formattedCreatedAt(): Attribute
     {
@@ -82,6 +86,8 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the formatted created at attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<bool, never>
      */
     protected function isRead(): Attribute
     {
@@ -92,6 +98,8 @@ class Notification extends DatabaseNotification implements Contract
 
     /**
      * Get the URL attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
      */
     protected function url(): Attribute
     {

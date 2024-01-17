@@ -13,6 +13,7 @@ class WidgetController extends Controller
      */
     public function __invoke(Request $request): Response
     {
+        /** @var \Cone\Root\Widgets\Widget $widget */
         $widget = $request->route('widget');
 
         $data = $widget->data($request);

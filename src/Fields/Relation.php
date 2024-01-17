@@ -27,6 +27,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\Relation
+ */
 abstract class Relation extends Field implements Form
 {
     use AsForm;
@@ -118,6 +121,8 @@ abstract class Relation extends Field implements Form
 
     /**
      * Get the relation instance.
+     *
+     * @phpstan-return TRelation
      */
     public function getRelation(Model $model): EloquentRelation
     {

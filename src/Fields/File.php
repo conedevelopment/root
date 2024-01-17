@@ -168,7 +168,9 @@ class File extends MorphToMany
             call_user_func_array($this->storageResolver, [$request, $medium, $path]);
         }
 
-        $request->user()->uploads()->save($medium);
+        /** @var \Illuminate\Foundation\Auth\User&\Cone\Root\Interfaces\Models\User $user */
+        $user = $request->user();
+        $user->uploads()->save($medium);
 
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
@@ -234,6 +236,7 @@ class File extends MorphToMany
      */
     public function toOption(Request $request, Model $model, Model $related): array
     {
+        /** @var \Cone\Root\Models\Medium $related */
         $option = parent::toOption($request, $model, $related);
 
         $name = sprintf(
@@ -244,6 +247,8 @@ class File extends MorphToMany
         );
 
         $option['attrs']->merge(['name' => $name]);
+
+        /** @var \Cone\Root\Models\Medium $related */
 
         return array_merge($option, [
             'fileName' => $related->file_name,

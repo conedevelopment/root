@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 
+/**
+ * @template TRelation of \Illuminate\Database\Eloquent\Relations\BelongsTo
+ *
+ * @extends \Cone\Root\Fields\Relation<TRelation>
+ */
 class BelongsTo extends Relation
 {
     /**

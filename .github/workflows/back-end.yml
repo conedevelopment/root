@@ -136,8 +136,11 @@ jobs:
             run: |
                 ! git grep --line-number -e '\$this\s*->\s*\$this' -- ':!:*/back-end\.yml'
         -
+            name: "Install orchestra/testbench"
+            run: "composer require --dev orchestra/testbench"
+        -
             name: "Perform static analysis"
-            run: "true TODO || composer exec -- phpstan analyze --level=5 src/"
+            run: "composer exec -- phpstan || true 'Annotate only'"
 
     coding_standards:
         name: "4️⃣ Coding Standards"
