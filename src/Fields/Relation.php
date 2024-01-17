@@ -662,6 +662,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
             'url' => $this->modelUrl($model),
+            'modelName' => $this->getRelatedName(),
         ]);
     }
 
@@ -674,7 +675,6 @@ abstract class Relation extends Field implements Form
             'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
             'model' => $this->getRelation($model)->make(),
-            'modelName' => $this->getRelatedName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('index')
