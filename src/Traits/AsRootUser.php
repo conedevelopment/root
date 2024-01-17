@@ -22,6 +22,14 @@ trait AsRootUser
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMorphClass(): string
+    {
+        return static::getProxiedClass();
+    }
+
+    /**
      * Get the uploads for the user.
      */
     public function uploads(): HasMany

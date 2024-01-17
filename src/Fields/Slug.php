@@ -45,7 +45,7 @@ class Slug extends Text
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label = null, Closure|string $modelAttribute = null)
+    public function __construct(?string $label = null, Closure|string|null $modelAttribute = null)
     {
         parent::__construct($label ?: __('Slug'), $modelAttribute ?: 'slug');
 

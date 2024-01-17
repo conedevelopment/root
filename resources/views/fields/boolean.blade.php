@@ -7,7 +7,7 @@
     </label>
     <div class="form-group">
         <label class="form-switch form-switch--sm">
-            <input {{ $attrs->class(['form-switch__control']) }} value="1">
+            <input {{ $attrs }} value="1">
         </label>
     </div>
     @if($invalid)

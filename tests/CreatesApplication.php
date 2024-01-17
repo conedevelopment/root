@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests;
 
+use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\RootApplicationServiceProvider;
 use Cone\Root\RootServiceProvider;
 use Illuminate\Contracts\Console\Kernel;
@@ -19,6 +20,8 @@ trait CreatesApplication
         $app->booting(static function () use ($app): void {
             $app->register(RootServiceProvider::class);
             $app->register(RootApplicationServiceProvider::class);
+
+            $app->bind(UserInterface::class, User::class);
         });
 
         $app->make(Kernel::class)->bootstrap();

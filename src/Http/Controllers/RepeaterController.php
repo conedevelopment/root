@@ -18,8 +18,6 @@ class RepeaterController extends Controller
         /** @var \Cone\Root\Fields\Repeater $field */
         $field = $request->route('field');
 
-        // Gate::allowIf($field->authorized($request, $model));
-
         $model = $request->filled('model')
             ? $resource->resolveRouteBinding($request, $request->input('model'))
             : $resource->getModelInstance();

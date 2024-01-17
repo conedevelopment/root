@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers;
 
-use Cone\Root\Http\Middleware\AuthorizeResource;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -16,25 +15,14 @@ use Illuminate\Support\Facades\Response as ResponseFactory;
 class ResourceController extends Controller
 {
     /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware(AuthorizeResource::class);
-    }
-
-    /**
      * Display a listing of the resource.
      */
     public function index(Request $request, Resource $resource): Response
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('viewAny', $resource->getModel());
-        }
+        $data = $resource->toIndex($request);
 
         return ResponseFactory::view(
-            'root::resources.index',
-            $resource->toIndex($request)
+            $data['template'], $data
         );
     }
 
@@ -43,13 +31,10 @@ class ResourceController extends Controller
      */
     public function create(Request $request, Resource $resource): Response
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('create', $resource->getModel());
-        }
+        $data = $resource->toCreate($request);
 
         return ResponseFactory::view(
-            'root::resources.form',
-            $resource->toCreate($request)
+            $data['template'], $data
         );
     }
 
@@ -58,10 +43,6 @@ class ResourceController extends Controller
      */
     public function store(Request $request, Resource $resource): RedirectResponse
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('create', $resource->getModel());
-        }
-
         $model = $resource->getModelInstance();
 
         $resource->handleFormRequest($request, $model);
@@ -75,13 +56,10 @@ class ResourceController extends Controller
      */
     public function show(Request $request, Resource $resource, Model $model): Response
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('view', $model);
-        }
+        $data = $resource->toShow($request, $model);
 
         return ResponseFactory::view(
-            'root::resources.show',
-            $resource->toShow($request, $model)
+            $data['template'], $data
         );
     }
 
@@ -90,13 +68,10 @@ class ResourceController extends Controller
      */
     public function edit(Request $request, Resource $resource, Model $model): Response
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('update', $model);
-        }
+        $data = $resource->toEdit($request, $model);
 
         return ResponseFactory::view(
-            'root::resources.form',
-            $resource->toEdit($request, $model)
+            $data['template'], $data
         );
     }
 
@@ -105,10 +80,6 @@ class ResourceController extends Controller
      */
     public function update(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('update', $model);
-        }
-
         $resource->handleFormRequest($request, $model);
 
         return Redirect::to($resource->modelUrl($model))
@@ -137,10 +108,6 @@ class ResourceController extends Controller
      */
     public function restore(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        if ($resource->getPolicy()) {
-            $this->authorize('restore', $model);
-        }
-
         $model->restore();
 
         return Redirect::back()

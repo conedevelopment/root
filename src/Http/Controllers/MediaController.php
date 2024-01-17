@@ -4,7 +4,6 @@ namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class MediaController extends Controller
@@ -19,8 +18,6 @@ class MediaController extends Controller
 
         /** @var \Cone\Root\Fields\Media $field */
         $field = $request->route('field');
-
-        // Gate::allowIf($field->authorized($request, $model));
 
         $model = $request->filled('model')
             ? $resource->resolveRouteBinding($request, $request->input('model'))

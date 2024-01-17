@@ -17,7 +17,7 @@ class URL extends Text
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 
@@ -43,7 +43,7 @@ class URL extends Text
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {

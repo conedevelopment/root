@@ -16,11 +16,12 @@ class Boolean extends Field
     /**
      * Create a new file field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
     {
         parent::__construct($label, $modelAttribute);
 
         $this->type('checkbox');
+        $this->class(['form-switch__control']);
     }
 
     /**
@@ -44,12 +45,30 @@ class Boolean extends Field
     /**
      * {@inheritdoc}
      */
-    public function resolveValue(Request $request, Model $model): mixed
+    public function resolveValue(Request $request, Model $model): bool
     {
-        $value = parent::resolveValue($request, $model);
+        $value = filter_var(parent::resolveValue($request, $model), FILTER_VALIDATE_BOOL);
 
-        $this->checked(filter_var($value, FILTER_VALIDATE_BOOL));
+        $this->checked($value);
 
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): ?string
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = static function (Request $request, Model $model, ?bool $value): string {
+                return sprintf(
+                    '<span class="status %s">%s</span>',
+                    $value ? 'status--success' : 'status--danger',
+                    $value ? __('Yes') : __('No')
+                );
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
     }
 }

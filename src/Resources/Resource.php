@@ -10,10 +10,12 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Filters\TrashStatus;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
@@ -37,6 +39,7 @@ abstract class Resource implements Arrayable, Form
 {
     use AsForm;
     use Authorizable;
+    use MapsAbilities;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
         RegistersRoutes::routeMatched as __routeMatched;
@@ -166,6 +169,36 @@ abstract class Resource implements Arrayable, Form
     public function getPolicy(): mixed
     {
         return Gate::getPolicyFor($this->getModel());
+    }
+
+    /**
+     * Map the resource abilities.
+     */
+    public function mapAbilities(): array
+    {
+        return [
+            'viewAny' => function (Request $request): bool {
+                return is_null($this->getPolicy()) || Gate::allows('viewAny', $this->getModel());
+            },
+            'create' => function (Request $request): bool {
+                return is_null($this->getPolicy()) || Gate::allows('create', $this->getModel());
+            },
+            'view' => function (Request $request, Model $model): bool {
+                return is_null($this->getPolicy()) || Gate::allows('view', $model);
+            },
+            'update' => function (Request $request, Model $model): bool {
+                return is_null($this->getPolicy()) || Gate::allows('update', $model);
+            },
+            'delete' => function (Request $request, Model $model): bool {
+                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
+            },
+            'forceDelete' => function (Request $request, Model $model): bool {
+                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
+            },
+            'restore' => function (Request $request, Model $model): bool {
+                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
+            },
+        ];
     }
 
     /**
@@ -306,7 +339,7 @@ abstract class Resource implements Arrayable, Form
     protected function resolveWidget(Request $request, Widget $widget): void
     {
         if ($widget instanceof Metric) {
-            $widget->setQuery($this->resolveFilteredQuery($request));
+            $widget->setQuery($this->resolveFilteredQuery($request)->clone()->withoutEagerLoads());
         }
     }
 
@@ -384,7 +417,10 @@ abstract class Resource implements Arrayable, Form
     {
         $this->__registerRoutes($request, $router);
 
-        $router->prefix($this->getUriKey())->group(function (Router $router) use ($request): void {
+        $router->group([
+            'prefix' => $this->getUriKey(),
+            'middleware' => $this->getRouteMiddleware(),
+        ], function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
             $this->resolveWidgets($request)->registerRoutes($request, $router);
 
@@ -395,11 +431,25 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the route middleware for the registered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            Authorize::class.':_resource',
+        ];
+    }
+
+    /**
      * Handle the route matched event.
      */
     public function routeMatched(RouteMatched $event): void
     {
         $event->route->defaults('resource', $this->getKey());
+
+        $event->route->getController()->middleware(
+            $this->getRouteMiddleware()
+        );
 
         $this->__routeMatched($event);
     }
@@ -426,6 +476,7 @@ abstract class Resource implements Arrayable, Form
     public function toIndex(Request $request): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.index',
             'title' => $this->getName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $this->getModelInstance())
@@ -435,7 +486,7 @@ abstract class Resource implements Arrayable, Form
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request)
                 ->visible('index')
-                ->toArray(),
+                ->mapToDisplay($request),
             'perPageOptions' => $this->getPerPageOptions(),
             'perPageKey' => $this->getPerPageKey(),
             'sortKey' => $this->getSortKey(),
@@ -457,6 +508,7 @@ abstract class Resource implements Arrayable, Form
     public function toCreate(Request $request): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.form',
             'title' => __('Create :resource', ['resource' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
@@ -475,6 +527,7 @@ abstract class Resource implements Arrayable, Form
     public function toShow(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.show',
             'title' => sprintf('%s: %s', $this->getModelName(), $this->modelTitle($model)),
             'model' => $model,
             'action' => $this->modelUrl($model),
@@ -490,7 +543,7 @@ abstract class Resource implements Arrayable, Form
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request, $model)
                 ->visible('show')
-                ->toArray(),
+                ->mapToDisplay($request),
             'relations' => $this->resolveFields($request)
                 ->subResource()
                 ->authorized($request, $model)
@@ -508,6 +561,7 @@ abstract class Resource implements Arrayable, Form
     public function toEdit(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'template' => 'root::resources.form',
             'title' => __('Edit :resource: :model', ['resource' => $this->getModelName(), 'model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),

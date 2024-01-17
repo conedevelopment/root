@@ -59,6 +59,14 @@ class Meta extends Model implements Contract
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMorphClass(): string
+    {
+        return static::getProxiedClass();
+    }
+
+    /**
      * Get the metable model.
      */
     public function metable(): MorphTo

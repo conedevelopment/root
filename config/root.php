@@ -1,7 +1,6 @@
 <?php
 
 use Cone\Root\Http\Middleware\Authenticate;
-use Cone\Root\Http\Middleware\HandleRootRequests;
 
 return [
 
@@ -46,7 +45,6 @@ return [
         Authenticate::class,
         'verified',
         'can:viewRoot',
-        HandleRootRequests::class,
     ],
 
     /*
@@ -110,6 +108,51 @@ return [
         'image' => [],
         'textAlign' => [
             'types' => ['heading', 'paragraph', 'image'],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Widget Chart Settings
+    |--------------------------------------------------------------------------
+    |
+    | You can specify the default ApexCharts config for each chart type here.
+    | For more info visit the official documentation: https://apexcharts.com
+    |
+    */
+
+    'widgets' => [
+        'trend' => [
+            'chart' => [
+                'type' => 'area',
+                'height' => 80,
+                'width' => '100%',
+                'sparkline' => ['enabled' => true],
+            ],
+            'stroke' => [
+                'curve' => 'smooth',
+                'width' => 2,
+            ],
+            'fill' => [
+                'type' => 'gradient',
+                'opacity' => 0.75,
+                'gradient' => [
+                    'shadeIntensity' => 1,
+                    'opacityFrom' => 0.75,
+                    'opacityTo' => 0,
+                    'stops' => [0, 100],
+                ],
+            ],
+            'xaxis' => ['type' => 'datetime'],
+            'yaxis' => ['min' => 0],
+            'colors' => ['var(--root-base-color-heading)'],
+            'tooltip' => [
+                'enabled' => true,
+                'marker' => ['show' => false],
+            ],
+            'grid' => [
+                'padding' => ['top' => 10, 'bottom' => 10],
+            ],
         ],
     ],
 

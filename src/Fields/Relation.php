@@ -8,9 +8,11 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
 use Cone\Root\Http\Controllers\RelationController;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -31,6 +33,7 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
+    use MapsAbilities;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }
@@ -101,7 +104,7 @@ abstract class Relation extends Field implements Form
     /**
      * Create a new relation field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null, Closure|string $relation = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         parent::__construct($label, $modelAttribute);
 
@@ -313,7 +316,7 @@ abstract class Relation extends Field implements Form
     /**
      * {@inheritdoc}
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model): mixed {
@@ -500,7 +503,7 @@ abstract class Relation extends Field implements Form
             ->with($this->with)
             ->withCount($this->withCount)
             ->latest()
-            ->paginate($request->input($this->getPerPageKey(), $request->hasHeader('Turbo-Frame') ? 5 : $relation->getRelated()->getPerPage()))
+            ->paginate($request->input($this->getPerPageKey(), $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
     }
 
@@ -526,7 +529,7 @@ abstract class Relation extends Field implements Form
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
     }
 
     /**
@@ -577,6 +580,24 @@ abstract class Relation extends Field implements Form
 
         $this->registerRouteConstraints($request, $router);
 
+        $this->routesRegistered($request);
+    }
+
+    /**
+     * Get the route middleware for the registered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            sprintf('%s:field,resourceModel,%s', Authorize::class, $this->getRouteKeyName()),
+        ];
+    }
+
+    /**
+     * Handle the routes registered event.
+     */
+    protected function routesRegistered(Request $request): void
+    {
         Root::instance()->breadcrumbs->patterns([
             $this->getUri() => $this->label,
             sprintf('%s/create', $this->getUri()) => __('Add'),
@@ -646,16 +667,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
             'url' => $this->modelUrl($model),
-        ]);
-    }
-
-    /**
-     * Get the fragment representation of the relation.
-     */
-    public function toFragment(Request $request, Model $model): array
-    {
-        return array_merge($this->toSubResource($request, $model), [
-            //
+            'modelName' => $this->getRelatedName(),
         ]);
     }
 
@@ -665,9 +677,9 @@ abstract class Relation extends Field implements Form
     public function toIndex(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
             'model' => $this->getRelation($model)->make(),
-            'modelName' => $this->getRelatedName(),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('index')
@@ -696,6 +708,7 @@ abstract class Relation extends Field implements Form
     public function toCreate(Request $request, Model $model): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->make(),
             'action' => $this->modelUrl($model),
@@ -714,6 +727,7 @@ abstract class Relation extends Field implements Form
     public function toShow(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.show',
             'title' => $this->resolveDisplay($related),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),
@@ -735,6 +749,7 @@ abstract class Relation extends Field implements Form
     public function toEdit(Request $request, Model $model, Model $related): array
     {
         return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
             'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),

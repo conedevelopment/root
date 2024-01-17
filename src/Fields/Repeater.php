@@ -37,6 +37,16 @@ class Repeater extends Field
     protected ?int $max = null;
 
     /**
+     * Create a new repeater field instance.
+     */
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
+    {
+        parent::__construct($label, $modelAttribute);
+
+        $this->hiddenOn(['index']);
+    }
+
+    /**
      * Get the URI key.
      */
     public function getUriKey(): string
@@ -127,7 +137,7 @@ class Repeater extends Field
                 $field->setModelAttribute($attribute)
                     ->name($attribute)
                     ->id($attribute)
-                    ->value(function () use ($tmpModel, $key): mixed {
+                    ->value(static function () use ($tmpModel, $key): mixed {
                         return $tmpModel->getAttribute($key);
                     });
             });
@@ -136,6 +146,16 @@ class Repeater extends Field
         };
 
         return $this->__withFields($callback);
+    }
+
+    /**
+     * Resolve the option fields.
+     */
+    public function resolveOptionFields(Request $request, Model $model, Model $tmpModel): Fields
+    {
+        return is_null($this->optionFieldsResolver)
+            ? new Fields()
+            : call_user_func_array($this->optionFieldsResolver, [$request, $model, $tmpModel]);
     }
 
     /**
@@ -185,7 +205,28 @@ class Repeater extends Field
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->getKey(), $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveFormat(Request $request, Model $model): ?string
+    {
+        if (is_null($this->formatResolver)) {
+            $this->formatResolver = function (Request $request, Model $model, array $value): string {
+                $values = array_map(function (array $value) use ($request, $model): array {
+                    return $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
+                        ->authorized($request, $model)
+                        ->visible('show')
+                        ->mapToDisplay($request, $model);
+                }, $value);
+
+                return View::make('root::fields.repeater-table', ['values' => $values])->render();
+            };
+        }
+
+        return parent::resolveFormat($request, $model);
     }
 
     /**
@@ -217,9 +258,7 @@ class Repeater extends Field
             'open' => true,
             'value' => $tmpModel->getAttribute('_key'),
             'label' => $this->getOptionName(),
-            'fields' => is_null($this->optionFieldsResolver)
-                ? new Fields()
-                : call_user_func_array($this->optionFieldsResolver, [$request, $model, $tmpModel]),
+            'fields' => $this->resolveOptionFields($request, $model, $tmpModel),
         ];
     }
 

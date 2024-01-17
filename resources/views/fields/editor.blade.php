@@ -34,8 +34,6 @@
     @endif
 </div>
 
-{{-- Modal --}}
-
 {{-- Script --}}
 @pushOnce('scripts')
     {{

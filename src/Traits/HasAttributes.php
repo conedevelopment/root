@@ -3,6 +3,7 @@
 namespace Cone\Root\Traits;
 
 use Closure;
+use Cone\Root\Support\ClassList;
 use Illuminate\Support\Arr;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -22,6 +23,28 @@ trait HasAttributes
     }
 
     /**
+     * Add a "class" HTML attribute.
+     */
+    public function class(string|array $value): static
+    {
+        $this->classList()->add($value);
+
+        return $this;
+    }
+
+    /**
+     * Get the class list.
+     */
+    public function classList(): ClassList
+    {
+        if (! isset($this->attributes['class'])) {
+            $this->attributes['class'] = new ClassList();
+        }
+
+        return $this->attributes['class'];
+    }
+
+    /**
      * Get the attributes.
      */
     public function getAttributes(): array
@@ -34,7 +57,9 @@ trait HasAttributes
      */
     public function setAttributes(array $attributes): static
     {
-        $this->attributes = array_replace($this->attributes, $attributes);
+        foreach ($attributes as $key => $value) {
+            $this->setAttribute($key, $value);
+        }
 
         return $this;
     }
@@ -52,7 +77,10 @@ trait HasAttributes
      */
     public function getAttribute(string $key, mixed $default = null): mixed
     {
-        return $this->attributes[$key] ?? $default;
+        return match ($key) {
+            'class' => $this->classList()->__toString(),
+            default => $this->attributes[$key] ?? $default,
+        };
     }
 
     /**
@@ -60,7 +88,10 @@ trait HasAttributes
      */
     public function setAttribute(string $key, mixed $value): static
     {
-        $this->attributes[$key] = $value;
+        match ($key) {
+            'class' => $this->classList()->clear()->add($value),
+            default => $this->attributes[$key] = $value,
+        };
 
         return $this;
     }
@@ -121,7 +152,7 @@ trait HasAttributes
         $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
 
         return match ($key) {
-            'class' => Arr::toCssClasses((array) $value),
+            'class' => (string) $value,
             'style' => Arr::toCssStyles((array) $value),
             default => $value,
         };

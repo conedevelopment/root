@@ -31,7 +31,6 @@ class RootServiceProvider extends ServiceProvider
      */
     public array $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
-        Interfaces\Navigation\Registry::class => Navigation\Registry::class,
     ];
 
     /**
@@ -55,6 +54,10 @@ class RootServiceProvider extends ServiceProvider
 
         $this->app->booted(static function (Application $app): void {
             $app->make(Root::class)->boot();
+        });
+
+        $this->app['request']->macro('isTurboFrameRequest', function (): bool {
+            return $this->hasHeader('Turbo-Frame');
         });
     }
 
@@ -160,6 +163,8 @@ class RootServiceProvider extends ServiceProvider
             Console\Commands\Install::class,
             Console\Commands\Publish::class,
             Console\Commands\ResourceMake::class,
+            Console\Commands\TrendMake::class,
+            Console\Commands\ValueMake::class,
             Console\Commands\WidgetMake::class,
         ]);
     }

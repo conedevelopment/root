@@ -25,7 +25,7 @@ class Widgets extends Collection
     /**
      * Filter the fields that are available for the current request and model.
      */
-    public function authorized(Request $request, Model $model = null): static
+    public function authorized(Request $request, ?Model $model = null): static
     {
         return $this->filter->authorized($request, $model)->values();
     }
@@ -36,6 +36,14 @@ class Widgets extends Collection
     public function visible(string|array $context): static
     {
         return $this->filter->visible($context)->values();
+    }
+
+    /**
+     * Map the widgets to display.
+     */
+    public function mapToDisplay(Request $request): array
+    {
+        return $this->map->data($request)->all();
     }
 
     /**

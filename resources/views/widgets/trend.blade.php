@@ -1,13 +1,15 @@
-<div class="app-widget app-widget--primary">
-    <div class="app-widget__column">
-        <h2 class="app-widget__title">{{ $name }}</h2>
-        <p class="app-widget__data">65</p>
-        <div class="trending trending--up app-widget__trending">
-            <span class="trending__caption">+12%</span>
-            <x-root::icon name="trending-up" class="trending__icon" />
+<turbo-frame id="widget-{{ $key }}" @if(! $isTurbo) src="{{ $url }}" @endif>
+    <div {{ $attrs }}>
+        <div class="app-widget__column">
+            <h2 class="app-widget__title">
+                {{ $name }}
+            </h2>
+            @if(! is_null($data['current']))
+                <p class="app-widget__data">{{ $data['current'] }}</p>
+            @endif
+        </div>
+        <div class="app-widget__chart">
+            <x-root::chart :config="$data['chart']" />
         </div>
     </div>
-    <div class="app-widget__chart">
-        <div id="chart01"></div>
-    </div>
-</div>
+</turbo-frame>

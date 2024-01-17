@@ -123,7 +123,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Create a new field instance.
      */
-    public function __construct(string $label, Closure|string $modelAttribute = null)
+    public function __construct(string $label, Closure|string|null $modelAttribute = null)
     {
         $this->computed = $modelAttribute instanceof Closure;
 
@@ -132,7 +132,7 @@ abstract class Field implements Arrayable, JsonSerializable
         $this->label($label);
         $this->name($this->modelAttribute);
         $this->id($this->modelAttribute);
-        $this->setAttribute('class', 'form-control');
+        $this->class('form-control');
         $this->value($this->computed ? $modelAttribute : null);
     }
 
@@ -168,6 +168,14 @@ abstract class Field implements Arrayable, JsonSerializable
     public function getValidationKey(): string
     {
         return $this->getRequestKey();
+    }
+
+    /**
+     * Get the blade template.
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
     }
 
     /**
@@ -235,7 +243,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the help attribute.
      */
-    public function help(string $value = null): static
+    public function help(?string $value = null): static
     {
         $this->help = $value;
 
@@ -329,7 +337,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the value resolver.
      */
-    public function value(Closure $callback = null): static
+    public function value(?Closure $callback = null): static
     {
         $this->valueResolver = $callback;
 
@@ -391,7 +399,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the format resolver.
      */
-    public function format(Closure $callback = null): static
+    public function format(?Closure $callback = null): static
     {
         $this->formatResolver = $callback;
 
@@ -401,12 +409,12 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         $value = $this->resolveValue($request, $model);
 
         if (is_null($this->formatResolver)) {
-            return $value;
+            return is_array($value) ? json_encode($value) : $value;
         }
 
         return call_user_func_array($this->formatResolver, [$request, $model, $value]);
@@ -417,9 +425,7 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($request, $value): void {
-            $this->resolveHydrate($request, $model, $value);
-        });
+        $this->resolveHydrate($request, $model, $value);
     }
 
     /**

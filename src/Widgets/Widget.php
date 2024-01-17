@@ -3,21 +3,18 @@
 namespace Cone\Root\Widgets;
 
 use Cone\Root\Http\Controllers\WidgetController;
+use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\View as ViewFactory;
 use Illuminate\Support\Str;
 
-abstract class Widget implements Arrayable, Responsable
+abstract class Widget implements Arrayable
 {
     use Authorizable;
     use HasAttributes;
@@ -28,7 +25,20 @@ abstract class Widget implements Arrayable, Responsable
     /**
      * The Blade template.
      */
-    protected string $template = 'root::widgets.widget';
+    protected string $template;
+
+    /**
+     * Indicates whether the widget is async loaded.
+     */
+    protected bool $async = false;
+
+    /**
+     * Create a new widget instance.
+     */
+    public function __construct()
+    {
+        $this->class('app-widget');
+    }
 
     /**
      * Get the key.
@@ -55,19 +65,23 @@ abstract class Widget implements Arrayable, Responsable
     }
 
     /**
-     * Render the widget.
-     */
-    public function render(): View
-    {
-        return ViewFactory::make($this->template);
-    }
-
-    /**
      * Get the view data.
      */
     public function data(Request $request): array
     {
-        return $this->toArray();
+        return array_merge($this->toArray(), [
+            'isTurbo' => $request->isTurboFrameRequest(),
+        ]);
+    }
+
+    /**
+     * Get the route middleware for the registered routes.
+     */
+    public function getRouteMiddleware(): array
+    {
+        return [
+            Authorize::class.':widget',
+        ];
     }
 
     /**
@@ -75,7 +89,9 @@ abstract class Widget implements Arrayable, Responsable
      */
     public function routes(Router $router): void
     {
-        $router->get('/', WidgetController::class);
+        if ($this->async) {
+            $router->get('/', WidgetController::class);
+        }
     }
 
     /**
@@ -88,16 +104,7 @@ abstract class Widget implements Arrayable, Responsable
             'key' => $this->getKey(),
             'name' => $this->getName(),
             'template' => $this->template,
+            'url' => $this->getUri(),
         ];
-    }
-
-    /**
-     * Convert the widget to an HTTP Response.
-     */
-    public function toResponse($request): Response
-    {
-        return new Response(
-            $this->render()->with($this->data($request))->render()
-        );
     }
 }

@@ -20,11 +20,10 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
-        // Gate::allowIf($field->authorized($request, $model));
+        $data = $field->toIndex($request, $model);
 
         return ResponseFactory::view(
-            $request->hasHeader('Turbo-Frame') ? 'root::resources.relation' : 'root::resources.index',
-            $field->toIndex($request, $model)
+            $data['template'], $data
         );
     }
 
@@ -35,9 +34,10 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
+        $data = $field->toCreate($request, $model);
+
         return ResponseFactory::view(
-            'root::resources.form',
-            $field->toCreate($request, $model)
+            $data['template'], $data
         );
     }
 
@@ -63,9 +63,10 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
+        $data = $field->toShow($request, $model, $related);
+
         return ResponseFactory::view(
-            'root::resources.show',
-            $field->toShow($request, $model, $related)
+            $data['template'], $data
         );
     }
 
@@ -76,9 +77,10 @@ class RelationController extends Controller
     {
         $field = $request->route('field');
 
+        $data = $field->toEdit($request, $model, $related);
+
         return ResponseFactory::view(
-            'root::resources.form',
-            $field->toEdit($request, $model, $related)
+            $data['template'], $data
         );
     }
 
