@@ -3,168 +3,168 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-notification {
-  &__drawer {
-    @include transition;
-    background-color: color('background');
-    block-size: 100dvh;
-    box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
-    display: flex;
-    flex-direction: column;
-    gap: spacer('m');
-    inline-size: 100%;
-    inset: 0 0 0 auto;
-    padding: spacer('m');
-    position: fixed;
-    transform: translateX(100%);
-    z-index: 50;
+    &__drawer {
+        @include transition;
+        background-color: color('background');
+        block-size: 100dvh;
+        box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
+        display: flex;
+        flex-direction: column;
+        gap: spacer('m');
+        inline-size: 100%;
+        inset: 0 0 0 auto;
+        padding: spacer('m');
+        position: fixed;
+        transform: translateX(100%);
+        z-index: 50;
 
-    &[data-state='open'] {
-      transform: translateX(0);
+        &[data-state='open'] {
+            transform: translateX(0);
+        }
+
+        @include breakpoint('xs') {
+            inline-size: 26rem;
+        }
     }
 
-    @include breakpoint('xs') {
-      inline-size: 26rem;
+    &__header {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('xs');
+        justify-content: space-between;
     }
-  }
 
-  &__header {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('xs');
-    justify-content: space-between;
-  }
-
-  &__title {
-    font-size: font-size('h4');
-    font-weight: 600;
-    margin-block: 0;
-  }
-
-  &__list {
-    @include scrollbar;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-
-    > * + * {
-      border-block-start: 1px solid color('border');
-      margin-block-start: spacer('s');
-      padding-block-start: spacer('s');
+    &__title {
+        font-size: font-size('h4');
+        font-weight: 600;
+        margin-block: 0;
     }
-  }
+
+    &__list {
+        @include scrollbar;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+
+        > * + * {
+            border-block-start: 1px solid color('border');
+            margin-block-start: spacer('s');
+            padding-block-start: spacer('s');
+        }
+    }
 }
 
 .notification-card {
-  $this: &;
-  --icon-size: 2.5rem;
-  @include a11y-card-link('.notification-card__link', true);
-  padding-inline-end: spacer('s');
+    $this: &;
+    --icon-size: 2.5rem;
+    @include a11y-card-link('.notification-card__link', true);
+    padding-inline-end: spacer('s');
 
-  &--read {
-    opacity: 0.5;
-  }
-
-  &--open {
-    #{$this}__control {
-      svg {
-        rotate: 90deg;
-      }
-
-      .horizontal-line {
-        opacity: 0;
-      }
-    }
-  }
-
-  &__header {
-    align-items: start;
-    display: flex;
-    gap: spacer('s');
-  }
-
-  &__icon {
-    align-items: center;
-    block-size: var(--icon-size);
-    border-radius: config('border-radius-sm', $display);
-    display: flex;
-    flex-shrink: 0;
-    inline-size: var(--icon-size);
-    justify-content: center;
-
-    &--info {
-      background-color: color.adjust(color('info', 'alert', $only-color: true), $lightness: 55%);
-      color: color('info', 'alert');
+    &--read {
+        opacity: 0.5;
     }
 
-    &--warning {
-      background-color: color.adjust(color('warning', 'alert', $only-color: true), $lightness: 41%);
-      color: color('warning', 'alert');
+    &--open {
+        #{$this}__control {
+            svg {
+                rotate: 90deg;
+            }
+
+            .horizontal-line {
+                opacity: 0;
+            }
+        }
     }
 
-    &--danger {
-      background-color: color.adjust(color('danger', 'alert', $only-color: true), $lightness: 46.5%);
-      color: color('danger', 'alert');
+    &__header {
+        align-items: start;
+        display: flex;
+        gap: spacer('s');
     }
 
-    &--success {
-      background-color: color.adjust(color('success', 'alert', $only-color: true), $lightness: 63%);
-      color: color('success', 'alert');
+    &__icon {
+        align-items: center;
+        block-size: var(--icon-size);
+        border-radius: config('border-radius-sm', $display);
+        display: flex;
+        flex-shrink: 0;
+        inline-size: var(--icon-size);
+        justify-content: center;
+
+        &--info {
+            background-color: color.adjust(color('info', 'alert', $only-color: true), $lightness: 55%);
+            color: color('info', 'alert');
+        }
+
+        &--warning {
+            background-color: color.adjust(color('warning', 'alert', $only-color: true), $lightness: 41%);
+            color: color('warning', 'alert');
+        }
+
+        &--danger {
+            background-color: color.adjust(color('danger', 'alert', $only-color: true), $lightness: 46.5%);
+            color: color('danger', 'alert');
+        }
+
+        &--success {
+            background-color: color.adjust(color('success', 'alert', $only-color: true), $lightness: 63%);
+            color: color('success', 'alert');
+        }
+
+        svg {
+            --size: 1rem;
+            block-size: var(--size);
+            inline-size: var(--size);
+        }
     }
 
-    svg {
-      --size: 1rem;
-      block-size: var(--size);
-      inline-size: var(--size);
-    }
-  }
-
-  &__caption {
-    @include layout-stack('xxs');
-    line-height: config('line-height-md', $typography);
-  }
-
-  &__title {
-    font-size: config('font-size-base', $typography);
-  }
-
-  &__link {
-    color: color('heading');
-    text-decoration: none;
-
-    &:hover,
-    &:focus {
-      color: color('link');
-    }
-  }
-
-  &__control {
-    flex-shrink: 0;
-    margin-inline-start: auto;
-
-    svg {
-      @include transition;
-    }
-  }
-
-  &__body {
-    @include transition;
-    border-inline-start: 1px solid color('border');
-    display: grid;
-    margin-inline-start: calc(var(--icon-size) / 2);
-    padding-inline-start: calc(var(--icon-size) / 2);
-
-    &[aria-hidden="true"] {
-      grid-template-rows: 0fr;
+    &__caption {
+        @include layout-stack('xxs');
+        line-height: config('line-height-md', $typography);
     }
 
-    &[aria-hidden="false"] {
-      grid-template-rows: 1fr;
-      margin-block-start: spacer('s');
+    &__title {
+        font-size: config('font-size-base', $typography);
     }
 
-    > div {
-      @include layout-stack('xs');
-      overflow: hidden;
+    &__link {
+        color: color('heading');
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            color: color('link');
+        }
     }
-  }
+
+    &__control {
+        flex-shrink: 0;
+        margin-inline-start: auto;
+
+        svg {
+            @include transition;
+        }
+    }
+
+    &__body {
+        @include transition;
+        border-inline-start: 1px solid color('border');
+        display: grid;
+        margin-inline-start: calc(var(--icon-size) / 2);
+        padding-inline-start: calc(var(--icon-size) / 2);
+
+        &[aria-hidden="true"] {
+            grid-template-rows: 0fr;
+        }
+
+        &[aria-hidden="false"] {
+            grid-template-rows: 1fr;
+            margin-block-start: spacer('s');
+        }
+
+        > div {
+            @include layout-stack('xs');
+            overflow: hidden;
+        }
+    }
 }

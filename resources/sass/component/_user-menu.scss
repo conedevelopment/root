@@ -1,51 +1,51 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .user-menu {
-  @include a11y-card-link('.user-menu__toggle', true);
-  align-items: center;
-  display: flex;
-  gap: spacer-clamp('xs', 's', '1vw');
-  position: relative;
-
-  &__avatar {
-    --size: 2.1rem;
-    block-size: var(--size);
-    border-radius: 50%;
-    inline-size: var(--size);
-  }
-
-  &__caption {
-    display: none;
-    flex-direction: column;
-    font-size: config('font-size-base', $typography);
-    gap: spacer('xxs');
-    line-height: 1;
-
-    @include breakpoint('md') {
-      display: flex;
-    }
-  }
-
-  &__role {
-    font-size: config('font-size-sm', $typography);
-  }
-
-  &__display-name {
-    color: color('heading');
-    font-weight: 700;
-  }
-
-  &__toggle {
-    background: none;
-    border: 0;
-    cursor: pointer;
+    @include a11y-card-link('.user-menu__toggle', true);
+    align-items: center;
     display: flex;
-    padding: 0;
+    gap: spacer-clamp('xs', 's', '1vw');
+    position: relative;
 
-    svg {
-      --size: 1em;
-      block-size: var(--size);
-      inline-size: var(--size);
+    &__avatar {
+        --size: 2.1rem;
+        block-size: var(--size);
+        border-radius: 50%;
+        inline-size: var(--size);
     }
-  }
+
+    &__caption {
+        display: none;
+        flex-direction: column;
+        font-size: config('font-size-base', $typography);
+        gap: spacer('xxs');
+        line-height: 1;
+
+        @include breakpoint('md') {
+            display: flex;
+        }
+    }
+
+    &__role {
+        font-size: config('font-size-sm', $typography);
+    }
+
+    &__display-name {
+        color: color('heading');
+        font-weight: 700;
+    }
+
+    &__toggle {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        display: flex;
+        padding: 0;
+
+        svg {
+            --size: 1em;
+            block-size: var(--size);
+            inline-size: var(--size);
+        }
+    }
 }

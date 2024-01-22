@@ -2,108 +2,108 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-widget {
-  $this: &;
-  align-items: center;
-
-  background-color: color('background');
-  border: 1px solid color('border');
-  border-radius: config('border-radius-sm', $display);
-  box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
-  display: flex;
-  justify-content: space-between;
-
-  &--primary {
-    background-color: color('primary');
-    border: 0;
-
-    #{$this}__title,
-    #{$this}__data {
-      color: hsl(0deg 0% 100%);
-    }
-  }
-
-  &--secondary {
-    background-color: color('primary');
-    border: 0;
-
-    #{$this}__title,
-    #{$this}__data {
-      color: hsl(0deg 0% 100%);
-    }
-  }
-
-  &--summary {
-    gap: spacer('m');
-    justify-content: start;
-    padding: spacer('m');
-
-    #{$this}__column {
-      padding: 0;
-    }
-  }
-
-  &--small-data {
-    #{$this}__data {
-      font-size: font-size('h4');
-    }
-  }
-
-  &__icon {
-    --size: 4rem;
+    $this: &;
     align-items: center;
-    background-color: color('icon-background', 'widget');
-    block-size: var(--size);
+
+    background-color: color('background');
+    border: 1px solid color('border');
     border-radius: config('border-radius-sm', $display);
-    color: color('primary');
+    box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
     display: flex;
-    flex-shrink: 0;
-    inline-size: var(--size);
-    justify-content: center;
+    justify-content: space-between;
 
-    svg {
-      --size: 1.5rem;
-      block-size: var(--size);
-      inline-size: var(--size);
+    &--primary {
+        background-color: color('primary');
+        border: 0;
+
+        #{$this}__title,
+        #{$this}__data {
+            color: hsl(0deg 0% 100%);
+        }
     }
-  }
 
-  &__title {
-    font-size: font-size('h5');
-    font-weight: 600;
-    margin-block: 0;
-  }
+    &--secondary {
+        background-color: color('primary');
+        border: 0;
 
-  &__data-row {
-    align-items: center;
-    display: flex;
-    gap: spacer('s');
-  }
-
-  &__data {
-    line-height: config('line-height-heading', $typography);
-    margin-block: 0;
-  }
-
-  &__column {
-    align-items: start;
-    color: color('heading');
-    display: flex;
-    flex-direction: column;
-    font-size: font-size('h1');
-    font-weight: 700;
-    line-height: config('line-height-heading', $typography);
-    padding: spacer('m');
-
-    #{$this}__trending {
-      margin-block-start: spacer('xxs');
+        #{$this}__title,
+        #{$this}__data {
+            color: hsl(0deg 0% 100%);
+        }
     }
-  }
 
-  &__chart {
-    max-inline-size: 65%;
+    &--summary {
+        gap: spacer('m');
+        justify-content: start;
+        padding: spacer('m');
 
-    foreignObject {
-      padding-block: spacer('s');
+        #{$this}__column {
+            padding: 0;
+        }
     }
-  }
+
+    &--small-data {
+        #{$this}__data {
+            font-size: font-size('h4');
+        }
+    }
+
+    &__icon {
+        --size: 4rem;
+        align-items: center;
+        background-color: color('icon-background', 'widget');
+        block-size: var(--size);
+        border-radius: config('border-radius-sm', $display);
+        color: color('primary');
+        display: flex;
+        flex-shrink: 0;
+        inline-size: var(--size);
+        justify-content: center;
+
+        svg {
+            --size: 1.5rem;
+            block-size: var(--size);
+            inline-size: var(--size);
+        }
+    }
+
+    &__title {
+        font-size: font-size('h5');
+        font-weight: 600;
+        margin-block: 0;
+    }
+
+    &__data-row {
+        align-items: center;
+        display: flex;
+        gap: spacer('s');
+    }
+
+    &__data {
+        line-height: config('line-height-heading', $typography);
+        margin-block: 0;
+    }
+
+    &__column {
+        align-items: start;
+        color: color('heading');
+        display: flex;
+        flex-direction: column;
+        font-size: font-size('h1');
+        font-weight: 700;
+        line-height: config('line-height-heading', $typography);
+        padding: spacer('m');
+
+        #{$this}__trending {
+            margin-block-start: spacer('xxs');
+        }
+    }
+
+    &__chart {
+        max-inline-size: 65%;
+
+        foreignObject {
+            padding-block: spacer('s');
+        }
+    }
 }

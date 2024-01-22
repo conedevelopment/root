@@ -1,172 +1,172 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .modal-backdrop {
-  align-items: start;
-  background-color: color('background', 'modal');
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  overflow-y: auto;
-  position: fixed;
-  z-index: 25;
+    align-items: start;
+    background-color: color('background', 'modal');
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    overflow-y: auto;
+    position: fixed;
+    z-index: 25;
 }
 
 .modal {
-  $this: &;
+    $this: &;
 
-  @include set-css-variable((
-    --inline-size: 34rem
-  ));
-  background-color: color('background');
-  border: 1px solid color('border');
-  border-radius: config('border-radius-sm', $display);
-  box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
-  inline-size: get-css-variable(--inline-size);
-  margin: spacer('m');
-  max-inline-size: 100%;
-  outline: 0;
-  position: relative;
+    @include set-css-variable((
+        --inline-size: 34rem
+    ));
+    background-color: color('background');
+    border: 1px solid color('border');
+    border-radius: config('border-radius-sm', $display);
+    box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
+    inline-size: get-css-variable(--inline-size);
+    margin: spacer('m');
+    max-inline-size: 100%;
+    outline: 0;
+    position: relative;
 
-  &--media {
-    display: flex;
-    flex-direction: column;
-    inline-size: auto;
-    inset: 0;
-    position: fixed;
-
-    #{$this}__body {
-      @include scrollbar;
-      flex-grow: 1;
-      overflow-y: auto;
-    }
-
-    #{$this}__header-caption {
-      order: 1;
-    }
-
-    #{$this}__close {
-      order: 2;
-
-      @include breakpoint('md') {
-        order: 3;
-      }
-    }
-
-    #{$this}__filter {
-      inline-size: 100%;
-      order: 3;
-
-      @include breakpoint('md') {
+    &--media {
+        display: flex;
+        flex-direction: column;
         inline-size: auto;
-        margin-inline-start: auto;
-        order: 2;
-      }
-    }
-  }
+        inset: 0;
+        position: fixed;
 
-  &--dropzone {
-    &::before {
-      background-color: color('dropzone-background', 'media');
-      border: 2px solid color('dropzone-border', 'media');
-      border-radius: config('border-radius-sm', $display);
-      content: '';
-      inset: 0;
-      pointer-events: none;
-      position: absolute;
-      z-index: 2;
-    }
+        #{$this}__body {
+            @include scrollbar;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
 
-    &::after {
-      align-items: center;
-      color: hsl(0deg 0% 100%);
-      content: attr(data-dropzone);
-      display: flex;
-      font-size: font-size('h2');
-      inset: 0;
-      justify-content: center;
-      line-height: config('line-height-md', $typography);
-      padding: spacer('m');
-      position: absolute;
-      text-align: center;
-      z-index: 3;
-    }
-  }
+        #{$this}__header-caption {
+            order: 1;
+        }
 
-  &__header {
-    align-items: center;
-    border-block-end: 1px solid color('border');
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('s');
-    justify-content: space-between;
-    padding: spacer('s') spacer-clamp('s', 'm');
+        #{$this}__close {
+            order: 2;
 
-    &-caption {
-      @include layout-stack(0);
-    }
-  }
+            @include breakpoint('md') {
+                order: 3;
+            }
+        }
 
-  &__title {
-    font-size: font-size('h3');
-    font-weight: 600;
-    margin-block: 0;
-  }
+        #{$this}__filter {
+            inline-size: 100%;
+            order: 3;
 
-  &__body {
-    @include layout-stack('s');
-    padding: spacer-clamp('s', 'm');
-  }
-
-  &__footer {
-    align-items: center;
-    border-block-start: 1px solid color('border');
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('s');
-    justify-content: end;
-    padding: spacer('s') spacer-clamp('s', 'm');
-
-    &--space-between {
-      justify-content: space-between;
+            @include breakpoint('md') {
+                inline-size: auto;
+                margin-inline-start: auto;
+                order: 2;
+            }
+        }
     }
 
-    input {
-      flex-grow: 1;
-      max-inline-size: 25rem;
+    &--dropzone {
+        &::before {
+            background-color: color('dropzone-background', 'media');
+            border: 2px solid color('dropzone-border', 'media');
+            border-radius: config('border-radius-sm', $display);
+            content: '';
+            inset: 0;
+            pointer-events: none;
+            position: absolute;
+            z-index: 2;
+        }
+
+        &::after {
+            align-items: center;
+            color: hsl(0deg 0% 100%);
+            content: attr(data-dropzone);
+            display: flex;
+            font-size: font-size('h2');
+            inset: 0;
+            justify-content: center;
+            line-height: config('line-height-md', $typography);
+            padding: spacer('m');
+            position: absolute;
+            text-align: center;
+            z-index: 3;
+        }
     }
-  }
 
-  &__filter {
-    align-items: center;
-    display: flex;
-    gap: spacer('s');
-    margin-inline: calc(#{spacer('xs')} * -1);
-    -ms-overflow-style: none;
-    overflow-x: auto;
-    padding: spacer('xs');
-    scrollbar-width: none;
+    &__header {
+        align-items: center;
+        border-block-end: 1px solid color('border');
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('s');
+        justify-content: space-between;
+        padding: spacer('s') spacer-clamp('s', 'm');
 
-    @include breakpoint('md') {
-      margin-inline: 0;
-      overflow: initial;
-      padding: 0;
+        &-caption {
+            @include layout-stack(0);
+        }
     }
 
-    &::-webkit-scrollbar {
-      display: none;
+    &__title {
+        font-size: font-size('h3');
+        font-weight: 600;
+        margin-block: 0;
     }
 
-    select,
-    input {
-      inline-size: auto;
-      min-inline-size: 10rem;
+    &__body {
+        @include layout-stack('s');
+        padding: spacer-clamp('s', 'm');
     }
-  }
 
-  &__column {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('s');
-  }
+    &__footer {
+        align-items: center;
+        border-block-start: 1px solid color('border');
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('s');
+        justify-content: end;
+        padding: spacer('s') spacer-clamp('s', 'm');
+
+        &--space-between {
+            justify-content: space-between;
+        }
+
+        input {
+            flex-grow: 1;
+            max-inline-size: 25rem;
+        }
+    }
+
+    &__filter {
+        align-items: center;
+        display: flex;
+        gap: spacer('s');
+        margin-inline: calc(#{spacer('xs')} * -1);
+        -ms-overflow-style: none;
+        overflow-x: auto;
+        padding: spacer('xs');
+        scrollbar-width: none;
+
+        @include breakpoint('md') {
+            margin-inline: 0;
+            overflow: initial;
+            padding: 0;
+        }
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        select,
+        input {
+            inline-size: auto;
+            min-inline-size: 10rem;
+        }
+    }
+
+    &__column {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('s');
+    }
 }

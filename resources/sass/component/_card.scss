@@ -1,121 +1,122 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-card {
-  $this: &;
-  background-color: color('background');
-  border: 1px solid color('border');
-  border-radius: config('border-radius-sm', $display);
-  box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
+    $this: &;
+    background-color: color('background');
+    border: 1px solid color('border');
+    border-radius: config('border-radius-sm', $display);
+    box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
 
-  &:focus-within {
-    z-index: 5;
-  }
-
-  &--edit {
-    #{$this}__header {
-      padding-inline: spacer('m');
+    &:focus-within {
+        z-index: 5;
     }
 
-    #{$this}__body {
-      padding-block: spacer('m');
+    &--edit {
+        #{$this}__header {
+            padding-inline: spacer('m');
+        }
 
-      > * {
-        padding-inline: spacer('m');
-      }
-    }
-  }
+        #{$this}__body {
+            padding-block: spacer('m');
 
-  &--setting {
-    #{$this}__body {
-      @include layout-stack(0.75rem);
-      padding-block: spacer('m');
-
-      > * {
-        padding-inline: spacer('m');
-      }
+            > * {
+                padding-inline: spacer('m');
+            }
+        }
     }
 
-    #{$this}__content {
-      @include layout-stack('xs');
-    }
-  }
+    &--setting {
+        #{$this}__body {
+            @include layout-stack(0.75rem);
+            padding-block: spacer('m');
 
-  &--sidebar {
-    display: grid;
-    gap: spacer-clamp('m', 'l');
-    grid-template-columns: minmax(0, 1fr);
-    padding: spacer('m');
+            > * {
+                padding-inline: spacer('m');
+            }
+        }
 
-    @include breakpoint('md') {
-      grid-template-columns: minmax(0, 13.5rem) minmax(0, 1fr);
-    }
-
-    > #{$this}__body {
-      @include layout-stack('m');
-      padding: 0;
-    }
-  }
-
-  &--info {
-    box-shadow: none;
-
-    #{$this}__header {
-      border-block-end: 0;
-      min-block-size: 0;
-      padding-block: spacer('m') 0;
-      padding-inline: spacer('m');
+        #{$this}__content {
+            @include layout-stack('xs');
+        }
     }
 
-    #{$this}__body {
-      padding-block: spacer('m');
+    &--sidebar {
+        display: grid;
+        gap: spacer-clamp('m', 'l');
+        grid-template-columns: minmax(0, 1fr);
+        padding: spacer('m');
 
-      > * {
-        padding-inline: spacer('m');
-      }
-    }
-  }
+        @include breakpoint('md') {
+            grid-template-columns: minmax(0, 13.5rem) minmax(0, 1fr);
+        }
 
-  &__header {
-    align-items: center;
-    border-block-end: 1px solid color('border');
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('xs') spacer('m');
-    justify-content: space-between;
-    min-block-size: 3.4rem;
-    padding: 0.75rem spacer('s');
-  }
-
-  &__actions {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: spacer('xs');
-    margin-inline-start: auto;
-  }
-
-  &__title {
-    font-size: font-size('h4');
-    font-weight: 600;
-    margin-block: 0;
-  }
-
-  &__body {
-    padding-block: spacer('s');
-
-    &--plain {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      padding: 0;
+        > #{$this}__body {
+            @include layout-stack('m');
+            padding: 0;
+        }
     }
 
-    > * {
-      padding-inline: spacer('s');
+    &--info {
+        box-shadow: none;
+
+        #{$this}__header {
+            border-block-end: 0;
+            min-block-size: 0;
+            padding-block: spacer('m') 0;
+            padding-inline: spacer('m');
+        }
+
+        #{$this}__body {
+            padding-block: spacer('m');
+
+            > * {
+                padding-inline: spacer('m');
+            }
+        }
     }
 
-    img:not(.data-table__image) {
-      border-radius: config('border-radius-sm', $display);
+    &__header {
+        align-items: center;
+        border-block-end: 1px solid color('border');
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('xs') spacer('m');
+        justify-content: space-between;
+        min-block-size: 3.4rem;
+        padding: 0.75rem spacer('s');
     }
-  }
+
+    &__actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: spacer('xs');
+        margin-inline-start: auto;
+    }
+
+    &__title {
+        font-size: font-size('h4');
+        font-weight: 600;
+        margin-block: 0;
+    }
+
+    &__body {
+        padding-block: spacer('s');
+
+        &--plain {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        > * {
+            padding-inline: spacer('s');
+        }
+
+        /* stylelint-disable-next-line selector-class-pattern */
+        img:not(.data-table__image) {
+            border-radius: config('border-radius-sm', $display);
+        }
+    }
 }

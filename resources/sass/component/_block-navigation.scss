@@ -1,102 +1,103 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .block-navigation {
-  @include a11y-card-link('.block-navigation__toggle', true);
-  display: flex;
-  flex-direction: column;
-  gap: spacer('s');
-  position: relative;
-  z-index: 1;
-
-  &__title {
-    align-items: center;
-    color: color('heading');
+    @include a11y-card-link('.block-navigation__toggle', true);
     display: flex;
-    font-size: config('font-size-base', $typography);
-    font-weight: 700;
-    justify-content: space-between;
-    margin-block: 0;
-  }
+    flex-direction: column;
+    gap: spacer('s');
+    position: relative;
+    z-index: 1;
 
-  &__toggle {
-    &[aria-expanded='true'] {
-      svg {
-        rotate: 180deg;
-      }
+    &__title {
+        align-items: center;
+        color: color('heading');
+        display: flex;
+        font-size: config('font-size-base', $typography);
+        font-weight: 700;
+        justify-content: space-between;
+        margin-block: 0;
     }
 
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  &__menu {
-    &[data-state='closed'] {
-      display: none;
-    }
-
-    &[data-state='open'] {
-      display: block;
-    }
-
-    ul {
-      @include clear-list;
-    }
-
-    a {
-      align-items: center;
-      color: color('text');
-      display: flex;
-      gap: 0.75em;
-      padding-block: 0.35em;
-      padding-inline: 0.75em;
-      position: relative;
-      text-decoration: none;
-
-      &:hover:not([aria-current='page']) {
-        &::before {
-          background-color: color('primary-lightest');
-        }
-      }
-
-      &::before {
-        border-radius: config('border-radius-sm', $display);
-        content: '';
-        inset-block: 0;
-        inset-inline: 0;
-        position: absolute;
-        z-index: -1;
-      }
-
-      &[aria-current='page'] {
-        color: hsl(0deg 0% 100%);
-
-        &::before {
-          background-color: color('primary');
+    &__toggle {
+        &[aria-expanded='true'] {
+            svg {
+                rotate: 180deg;
+            }
         }
 
         svg {
-          color: hsl(0deg 0% 100%);
+            pointer-events: none;
         }
-      }
-
-      svg {
-        --size: 1.15em;
-        block-size: var(--size);
-        color: color('primary');
-        inline-size: var(--size);
-      }
     }
 
-    &--breakout {
-      a {
-        padding-block: 0.35em;
-        padding-inline: 0;
-
-        &::before {
-          inset-inline: -0.75rem -0.35em;
+    &__menu {
+        &[data-state='closed'] {
+            display: none;
         }
-      }
+
+        &[data-state='open'] {
+            display: block;
+        }
+
+        ul {
+            @include clear-list;
+        }
+
+        a {
+            align-items: center;
+            color: color('text');
+            display: flex;
+            gap: 0.75em;
+            padding-block: 0.35em;
+            padding-inline: 0.75em;
+            position: relative;
+            text-decoration: none;
+
+            &:hover:not([aria-current='page']) {
+                &::before {
+                    background-color: color('primary-lightest');
+                }
+            }
+
+            &::before {
+                border-radius: config('border-radius-sm', $display);
+                content: '';
+                inset-block: 0;
+                inset-inline: 0;
+                position: absolute;
+                z-index: -1;
+            }
+
+            /* stylelint-disable-next-line selector-no-qualifying-type */
+            &[aria-current='page'] {
+                color: hsl(0deg 0% 100%);
+
+                &::before {
+                    background-color: color('primary');
+                }
+
+                svg {
+                    color: hsl(0deg 0% 100%);
+                }
+            }
+
+            svg {
+                --size: 1.15em;
+                block-size: var(--size);
+                color: color('primary');
+                inline-size: var(--size);
+            }
+        }
+
+        &--breakout {
+            a {
+                padding-block: 0.35em;
+                padding-inline: 0;
+
+                &::before {
+                    inset-inline: -0.75rem -0.35em;
+                }
+            }
+        }
     }
-  }
 }

@@ -1,67 +1,67 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .context-menu {
-  --inset-block-start: calc(100% + 1rem);
-  --inline-size: 10rem;
+    --inset-block-start: calc(100% + 1rem);
+    --inline-size: 10rem;
 
-  @include clear-list;
-  @include transition;
-  background-color: color('background');
-  border: 1px solid color('border');
-  border-radius: config('border-radius-sm', $display);
-  box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
-  inline-size: var(--inline-size);
-  opacity: 0;
-  position: absolute;
-  scale: 0.85;
-  visibility: hidden;
-  z-index: 10;
-
-  &--inline-start {
-    inset: var(--inset-block-start) auto auto 0;
-  }
-
-  &--inline-end {
-    inset: var(--inset-block-start) 0 auto auto;
-  }
-
-  &[data-state='open'] {
-    opacity: 1;
-    scale: 1;
-    visibility: visible;
-  }
-
-  > li {
-    display: flex;
-    flex-direction: column;
-  }
-
-  > li + li {
-    border-block-start: 1px solid color('border');
-    margin-block-start: 0;
-  }
-
-  &__item {
-    align-items: center;
-    background: none;
-    block-size: 2.25rem;
-    border: 0;
+    @include clear-list;
+    @include transition;
+    background-color: color('background');
+    border: 1px solid color('border');
     border-radius: config('border-radius-sm', $display);
-    color: color('text');
-    display: flex;
-    justify-content: space-between;
-    line-height: config('line-height-md', $typography);
-    margin: 0.15em;
-    padding-block: 0.25em;
-    padding-inline: 0.6em;
-    text-decoration: none;
+    box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
+    inline-size: var(--inline-size);
+    opacity: 0;
+    position: absolute;
+    scale: 0.85;
+    visibility: hidden;
+    z-index: 10;
 
-    &:hover:not([aria-current='page'], :has(.theme-switcher)) {
-      background-color: color('primary-lightest');
+    &--inline-start {
+        inset: var(--inset-block-start) auto auto 0;
     }
 
-    &[aria-current='page'] {
-      color: color('primary');
+    &--inline-end {
+        inset: var(--inset-block-start) 0 auto auto;
     }
-  }
+
+    &[data-state='open'] {
+        opacity: 1;
+        scale: 1;
+        visibility: visible;
+    }
+
+    > li {
+        display: flex;
+        flex-direction: column;
+    }
+
+    > li + li {
+        border-block-start: 1px solid color('border');
+        margin-block-start: 0;
+    }
+
+    &__item {
+        align-items: center;
+        background: none;
+        block-size: 2.25rem;
+        border: 0;
+        border-radius: config('border-radius-sm', $display);
+        color: color('text');
+        display: flex;
+        justify-content: space-between;
+        line-height: config('line-height-md', $typography);
+        margin: 0.15em;
+        padding-block: 0.25em;
+        padding-inline: 0.6em;
+        text-decoration: none;
+
+        &:hover:not([aria-current='page'], :has(.theme-switcher)) {
+            background-color: color('primary-lightest');
+        }
+
+        &[aria-current='page'] {
+            color: color('primary');
+        }
+    }
 }

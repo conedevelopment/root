@@ -1,59 +1,59 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .search-form {
-  @include generate-variables($form-control, ('focus-', 'textarea-'));
-  @include transition($property: all);
-  align-items: center;
-  background-color: color('background', 'form');
-  border: config('border-width', $form-control) solid color('border', 'form');
-  border-radius: config('border-radius', $form-control);
-  box-sizing: border-box;
-  display: flex;
-  gap: spacer('xs');
-  padding: config('padding', $form-control);
-
-  &:focus-within {
-    @include focus-ring(
-      $type: config('focus-ring-type', $form-control, false),
-      $border-color: color('border-focus', 'form'),
-      $ring-color: color('ring-focus', 'form'),
-      $box-shadow-type: config('focus-ring-box-shadow-type', $form-control, false),
-      $ring-size: config('focus-ring-size', $form-control, false),
-      $ring-offset: config('focus-ring-offset', $form-control, false)
-    );
-  }
-
-  &__control {
-    background-color: transparent;
-    border: 0;
-    color: color('text', 'form');
-    flex-grow: 2;
-    font-size: config('font-size', $form-control);
-    font-weight: config('font-weight', $form-control);
-    line-height: config('line-height', $form-control);
-    outline: 0;
-    padding: 0;
-  }
-
-  &__icon {
-    --size: 0.9rem;
-    block-size: var(--size);
-    color: color('border', 'form');
+    @include generate-variables($form-control, ('focus-', 'textarea-'));
+    @include transition($property: all);
+    align-items: center;
+    background-color: color('background', 'form');
+    border: config('border-width', $form-control) solid color('border', 'form');
+    border-radius: config('border-radius', $form-control);
+    box-sizing: border-box;
     display: flex;
-    grid-column: 1 / 2;
-    grid-row: 1;
-    inline-size: var(--size);
-    justify-content: center;
-  }
+    gap: spacer('xs');
+    padding: config('padding', $form-control);
 
-  &__helper {
-    background-color: color('light-background', 'btn');
-    border-radius: config('border-radius', $form-control, false);
-    color: color('light-foreground', 'btn');
-    font-weight: config('font-weight', $btn, false);
-    justify-self: center;
-    line-height: 1;
-    padding: spacer('xxs') spacer('xs');
-    pointer-events: none;
-  }
+    &:focus-within {
+        @include focus-ring(
+            $type: config('focus-ring-type', $form-control, false),
+            $border-color: color('border-focus', 'form'),
+            $ring-color: color('ring-focus', 'form'),
+            $box-shadow-type: config('focus-ring-box-shadow-type', $form-control, false),
+            $ring-size: config('focus-ring-size', $form-control, false),
+            $ring-offset: config('focus-ring-offset', $form-control, false)
+        );
+    }
+
+    &__control {
+        background-color: transparent;
+        border: 0;
+        color: color('text', 'form');
+        flex-grow: 2;
+        font-size: config('font-size', $form-control);
+        font-weight: config('font-weight', $form-control);
+        line-height: config('line-height', $form-control);
+        outline: 0;
+        padding: 0;
+    }
+
+    &__icon {
+        --size: 0.9rem;
+        block-size: var(--size);
+        color: color('border', 'form');
+        display: flex;
+        grid-column: 1 / 2;
+        grid-row: 1;
+        inline-size: var(--size);
+        justify-content: center;
+    }
+
+    &__helper {
+        background-color: color('light-background', 'btn');
+        border-radius: config('border-radius', $form-control, false);
+        color: color('light-foreground', 'btn');
+        font-weight: config('font-weight', $btn, false);
+        justify-self: center;
+        line-height: 1;
+        padding: spacer('xxs') spacer('xs');
+        pointer-events: none;
+    }
 }

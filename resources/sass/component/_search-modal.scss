@@ -1,37 +1,37 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .search-modal {
-  display: flex;
-  flex-direction: column;
-  gap: spacer('s');
+    display: flex;
+    flex-direction: column;
+    gap: spacer('s');
 }
 
 .search-results {
-  @include scrollbar;
-  @include clear-list;
-  max-block-size: 20rem;
-  overflow-y: auto;
-  padding-inline-end: spacer('s');
+    @include scrollbar;
+    @include clear-list;
+    max-block-size: 20rem;
+    overflow-y: auto;
+    padding-inline-end: spacer('s');
 
-  > li + li {
-    border-block-start: 1px dashed color('border');
-    margin-block-start: spacer('xs');
-    padding-block-start: spacer('xs');
-  }
+    > li + li {
+        border-block-start: 1px dashed color('border');
+        margin-block-start: spacer('xs');
+        padding-block-start: spacer('xs');
+    }
 }
 
 .search-result-item {
-  align-items: center;
-  color: color('text');
-  display: flex;
-  flex-wrap: wrap;
-  gap: spacer('xs');
-  text-decoration: none;
+    align-items: center;
+    color: color('text');
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs');
+    text-decoration: none;
 
-  &__icon {
-    --size: 1em;
-    block-size: var(--size);
-    color: color('primary');
-    inline-size: var(--size);
-  }
+    &__icon {
+        --size: 1em;
+        block-size: var(--size);
+        color: color('primary');
+        inline-size: var(--size);
+    }
 }
