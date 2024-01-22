@@ -5,12 +5,12 @@
 
 {{-- Actions --}}
 @section('actions')
-    @can('create', $model)
+    @if($abilities['create'])
         <a href="{{ $url }}/create" class="btn btn--primary btn--icon">
             <x-root::icon name="plus" class="btn__icon" />
             {{ __('Add :resource', ['resource' => $modelName]) }}
         </a>
-    @endcan
+    @endif
 @endsection
 
 {{-- Content --}}

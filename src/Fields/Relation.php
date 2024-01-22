@@ -12,7 +12,6 @@ use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
-use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -33,7 +32,6 @@ use Illuminate\Support\Str;
 abstract class Relation extends Field implements Form
 {
     use AsForm;
-    use MapsAbilities;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
     }

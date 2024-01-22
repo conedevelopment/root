@@ -15,7 +15,6 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
-use Cone\Root\Traits\MapsAbilities;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
@@ -39,7 +38,6 @@ abstract class Resource implements Arrayable, Form
 {
     use AsForm;
     use Authorizable;
-    use MapsAbilities;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
         RegistersRoutes::routeMatched as __routeMatched;
@@ -172,32 +170,37 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Map the resource abilities.
+     * Resolve the ability.
      */
-    public function mapAbilities(): array
+    public function resolveAbility(string $ability, Request $request, Model $model, ...$arguments): bool
+    {
+        $policy = $this->getPolicy();
+
+        return is_null($policy) || $request->user()->can($ability, $model, ...$arguments);
+    }
+
+    /**
+     * Map the resource level abilities.
+     */
+    public function mapResourceAbilities(Request $request): array
     {
         return [
-            'viewAny' => function (Request $request): bool {
-                return is_null($this->getPolicy()) || Gate::allows('viewAny', $this->getModel());
-            },
-            'create' => function (Request $request): bool {
-                return is_null($this->getPolicy()) || Gate::allows('create', $this->getModel());
-            },
-            'view' => function (Request $request, Model $model): bool {
-                return is_null($this->getPolicy()) || Gate::allows('view', $model);
-            },
-            'update' => function (Request $request, Model $model): bool {
-                return is_null($this->getPolicy()) || Gate::allows('update', $model);
-            },
-            'delete' => function (Request $request, Model $model): bool {
-                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
-            },
-            'forceDelete' => function (Request $request, Model $model): bool {
-                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
-            },
-            'restore' => function (Request $request, Model $model): bool {
-                return is_null($this->getPolicy()) || Gate::allows('delete', $model);
-            },
+            'viewAny' => $this->resolveAbility('viewAny', $request, $this->getModelInstance()),
+            'create' => $this->resolveAbility('create', $request, $this->getModelInstance()),
+        ];
+    }
+
+    /**
+     * Map the model level abilities.
+     */
+    public function mapModelAbilities(Request $request, Model $model): array
+    {
+        return [
+            'view' => $this->resolveAbility('view', $request, $model),
+            'update' => $this->resolveAbility('update', $request, $model),
+            'restore' => $this->resolveAbility('restore', $request, $model),
+            'delete' => $this->resolveAbility('delete', $request, $model),
+            'forceDelete' => $this->resolveAbility('forceDelete', $request, $model),
         ];
     }
 
@@ -386,6 +389,7 @@ abstract class Resource implements Arrayable, Form
                     'id' => $model->getKey(),
                     'url' => $this->modelUrl($model),
                     'model' => $model,
+                    'abilities' => $this->mapModelAbilities($request, $model),
                     'fields' => $this->resolveFields($request)
                         ->subResource(false)
                         ->authorized($request, $model)
@@ -447,9 +451,13 @@ abstract class Resource implements Arrayable, Form
     {
         $event->route->defaults('resource', $this->getKey());
 
-        $event->route->getController()->middleware(
-            $this->getRouteMiddleware()
-        );
+        $controller = $event->route->getController();
+
+        $controller->middleware($this->getRouteMiddleware());
+
+        if ($this->getPolicy()) {
+            $controller->authorizeResource($this->getModel(), 'resourceModel');
+        }
 
         $this->__routeMatched($event);
     }
@@ -479,9 +487,9 @@ abstract class Resource implements Arrayable, Form
             'template' => 'root::resources.index',
             'title' => $this->getName(),
             'actions' => $this->resolveActions($request)
-                ->authorized($request, $this->getModelInstance())
+                ->authorized($request, $model = $this->getModelInstance())
                 ->visible('index')
-                ->mapToForms($request, $this->getModelInstance()),
+                ->mapToForms($request, $model),
             'data' => $this->paginate($request),
             'widgets' => $this->resolveWidgets($request)
                 ->authorized($request)
@@ -493,12 +501,13 @@ abstract class Resource implements Arrayable, Form
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
-                ->map(function (RenderableFilter $filter) use ($request): array {
-                    return $filter->toField()->toInput($request, $this->getModelInstance());
+                ->map(function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()->toInput($request, $model);
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
             'url' => $this->getUri(),
+            'abilities' => $this->mapResourceAbilities($request),
         ]);
     }
 
@@ -518,6 +527,7 @@ abstract class Resource implements Arrayable, Form
                 ->authorized($request, $model)
                 ->visible('create')
                 ->mapToInputs($request, $model),
+            'abilities' => $this->mapResourceAbilities($request),
         ]);
     }
 
@@ -552,6 +562,10 @@ abstract class Resource implements Arrayable, Form
                         'url' => trim(sprintf('%s?%s', $relation->modelUrl($model), $request->getQueryString()), '?'),
                     ]);
                 }),
+            'abilities' => array_merge(
+                $this->mapResourceAbilities($request),
+                $this->mapModelAbilities($request, $model)
+            ),
         ]);
     }
 
@@ -571,6 +585,10 @@ abstract class Resource implements Arrayable, Form
                 ->authorized($request, $model)
                 ->visible('update')
                 ->mapToInputs($request, $model),
+            'abilities' => array_merge(
+                $this->mapResourceAbilities($request),
+                $this->mapModelAbilities($request, $model)
+            ),
         ]);
     }
 }

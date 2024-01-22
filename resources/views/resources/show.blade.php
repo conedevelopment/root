@@ -5,12 +5,12 @@
 
 {{-- Actions --}}
 @section('actions')
-    @can('update', $model)
+    @if($abilities['update'])
         <a href="{{ $action }}/edit" class="btn btn--primary btn--icon">
             <x-root::icon name="edit" class="btn__icon" />
             {{ __('Edit') }}
         </a>
-    @endcan
+    @endif
 @endsection
 
 {{-- Content --}}

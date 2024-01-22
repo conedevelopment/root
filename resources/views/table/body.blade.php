@@ -48,17 +48,17 @@
                                 @endforeach
                                 <td>
                                     <div class="data-table__actions">
-                                        @can('view', $row['model'])
+                                        @if($row['abilities']['view'])
                                             <a href="{{ $row['url'] }}" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('View') }}" data-turbo-frame="_top">
                                                 <x-root::icon name="eye" class="btn__icon" />
                                             </a>
-                                        @endcan
-                                        @can('update', $row['model'])
+                                        @endif
+                                        @if($row['abilities']['update'])
                                             <a href="{{ $row['url'] }}/edit" class="btn btn--light btn--sm btn--icon" aria-label="{{ __('Edit') }}" data-turbo-frame="_top">
                                                 <x-root::icon name="edit" class="btn__icon" />
                                             </a>
-                                        @endcan
-                                        @can('delete', $row['model'])
+                                        @endif
+                                        @if($row['abilities']['delete'])
                                             <form action="{{ $row['url'] }}" method="POST" onsubmit="return window.confirm('{{ __('Are you sure?') }}');">
                                                 @csrf
                                                 @method('DELETE')
@@ -66,7 +66,7 @@
                                                     <x-root::icon name="trash" class="btn__icon" />
                                                 </button>
                                             </form>
-                                        @endcan
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
