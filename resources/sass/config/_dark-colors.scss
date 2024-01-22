@@ -138,8 +138,8 @@ $colors: (
   ),
   'scrollbar': (
     'thumb-background': hsl(0 0% 100% / 15%),
-    'thumb-background-hover':	hsl(0 0% 100% / 25%),
-    'track-background':	hsl(0 0% 100% / 5%),
+    'thumb-background-hover': hsl(0 0% 100% / 25%),
+    'track-background': hsl(0 0% 100% / 5%),
   ),
   'widget': (
     'icon-background': color.adjust($dark-color-black, $lightness: 5%),
