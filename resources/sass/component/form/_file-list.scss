@@ -1,68 +1,72 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .file-list {
-    @include generate-variables($form-control, $include: ('border-width', 'border-radius'));
-    display: flex;
-    flex-direction: column;
-    gap: spacer('s');
+  @include generate-variables($form-control, $include: ('border-width', 'border-radius'));
+  display: flex;
+  flex-direction: column;
+  gap: spacer('s');
 
-    &__items {
-        @include clear-list;
-        border: config('border-width', $form-control) solid color('border', 'form');
-        border-radius: config('border-radius', $form-control);
-        padding: spacer('xs');
+  &__items {
+    @include clear-list;
+    border: config('border-width', $form-control) solid color('border', 'form');
+    border-radius: config('border-radius', $form-control);
+    padding: spacer('xs');
 
-        > li + li {
-            border-block-start: config('border-width', $form-control) solid color('border');
-            margin-block-start: spacer('xs');
-            padding-block-start: spacer('xs');
-        }
+    > li + li {
+      border-block-start: config('border-width', $form-control) solid color('border');
+      margin-block-start: spacer('xs');
+      padding-block-start: spacer('xs');
     }
+  }
 }
 
 .file-list-item {
+  align-items: center;
+  display: flex;
+  gap: spacer('s');
+  justify-content: space-between;
+
+  &__icon {
+    align-items: center;
+    aspect-ratio: 1;
+    background-color: color('background', 'media');
+    border-radius: config('border-radius-sm', $display);
+    display: flex;
+    inline-size: 2.5rem;
+    justify-content: center;
+
+    svg {
+      --size: 1rem;
+      block-size: var(--size);
+      color: color('icon', 'media');
+      inline-size: var(--size);
+    }
+  }
+
+  &__column {
     align-items: center;
     display: flex;
     gap: spacer('s');
-    justify-content: space-between;
+  }
 
-    &__icon {
-        align-items: center;
-        aspect-ratio: 1;
-        background-color: color('background', 'media');
-        border-radius: config('border-radius-sm', $display);
-        display: flex;
-        inline-size: 2.5rem;
-        justify-content: center;
+  &__thumbnail {
+    aspect-ratio: 1;
+    border-radius: config('border-radius-sm', $display);
+    inline-size: 2.5rem;
+  }
 
-        svg {
-            --size: 1rem;
-            block-size: var(--size);
-            color: color('icon', 'media');
-            inline-size: var(--size);
-        }
+  &__name {
+    @include text-ellipsis(1);
+    max-inline-size: 10ch;
+
+    @include breakpoint('xs') {
+      max-inline-size: 25ch;
     }
+  }
 
-    &__column {
-        align-items: center;
-        display: flex;
-        gap: spacer('s');
-    }
-
-    &__thumbnail {
-        aspect-ratio: 1;
-        border-radius: config('border-radius-sm', $display);
-        inline-size: 2.5rem;
-    }
-
-    &__name {
-        @include text-ellipsis(1);
-        max-inline-size: 25ch;
-    }
-
-    &__actions {
-        align-items: center;
-        display: flex;
-        gap: spacer('xxs');
-    }
+  &__actions {
+    align-items: center;
+    display: flex;
+    gap: spacer('xxs');
+  }
 }

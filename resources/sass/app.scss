@@ -15,6 +15,10 @@
     ));
 }
 
+body {
+    overflow-x: hidden;
+}
+
 [x-cloak] {
     visibility: hidden !important;
 }

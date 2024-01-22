@@ -1,102 +1,102 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .media-list {
-    --column: 2;
-    @include clear-list;
-    display: grid;
-    gap: spacer('m');
-    grid-template-columns: repeat(var(--column), minmax(0, 1fr));
+  --column: 2;
+  @include clear-list;
+  display: grid;
+  gap: spacer('m');
+  grid-template-columns: repeat(var(--column), minmax(0, 1fr));
 
-    @include breakpoint('xs') {
-        --column: 3;
-    }
+  @include breakpoint('xs') {
+    --column: 3;
+  }
 
-    @include breakpoint('sm') {
-        --column: 4;
-    }
+  @include breakpoint('sm') {
+    --column: 4;
+  }
 
-    @include breakpoint('md') {
-        --column: 6;
-    }
+  @include breakpoint('md') {
+    --column: 6;
+  }
 
-    @include breakpoint('lg') {
-        --column: 8;
-    }
+  @include breakpoint('lg') {
+    --column: 8;
+  }
 
-    > * + * {
-        margin-block-start: 0;
-    }
+  > * + * {
+    margin-block-start: 0;
+  }
 }
 
 .media-item {
-    border-radius: config('border-radius-lg', $display);
-    line-height: config('line-height-md', $typography);
-    position: relative;
+  border-radius: config('border-radius-sm', $display);
+  line-height: config('line-height-md', $typography);
+  position: relative;
 
-    &[aria-checked="true"],
-    &:focus-visible {
-        @include focus-ring(
-            $type: config('focus-ring-type', $btn, false),
-            $ring-color: color('primary-background', 'btn'),
-            $box-shadow-type: config('focus-ring-box-shadow-type', $btn, false),
-            $ring-size: 3px,
-            $ring-offset: 3px
-        );
+  &[aria-checked="true"],
+  &:focus-visible {
+    @include focus-ring(
+      $type: config('focus-ring-type', $btn, false),
+      $ring-color: color('primary-background', 'btn'),
+      $box-shadow-type: config('focus-ring-box-shadow-type', $btn, false),
+      $ring-size: 3px,
+      $ring-offset: 3px
+    );
+  }
+
+  &__background {
+    align-items: center;
+    aspect-ratio: 1;
+    background-color: color('background', 'media');
+    border-radius: config('border-radius-sm', $display);
+    display: flex;
+    flex-direction: column;
+    gap: spacer('xxs');
+    justify-content: center;
+    padding: spacer('s');
+  }
+
+  &__icon {
+    --size: 1.5rem;
+    block-size: var(--size);
+    color: color('icon', 'media');
+    inline-size: var(--size);
+  }
+
+  &__name {
+    @include text-ellipsis(2);
+    max-inline-size: 100%;
+    text-align: center;
+  }
+
+  &__selected {
+    --size: 1.5rem;
+    align-items: center;
+    background-color: color('primary-background', 'btn');
+    block-size: var(--size);
+    border-radius: config('border-radius-sm', $display);
+    color: color('primary-foreground', 'btn');
+    display: flex;
+    inline-size: var(--size);
+    inset: spacer('xs') spacer('xs') auto auto;
+    justify-content: center;
+    position: absolute;
+
+    svg {
+      --size: 1rem;
+      block-size: var(--size);
+      inline-size: var(--size);
     }
+  }
 
-    &__background {
-        align-items: center;
-        aspect-ratio: 1;
-        background-color: color('background', 'media');
-        border-radius: config('border-radius-lg', $display);
-        display: flex;
-        flex-direction: column;
-        gap: spacer('xxs');
-        justify-content: center;
-        padding: spacer('s');
-    }
+  .progressbar {
+    margin-block-start: spacer('s');
+  }
 
-    &__icon {
-        --size: 1.5rem;
-        block-size: var(--size);
-        color: color('icon', 'media');
-        inline-size: var(--size);
-    }
-
-    &__name {
-        @include text-ellipsis(2);
-        max-inline-size: 100%;
-        text-align: center;
-    }
-
-    &__selected {
-        --size: 1.5rem;
-        align-items: center;
-        background-color: color('primary-background', 'btn');
-        block-size: var(--size);
-        border-radius: config('border-radius-sm', $display);
-        color: color('primary-foreground', 'btn');
-        display: flex;
-        inline-size: var(--size);
-        inset: spacer('xs') spacer('xs') auto auto;
-        justify-content: center;
-        position: absolute;
-
-        svg {
-            --size: 1rem;
-            block-size: var(--size);
-            inline-size: var(--size);
-        }
-    }
-
-    .progressbar {
-        margin-block-start: spacer('s');
-    }
-
-    img {
-        aspect-ratio: 1;
-        border-radius: config('border-radius-lg', $display);
-        inline-size: 100%;
-        object-fit: cover;
-    }
+  img {
+    aspect-ratio: 1;
+    border-radius: config('border-radius-sm', $display);
+    inline-size: 100%;
+    object-fit: cover;
+  }
 }

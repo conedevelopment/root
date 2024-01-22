@@ -1,43 +1,59 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .search-form {
-    $this: &;
-    position: relative;
+  @include generate-variables($form-control, ('focus-', 'textarea-'));
+  @include transition($property: all);
+  align-items: center;
+  background-color: color('background', 'form');
+  border: config('border-width', $form-control) solid color('border', 'form');
+  border-radius: config('border-radius', $form-control);
+  box-sizing: border-box;
+  display: flex;
+  gap: spacer('xs');
+  padding: config('padding', $form-control);
 
-    &--sm {
-        #{$this}__control {
-            padding-inline-start: 1.75em;
-        }
+  &:focus-within {
+    @include focus-ring(
+      $type: config('focus-ring-type', $form-control, false),
+      $border-color: color('border-focus', 'form'),
+      $ring-color: color('ring-focus', 'form'),
+      $box-shadow-type: config('focus-ring-box-shadow-type', $form-control, false),
+      $ring-size: config('focus-ring-size', $form-control, false),
+      $ring-offset: config('focus-ring-offset', $form-control, false)
+    );
+  }
 
-        #{$this}__submit {
-            padding-inline: 0.6em;
-        }
+  &__control {
+    background-color: transparent;
+    border: 0;
+    color: color('text', 'form');
+    flex-grow: 2;
+    font-size: config('font-size', $form-control);
+    font-weight: config('font-weight', $form-control);
+    line-height: config('line-height', $form-control);
+    outline: 0;
+    padding: 0;
+  }
 
-        #{$this}__icon {
-            --dimension: 0.75rem;
-        }
-    }
+  &__icon {
+    --size: 0.9rem;
+    block-size: var(--size);
+    color: color('border', 'form');
+    display: flex;
+    grid-column: 1 / 2;
+    grid-row: 1;
+    inline-size: var(--size);
+    justify-content: center;
+  }
 
-    &__control {
-        padding-inline-start: 2.15em;
-    }
-
-    &__submit {
-        align-items: center;
-        background: none;
-        border: 0;
-        color: color('border', 'form');
-        display: flex;
-        inset: 0 auto 0 0;
-        justify-content: center;
-        padding-block: 0;
-        padding-inline: 0.75em;
-        position: absolute;
-    }
-
-    &__icon {
-        --dimension: 0.9rem;
-        block-size: var(--dimension);
-        inline-size: var(--dimension);
-    }
+  &__helper {
+    background-color: color('light-background', 'btn');
+    border-radius: config('border-radius', $form-control, false);
+    color: color('light-foreground', 'btn');
+    font-weight: config('font-weight', $btn, false);
+    justify-self: center;
+    line-height: 1;
+    padding: spacer('xxs') spacer('xs');
+    pointer-events: none;
+  }
 }

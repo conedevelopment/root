@@ -1,18 +1,18 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .or-separator {
-    align-items: center;
-    display: flex;
-    font-size: config('font-size-sm', $typography);
-    gap: spacer('s');
-    text-transform: uppercase;
+  align-items: center;
+  display: flex;
+  font-size: config('font-size-sm', $typography);
+  gap: spacer('s');
+  text-transform: uppercase;
 
-    &::before,
-    &::after {
-        background-color: color('border');
-        block-size: 1px;
-        content: '';
-        display: flex;
-        inline-size: 100%;
-    }
+  &::before,
+  &::after {
+    background-color: color('border');
+    block-size: 1px;
+    content: '';
+    display: flex;
+    inline-size: 100%;
+  }
 }

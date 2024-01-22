@@ -1,46 +1,42 @@
 @use 'sass:color';
 @use 'sprucecss/scss/spruce' as *;
 
-.btn--dark {
-    @include btn-variant('dark');
-}
-
 .btn--light {
-    @include btn-variant('light');
+  @include btn-variant('light');
 
-    &.btn--active {
-        background-color: color('light-background-hover', 'btn');
-        border-color: color('light-background-hover', 'btn');
-        color: color('light-foreground-hover', 'btn');
-    }
+  &.btn--active {
+    background-color: color('light-background-hover', 'btn');
+    border-color: color('light-background-hover', 'btn');
+    color: color('light-foreground-hover', 'btn');
+  }
 }
 
 .btn--delete {
-    @include btn-variant('delete');
+  @include btn-variant('delete');
 }
 
 .btn--dark {
-    @include btn-variant('dark');
+  @include btn-variant('dark');
 }
 
 .btn--outline-dark {
-    @include btn-variant-outline('dark');
+  @include btn-variant-outline('dark');
 }
 
 .btn {
-    &--counter {
-        position: relative;
-    }
+  &--counter {
+    position: relative;
+  }
 
-    &__counter {
-        background-color: color('danger', 'alert');
-        border-radius: config('border-radius-sm', $display);
-        color: color('primary-foreground', 'btn');
-        font-size: 0.6375rem;
-        inset: -0.5em -0.5em auto auto;
-        min-inline-size: 1.25rem;
-        padding: 0.45em;
-        position: absolute;
-        text-align: center;
-    }
+  &__counter {
+    background-color: color('danger', 'alert');
+    border-radius: config('border-radius-sm', $display);
+    color: color('primary-foreground', 'btn');
+    font-size: 0.6375rem;
+    inset: -0.5em -0.5em auto auto;
+    min-inline-size: 1.25rem;
+    padding: 0.45em;
+    position: absolute;
+    text-align: center;
+  }
 }

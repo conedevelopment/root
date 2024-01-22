@@ -10,7 +10,7 @@
             <span class="btn__counter" x-text="unread"></span>
         </template>
     </button>
-    <div class="context-menu" x-bind:class="{ 'is-open': open }">
+    <div class="app-notification__drawer" x-bind:data-state="open ? 'open' : 'closed'" x-transition>
         <div class="app-notification__header">
             <h2 class="app-notification__title">{{ __('Notifications') }}</h2>
             <button
@@ -23,24 +23,37 @@
             </button>
         </div>
         <div class="app-notification__list">
+            <template x-if="notifications.length === 0">
+                <div class="notification-card">
+                    <div class="alert alert--info">{{ __("You don't have any notifications yet.") }}</div>
+                </div>
+            </template>
             <template x-for="notification in notifications" x-bind:key="notification.id">
                 <div
                     class="notification-card"
+                    x-data="{ open: false }"
                     x-bind:class="{
                         'notification-card--unread': ! notification.is_read,
                         'notification-card--read': notification.is_read,
+                        'notification-card--open': open,
                     }"
                 >
-                    <div class="notification-card__caption">
-                        <h3 class="notification-card__title">
-                            <a
-                                href="#"
-                                class="notification-card__link"
-                                x-text="notification.subject"
-                                x-on:click.prevent="markAsRead(notification)"
-                            ></a>
-                        </h3>
-                        <p x-text="notification.formatted_created_at"></p>
+                    <div class="notification-card__header">
+                        <div class="notification-card__caption">
+                            <h3 x-bind:id="notification.id" class="notification-card__title" x-text="notification.subject"></h3>
+                            <p x-text="notification.formatted_created_at"></p>
+                        </div>
+                        <button
+                            x-on:click="open = ! open"
+                            aria-label="{{ __('Toggle notification') }}"
+                            x-bind:aria-describedby="notification.id"
+                            class="btn btn--primary btn--sm btn--icon notification-card__control"
+                        >
+                            <x-root::icon name="plus" class="btn__icon" />
+                        </button>
+                    </div>
+                    <div class="notification-card__body" x-bind:aria-hidden="open ? 'false' : 'true'">
+                        <div x-html="notification.content"></div>
                     </div>
                 </div>
             </template>

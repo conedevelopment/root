@@ -1,29 +1,30 @@
 <th scope="col">
     @if($sortable)
-        <div class="data-table-sort">
-            {{ $label }}
-            @if(Request::input($sortKey.'.by') !== $attribute || Request::input($sortKey.'.order', 'asc') === 'asc')
-                <a
-                    href="{{ Request::fullUrlWithQuery([$sortKey => ['order' => 'desc', 'by' => $attribute]]) }}"
-                    class="data-table-sort__control"
-                    aria-label="{{ __('Sort descending') }}"
-                >
-                    @if(Request::input($sortKey.'.by') !== $attribute)
-                        <x-root::icon name="chevron-up-down" class="data-table-sort__icon" />
-                    @else
-                        <x-root::icon name="chevron-up" class="data-table-sort__icon" />
-                    @endif
-                </a>
-            @else
-                <a
-                    href="{{ Request::fullUrlWithQuery([$sortKey => ['order' => 'asc', 'by' => $attribute]]) }}"
-                    class="data-table-sort__control"
-                    aria-label="{{ __('Sort ascending') }}"
-                >
-                    <x-root::icon name="chevron-down" class="data-table-sort__icon" />
-                </a>
-            @endif
-        </div>
+        @if(Request::input($sortKey.'.by') !== $attribute || Request::input($sortKey.'.order', 'asc') === 'asc')
+            <a
+                href="{{ Request::fullUrlWithQuery([$sortKey => ['order' => 'desc', 'by' => $attribute]]) }}"
+                class="sort-btn"
+                aria-label="{{ __('Sort descending') }}"
+                style="text-decoration: none;"
+            >
+                {{ $label }}
+                @if(Request::input($sortKey.'.by') !== $attribute)
+                    <x-root::icon name="chevron-up-down" class="sort-btn__icon" />
+                @else
+                    <x-root::icon name="chevron-up" class="sort-btn__icon" />
+                @endif
+            </a>
+        @else
+            <a
+                href="{{ Request::fullUrlWithQuery([$sortKey => ['order' => 'asc', 'by' => $attribute]]) }}"
+                class="sort-btn"
+                aria-label="{{ __('Sort ascending') }}"
+                style="text-decoration: none;"
+            >
+                {{ $label }}
+                <x-root::icon name="chevron-down" class="sort-btn__icon" />
+            </a>
+        @endif
     @else
         {{ $label }}
     @endif

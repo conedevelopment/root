@@ -1,43 +1,43 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .progressbar {
-    display: flex;
-    flex-direction: column;
-    gap: spacer('xs');
-    inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: spacer('xs');
+  inline-size: 100%;
 
-    &__inner {
-        background-color: color('background', 'form');
-        block-size: 0.5rem;
-        border-radius: config('border-radius-sm', $display);
-        box-shadow: inset 0 0 0 1px color('border', 'form');
-        position: relative;
+  &__inner {
+    background-color: color('background', 'form');
+    block-size: 0.5rem;
+    border-radius: config('border-radius-sm', $display);
+    box-shadow: inset 0 0 0 1px color('border', 'form');
+    position: relative;
+  }
+
+  &__indicator {
+    background-color: color('primary');
+    block-size: 100%;
+    border-radius: config('border-radius-sm', $display);
+    inset: 0 auto 0 0;
+    position: absolute;
+
+    &:not([style*="inline-size"]) {
+      animation: 1s progress infinite linear alternate;
+      inline-size: 20%;
     }
+  }
 
-    &__indicator {
-        background-color: color('primary');
-        block-size: 100%;
-        border-radius: config('border-radius-sm', $display);
-        inset: 0 auto 0 0;
-        position: absolute;
-
-        &:not([style*="inline-size"]) {
-            animation: 1s progress infinite linear alternate;
-            inline-size: 20%;
-        }
-    }
-
-    &__caption {
-        text-align: center;
-    }
+  &__caption {
+    text-align: center;
+  }
 }
 
 @keyframes progress {
-    0% {
-        inset-inline-start: 0%;
-    }
+  0% {
+    inset-inline-start: 0%;
+  }
 
-    100% {
-        inset-inline-start: 80%;
-    }
+  100% {
+    inset-inline-start: 80%;
+  }
 }

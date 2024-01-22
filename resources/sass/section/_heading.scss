@@ -1,41 +1,41 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-heading {
-    padding-block: spacer-clamp('m', 'l');
+  padding-block: spacer-clamp('m', 'l');
 
-    &__inner {
-        display: flex;
-        flex-wrap: wrap;
-        gap: spacer('s') spacer('m');
-        justify-content: space-between;
+  &__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('s') spacer('m');
+    justify-content: space-between;
 
-        &--column {
-            flex-direction: column;
-        }
+    &--column {
+      flex-direction: column;
     }
+  }
 
-    &__caption {
-        @include layout-stack('xs');
-    }
+  &__caption {
+    @include layout-stack('xs');
+  }
 
-    &__title {
-        font-weight: 700;
-    }
+  &__title {
+    font-weight: 700;
+  }
 
-    &__description {
-        @include layout-stack('xxs');
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        font-size: 1rem;
-        gap: spacer('xs') spacer('m');
-    }
+  &__description {
+    @include layout-stack('xxs');
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    gap: spacer('xs') spacer('m');
+  }
 
-    &__actions {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        gap: spacer('xs')spacer('s');
-        justify-content: end;
-    }
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacer('xs')spacer('s');
+    justify-content: end;
+  }
 }

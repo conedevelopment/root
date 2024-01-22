@@ -1,35 +1,35 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .l-main {
-    display: flex;
-    position: relative;
+  display: flex;
+  position: relative;
 
-    &__sidebar {
-        background-color: color('background');
-        display: none;
-        inline-size: get-css-variable(--sidebar-inline-size);
-        inset-block: 0;
-        inset-inline: 0 auto;
-        position: fixed;
-        z-index: 20;
+  &__sidebar {
+    background-color: color('background');
+    display: none;
+    inline-size: get-css-variable(--sidebar-inline-size);
+    inset-block: 0;
+    inset-inline: 0 auto;
+    position: fixed;
+    z-index: 20;
 
-        @include breakpoint('md') {
-            display: block;
-        }
-
-        &--open {
-            display: block;
-        }
+    @include breakpoint('md') {
+      display: block;
     }
 
-    &__body {
-        background-color: color('background', 'main');
-        inline-size: 100%;
-        min-block-size: 100lvh;
-
-        @include breakpoint('md') {
-            inline-size: calc(100% - #{get-css-variable(--sidebar-inline-size)});
-            margin-inline-start: get-css-variable(--sidebar-inline-size);
-        }
+    &--open {
+      display: block;
     }
+  }
+
+  &__body {
+    background-color: color('background', 'main');
+    inline-size: 100%;
+    min-block-size: calc(100lvh + 1rem);
+
+    @include breakpoint('md') {
+      inline-size: calc(100% - #{get-css-variable(--sidebar-inline-size)});
+      margin-inline-start: get-css-variable(--sidebar-inline-size);
+    }
+  }
 }
