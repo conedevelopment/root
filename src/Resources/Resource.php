@@ -176,11 +176,11 @@ abstract class Resource implements Arrayable, Form
     {
         $policy = $this->getPolicy();
 
-        return is_null($policy) || $request->user()->can($ability, $model, ...$arguments);
+        return $policy?->{$ability}($request->user(), $model, ...$arguments) ?: true;
     }
 
     /**
-     * Map the resource level abilities.
+     * Map the resource abilities.
      */
     public function mapResourceAbilities(Request $request): array
     {
@@ -191,7 +191,7 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Map the model level abilities.
+     * Map the model abilities.
      */
     public function mapModelAbilities(Request $request, Model $model): array
     {

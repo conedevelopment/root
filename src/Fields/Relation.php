@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
@@ -519,6 +520,7 @@ abstract class Relation extends Field implements Form
                 ->authorized($request, $related)
                 ->visible('index')
                 ->mapToDisplay($request, $related),
+            'abilities' => $this->mapRelatedAbilities($request, $model, $related),
         ];
     }
 
@@ -607,6 +609,43 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Resolve the ability.
+     */
+    public function resolveAbility(string $ability, Request $request, Model $model, ...$arguments): bool
+    {
+        $policy = Gate::getPolicyFor($model);
+
+        $ability .= Str::studly($this->getRelatedName());
+
+        return $policy?->{$ability}($request->user(), $model, ...$arguments) ?: true;
+    }
+
+    /**
+     * Map the relation abilities.
+     */
+    public function mapRelationAbilities(Request $request, Model $model): array
+    {
+        return [
+            'viewAny' => $this->resolveAbility('viewAny', $request, $model),
+            'create' => $this->resolveAbility('create', $request, $model),
+        ];
+    }
+
+    /**
+     * Map the related model abilities.
+     */
+    public function mapRelatedAbilities(Request $request, Model $model, Model $related): array
+    {
+        return [
+            'view' => $this->resolveAbility('view', $request, $model, $related),
+            'update' => $this->resolveAbility('update', $request, $model, $related),
+            'restore' => $this->resolveAbility('restore', $request, $model, $related),
+            'delete' => $this->resolveAbility('delete', $request, $model, $related),
+            'forceDelete' => $this->resolveAbility('forceDelete', $request, $model, $related),
+        ];
+    }
+
+    /**
      * Register the routes.
      */
     public function routes(Router $router): void
@@ -666,6 +705,7 @@ abstract class Relation extends Field implements Form
             'key' => $this->modelAttribute,
             'url' => $this->modelUrl($model),
             'modelName' => $this->getRelatedName(),
+            'abilities' => $this->mapRelationAbilities($request, $model),
         ]);
     }
 
@@ -738,6 +778,10 @@ abstract class Relation extends Field implements Form
                 ->authorized($request, $related)
                 ->visible('show')
                 ->mapToForms($request, $related),
+            'abilities' => array_merge(
+                $this->mapRelationAbilities($request, $model),
+                $this->mapRelatedAbilities($request, $model, $related)
+            ),
         ]);
     }
 
@@ -757,6 +801,10 @@ abstract class Relation extends Field implements Form
                 ->authorized($request, $related)
                 ->visible('update')
                 ->mapToInputs($request, $related),
+            'abilities' => array_merge(
+                $this->mapRelationAbilities($request, $model),
+                $this->mapRelatedAbilities($request, $model, $related)
+            ),
         ]);
     }
 }

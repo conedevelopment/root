@@ -5,12 +5,12 @@
                 <a href="{{ $url }}" data-turbo-frame="_top">{{ $title }}</a>
             </h2>
             <div class="app-card__actions">
-                @can('create', $model)
+                @if($abilities['create'])
                     <a href="{{ $url }}/create" class="btn btn--primary btn--icon" data-turbo-frame="_top">
                         <x-root::icon name="plus" class="btn__icon" />
                         {{ __('Add :resource', ['resource' => $modelName]) }}
                     </a>
-                @endcan
+                @endif
                 @include('root::table.filters')
             </div>
         </div>
