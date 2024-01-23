@@ -36,16 +36,18 @@
         @if($model->exists && isset($relations))
             <div class="l-row__column">
                 @foreach($relations as $relation)
-                    <turbo-frame id="relation-{{ $relation['attribute'] }}" src="{{ $relation['url'] }}">
-                        <div class="app-card">
-                            <div class="app-card__header">
-                                <h2 class="app-card__title">{{ $relation['label'] }}</h2>
+                    @if($relation['abilities']['viewAny'])
+                        <turbo-frame id="relation-{{ $relation['attribute'] }}" src="{{ $relation['url'] }}">
+                            <div class="app-card">
+                                <div class="app-card__header">
+                                    <h2 class="app-card__title">{{ $relation['label'] }}</h2>
+                                </div>
+                                <div class="app-card__body">
+                                    {{ __('Loading') }}...
+                                </div>
                             </div>
-                            <div class="app-card__body">
-                                {{ __('Loading') }}...
-                            </div>
-                        </div>
-                    </turbo-frame>
+                        </turbo-frame>
+                    @endif
                 @endforeach
             </div>
         @endif
