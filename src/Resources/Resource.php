@@ -457,7 +457,7 @@ abstract class Resource implements Arrayable, Form
 
         $controller->middleware($this->getRouteMiddleware());
 
-        if ($this->getPolicy()) {
+        if (! is_null($this->getPolicy())) {
             $controller->authorizeResource($this->getModel(), 'resourceModel');
         }
 

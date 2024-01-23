@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -35,6 +36,7 @@ abstract class Relation extends Field implements Form
     use AsForm;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
+        RegistersRoutes::routeMatched as __routeMatched;
     }
     use ResolvesActions;
     use ResolvesFields;
@@ -609,13 +611,46 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Handle the route matched event.
+     */
+    public function routeMatched(RouteMatched $event): void
+    {
+        $this->__routeMatched($event);
+
+        $controller = $event->route->getController();
+
+        $controller->middleware($this->getRouteMiddleware());
+
+        $middleware = function (Request $request, Closure $next) use ($event): mixed {
+            $ability = match ($event->route->getActionMethod()) {
+                'index' => 'viewAny',
+                'show' => 'view',
+                'create' => 'create',
+                'store' => 'create',
+                'edit' => 'update',
+                'update' => 'update',
+                'destroy' => 'delete',
+                default => $event->route->getActionMethod(),
+            };
+
+            Gate::allowIf($this->resolveAbility(
+                $ability, $request, $request->route('resourceModel'), $request->route($this->getRouteParameterName())
+            ));
+
+            return $next($request);
+        };
+
+        $controller->middleware([$middleware]);
+    }
+
+    /**
      * Resolve the ability.
      */
     public function resolveAbility(string $ability, Request $request, Model $model, ...$arguments): bool
     {
         $policy = Gate::getPolicyFor($model);
 
-        $ability .= Str::studly($this->getRelatedName());
+        $ability .=  Str::of($this->getModelAttribute())->singular()->studly()->value();
 
         return is_null($policy)
             || ! method_exists($policy, $ability)

@@ -32,7 +32,7 @@
             <button type="submit" class="btn btn--primary" form="{{ $key }}">{{ __('Save') }}</button>
             <a href="{{ $action }}" class="btn btn--light">{{ __('Cancel') }}</a>
         </div>
-        @if($abilities['delete'])
+        @if($model->exists && $abilities['delete'])
             <div class="app-actions__column">
                 <form method="POST" action="{{ $action }}" onsubmit="return window.confirm('{{ __('Are you sure?') }}');">
                     @csrf
