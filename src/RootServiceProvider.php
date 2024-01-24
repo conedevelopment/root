@@ -24,6 +24,7 @@ class RootServiceProvider extends ServiceProvider
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
+        Interfaces\Models\User::class => Models\User::class,
     ];
 
     /**

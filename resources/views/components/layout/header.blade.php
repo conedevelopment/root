@@ -31,7 +31,7 @@
                 <button type="button" class="user-menu__toggle" x-bind:aria-expanded="open" x-on:click="open = ! open">
                     <x-root::icon name="chevron-down" class="open-search__icon" />
                 </button>
-                <ul class="context-menu" x-bind:class="{ 'is-open': open }">
+                <ul class="context-menu" x-bind:data-state="open ? 'open': 'closed'">
                     <li>
                         <span class="context-menu__item">
                             {{ __('Theme') }} <x-root::layout.theme />

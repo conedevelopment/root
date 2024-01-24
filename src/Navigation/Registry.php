@@ -14,10 +14,6 @@ class Registry
      */
     public function location(string $name): Location
     {
-        if (! array_key_exists($name, $this->locations)) {
-            $this->locations[$name] = new Location($name);
-        }
-
-        return $this->locations[$name];
+        return $this->locations[$name] ??= new Location($name);
     }
 }

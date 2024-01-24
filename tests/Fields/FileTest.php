@@ -5,7 +5,6 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\File;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 
 class FileTest extends TestCase

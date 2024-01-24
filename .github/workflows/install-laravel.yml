@@ -62,7 +62,7 @@ jobs:
                 sed -i -e 's#^DB_DATABASE=.*$#DB_DATABASE=:memory:#' .env
                 php artisan key:generate
                 # Wait for https://github.com/conedevelopment/root/issues/155
-                ##php artisan root:install --seed
+                php artisan root:install --seed
                 php artisan root:publish --packages
         -
             name: "Perform static analysis on stubs"
@@ -70,7 +70,6 @@ jobs:
             run: |
                 composer require --no-interaction --dev --prefer-dist nunomaduro/larastan
                 php artisan root:action FooBar
-                ##php artisan root:extract FooBar
                 php artisan root:field FooBar
                 php artisan root:filter FooBar
                 php artisan root:resource FooBar --model 'App\Models\User'

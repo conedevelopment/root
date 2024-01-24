@@ -1,24 +1,30 @@
 <?php
 
-namespace Cone\Root\Traits;
+namespace Cone\Root\Models;
 
-use Cone\Root\Interfaces\Models\User;
-use Cone\Root\Models\Medium;
-use Cone\Root\Models\Notification;
+use Cone\Root\Interfaces\Models\User as Contract;
+use Cone\Root\Traits\HasMedia;
+use Cone\Root\Traits\HasMetaData;
+use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-trait AsRootUser
+class User extends Authenticatable implements Contract
 {
+    use HasMedia;
+    use HasMetaData;
     use InteractsWithProxy;
+    use Notifiable;
 
     /**
      * Get the proxied interface.
      */
     public static function getProxiedInterface(): string
     {
-        return User::class;
+        return Contract::class;
     }
 
     /**
