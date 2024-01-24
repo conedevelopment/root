@@ -68,6 +68,7 @@
         z-index: -1;
       }
 
+      /* stylelint-disable-next-line selector-no-qualifying-type */
       &[aria-current='page'] {
         color: hsl(0deg 0% 100%);
 

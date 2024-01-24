@@ -174,7 +174,7 @@ class Slug extends Text
             ->newQuery()
             ->when(
                 in_array(SoftDeletes::class, class_uses_recursive($model)),
-                static fn (Builder $query): Builder  => $query->withTrashed()
+                static fn (Builder $query): Builder => $query->withTrashed()
             )
             ->where($this->modelAttribute, 'like', $value.'%')
             ->orderByDesc($this->modelAttribute)

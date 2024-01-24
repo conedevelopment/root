@@ -114,6 +114,7 @@
       padding-inline: spacer('s');
     }
 
+    /* stylelint-disable-next-line selector-class-pattern */
     img:not(.data-table__image) {
       border-radius: config('border-radius-sm', $display);
     }
