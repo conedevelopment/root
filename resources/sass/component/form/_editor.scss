@@ -2,7 +2,7 @@
 
 .editor {
   @include set-css-variable((
-    --block-size:  18rem
+    --block-size: 18rem
   ));
   @include transition;
   block-size: get-css-variable(--block-size);
