@@ -8,21 +8,21 @@
 @use 'sprucecss/scss/spruce' as *;
 
 :root {
-    @include set-css-variable((
-        --sidebar-inline-size: 20rem,
-        --header-block-size: 4.5rem,
-        --container-gap: spacer-clamp('m', 'l')
-    ));
+  @include set-css-variable((
+    --sidebar-inline-size: 20rem,
+    --header-block-size: 4.5rem,
+    --container-gap: spacer-clamp('m', 'l')
+  ));
 }
 
 body {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 [x-cloak] {
-    visibility: hidden !important;
+  visibility: hidden !important;
 }
 
 img {
-    border-radius: config('border-radius-sm', $display);
+  border-radius: config('border-radius-sm', $display);
 }

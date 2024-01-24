@@ -650,7 +650,7 @@ abstract class Relation extends Field implements Form
     {
         $policy = Gate::getPolicyFor($model);
 
-        $ability .=  Str::of($this->getModelAttribute())->singular()->studly()->value();
+        $ability .= Str::of($this->getModelAttribute())->singular()->studly()->value();
 
         return is_null($policy)
             || ! method_exists($policy, $ability)
