@@ -80,7 +80,7 @@ class BelongsToMany extends Relation
                             $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
                         );
                     });
-            })->display(function (Model $model): mixed {
+            })->display(function (Model $model): ?string {
                 return $this->resolveDisplay($model);
             }),
         ];

@@ -97,7 +97,7 @@ class File extends MorphToMany
     /**
      * {@inheritdoc}
      */
-    public function resolveDisplay(Model $related): mixed
+    public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
             $this->display(function (Medium $related): string {
@@ -141,12 +141,9 @@ class File extends MorphToMany
      */
     public function store(Request $request, Model $model, UploadedFile $file): array
     {
-        $disk = Storage::build([
-            'driver' => 'local',
-            'root' => Config::get('root.media.tmp_dir'),
-        ]);
+        $disk = Storage::build(Config::get('root.media.tmp_dir'));
 
-        $disk->put($file->getClientOriginalName(), $file);
+        $disk->putFileAs('', $file, $file->getClientOriginalName());
 
         return $this->stored($request, $model, $disk->path($file->getClientOriginalName()));
     }
@@ -170,6 +167,7 @@ class File extends MorphToMany
 
         /** @var \Illuminate\Foundation\Auth\User&\Cone\Root\Interfaces\Models\User $user */
         $user = $request->user();
+
         $user->uploads()->save($medium);
 
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
@@ -254,7 +252,9 @@ class File extends MorphToMany
             'fileName' => $related->file_name,
             'isImage' => $related->isImage,
             'processing' => false,
-            'url' => $related->hasConversion('thumbnail') ? $related->getUrl('thumbnail') : $related->getUrl(),
+            'url' => ! is_null($this->displayConversion) && $related->hasConversion($this->displayConversion)
+                ? $related->getUrl($this->displayConversion)
+                : $related->getUrl(),
             'uuid' => $related->uuid,
         ]);
     }

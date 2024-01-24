@@ -291,7 +291,7 @@ abstract class Relation extends Field implements Form
     /**
      * Resolve the display format or the query result.
      */
-    public function resolveDisplay(Model $related): mixed
+    public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
             $this->display($related->getKeyName());
