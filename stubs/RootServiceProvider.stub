@@ -17,7 +17,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
      * All of the container bindings that should be registered.
      */
     public array $bindings = [
-        UserInterface::class => User::class,
+        // UserInterface::class => User::class,
     ];
 
     /**
