@@ -189,6 +189,14 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Get the field label.
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    /**
      * Set the "name" HTML attribute attribute.
      */
     public function name(string|Closure $value): static
@@ -490,6 +498,14 @@ abstract class Field implements Arrayable, JsonSerializable
     public function updateRules(array|Closure $rules): static
     {
         return $this->rules($rules, 'update');
+    }
+
+    /**
+     * Get the validation rules.
+     */
+    public function getRules(): array
+    {
+        return $this->rules;
     }
 
     /**

@@ -22,6 +22,7 @@ class URL extends Text
         parent::__construct($label, $modelAttribute);
 
         $this->type('url');
+        $this->rules(['string', 'url']);
 
         $this->textResolver = fn (): string => 'URL';
     }
@@ -31,11 +32,7 @@ class URL extends Text
      */
     public function text(Closure|string $value): static
     {
-        if (is_string($value)) {
-            $value = fn (): string => $value;
-        }
-
-        $this->textResolver = $value;
+        $this->textResolver = is_string($value) ? fn (): string => $value : $value;
 
         return $this;
     }
@@ -47,11 +44,7 @@ class URL extends Text
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
-                if (is_null($value)) {
-                    return $value;
-                }
-
-                return sprintf(
+                return is_null($value) ? $value : sprintf(
                     '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
                     $value,
                     $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',
@@ -66,7 +59,7 @@ class URL extends Text
     /**
      * Determine if the given URL is external.
      */
-    protected function isExternal(string $value): bool
+    public function isExternal(string $value): bool
     {
         $root = Root::instance();
 
@@ -75,6 +68,6 @@ class URL extends Text
         $url = parse_url($value);
 
         return $domain !== ($url['host'] ?? null)
-            || ! str_starts_with(ltrim($url['path'], '/'), ltrim($path, '/'));
+            && ! str_starts_with(ltrim($url['path'] ?? '', '/'), ltrim($path, '/'));
     }
 }
