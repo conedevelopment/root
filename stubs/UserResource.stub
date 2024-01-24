@@ -5,6 +5,7 @@ namespace App\Root\Resources;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
+use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -13,9 +14,22 @@ use Illuminate\Validation\Rule;
 class UserResource extends Resource
 {
     /**
+     * The model class.
+     */
+    protected string $model = User::class;
+
+    /**
      * The icon for the resource.
      */
     protected string $icon = 'users';
+
+    /**
+     * Get the model for the resource.
+     */
+    public function getModel(): string
+    {
+        return User::getProxiedClass();
+    }
 
     /**
      * Define the fields.
