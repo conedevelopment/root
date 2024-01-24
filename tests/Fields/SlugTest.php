@@ -45,6 +45,6 @@ class SlugTest extends TestCase
 
         $user->save();
 
-        $this->assertSame('test_at_foocom', $user->name);
+        $this->assertSame('test_at_conetest', $user->name);
     }
 }
