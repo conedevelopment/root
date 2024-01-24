@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Front-end assets"
+
+on:
+    workflow_dispatch: null
+
+permissions:
+    contents: "write"
+    pull-requests: "write"
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
+
+jobs:
+    build:
+        name: "Build"
+        runs-on: "ubuntu-latest"
+        timeout-minutes: 5
+        steps:
+        -
+            name: "Set up Node.js"
+            uses: "actions/setup-node@v3"
+            with:
+                node-version: "18"
+                cache: "yarn"
+        -
+            name: "Configure yarn"
+            run: "yarn config set engine-strict true"
+        -
+            name: "Install production dependencies"
+            run: "yarn install --non-interactive --pure-lockfile"
+        -
+            name: "Build assets"
+            run: "yarn run build"
+        -
+            name: "Check difference to repository"
+            id: "list_diff"
+            run: |
+                if ! git diff --exit-code; then
+                    echo "exit_status=1" >>"${GITHUB_OUTPUT}"
+                fi
+        -
+            name: "Create pull request"
+            if: "${{ steps.list_diff.outputs.exit_status == '1' }}"
+            uses: "peter-evans/create-pull-request@v5"
+            with:
+                add-paths: "./"
+                branch: "build-assets"
+                commit-message: "Fix CS"
+                title: "Build front-end assets"
+                body: |
+                    Automated changes by running "build" script.
+                delete-branch: true
