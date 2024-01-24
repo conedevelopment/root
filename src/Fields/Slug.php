@@ -45,12 +45,11 @@ class Slug extends Text
     /**
      * Create a new field instance.
      */
-    public function __construct(?string $label = null, Closure|string|null $modelAttribute = null)
+    public function __construct(?string $label = null, Closure|string $modelAttribute = 'slug')
     {
-        parent::__construct($label ?: __('Slug'), $modelAttribute ?: 'slug');
+        parent::__construct($label ?: __('Slug'), $modelAttribute);
 
         $this->readonly();
-
         $this->unique();
     }
 
@@ -62,6 +61,14 @@ class Slug extends Text
         $this->nullable = $value;
 
         return $this;
+    }
+
+    /**
+     * Determine if the field is nullable.
+     */
+    public function isNullable(): bool
+    {
+        return $this->nullable;
     }
 
     /**
@@ -91,7 +98,7 @@ class Slug extends Text
     {
         $value = parent::getValueForHydrate($request);
 
-        if (! $this->nullable && empty($value)) {
+        if (! $this->isNullable() && empty($value)) {
             $value = Str::random();
         }
 
@@ -104,6 +111,16 @@ class Slug extends Text
     public function from(array|string $attributes): static
     {
         $this->from = (array) $attributes;
+
+        return $this;
+    }
+
+    /**
+     * Set the "separator" property.
+     */
+    public function separator(string $value): static
+    {
+        $this->separator = $value;
 
         return $this;
     }
@@ -157,16 +174,9 @@ class Slug extends Text
             ->newQuery()
             ->when(
                 in_array(SoftDeletes::class, class_uses_recursive($model)),
-                static function (Builder $query): Builder {
-                    return $query->withTrashed();
-                }
+                static fn (Builder $query): Builder  => $query->withTrashed()
             )
-            ->whereRaw(sprintf(
-                "`%s` regexp '^%s(%s[\\\\d]+)?$'",
-                $this->modelAttribute,
-                preg_quote($value),
-                preg_quote($this->separator)
-            ))
+            ->where($this->modelAttribute, 'like', $value.'%')
             ->orderByDesc($this->modelAttribute)
             ->limit(1)
             ->value($this->modelAttribute);
