@@ -48,7 +48,7 @@ jobs:
             with:
                 add-paths: "./"
                 branch: "build-assets"
-                commit-message: "Fix CS"
+                commit-message: "Regenerate assets"
                 title: "Build front-end assets"
                 body: |
                     Automated changes by running "build" script.
