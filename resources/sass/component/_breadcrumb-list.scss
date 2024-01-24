@@ -24,6 +24,7 @@
       transform: rotate(-45deg);
 
       @at-root {
+        /* stylelint-disable-next-line selector-max-compound-selectors */
         [dir='rtl'] & {
           transform: rotate(45deg);
         }

@@ -1,5 +1,7 @@
 @use 'sprucecss/scss/spruce' as *;
 
+/* stylelint-disable selector-no-qualifying-type */
+
 code[class*='language-'],
 pre[class*='language-'] {
   border-radius: config('border-radius-sm', $display);

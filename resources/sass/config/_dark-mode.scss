@@ -8,7 +8,7 @@
 [data-theme-mode='dark'] {
   color-scheme: dark;
 
-  /* stylelint-disable */
+  /* stylelint-disable selector-no-qualifying-type,selector-class-pattern */
   select.form-control:not([multiple]):not([size]),
   .combobox__control {
     @include field-icon(
