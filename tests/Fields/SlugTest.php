@@ -32,7 +32,7 @@ class SlugTest extends TestCase
     public function test_a_slug_field_generates_value_from_model_attributes(): void
     {
         $user = new User([
-            'email' => 'test@foo.com',
+            'email' => 'test@cone.test',
             'name' => 'Test',
             'password' => 'secret',
         ]);
