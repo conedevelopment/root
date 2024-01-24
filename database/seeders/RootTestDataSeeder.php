@@ -4,7 +4,6 @@ namespace Cone\Root\Database\Seeders;
 
 use Cone\Root\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 
 class RootTestDataSeeder extends Seeder
