@@ -44,6 +44,19 @@ class NavigationTest extends TestCase
         $this->assertEmpty($location->all());
     }
 
+    public function test_a_naviagation_location_has_groups(): void
+    {
+        $location = $this->registry->location('sidebar');
+
+        $location->new('/dashboard', 'Dashboard')->group('General');
+        $location->new('/posts', 'Posts')->group('Blog');
+
+        $this->assertSame(
+            ['General', 'Blog'],
+            array_keys($location->groups())
+        );
+    }
+
     public function test_a_naviagation_item_has_items(): void
     {
         $location = $this->registry->location('sidebar');
