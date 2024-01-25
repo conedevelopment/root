@@ -27,5 +27,8 @@ abstract class TestCase extends BaseTestCase
         Storage::fake('public');
 
         Storage::disk('local')->makeDirectory('root-tmp');
+
+        $this->app['config']->set('root.media.tmp_dir', Storage::disk('local')->path('root-tmp'));
+        $this->app['config']->set('root.media.chunk_expiration', 0);
     }
 }
