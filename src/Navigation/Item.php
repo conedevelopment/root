@@ -4,6 +4,7 @@ namespace Cone\Root\Navigation;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\URL;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\URL;
  * @property string $icon
  * @property string $group
  */
-class Item
+class Item implements Arrayable
 {
     use HasAttributes;
     use HasItems;
@@ -83,5 +84,17 @@ class Item
     public function __get(string $key): mixed
     {
         return $this->getAttribute($key);
+    }
+
+    /**
+     * Get the array representation of the item.
+     */
+    public function toArray(): array
+    {
+        return array_merge($this->getAttributes(), [
+            'matched' => $this->matched(),
+            'partiallyMatched' => $this->partiallyMatched(),
+            'items' => array_map(fn (Item $item): array => $item->toArray(), $this->items),
+        ]);
     }
 }

@@ -4,6 +4,7 @@ namespace Cone\Root\Navigation;
 
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\URL;
 
 trait HasItems
 {
@@ -15,7 +16,7 @@ trait HasItems
     /**
      * Make a new item.
      */
-    public function new(string $url, string $label, array $attributes = [], ?Closure $callback = null): static
+    public function new(string $url, string $label, array $attributes = [], ?Closure $callback = null): Item
     {
         $item = new Item($url, $label, $attributes);
 
@@ -23,7 +24,9 @@ trait HasItems
             call_user_func_array($callback, [$item]);
         }
 
-        return $this->add($item);
+        $this->add($item);
+
+        return $item;
     }
 
     /**
@@ -43,15 +46,19 @@ trait HasItems
      */
     public function get(string $url): ?Item
     {
+        $url = URL::to($url);
+
         return $this->items[$url] ?? null;
     }
 
     /**
      * Remove the item.
      */
-    public function remove(string $key): static
+    public function remove(string $url): static
     {
-        unset($this->items[$key]);
+        $url = URL::to($url);
+
+        unset($this->items[$url]);
 
         return $this;
     }
