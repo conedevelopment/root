@@ -18,7 +18,9 @@ class Registry
      */
     public function patterns(array $patterns): void
     {
-        $this->patterns = array_merge($this->patterns, $patterns);
+        foreach ($patterns as $pattern => $label) {
+            $this->pattern($pattern, $label);
+        }
     }
 
     /**
