@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 
 class LoginControllerTest extends TestCase
 {
-    public function test_login_controller_shows_login_form(): void
+    public function test_login_controller_shows_form(): void
     {
         $this->get('/root/login')
             ->assertOk()
