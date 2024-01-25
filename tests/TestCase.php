@@ -26,6 +26,6 @@ abstract class TestCase extends BaseTestCase
         Storage::fake('local');
         Storage::fake('public');
 
-        Storage::disk('local')->makeDirectory('root-uploads');
+        Storage::disk('local')->makeDirectory('root-tmp');
     }
 }
