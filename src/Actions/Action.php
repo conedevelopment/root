@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Actions;
 
+use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Middleware\Authorize;
@@ -104,6 +105,18 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
+     * Get the Eloquent query.
+     */
+    public function getQuery(): Builder
+    {
+        if (is_null($this->query)) {
+            throw new QueryResolutionException();
+        }
+
+        return $this->query;
+    }
+
+    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
@@ -155,11 +168,11 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     public function perform(Request $request): Response
     {
-        $this->validateFormRequest($request, $this->query->getModel());
+        $this->validateFormRequest($request, $this->getQuery()->getModel());
 
         $this->handle(
             $request,
-            $request->boolean('all') ? $this->query->get() : $this->query->findMany($request->input('models', []))
+            $request->boolean('all') ? $this->getQuery()->get() : $this->getQuery()->findMany($request->input('models', []))
         );
 
         return Redirect::back()->with(
