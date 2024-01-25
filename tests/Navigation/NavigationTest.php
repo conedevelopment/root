@@ -26,7 +26,7 @@ class NavigationTest extends TestCase
         $this->assertSame(['sidebar' => $location], $this->registry->locations());
     }
 
-    public function test_a_naviagation_location_has_items(): void
+    public function test_a_navigation_location_has_items(): void
     {
         $location = $this->registry->location('sidebar');
 
@@ -44,7 +44,7 @@ class NavigationTest extends TestCase
         $this->assertEmpty($location->all());
     }
 
-    public function test_a_naviagation_location_has_groups(): void
+    public function test_a_navigation_location_has_groups(): void
     {
         $location = $this->registry->location('sidebar');
 
@@ -57,7 +57,7 @@ class NavigationTest extends TestCase
         );
     }
 
-    public function test_a_naviagation_item_has_items(): void
+    public function test_a_navigation_item_has_items(): void
     {
         $location = $this->registry->location('sidebar');
 
