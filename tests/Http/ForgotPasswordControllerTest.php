@@ -4,10 +4,7 @@ namespace Cone\Root\Tests\Http;
 
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
 class ForgotPasswordControllerTest extends TestCase

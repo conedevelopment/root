@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Http\Controllers\Auth;
 
-use App\Http\Requests\ResetPasswordRequest;
 use App\Models\User;
 use Cone\Root\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
@@ -20,7 +19,7 @@ use Illuminate\Support\Str;
 class ResetPasswordController extends Controller
 {
     /**
-     * Display the password reset view for the given token.
+     * Display the password reset form for the given token.
      */
     public function show(Request $request): Response
     {
@@ -33,8 +32,14 @@ class ResetPasswordController extends Controller
     /**
      * Reset the given user's password.
      */
-    public function reset(ResetPasswordRequest $request): RedirectResponse
+    public function reset(Request $request): RedirectResponse
     {
+        $request->validate([
+            'token' => ['required'],
+            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => ['required', 'string', 'email'],
+        ]);
+
         $response = Password::broker()->reset(
             $request->only(['email', 'password', 'password_confirmation', 'token']),
             function (User $user, string $password): void {
