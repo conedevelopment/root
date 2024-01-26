@@ -387,18 +387,26 @@ abstract class Resource implements Arrayable, Form
             ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
             ->through(function (Model $model) use ($request): array {
-                return [
-                    'id' => $model->getKey(),
-                    'url' => $this->modelUrl($model),
-                    'model' => $model,
-                    'abilities' => $this->mapModelAbilities($request, $model),
-                    'fields' => $this->resolveFields($request)
-                        ->subResource(false)
-                        ->authorized($request, $model)
-                        ->visible('index')
-                        ->mapToDisplay($request, $model),
-                ];
+                return $this->mapModel($request, $model);
             });
+    }
+
+    /**
+     * Map the model.
+     */
+    public function mapModel(Request $request, Model $model): array
+    {
+        return [
+            'id' => $model->getKey(),
+            'url' => $this->modelUrl($model),
+            'model' => $model,
+            'abilities' => $this->mapModelAbilities($request, $model),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $model)
+                ->visible('index')
+                ->mapToDisplay($request, $model),
+        ];
     }
 
     /**

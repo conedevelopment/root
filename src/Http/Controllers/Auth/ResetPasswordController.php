@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Http\Controllers\Auth;
 
-use App\Models\User;
 use Cone\Root\Http\Controllers\Controller;
+use Cone\Root\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;

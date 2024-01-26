@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests;
 
+use Cone\Root\Interfaces\Models\User as UserInterface;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,8 @@ abstract class TestCase extends BaseTestCase
 
         $this->app['router']->getRoutes()->refreshNameLookups();
 
+        $this->app->bind(UserInterface::class, User::class);
+
         $this->startSession();
 
         $this->app['request']->setLaravelSession($this->app['session']);
@@ -30,5 +33,6 @@ abstract class TestCase extends BaseTestCase
 
         $this->app['config']->set('root.media.tmp_dir', Storage::disk('local')->path('root-tmp'));
         $this->app['config']->set('root.media.chunk_expiration', 0);
+        $this->app['config']->set('auth.providers.users.model', User::class);
     }
 }

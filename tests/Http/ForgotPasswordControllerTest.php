@@ -2,9 +2,9 @@
 
 namespace Cone\Root\Tests\Http;
 
+use Cone\Root\Notifications\ResetPassword;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
 class ForgotPasswordControllerTest extends TestCase
@@ -31,6 +31,6 @@ class ForgotPasswordControllerTest extends TestCase
         ])->assertRedirect()
             ->assertSessionDoesntHaveErrors();
 
-        Notification::assertNothingSentTo($user);
+        Notification::assertSentTo($user, ResetPassword::class);
     }
 }
