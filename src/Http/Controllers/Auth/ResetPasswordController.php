@@ -5,6 +5,7 @@ namespace Cone\Root\Http\Controllers\Auth;
 use App\Models\User;
 use Cone\Root\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -45,7 +46,7 @@ class ResetPasswordController extends Controller
             function (User $user, string $password): void {
                 $this->resetPassword($user, $password);
 
-                if (! $user->hasVerifiedEmail()) {
+                if ($user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail()) {
                     $user->markEmailAsVerified();
                 }
             }
