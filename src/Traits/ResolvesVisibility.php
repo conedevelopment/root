@@ -34,7 +34,7 @@ trait ResolvesVisibility
         $this->visibilityResolvers[] = $context instanceof Closure
             ? $context
             : static function (string|array $currentContext) use ($context) {
-                return ! empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
+                return !empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
             };
 
         return $this;
@@ -47,7 +47,7 @@ trait ResolvesVisibility
     {
         $context = $context instanceof Closure
             ? static function (array|string $currentContext) use ($context): bool {
-                return ! call_user_func_array($context, [$currentContext]);
+                return !call_user_func_array($context, [$currentContext]);
             }
             : static function (string|array $currentContext) use ($context) {
                 return empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
