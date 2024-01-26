@@ -26,7 +26,7 @@ abstract class Select extends RenderableFilter
     {
         $default = parent::getValue($request);
 
-        return $this->multiple ? Arr::wrap($default) : $default;
+        return $this->isMultiple() ? Arr::wrap($default) : $default;
     }
 
     /**
@@ -40,6 +40,14 @@ abstract class Select extends RenderableFilter
     }
 
     /**
+     * Determine if the filter is multiple.
+     */
+    public function isMultiple(): bool
+    {
+        return $this->multiple;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toField(): Field
@@ -49,6 +57,6 @@ abstract class Select extends RenderableFilter
                 return $this->options($request);
             }))
             ->value(fn (Request $request): mixed => $this->getValue($request))
-            ->multiple($this->multiple);
+            ->multiple($this->isMultiple());
     }
 }
