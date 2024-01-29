@@ -21,7 +21,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.0.0-alpha';
+    public const VERSION = '2.0.0-beta';
 
     /**
      * The registered booting callbacks.
