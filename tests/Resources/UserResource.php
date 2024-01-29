@@ -4,6 +4,7 @@ namespace Cone\Root\Tests\Resources;
 
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\ID;
+use Cone\Root\Fields\Media;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\Actions\SendPasswordResetNotification;
@@ -30,6 +31,7 @@ class UserResource extends Resource
             Text::make('Name')->searchable(),
             Email::make('Email')->searchable(),
             Text::make('Password')->visibleOn(['create', 'update']),
+            Media::make('Media'),
         ];
     }
 
