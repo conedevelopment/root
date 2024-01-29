@@ -34,10 +34,10 @@ class Filters extends Collection
      */
     public function apply(Request $request, Builder $query): Builder
     {
-        $this->filter(static function (Filter $filter) use ($request): bool {
-            return $request->has($filter->getRequestKey());
-        })->each(static function (Filter $filter) use ($query, $request): void {
-            $filter->apply($request, $query, $filter->getValue($request));
+        $this->each(static function (Filter $filter) use ($query, $request): void {
+            if ($filter->isActive($request)) {
+                $filter->apply($request, $query, $filter->getValue($request));
+            }
         });
 
         return $query;
