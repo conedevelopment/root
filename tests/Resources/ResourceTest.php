@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests\Resources;
 
+use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
@@ -13,7 +14,7 @@ class ResourceTest extends TestCase
     {
         parent::setUp();
 
-        $this->resource = new UserResource();
+        $this->resource = Root::instance()->resources->resolve('users');
     }
 
     public function test_a_resource_resolves_model(): void
@@ -102,10 +103,6 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_registers_routes(): void
     {
-        $this->app['router']->prefix('root')->group(function ($router) {
-            $this->resource->registerRoutes($this->app['request'], $router);
-        });
-
         $action = $this->resource->resolveActions($this->app['request'])->first();
 
         $this->assertSame('/root/users/actions/send-password-reset-notification', $action->getUri());
@@ -114,5 +111,20 @@ class ResourceTest extends TestCase
             trim($action->getUri(), '/'),
             $this->app['router']->getRoutes()->get('POST')
         );
+    }
+
+    public function test_a_resource_handles_form_requests(): void
+    {
+        $user = new User();
+
+        $this->app['request']->merge([
+            'name' => 'Test',
+            'email' => 'hello@foo.bar',
+            'password' => 'password',
+        ]);
+
+        $this->resource->handleFormRequest($this->app['request'], $user);
+
+        $this->assertSame(['name' => 'Test', 'email' => 'hello@foo.bar'], $user->only(['name', 'email']));
     }
 }

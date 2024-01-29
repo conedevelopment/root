@@ -29,6 +29,7 @@ class UserResource extends Resource
             ID::make(),
             Text::make('Name')->searchable(),
             Email::make('Email')->searchable(),
+            Text::make('Password')->visibleOn(['create', 'update']),
         ];
     }
 
