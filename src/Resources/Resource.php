@@ -327,7 +327,7 @@ abstract class Resource implements Arrayable, Form
      */
     protected function resolveFilter(Request $request, Filter $filter): void
     {
-        $filter->setKey(sprintf('%s:%s', $this->getKey(), $filter->getKey()));
+        $filter->setKey(sprintf('%s_%s', $this->getKey(), $filter->getKey()));
     }
 
     /**
