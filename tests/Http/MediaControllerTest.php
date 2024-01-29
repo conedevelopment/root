@@ -7,7 +7,6 @@ use Cone\Root\Jobs\MoveFile;
 use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Models\Medium;
 use Cone\Root\Root;
-use Cone\Root\Tests\Post;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Http\UploadedFile;
