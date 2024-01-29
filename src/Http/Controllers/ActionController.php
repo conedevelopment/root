@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class ActionController extends Controller
@@ -15,8 +14,6 @@ class ActionController extends Controller
     {
         /** @var \Cone\Root\Actions\Action $action */
         $action = $request->route('action');
-
-        Gate::allowIf($action->authorized($request));
 
         return $action->perform($request);
     }
