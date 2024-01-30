@@ -16,7 +16,7 @@ return new class() extends Migration
             $table->string('type');
             $table->morphs('notifiable');
             $table->string('subject')->index();
-            $table->text('message')->nullable()->index();
+            $table->text('message')->nullable();
             $table->json('data')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
