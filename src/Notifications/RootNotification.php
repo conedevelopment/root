@@ -2,8 +2,6 @@
 
 namespace Cone\Root\Notifications;
 
-use Cone\Root\Notifications\RootChannel;
-use Cone\Root\Notifications\RootMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
