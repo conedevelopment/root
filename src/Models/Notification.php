@@ -23,10 +23,8 @@ class Notification extends DatabaseNotification implements Contract
      * @var array
      */
     protected $appends = [
-        'content',
         'formatted_created_at',
         'is_read',
-        'subject',
         'url',
     ];
 
@@ -62,32 +60,6 @@ class Notification extends DatabaseNotification implements Contract
     }
 
     /**
-     * Get the content attribute.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string, never>
-     */
-    protected function content(): Attribute
-    {
-        return new Attribute(
-            get: function (): string {
-                return $this->data['content'] ?? '';
-            }
-        );
-    }
-
-    /**
-     * Get the subject attribute.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
-     */
-    protected function subject(): Attribute
-    {
-        return new Attribute(
-            get: fn (): ?string => $this->data['subject'] ?? $this->getKey()
-        );
-    }
-
-    /**
      * Get the formatted created at attribute.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
@@ -95,7 +67,7 @@ class Notification extends DatabaseNotification implements Contract
     protected function formattedCreatedAt(): Attribute
     {
         return new Attribute(
-            get: fn (): ?string => $this->created_at?->format('Y-m-d H:i'),
+            get: fn (): ?string => $this->created_at?->isoFormat('YYYY. MMMM DD. HH:mm'),
         );
     }
 

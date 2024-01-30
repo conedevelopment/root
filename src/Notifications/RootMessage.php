@@ -7,14 +7,19 @@ use Illuminate\Contracts\Support\Arrayable;
 class RootMessage implements Arrayable
 {
     /**
-     * The message subject.
+     * The subject.
      */
     protected ?string $subject = null;
 
     /**
-     * The message content.
+     * The message.
      */
     protected ?string $message = null;
+
+    /**
+     * The data.
+     */
+    protected array $data = [];
 
     /**
      * Create a new message instance.
@@ -26,7 +31,7 @@ class RootMessage implements Arrayable
     }
 
     /**
-     * Set the message subject.
+     * Set the subject.
      */
     public function subject(string $value): static
     {
@@ -36,11 +41,21 @@ class RootMessage implements Arrayable
     }
 
     /**
-     * Set the message message.
+     * Set the message.
      */
     public function message(string $value): static
     {
         $this->message = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the data.
+     */
+    public function data(array $value): static
+    {
+        $this->data = $value;
 
         return $this;
     }
@@ -53,6 +68,7 @@ class RootMessage implements Arrayable
         return [
             'subject' => $this->subject,
             'message' => $this->message,
+            'data' => $this->data,
         ];
     }
 }

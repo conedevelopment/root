@@ -53,7 +53,7 @@
                         </button>
                     </div>
                     <div class="notification-card__body" x-bind:aria-hidden="open ? 'false' : 'true'">
-                        <div x-html="notification.content"></div>
+                        <div x-html="notification.message"></div>
                     </div>
                 </div>
             </template>

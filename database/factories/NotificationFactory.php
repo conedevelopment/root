@@ -22,10 +22,9 @@ class NotificationFactory extends Factory
     {
         return [
             'type' => 'App\\Notifications\\CustomNotification',
-            'data' => [
-                'subject' => $this->faker->jobTitle(),
-                'content' => $this->faker->paragraph(),
-            ],
+            'subject' => $this->faker->jobTitle(),
+            'message' => $this->faker->paragraph(),
+            'data' => [],
             'read_at' => Date::now(),
         ];
     }

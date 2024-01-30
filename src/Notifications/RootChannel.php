@@ -11,7 +11,10 @@ class RootChannel
      */
     public function send(object $notifiable, Notification $notification): void
     {
-        $data = $notification->toRoot($notifiable)->toArray();
+        $data = array_merge(
+            ['type' => $notification::class],
+            $notification->toRoot($notifiable)->toArray()
+        );
 
         $notifiable->rootNotifications()->create($data);
     }
