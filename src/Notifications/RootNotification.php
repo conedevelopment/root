@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace Cone\Root\Notifications;
 
 use Cone\Root\Notifications\RootChannel;
 use Cone\Root\Notifications\RootMessage;

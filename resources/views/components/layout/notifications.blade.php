@@ -32,11 +32,7 @@
                 <div
                     class="notification-card"
                     x-data="{ open: false }"
-                    x-bind:class="{
-                        'notification-card--unread': ! notification.is_read,
-                        'notification-card--read': notification.is_read,
-                        'notification-card--open': open,
-                    }"
+                    x-bind:class="{ 'notification-card--open': open }"
                 >
                     <div class="notification-card__header">
                         <div class="notification-card__caption">
@@ -44,10 +40,10 @@
                             <p x-text="notification.formatted_created_at"></p>
                         </div>
                         <button
-                            x-on:click="open = ! open"
                             aria-label="{{ __('Toggle notification') }}"
-                            x-bind:aria-describedby="notification.id"
                             class="btn btn--primary btn--sm btn--icon notification-card__control"
+                            x-bind:aria-describedby="notification.id"
+                            x-on:click="open = ! open; markAsRead(notification)"
                         >
                             <x-root::icon name="plus" class="btn__icon" />
                         </button>
