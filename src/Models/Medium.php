@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class Medium extends Model implements Contract
@@ -200,17 +201,7 @@ class Medium extends Model implements Contract
     protected function formattedSize(): Attribute
     {
         return new Attribute(
-            get: static function (mixed $value, array $attributes): string {
-                if ($attributes['size'] === 0) {
-                    return '0 KB';
-                }
-
-                $units = ['KB', 'MB', 'GB', 'TB', 'PB'];
-
-                $index = floor(log($attributes['size'], 1024));
-
-                return sprintf('%.1f %s', round($attributes['size'] / pow(1024, $index), 1), $units[$index]);
-            }
+            get: fn (): string => Number::fileSize($this->size ?: 0)
         );
     }
 
