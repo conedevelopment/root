@@ -23,6 +23,7 @@ class Notification extends DatabaseNotification implements Contract
      * @var array
      */
     protected $appends = [
+        'content',
         'formatted_created_at',
         'is_read',
         'subject',
@@ -61,6 +62,20 @@ class Notification extends DatabaseNotification implements Contract
     }
 
     /**
+     * Get the content attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<string, never>
+     */
+    protected function content(): Attribute
+    {
+        return new Attribute(
+            get: function (): string {
+                return $this->data['content'] ?? '';
+            }
+        );
+    }
+
+    /**
      * Get the subject attribute.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<string|null, never>
@@ -85,7 +100,7 @@ class Notification extends DatabaseNotification implements Contract
     }
 
     /**
-     * Get the formatted created at attribute.
+     * Get the is read at attribute.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<bool, never>
      */
