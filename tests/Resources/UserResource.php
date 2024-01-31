@@ -3,6 +3,7 @@
 namespace Cone\Root\Tests\Resources;
 
 use Cone\Root\Fields\Email;
+use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Media;
 use Cone\Root\Fields\Text;
@@ -32,6 +33,18 @@ class UserResource extends Resource
             Email::make('Email')->searchable(),
             Text::make('Password')->visibleOn(['create', 'update']),
             Media::make('Media'),
+            HasMany::make('Uploads')
+                ->display('file_name')
+                ->asSubResource()
+                ->withFields(function () {
+                    return [
+                        Text::make('Name'),
+                        Text::make('File Name'),
+                        Text::make('Size'),
+                        Text::make('Disk'),
+                        Text::make('Mime Type'),
+                    ];
+                }),
         ];
     }
 

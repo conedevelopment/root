@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5068d014f1230bc59ddb7ebe7c97e8a3",
+    "content-hash": "42c66fa01e6f82c2fa5d1aa5d6e6ad3a",
     "packages": [
         {
             "name": "brick/math",
@@ -722,20 +722,20 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.42.0",
+            "version": "v10.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "fef1aff874a6749c44f8e142e5764eab8cb96890"
+                "reference": "4f7802dfc9993cb57cf69615491ce1a7eb2e9529"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/fef1aff874a6749c44f8e142e5764eab8cb96890",
-                "reference": "fef1aff874a6749c44f8e142e5764eab8cb96890",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/4f7802dfc9993cb57cf69615491ce1a7eb2e9529",
+                "reference": "4f7802dfc9993cb57cf69615491ce1a7eb2e9529",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.9.3|^0.10.2|^0.11",
+                "brick/math": "^0.9.3|^0.10.2|^0.11|^0.12",
                 "composer-runtime-api": "^2.2",
                 "doctrine/inflector": "^2.0.5",
                 "dragonmantank/cron-expression": "^3.3.2",
@@ -923,7 +923,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-01-23T15:07:56+00:00"
+            "time": "2024-01-30T16:25:02+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -5460,12 +5460,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/laravel.git",
-                "reference": "2254e8e301cfcbf8983c2f7cfa8b7c63549b73c7"
+                "reference": "20261731467a6adc9393189d75b6e2362e1c31c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/2254e8e301cfcbf8983c2f7cfa8b7c63549b73c7",
-                "reference": "2254e8e301cfcbf8983c2f7cfa8b7c63549b73c7",
+                "url": "https://api.github.com/repos/laravel/laravel/zipball/20261731467a6adc9393189d75b6e2362e1c31c0",
+                "reference": "20261731467a6adc9393189d75b6e2362e1c31c0",
                 "shasum": ""
             },
             "require": {
@@ -5510,7 +5510,7 @@
             "support": {
                 "source": "https://github.com/laravel/laravel/tree/10.x"
             },
-            "time": "2024-01-09T18:22:37+00:00"
+            "time": "2024-01-29T14:39:12+00:00"
         },
         {
             "name": "laravel/pint",
