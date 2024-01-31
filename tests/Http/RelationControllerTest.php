@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Tests\Http\Controllers;
+namespace Cone\Root\Tests\Http;
 
 use Cone\Root\Fields\HasMany;
 use Cone\Root\Models\Medium;
