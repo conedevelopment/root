@@ -787,6 +787,7 @@ abstract class Relation extends Field implements Form
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->make(),
             'action' => $this->modelUrl($model),
+            'uploads' => $this->hasFileField($request),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -833,6 +834,7 @@ abstract class Relation extends Field implements Form
             'model' => $related,
             'action' => $this->relatedUrl($model, $related),
             'method' => 'PATCH',
+            'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)

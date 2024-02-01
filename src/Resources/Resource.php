@@ -532,6 +532,7 @@ abstract class Resource implements Arrayable, Form
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
             'method' => 'POST',
+            'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $model)
@@ -590,6 +591,7 @@ abstract class Resource implements Arrayable, Form
             'model' => $model,
             'action' => $this->modelUrl($model),
             'method' => 'PATCH',
+            'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $model)

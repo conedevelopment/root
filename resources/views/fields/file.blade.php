@@ -1,4 +1,4 @@
-<div class="form-group--row">
+<div class="form-group--row" x-data="{ selection: {{ json_encode($options) }} }">
     <label class="form-label" for="{{ $attrs->get('id') }}">
         {{ $label }}
         @if($attrs->get('required'))
@@ -6,13 +6,11 @@
         @endif
     </label>
     <input {{ $attrs }}>
-    @if(! empty($options))
-        <ul class="file-list__items">
-            @foreach($options as $option)
-                <li>{!! $option['html'] !!}</li>
-            @endforeach
-        </ul>
-    @endif
+    <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
+        <template x-for="(item, index) in selection" :key="item.uuid">
+            <li x-html="item.html"></li>
+        </template>
+    </ul>
     @if($invalid)
         <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
     @endif

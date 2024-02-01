@@ -5,7 +5,13 @@
 
 {{-- Content --}}
 @section('content')
-    <form id="{{ $key }}" method="POST" action="{{ $action }}" autocomplete="off">
+    <form
+        id="{{ $key }}"
+        method="POST"
+        action="{{ $action }}"
+        autocomplete="off"
+        @if($uploads) enctype="multipart/form-data" @endif
+    >
         @csrf
         @method($method)
         <div class="l-row">

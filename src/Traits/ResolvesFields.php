@@ -5,6 +5,8 @@ namespace Cone\Root\Traits;
 use Closure;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Fields;
+use Cone\Root\Fields\File;
+use Cone\Root\Fields\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -36,6 +38,20 @@ trait ResolvesFields
         $this->fieldsResolver = $callback;
 
         return $this;
+    }
+
+    /**
+     * Determine if the object has file field.
+     */
+    public function hasFileField(Request $request): bool
+    {
+        return $this->resolveFields($request)
+            ->subResource(false)
+            ->visible(['update', 'create'])
+            ->some(static function (Field $field) use ($request): bool {
+                return $field instanceof File && ! $field instanceof Media
+                    || (in_array(ResolvesFields::class, class_uses_recursive($field)) && $field->hasFileField($request));
+            });
     }
 
     /**
