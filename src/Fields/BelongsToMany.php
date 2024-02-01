@@ -151,6 +151,14 @@ class BelongsToMany extends Relation
     {
         $value = (array) parent::getValueForHydrate($request);
 
+        return $this->mergePivotValues($value);
+    }
+
+    /**
+     * Merge the pivot values.
+     */
+    public function mergePivotValues(array $value): mixed
+    {
         $value = Arr::isList($value) ? array_fill_keys($value, []) : $value;
 
         return array_map(function (array $pivot): array {
