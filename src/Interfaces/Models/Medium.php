@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Interfaces\Models;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 interface Medium
 {
     /**
@@ -23,4 +25,9 @@ interface Medium
      * Get the url to the conversion.
      */
     public function getUrl(?string $conversion = null): string;
+
+    /**
+     * Download the medium.
+     */
+    public function download(?string $conversion = null): BinaryFileResponse;
 }

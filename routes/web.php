@@ -1,11 +1,15 @@
 <?php
 
 use Cone\Root\Http\Controllers\DashboardController;
+use Cone\Root\Http\Controllers\DownloadController;
 use Cone\Root\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard
 Route::get('/', DashboardController::class)->name('dashboard');
+
+// Download
+Route::get('/download/{medium:uuid}', DownloadController::class)->name('download');
 
 // Resource
 Route::get('/{resource}', [ResourceController::class, 'index'])->name('resource.index');

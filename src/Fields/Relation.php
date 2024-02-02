@@ -323,21 +323,29 @@ abstract class Relation extends Field implements Form
             $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($model);
 
-                return Collection::wrap($default)->map(function (Model $related) use ($request): mixed {
-                    $resource = Root::instance()->resources->forModel($related);
-
-                    $value = $this->resolveDisplay($related);
-
-                    if (! is_null($resource) && $related->exists && $request->user()->can('view', $related)) {
-                        $value = sprintf('<a href="%s" data-turbo-frame="_top">%s</a>', $resource->modelUrl($related), $value);
-                    }
-
-                    return $value;
-                })->join(', ');
+                return Collection::wrap($default)->map(function (Model $related) use ($model, $request): mixed {
+                    return $this->formatRelated($request, $model, $related);
+                })->filter()->join(', ');
             };
         }
 
         return parent::resolveFormat($request, $model);
+    }
+
+    /**
+     * Format the related model.
+     */
+    public function formatRelated(Request $request, Model $model, Model $related): ?string
+    {
+        $resource = Root::instance()->resources->forModel($related);
+
+        $value = $this->resolveDisplay($related);
+
+        if (! is_null($resource) && $related->exists && $resource->resolveAbility('view', $request, $related)) {
+            $value = sprintf('<a href="%s" data-turbo-frame="_top">%s</a>', $resource->modelUrl($related), $value);
+        }
+
+        return $value;
     }
 
     /**

@@ -17,10 +17,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class Medium extends Model implements Contract
 {
@@ -277,6 +279,14 @@ class Medium extends Model implements Contract
     public function hasConversion(string $conversion): bool
     {
         return in_array($conversion, $this->properties['conversions'] ?? []);
+    }
+
+    /**
+     * Download the medium.
+     */
+    public function download(?string $conversion = null): BinaryFileResponse
+    {
+        return Response::download($this->getAbsolutePath($conversion));
     }
 
     /**

@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 
 class File extends MorphToMany
@@ -102,12 +103,26 @@ class File extends MorphToMany
         if (is_null($this->displayResolver)) {
             $this->display(function (Medium $related): string {
                 return $related->isImage
-                    ? sprintf('<img src="%s" width="30" height="30">', $related->getUrl($this->displayConversion))
-                    : sprintf('<a href="%s">%s</a>', $related->getUrl(), $related->file_name);
+                    ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
+                    : $related->file_name;
             });
         }
 
         return parent::resolveDisplay($related);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function formatRelated(Request $request, Model $model, Model $related): ?string
+    {
+        $value = $this->resolveDisplay($related);
+
+        if ($related->isImage || ! $this->resolveAbility('view', $request, $model, $related)) {
+            return $value;
+        }
+
+        return sprintf('<a href="%s" download>%s</a>', URL::signedRoute('root.download', $related), $value);
     }
 
     /**
