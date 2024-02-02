@@ -198,10 +198,7 @@ class File extends MorphToMany
                 return $this->store($request, $model, $file)['value'];
             }, $files);
 
-            $value = array_replace(
-                (array) $value,
-                $this->mergePivotValues($ids)
-            );
+            $value += $this->mergePivotValues($ids);
 
             $this->resolveHydrate($request, $model, $value);
 
