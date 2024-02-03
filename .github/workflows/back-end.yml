@@ -129,7 +129,7 @@ jobs:
                 dependency-versions: "locked"
         -
             name: "Check PSR-4 mapping 🐌"
-            run: "composer dump-autoload --optimize --strict-psr"
+            run: "composer dump-autoload --dev --optimize --strict-psr"
         -
             # https://github.com/phpstan/phpstan/issues/9475
             name: "Search for $this->$this typo 🐌"
