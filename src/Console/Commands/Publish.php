@@ -26,13 +26,13 @@ class Publish extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(): void
     {
         if ($this->option('packages')) {
             $this->packages();
         }
 
-        return $this->call('vendor:publish', array_merge(
+        $this->call('vendor:publish', array_merge(
             ['--provider' => RootServiceProvider::class],
             $this->option('force') ? ['--force' => true] : [],
             ['--tag' => $this->option('tag') ?: ['root-compiled']]

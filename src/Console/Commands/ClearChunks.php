@@ -26,7 +26,7 @@ class ClearChunks extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(): void
     {
         $now = time();
 
@@ -45,7 +45,5 @@ class ClearChunks extends Command
         }
 
         $this->info(sprintf('%d chunks are cleared!', $count));
-
-        return Command::SUCCESS;
     }
 }

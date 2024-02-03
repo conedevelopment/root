@@ -27,21 +27,19 @@ class Install extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $status = $this->call('migrate');
+        $this->call('migrate');
 
         File::ensureDirectoryExists(Config::get('root.media.tmp_dir'));
 
         if ($this->option('seed')) {
-            $status = $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
+            $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
         }
 
-        $status = $this->call('vendor:publish', ['--tag' => ['root-provider', 'root-user-resource']]);
+        $this->call('vendor:publish', ['--tag' => ['root-provider', 'root-user-resource']]);
 
         $this->registerServiceProvider();
-
-        return $status;
     }
 
     /**
