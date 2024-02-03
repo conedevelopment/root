@@ -9,12 +9,10 @@
   background-color: color('background');
   border: 1px solid color('border');
   border-radius: config('border-radius-sm', $display);
-  box-shadow: 0 0 spacer('xxs') hsl(201deg 72% 32% / 5%);
+  box-shadow: 0 0 spacer('xxs') hsl(200deg 72% 33% / 5%);
+  font-size: 0.938rem;
   inline-size: var(--inline-size);
-  opacity: 0;
   position: absolute;
-  scale: 0.85;
-  visibility: hidden;
   z-index: 10;
 
   &--inline-start {
@@ -23,12 +21,6 @@
 
   &--inline-end {
     inset: var(--inset-block-start) 0 auto auto;
-  }
-
-  &[data-state='open'] {
-    opacity: 1;
-    scale: 1;
-    visibility: visible;
   }
 
   > li {

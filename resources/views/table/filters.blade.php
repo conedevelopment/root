@@ -12,7 +12,7 @@
                     <span class="btn__counter">{{ $activeFilters }}</span>
                 @endif
             </button>
-            <div class="context-menu context-menu--inline-end" x-bind:class="{ 'is-open': open }">
+            <div x-cloak x-show="open" x-transition class="context-menu context-menu--inline-end">
                 <div class="form-group-stack form-group-stack--bordered form-group-container">
                     @foreach($filters as $filter)
                         @include($filter['template'], $filter)
