@@ -165,11 +165,19 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
+     * Handle the request.
+     */
+    public function handleFormRequest(Request $request, Model $model): void
+    {
+        $this->validateFormRequest($request, $model);
+    }
+
+    /**
      * Perform the action.
      */
     public function perform(Request $request): Response
     {
-        $this->validateFormRequest($request, $this->getQuery()->getModel());
+        $this->handleFormRequest($request, $this->getQuery()->getModel());
 
         $this->handle(
             $request,

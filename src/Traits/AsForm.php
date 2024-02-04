@@ -24,14 +24,7 @@ trait AsForm
     /**
      * Handle the request.
      */
-    public function handleFormRequest(Request $request, Model $model): void
-    {
-        $this->validateFormRequest($request, $model);
-
-        $this->resolveFields($request)->persist($request, $model);
-
-        $model->save();
-    }
+    abstract public function handleFormRequest(Request $request, Model $model): void;
 
     /**
      * Validate the request.
