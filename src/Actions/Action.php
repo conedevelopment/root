@@ -170,6 +170,11 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function handleFormRequest(Request $request, Model $model): void
     {
         $this->validateFormRequest($request, $model);
+
+        $this->handle(
+            $request,
+            $request->boolean('all') ? $this->getQuery()->get() : $this->getQuery()->findMany($request->input('models', []))
+        );
     }
 
     /**
@@ -178,11 +183,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function perform(Request $request): Response
     {
         $this->handleFormRequest($request, $this->getQuery()->getModel());
-
-        $this->handle(
-            $request,
-            $request->boolean('all') ? $this->getQuery()->get() : $this->getQuery()->findMany($request->input('models', []))
-        );
 
         return Redirect::back()->with(
             sprintf('alerts.action-%s', $this->getKey()),

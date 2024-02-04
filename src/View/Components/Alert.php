@@ -34,6 +34,10 @@ class Alert extends Component
         return $this->view('root::components.alert', [
             'type' => $this->type,
             'closable' => $this->closable,
+            'class' => match ($this->type) {
+                'error' => 'alert--danger',
+                default => 'alert--'.$this->type,
+            },
         ]);
     }
 }

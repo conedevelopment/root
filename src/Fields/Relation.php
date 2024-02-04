@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
@@ -24,9 +25,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\Relation
@@ -557,14 +560,26 @@ abstract class Relation extends Field implements Form
     {
         $this->validateFormRequest($request, $model);
 
-        $this->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible($request->isMethod('POST') ? 'create' : 'update')
-            ->persist($request, $model);
+        try {
+            DB::beginTransaction();
 
-        $model->save();
+            $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->persist($request, $model);
 
-        $this->saved($request, $model);
+            $model->save();
+
+            $this->saved($request, $model);
+
+            DB::commit();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            DB::rollback();
+
+            throw new SaveFormDataException($exception->getMessage());
+        }
     }
 
     /**

@@ -2,17 +2,22 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Alert;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider
@@ -75,6 +80,14 @@ class RootServiceProvider extends ServiceProvider
 
         $this->registerViews();
         $this->registerRoutes();
+
+        $this->app->make(ExceptionHandler::class)->renderable(
+            static function (SaveFormDataException $exception): RedirectResponse {
+                return Redirect::back()
+                    ->withInput()
+                    ->with('alerts.form-save', Alert::error($exception->getMessage()));
+            }
+        );
     }
 
     /**

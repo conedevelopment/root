@@ -3,6 +3,7 @@
 namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
+use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Filters\Filter;
@@ -31,8 +32,10 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Throwable;
 
 abstract class Resource implements Arrayable, Form
 {
@@ -416,14 +419,26 @@ abstract class Resource implements Arrayable, Form
     {
         $this->validateFormRequest($request, $model);
 
-        $this->resolveFields($request)
-            ->authorized($request, $model)
-            ->visible($request->isMethod('POST') ? 'create' : 'update')
-            ->persist($request, $model);
+        try {
+            DB::beginTransaction();
 
-        $model->save();
+            $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->persist($request, $model);
 
-        $this->saved($request, $model);
+            $model->save();
+
+            $this->saved($request, $model);
+
+            DB::commit();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            DB::rollBack();
+
+            throw new SaveFormDataException($exception->getMessage());
+        }
     }
 
     /**
