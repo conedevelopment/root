@@ -34,9 +34,11 @@
                     <x-root::icon name="close" class="btn__icon" />
                 </button>
             </div>
-            <div class="modal__body">
-                {{ $slot }}
-            </div>
+            @if($slot->isNotEmpty())
+                <div class="modal__body">
+                    {{ $slot }}
+                </div>
+            @endif
             @isset($footer)
                 <div {{ $footer->attributes->class(['modal__footer']) }}>
                     {{ $footer }}

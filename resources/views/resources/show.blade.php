@@ -6,7 +6,9 @@
 {{-- Actions --}}
 @section('actions')
     @if(! empty($actions))
-        @include('root::actions.actions')
+        <div x-data="{ selection: [{{ $model->getKey() }}], selectedAllMatchingQuery: false }">
+            @include('root::actions.actions')
+        </div>
     @endif
     @if($abilities['delete'])
         <form method="POST" action="{{ $action }}" onsubmit="return window.confirm('{{ __('Are you sure?') }}');">

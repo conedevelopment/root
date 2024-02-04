@@ -122,6 +122,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected function resolveField(Request $request, Field $field): void
     {
         $field->setAttribute('form', $this->getKey());
+        $field->id($this->getKey().'-'.$field->getAttribute('id'));
         $field->resolveErrorsUsing(function (Request $request): MessageBag {
             return $this->errors($request);
         });
