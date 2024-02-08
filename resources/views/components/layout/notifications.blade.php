@@ -54,9 +54,9 @@
                 </div>
             </template>
         </div>
-        <template x-if="unread > 0">
-            <button type="button" class="btn btn--primary btn--block">
-                {{ __('Mark all as read') }}
+        <template x-if="nextPageUrl">
+            <button type="button" class="btn btn--primary btn--block" x-on:click="fetch">
+                {{ __('Load more') }}
             </button>
         </template>
     </div>
