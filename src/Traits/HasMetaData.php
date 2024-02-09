@@ -14,4 +14,12 @@ trait HasMetaData
     {
         return $this->morphMany(Meta::getProxiedClass(), 'metable');
     }
+
+    /**
+     * Get the meta value of the given key.
+     */
+    public function metaValue(string $key): mixed
+    {
+        return $this->metaData->firstWhere('key', $key)?->value;
+    }
 }
