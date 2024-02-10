@@ -22,7 +22,6 @@ class URL extends Text
         parent::__construct($label, $modelAttribute);
 
         $this->type('url');
-        $this->rules(['string', 'url']);
 
         $this->textResolver = fn (): string => 'URL';
     }

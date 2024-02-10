@@ -14,6 +14,5 @@ class Email extends Text
         parent::__construct($label, $modelAttribute);
 
         $this->type('email');
-        $this->rules(['string', 'email']);
     }
 }
