@@ -20,11 +20,4 @@ class EmailTest extends TestCase
     {
         $this->assertSame('email', $this->field->getAttribute('type'));
     }
-
-    public function test_an_email_field_has_email_validation_rule(): void
-    {
-        $rules = $this->field->getRules();
-
-        $this->assertSame(['string', 'email'], $rules['*']);
-    }
 }

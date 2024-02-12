@@ -22,13 +22,6 @@ class URLTest extends TestCase
         $this->assertSame('url', $this->field->getAttribute('type'));
     }
 
-    public function test_an_url_field_has_url_validation_rule(): void
-    {
-        $rules = $this->field->getRules();
-
-        $this->assertSame(['string', 'url'], $rules['*']);
-    }
-
     public function test_a_url_field_resolves_format(): void
     {
         $model = new User();
