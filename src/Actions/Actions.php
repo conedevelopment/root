@@ -40,6 +40,16 @@ class Actions extends Collection
     }
 
     /**
+     * Filter the standalone actions.
+     */
+    public function standalone(bool $value = true): static
+    {
+        return $this->filter(static function (Action $action) use ($value): bool {
+            return $value ? $action->isStandalone() : ! $action->isStandalone();
+        });
+    }
+
+    /**
      * Map the action to forms.
      */
     public function mapToForms(Request $request, Model $model): array

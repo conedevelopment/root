@@ -53,6 +53,11 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected bool $confirmable = false;
 
     /**
+     * Indicates if the action is standalone.
+     */
+    protected bool $standalone = false;
+
+    /**
      * The Eloquent query.
      */
     protected ?Builder $query = null;
@@ -162,6 +167,24 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function isConfirmable(): bool
     {
         return $this->confirmable;
+    }
+
+    /**
+     * Set the standalone property.
+     */
+    public function standalone(bool $value = true): static
+    {
+        $this->standalone = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the action is standalone.
+     */
+    public function isStandalone(): bool
+    {
+        return $this->standalone;
     }
 
     /**

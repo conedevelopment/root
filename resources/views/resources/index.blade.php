@@ -5,6 +5,11 @@
 
 {{-- Actions --}}
 @section('actions')
+    @if(! empty($standaloneActions))
+        <div x-data="{ selection: [], selectedAllMatchingQuery: false }">
+            @include('root::actions.actions', ['actions' => $standaloneActions])
+        </div>
+    @endif
     @if($abilities['create'])
         <a href="{{ $url }}/create" class="btn btn--primary btn--icon">
             <x-root::icon name="plus" class="btn__icon" />

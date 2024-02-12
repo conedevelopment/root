@@ -788,9 +788,14 @@ abstract class Relation extends Field implements Form
             'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
             'model' => $this->getRelation($model)->make(),
+            'standaloneActions' => $this->resolveActions($request)
+                ->authorized($request, $model)
+                ->standalone()
+                ->mapToForms($request, $model),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->visible('index')
+                ->standalone(false)
                 ->mapToForms($request, $model),
             'data' => $this->paginate($request, $model)->through(function (Model $related) use ($request, $model): array {
                 return $this->mapRelated($request, $model, $related);
@@ -848,6 +853,7 @@ abstract class Relation extends Field implements Form
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $related)
                 ->visible('show')
+                ->standalone(false)
                 ->mapToForms($request, $related),
             'abilities' => array_merge(
                 $this->mapRelationAbilities($request, $model),
