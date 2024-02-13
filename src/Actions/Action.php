@@ -194,10 +194,13 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     {
         $this->validateFormRequest($request, $model);
 
-        $this->handle(
-            $request,
-            $request->boolean('all') ? $this->getQuery()->get() : $this->getQuery()->findMany($request->input('models', []))
-        );
+        $models = match (true) {
+            $this->isStandalone() => new Collection([$model]),
+            $request->boolean('all') => $this->getQuery()->get(),
+            default => $this->getQuery()->findMany($request->input('models', [])),
+        };
+
+        $this->handle($request, $models);
     }
 
     /**
