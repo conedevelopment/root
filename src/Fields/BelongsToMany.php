@@ -43,6 +43,7 @@ class BelongsToMany extends Relation
         parent::__construct($label, $modelAttribute, $relation);
 
         $this->setAttribute('multiple', true);
+        $this->name(sprintf('%s[]', $this->getAttribute('name')));
     }
 
     /**
