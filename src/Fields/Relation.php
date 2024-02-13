@@ -405,7 +405,11 @@ abstract class Relation extends Field implements Form
      */
     public function resolveRelatableQuery(Request $request, Model $model): Builder
     {
-        $query = $this->getRelation($model)->getRelated()->newQuery();
+        $query = $this->getRelation($model)
+            ->getRelated()
+            ->newQuery()
+            ->with($this->with)
+            ->withCount($this->withCount);
 
         foreach (static::$scopes[static::class] ?? [] as $scope) {
             $query = call_user_func_array($scope, [$request, $query, $model]);
@@ -511,9 +515,7 @@ abstract class Relation extends Field implements Form
         $relation = $this->getRelation($model);
 
         return $this->resolveFilters($request)
-            ->apply($request, $relation->getQuery())
-            ->with($this->with)
-            ->withCount($this->withCount)
+            ->apply($request, $this->resolveRelatableQuery($request, $model))
             ->latest()
             ->paginate($request->input($this->getPerPageKey(), $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
