@@ -1,6 +1,10 @@
 <fieldset>
     <legend>{{ $label }}</legend>
-    @foreach($fields as $field)
-        @include($field['template'], $field)
-    @endforeach
+    @if(empty($fields))
+        <x-root::alert>{{ __('No available fields.') }}</x-root::alert>
+    @else
+        @foreach($fields as $field)
+            @include($field['template'], $field)
+        @endforeach
+    @endif
 </fieldset>
