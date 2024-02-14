@@ -515,7 +515,9 @@ abstract class Relation extends Field implements Form
         $relation = $this->getRelation($model);
 
         return $this->resolveFilters($request)
-            ->apply($request, $this->resolveRelatableQuery($request, $model))
+            ->apply($request, $relation->getQuery())
+            ->with($this->with)
+            ->withCount($this->withCount)
             ->latest()
             ->paginate($request->input($this->getPerPageKey(), $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()))
             ->withQueryString();
