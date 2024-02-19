@@ -137,9 +137,7 @@ class Repeater extends Field
                 $field->setModelAttribute($attribute)
                     ->name($attribute)
                     ->id($attribute)
-                    ->value(static function () use ($tmpModel, $key): mixed {
-                        return $tmpModel->getAttribute($key);
-                    });
+                    ->value(fn (): mixed => $tmpModel->getAttribute($key));
             });
 
             return $fields;

@@ -1,4 +1,10 @@
 <div id="notifications" class="app-notification" x-data="notifications('{{ $url }}')" x-on:click.outside="open = false" data-turbo-permanent>
+    <div
+        class="app-notification__backdrop"
+        x-on:click="open = ! open"
+        x-transition
+        x-show="open"
+    ></div>
     <button
         class="btn btn--light btn--icon btn--counter app-notification__toggle"
         aria-label="{{ __('Notifications') }}"

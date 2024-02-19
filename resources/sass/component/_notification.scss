@@ -3,6 +3,14 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-notification {
+  &__backdrop {
+    background-color: color('background', 'modal');
+    block-size: 100dvh;
+    inset: 0;
+    position: fixed;
+    z-index: 25;
+  }
+
   &__drawer {
     @include transition;
     background-color: color('background');

@@ -37,7 +37,7 @@
                     <div class="table-responsive">
                         <table class="table">
                             @foreach($fields as $field)
-                                <tr>
+                                <tr class="vertical-align:top">
                                     <th>{{ $field['label'] }}</th>
                                     @include('root::table.cell', $field)
                                 </tr>
