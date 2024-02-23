@@ -5,12 +5,16 @@
             <span class="required-marker">*</span>
         @endif
     </label>
-    <input {{ $attrs }}>
-    <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
-        <template x-for="(item, index) in selection" :key="item.uuid">
-            <li x-html="item.html"></li>
-        </template>
-    </ul>
+    <div class="file-list">
+        <div class="form-group">
+            <input {{ $attrs }}>
+        </div>
+        <ul class="file-list__items" x-show="selection.length > 0" x-cloak>
+            <template x-for="(item, index) in selection" :key="item.uuid">
+                <li x-html="item.html"></li>
+            </template>
+        </ul>
+    </div>
     @if($invalid)
         <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
     @endif

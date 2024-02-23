@@ -69,6 +69,9 @@
         </main>
     </div>
 
+    {{-- Notifications --}}
+    <x-root::layout.notifications />
+
     {{-- Modals --}}
     <div id="modals"></div>
 

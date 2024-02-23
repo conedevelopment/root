@@ -12,6 +12,36 @@
   display: flex;
   justify-content: space-between;
 
+  &--welcome {
+    --column: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--column), minmax(0, 1fr));
+
+    > * {
+      block-size: 100%;
+    }
+
+    > * + * {
+      border-block-start: 1px solid color('border');
+    }
+
+    @include breakpoint('lg') {
+      --column: 2;
+
+      > * {
+        border-block-start: none;
+      }
+
+      > *:not(:nth-last-of-type(1), :nth-last-of-type(2)) {
+        border-block-end: 1px solid color('border');
+      }
+
+      > *:nth-of-type(even) {
+        border-inline-start: 1px solid color('border');
+      }
+    }
+  }
+
   &--primary {
     background-color: color('primary');
     border: 0;

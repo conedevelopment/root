@@ -1,0 +1,48 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.welcome-card {
+  @include a11y-card-link('.welcome-card__link', true);
+  $this: &;
+  display: flex;
+  gap: spacer('m');
+  padding: spacer-clamp('m', 2rem);
+
+  &__icon {
+    --size: 3rem;
+    align-items: center;
+    background-color: color('icon-background', 'widget');
+    block-size: var(--size);
+    border-radius: config('border-radius-sm', $display);
+    color: color('primary');
+    display: flex;
+    flex-shrink: 0;
+    inline-size: var(--size);
+    justify-content: center;
+
+    svg {
+      --size: 1.4rem;
+      block-size: var(--size);
+      inline-size: var(--size);
+    }
+  }
+
+  &__title {
+    font-size: font-size('h4');
+    font-weight: 600;
+    margin-block: 0;
+  }
+
+  &__link {
+    color: color('heading');
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: color('heading');
+    }
+  }
+
+  &__body {
+    @include layout-stack('xs');
+  }
+}

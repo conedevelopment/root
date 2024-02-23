@@ -133,6 +133,12 @@
 
   &__title {
     font-size: config('font-size-base', $typography);
+
+    .notification-dot {
+      inset-block-start: -0.1em;
+      margin-inline-end: spacer('xxs');
+      position: relative;
+    }
   }
 
   &__link {

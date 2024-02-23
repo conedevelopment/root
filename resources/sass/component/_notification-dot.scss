@@ -1,0 +1,23 @@
+@use 'sprucecss/scss/spruce' as *;
+
+.notification-dot {
+  --size: 1em;
+  background-color: color('success', 'alert');
+  block-size: calc(var(--size) / 2);
+  border-radius: 50%;
+  display: inline-flex;
+  inline-size: calc(var(--size) / 2);
+  margin-left: 10px;
+  position: relative;
+
+  &::before {
+    block-size: var(--size);
+    border: 3px solid color('success', 'alert');
+    border-radius: 50%;
+    content: '';
+    inline-size: var(--size);
+    inset: calc(var(--size) / 4 * -1) auto auto calc(var(--size) / 4 * -1);
+    opacity: 0;
+    position: absolute;
+  }
+}
