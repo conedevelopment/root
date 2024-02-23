@@ -42,6 +42,11 @@ abstract class Field implements Arrayable, JsonSerializable
     protected ?Closure $formatResolver = null;
 
     /**
+     * The default value resolver callback.
+     */
+    protected ?Closure $defaultValueResolver = null;
+
+    /**
      * The value resolver callback.
      */
     protected ?Closure $valueResolver = null;
@@ -343,6 +348,20 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Set the default value resolver.
+     */
+    public function default(mixed $value): static
+    {
+        if (! $value instanceof Closure) {
+            $value = fn (): mixed => $value;
+        }
+
+        $this->defaultValueResolver = $value;
+
+        return $this;
+    }
+
+    /**
      * Set the value resolver.
      */
     public function value(?Closure $callback = null): static
@@ -362,6 +381,10 @@ abstract class Field implements Arrayable, JsonSerializable
         }
 
         $value = $this->getValue($model);
+
+        if (! is_null($this->defaultValueResolver)) {
+            $value = call_user_func_array($this->defaultValueResolver, [$request, $model]);
+        }
 
         if (is_null($this->valueResolver)) {
             return $value;
