@@ -39,7 +39,7 @@ class Meta extends MorphOne
 
         parent::__construct($label, $modelAttribute, $relation);
 
-        $this->asText();
+        $this->as(Text::class);
     }
 
     /**
@@ -50,6 +50,14 @@ class Meta extends MorphOne
         return $this->relation instanceof Closure
             ? sprintf('__root_%s', $this->getModelAttribute())
             : $this->relation;
+    }
+
+    /**
+     * Get the field instance.
+     */
+    public function getField(): Field
+    {
+        return $this->field;
     }
 
     /**
@@ -68,118 +76,6 @@ class Meta extends MorphOne
         }
 
         return $this;
-    }
-
-    /**
-     * Set the meta field as boolean.
-     */
-    public function asBoolean(?Closure $callback = null): static
-    {
-        return $this->as(Boolean::class, $callback);
-    }
-
-    /**
-     * Set the meta field as checkbox.
-     */
-    public function asCheckbox(?Closure $callback = null): static
-    {
-        return $this->as(Checkbox::class, $callback);
-    }
-
-    /**
-     * Set the meta field as color.
-     */
-    public function asColor(?Closure $callback = null): static
-    {
-        return $this->as(Color::class, $callback);
-    }
-
-    /**
-     * Set the meta field as date.
-     */
-    public function asDate(?Closure $callback = null): static
-    {
-        return $this->as(Date::class, $callback);
-    }
-
-    /**
-     * Set the meta field as editor.
-     */
-    public function asEditor(?Closure $callback = null): static
-    {
-        return $this->as(Editor::class, $callback);
-    }
-
-    /**
-     * Set the meta field as hidden.
-     */
-    public function asHidden(?Closure $callback = null): static
-    {
-        return $this->as(Hidden::class, $callback);
-    }
-
-    /**
-     * Set the meta field as number.
-     */
-    public function asNumber(?Closure $callback = null): static
-    {
-        return $this->as(Number::class, $callback);
-    }
-
-    /**
-     * Set the meta field as radio.
-     */
-    public function asRadio(?Closure $callback = null): static
-    {
-        return $this->as(Radio::class, $callback);
-    }
-
-    /**
-     * Set the meta field as range.
-     */
-    public function asRange(?Closure $callback = null): static
-    {
-        return $this->as(Range::class, $callback);
-    }
-
-    /**
-     * Set the meta field as select.
-     */
-    public function asSelect(?Closure $callback = null): static
-    {
-        return $this->as(Select::class, $callback);
-    }
-
-    /**
-     * Set the meta field as tag.
-     */
-    public function asTag(?Closure $callback = null): static
-    {
-        return $this->as(Tag::class, $callback);
-    }
-
-    /**
-     * Set the meta field as text.
-     */
-    public function asText(?Closure $callback = null): static
-    {
-        return $this->as(Text::class, $callback);
-    }
-
-    /**
-     * Set the meta field as textarea.
-     */
-    public function asTextarea(?Closure $callback = null): static
-    {
-        return $this->as(Textarea::class, $callback);
-    }
-
-    /**
-     * Set the meta field as URL.
-     */
-    public function asUrl(?Closure $callback = null): static
-    {
-        return $this->as(URL::class, $callback);
     }
 
     /**
@@ -243,14 +139,6 @@ class Meta extends MorphOne
         }
 
         parent::resolveHydrate($request, $model, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray(): array
-    {
-        return $this->field->toArray();
     }
 
     /**
