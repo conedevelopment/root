@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\NotificationFactory;
 use Cone\Root\Interfaces\Models\Notification as Contract;
+use Cone\Root\Support\Filters;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -67,7 +68,13 @@ class Notification extends DatabaseNotification implements Contract
     protected function formattedCreatedAt(): Attribute
     {
         return new Attribute(
-            get: fn (): ?string => $this->created_at?->isoFormat('YYYY. MMMM DD. HH:mm'),
+            get: function (): ?string {
+                return Filters::apply(
+                    'root:notification.formatted_created_at_attribute',
+                    $this->created_at?->isoFormat('YYYY. MMMM DD. HH:mm'),
+                    $this
+                );
+            }
         );
     }
 
@@ -79,7 +86,13 @@ class Notification extends DatabaseNotification implements Contract
     protected function isRead(): Attribute
     {
         return new Attribute(
-            get: fn (): bool => ! is_null($this->read_at),
+            get: function (): bool {
+                return Filters::apply(
+                    'root:notification.is_read_attribute',
+                    ! is_null($this->read_at),
+                    $this
+                );
+            }
         );
     }
 
@@ -91,7 +104,13 @@ class Notification extends DatabaseNotification implements Contract
     protected function url(): Attribute
     {
         return new Attribute(
-            get: fn (): ?string => $this->exists ? URL::route('root.api.notifications.update', $this) : null,
+            get: function (): ?string {
+                return Filters::apply(
+                    'root:notification.url_attribute',
+                    $this->exists ? URL::route('root.api.notifications.update', $this) : null,
+                    $this
+                );
+            }
         );
     }
 }
