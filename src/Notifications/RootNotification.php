@@ -22,8 +22,6 @@ abstract class RootNotification extends Notification implements ShouldQueue
 
     /**
      * Get the Root Message representation of the notification.
-     *
-     * @return array<string, mixed>
      */
     abstract public function toRoot(object $notifiable): RootMessage;
 }
