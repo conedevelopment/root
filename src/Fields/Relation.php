@@ -580,7 +580,7 @@ abstract class Relation extends Field implements Form
         } catch (Throwable $exception) {
             report($exception);
 
-            DB::rollback();
+            DB::rollBack();
 
             throw new SaveFormDataException($exception->getMessage());
         }
