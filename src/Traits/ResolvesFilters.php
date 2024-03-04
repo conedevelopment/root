@@ -5,6 +5,7 @@ namespace Cone\Root\Traits;
 use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\Filters;
+use Cone\Root\Support\Filters as ValueFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -46,13 +47,15 @@ trait ResolvesFilters
     public function resolveFilters(Request $request): Filters
     {
         if (is_null($this->filters)) {
-            $this->filters = new Filters($this->filters($request));
+            $filters = new Filters($this->filters($request));
 
-            $this->filters->when(! is_null($this->filtersResolver), function (Filters $filters) use ($request): void {
+            $filters->when(! is_null($this->filtersResolver), function (Filters $filters) use ($request): void {
                 $filters->register(
                     Arr::wrap(call_user_func_array($this->filtersResolver, [$request]))
                 );
             });
+
+            $this->filters = ValueFilters::apply(static::class.'.filters', $filters, $this);
 
             $this->filters->each(function (Filter $filter) use ($request): void {
                 $this->resolveFilter($request, $filter);

@@ -7,6 +7,7 @@ use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Fields;
 use Cone\Root\Fields\File;
 use Cone\Root\Fields\Media;
+use Cone\Root\Support\Filters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -60,13 +61,15 @@ trait ResolvesFields
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
-            $this->fields = new Fields($this->fields($request));
+            $fields = new Fields($this->fields($request));
 
-            $this->fields->when(! is_null($this->fieldsResolver), function (Fields $fields) use ($request): void {
+            $fields->when(! is_null($this->fieldsResolver), function (Fields $fields) use ($request): void {
                 $fields->register(
                     Arr::wrap(call_user_func_array($this->fieldsResolver, [$request]))
                 );
             });
+
+            $this->fields = Filters::apply(static::class.'.fields', $fields, $this);
 
             $this->fields->each(function (Field $field) use ($request): void {
                 $this->resolveField($request, $field);
