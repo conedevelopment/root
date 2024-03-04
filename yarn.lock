@@ -32,10 +32,10 @@
     chalk "^2.4.2"
     js-tokens "^4.0.0"
 
-"@conedevelopment/qkie@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@conedevelopment/qkie/-/qkie-1.0.2.tgz#81d7f1a1c15866ca88206600158ab7858c70b83c"
-  integrity sha512-PUsFJEu1COHqO+ddXUu6bxRJpSMjHl7DCWqtO4CLIkLs26lBZxWTsT6XS4SOL6JTj0oXd32SLS8iFNCDGu4Amg==
+"@conedevelopment/qkie@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@conedevelopment/qkie/-/qkie-1.1.1.tgz#40b3e4eb6e4ff2a5976b16c6d802bee513106442"
+  integrity sha512-8H8YPBCgmF6h27IboL3+wYTeDcMJsvN9Yl5c8muQDFzlUTtUm88Wha8edGk5Gi5n+Ax+xaxiKhBLp9SODT5vZg==
 
 "@csstools/selector-specificity@^2.0.2":
   version "2.2.0"
