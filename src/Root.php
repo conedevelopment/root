@@ -4,6 +4,7 @@ namespace Cone\Root;
 
 use Closure;
 use Cone\Root\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Models\User;
 use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
@@ -52,6 +53,11 @@ class Root
      * The breadcrumbs instance.
      */
     public readonly Breadcrumbs $breadcrumbs;
+
+    /**
+     * The auth resolver.
+     */
+    protected ?Closure $authResovler = null;
 
     /**
      * Create a new Root instance.
@@ -146,5 +152,23 @@ class Root
     public function getDomain(): string
     {
         return (string) Config::get('root.domain', null);
+    }
+
+    /**
+     * Determine wheter the given user is authorized.
+     */
+    public function authorized(User $user): bool
+    {
+        return ! is_null($this->authResovler)
+            ? call_user_func_array($this->authResovler, [$user])
+            : true;
+    }
+
+    /**
+     * Set the auth resolver callback.
+     */
+    public function authorize(Closure $callback): void
+    {
+        $this->authResovler = $callback;
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Root\Resources;
+namespace Cone\Root\Resources;
 
+use Cone\Root\Actions\SendPasswordResetNotification;
+use Cone\Root\Actions\SendVerificationNotification;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
 use Cone\Root\Models\User;
-use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,7 @@ class UserResource extends Resource
      */
     public function getModel(): string
     {
-        return User::getProxiedClass();
+        return $this->model::getProxiedClass();
     }
 
     /**
@@ -37,12 +38,12 @@ class UserResource extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make(),
+            ID::make()->searchable(),
 
             Text::make(__('Name'), 'name')
+                ->rules(['required', 'string', 'max:256'])
                 ->searchable()
-                ->sortable()
-                ->rules(['required', 'string', 'max:256']),
+                ->sortable(),
 
             Email::make(__('Email'), 'email')
                 ->searchable()
@@ -52,6 +53,17 @@ class UserResource extends Resource
                 ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
+        ];
+    }
+
+    /**
+     * Define the actions.
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            new SendVerificationNotification(),
+            new SendPasswordResetNotification(),
         ];
     }
 }

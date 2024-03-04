@@ -3,8 +3,12 @@
 namespace Cone\Root;
 
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Resources\UserResource;
 use Cone\Root\Support\Alert;
+use Cone\Root\Support\Filters;
+use Cone\Root\Widgets\Welcome;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
@@ -16,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\ServiceProvider;
@@ -78,16 +83,12 @@ class RootServiceProvider extends ServiceProvider
             $this->registerPublishes();
         }
 
+        $this->registerResources();
+        $this->registerWidgets();
         $this->registerViews();
         $this->registerRoutes();
-
-        $this->app->make(ExceptionHandler::class)->renderable(
-            static function (SaveFormDataException $exception): RedirectResponse {
-                return Redirect::back()
-                    ->withInput()
-                    ->with('alerts.form-save', Alert::error($exception->getMessage()));
-            }
-        );
+        $this->registerExceptions();
+        $this->registerAuth();
     }
 
     /**
@@ -111,14 +112,6 @@ class RootServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),
         ], 'root-views');
-
-        $this->publishes([
-            __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->path('Providers/RootServiceProvider.php'),
-        ], 'root-provider');
-
-        $this->publishes([
-            __DIR__.'/../stubs/UserResource.stub' => $this->app->path('Root/Resources/UserResource.php'),
-        ], 'root-user-resource');
     }
 
     /**
@@ -201,5 +194,53 @@ class RootServiceProvider extends ServiceProvider
                 'user' => $request->user(),
             ]);
         });
+    }
+
+    /**
+     * Register the custom exceptions.
+     */
+    protected function registerExceptions(): void
+    {
+        $this->app->make(ExceptionHandler::class)->renderable(
+            static function (SaveFormDataException $exception): RedirectResponse {
+                return Redirect::back()
+                    ->withInput()
+                    ->with('alerts.form-save', Alert::error($exception->getMessage()));
+            }
+        );
+    }
+
+    /**
+     * Register the auth features.
+     */
+    protected function registerAuth(): void
+    {
+        Gate::define('viewRoot', static function (User $user): bool {
+            return Root::instance()->authorized($user);
+        });
+    }
+
+    /**
+     * Register the resources.
+     */
+    protected function registerResources(): void
+    {
+        $resources = Filters::apply('root:resources', [
+            new UserResource(),
+        ]);
+
+        Root::instance()->resources->register($resources);
+    }
+
+    /**
+     * Register the widgets.
+     */
+    protected function registerWidgets(): void
+    {
+        $widgets = Filters::apply('root:widgets', [
+            new Welcome(),
+        ]);
+
+        Root::instance()->widgets->register($widgets);
     }
 }
