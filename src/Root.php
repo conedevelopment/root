@@ -155,7 +155,7 @@ class Root
     }
 
     /**
-     * Determine wheter the given user is authorized.
+     * Determine whether the given user is authorized.
      */
     public function authorized(User $user): bool
     {
