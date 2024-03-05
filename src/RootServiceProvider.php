@@ -15,6 +15,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -162,6 +163,8 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
+        AboutCommand::add('Root', fn (): array => ['Version' => Root::VERSION]);
+
         $this->commands([
             Console\Commands\ActionMake::class,
             Console\Commands\ClearChunks::class,
