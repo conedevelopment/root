@@ -57,7 +57,7 @@ class Root
     /**
      * The auth resolver.
      */
-    protected ?Closure $authResovler = null;
+    protected ?Closure $authResolver = null;
 
     /**
      * Create a new Root instance.
@@ -159,8 +159,8 @@ class Root
      */
     public function authorized(User $user): bool
     {
-        return ! is_null($this->authResovler)
-            ? call_user_func_array($this->authResovler, [$user])
+        return ! is_null($this->authResolver)
+            ? call_user_func_array($this->authResolver, [$user])
             : true;
     }
 
@@ -169,6 +169,6 @@ class Root
      */
     public function authorize(Closure $callback): void
     {
-        $this->authResovler = $callback;
+        $this->authResolver = $callback;
     }
 }
