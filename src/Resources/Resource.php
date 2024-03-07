@@ -325,6 +325,12 @@ abstract class Resource implements Arrayable, Form
     {
         $field->setAttribute('form', $this->getKey());
         $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
+
+        if ($field instanceof Relation) {
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
+            });
+        }
     }
 
     /**

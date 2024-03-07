@@ -106,6 +106,11 @@ abstract class Relation extends Field implements Form
     protected static array $scopes = [];
 
     /**
+     * The route key resolver.
+     */
+    protected ?Closure $routeKeyNameResovler = null;
+
+    /**
      * Create a new relation field instance.
      */
     public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
@@ -164,11 +169,27 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Set the route key name resolver.
+     */
+    public function resolveRouteKeyNameUsing(Closure $callback): static
+    {
+        $this->routeKeyNameResovler = $callback;
+
+        return $this;
+    }
+
+    /**
      * Get the related model's route key name.
      */
     public function getRouteKeyName(): string
     {
-        return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
+        $callback = is_null($this->routeKeyNameResovler)
+            ? function (): string {
+                return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
+            }
+            : $this->routeKeyNameResovler;
+
+        return call_user_func($callback);
     }
 
     /**
@@ -379,6 +400,12 @@ abstract class Relation extends Field implements Form
         } else {
             $field->setAttribute('form', $this->getAttribute('form'));
             $field->resolveErrorsUsing($this->errorsResolver);
+        }
+
+        if ($field instanceof Relation) {
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value();
+            });
         }
     }
 

@@ -8,6 +8,7 @@ use Cone\Root\Traits\ResolvesFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 
 class Fieldset extends Field
 {
@@ -44,6 +45,12 @@ class Fieldset extends Field
     {
         $field->setAttribute('form', $this->getAttribute('form'));
         $field->resolveErrorsUsing($this->errorsResolver);
+
+        if ($field instanceof Relation) {
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value();
+            });
+        }
     }
 
     /**

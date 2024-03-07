@@ -4,6 +4,7 @@ namespace Cone\Root\Actions;
 
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Relation;
 use Cone\Root\Http\Controllers\ActionController;
 use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
@@ -131,6 +132,12 @@ abstract class Action implements Arrayable, Form, JsonSerializable
         $field->resolveErrorsUsing(function (Request $request): MessageBag {
             return $this->errors($request);
         });
+
+        if ($field instanceof Relation) {
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
+            });
+        }
     }
 
     /**

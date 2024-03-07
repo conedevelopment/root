@@ -112,6 +112,12 @@ class Repeater extends Field
         $field->setModelAttribute(
             sprintf('%s.*.%s', $this->getModelAttribute(), $field->getModelAttribute())
         );
+
+        if ($field instanceof Relation) {
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value();
+            });
+        }
     }
 
     /**
