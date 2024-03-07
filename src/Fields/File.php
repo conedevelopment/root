@@ -49,6 +49,7 @@ class File extends MorphToMany
     {
         parent::__construct($label, $modelAttribute, $relation);
 
+        $this->name($this->modelAttribute);
         $this->type('file');
         $this->multiple(false);
         $this->class(['form-file']);

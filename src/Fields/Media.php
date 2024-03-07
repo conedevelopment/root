@@ -71,9 +71,7 @@ class Media extends File
      */
     public function fields(Request $request): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     /**

@@ -17,12 +17,16 @@
         </span>
     </template>
     <template x-if="! item.processing && item.isImage">
-        <img x-bind:src="item.url" x-bind:alt="item.label">
+        <img
+            x-bind:src="item.url"
+            x-bind:alt="item.fileName"
+            onerror="this.src = '/vendor/root/image-loading-placeholder.svg';"
+        >
     </template>
     <template x-if="! item.processing && ! item.isImage">
         <span class="media-item__background">
             <x-root::icon name="document" class="media-item__icon" />
-            <span x-text="item.label" class="media-item__name"></span>
+            <span x-text="item.fileName" class="media-item__name"></span>
         </span>
     </template>
 </li>
