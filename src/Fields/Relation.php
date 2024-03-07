@@ -187,7 +187,7 @@ abstract class Relation extends Field implements Form
             ? function (): string {
                 return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
             }
-            : $this->routeKeyNameResolver;
+        : $this->routeKeyNameResolver;
 
         return call_user_func($callback);
     }

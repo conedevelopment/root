@@ -68,7 +68,7 @@ class RelationControllerTest extends TestCase
     public function test_a_relation_controller_handles_show(): void
     {
         $this->app['request']->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{relationUpload}'];
+            return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
         });
 
         $this->actingAs($this->admin)
@@ -81,7 +81,7 @@ class RelationControllerTest extends TestCase
     public function test_a_relation_controller_handles_edit(): void
     {
         $this->app['request']->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{relationUpload}/edit'];
+            return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}/edit'];
         });
 
         $this->actingAs($this->admin)
@@ -94,7 +94,7 @@ class RelationControllerTest extends TestCase
     public function test_a_relation_controller_handles_update(): void
     {
         $this->app['request']->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('PATCH')['root/users/{resourceModel}/fields/uploads/{relationUpload}'];
+            return $this->app['router']->getRoutes()->get('PATCH')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
         });
 
         $this->actingAs($this->admin)
@@ -111,7 +111,7 @@ class RelationControllerTest extends TestCase
     public function test_a_relation_controller_handles_destroy(): void
     {
         $this->app['request']->setRouteResolver(function () {
-            return $this->app['router']->getRoutes()->get('DELETE')['root/users/{resourceModel}/fields/uploads/{relationUpload}'];
+            return $this->app['router']->getRoutes()->get('DELETE')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
         });
 
         $this->actingAs($this->admin)
