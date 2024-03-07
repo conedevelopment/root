@@ -108,7 +108,7 @@ abstract class Relation extends Field implements Form
     /**
      * The route key resolver.
      */
-    protected ?Closure $routeKeyNameResovler = null;
+    protected ?Closure $routeKeyNameResolver = null;
 
     /**
      * Create a new relation field instance.
@@ -173,7 +173,7 @@ abstract class Relation extends Field implements Form
      */
     public function resolveRouteKeyNameUsing(Closure $callback): static
     {
-        $this->routeKeyNameResovler = $callback;
+        $this->routeKeyNameResolver = $callback;
 
         return $this;
     }
@@ -183,11 +183,11 @@ abstract class Relation extends Field implements Form
      */
     public function getRouteKeyName(): string
     {
-        $callback = is_null($this->routeKeyNameResovler)
+        $callback = is_null($this->routeKeyNameResolver)
             ? function (): string {
                 return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
             }
-            : $this->routeKeyNameResovler;
+            : $this->routeKeyNameResolver;
 
         return call_user_func($callback);
     }
