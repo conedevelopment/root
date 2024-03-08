@@ -435,6 +435,8 @@ abstract class Resource implements Arrayable, Form
                 ->visible($request->isMethod('POST') ? 'create' : 'update')
                 ->persist($request, $model);
 
+            $this->saving($request, $model);
+
             $model->save();
 
             $this->saved($request, $model);
@@ -447,6 +449,14 @@ abstract class Resource implements Arrayable, Form
 
             throw new SaveFormDataException($exception->getMessage());
         }
+    }
+
+    /**
+     * Handle the saving form event.
+     */
+    public function saving(Request $request, Model $model): void
+    {
+        //
     }
 
     /**

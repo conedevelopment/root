@@ -10,6 +10,8 @@ use Cone\Root\Fields\Text;
 use Cone\Root\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserResource extends Resource
@@ -65,5 +67,15 @@ class UserResource extends Resource
             new SendVerificationNotification(),
             new SendPasswordResetNotification(),
         ];
+    }
+
+    /**
+     * Handle the saved form event.
+     */
+    public function saving(Request $request, Model $model): void
+    {
+        if (! $model->exists && is_null($model->getAttribute('password'))) {
+            $model->setAttribute('password', Hash::make(Str::password()));
+        }
     }
 }
