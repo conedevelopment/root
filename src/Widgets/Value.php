@@ -83,7 +83,7 @@ abstract class Value extends Metric
     {
         $divider = ($result['current'] + $result['previous']);
 
-        if ($divider == 0) {
+        if ($result['previous'] == 0 || $divider == 0) {
             return 0;
         }
 

@@ -4,6 +4,7 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\SendPasswordResetNotification;
 use Cone\Root\Actions\SendVerificationNotification;
+use Cone\Root\Fields\Date;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
@@ -55,6 +56,14 @@ class UserResource extends Resource
                 ->updateRules(static function (Request $request, Model $model): array {
                     return [Rule::unique('users')->ignoreModel($model)];
                 }),
+
+            Date::make(__('Created At'), 'created_at')
+                ->sortable()
+                ->withTime(),
+
+            Date::make(__('Email Verified At'), 'email_verified_at')
+                ->sortable()
+                ->withTime(),
         ];
     }
 
