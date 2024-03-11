@@ -79,7 +79,7 @@ class UserResource extends Resource
     }
 
     /**
-     * Handle the saved form event.
+     * Handle the saving form event.
      */
     public function saving(Request $request, Model $model): void
     {
