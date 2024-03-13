@@ -18,11 +18,9 @@ abstract class TestCase extends BaseTestCase
 
     public function createApplication(): Application
     {
-        $app = require dirname(__DIR__).'/vendor/laravel/laravel/bootstrap/app.php';
+        $app = require __DIR__.'/app.php';
 
         $app->booting(static function () use ($app): void {
-            $app->register(RootServiceProvider::class);
-
             $app->bind(UserInterface::class, User::class);
         });
 
