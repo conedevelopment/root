@@ -18,7 +18,7 @@ class Date extends Field
     /**
      * The timezone.
      */
-    protected ?string $timezone = null;
+    protected string $timezone = 'UTC';
 
     /**
      * Indicates if the field should include time.
@@ -77,7 +77,7 @@ class Date extends Field
     /**
      * Set the timezone.
      */
-    public function timezone(?string $value = null): static
+    public function timezone(string $value): static
     {
         $this->timezone = $value;
 
@@ -91,7 +91,7 @@ class Date extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
-                return is_null($value) ? $value : DateFactory::parse($value)->tz($this->timezone)->format($this->format);
+                return is_null($value) ? $value : DateFactory::parse($value)->setTimezone($this->timezone)->format($this->format);
             };
         }
 

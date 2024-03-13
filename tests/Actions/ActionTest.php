@@ -111,7 +111,10 @@ class ActionTest extends TestCase
 
     public function test_an_action_has_response_representation(): void
     {
-        $response = $this->createTestResponse($this->action->perform($this->app['request']));
+        $response = $this->createTestResponse(
+            $this->action->perform($this->app['request']),
+            $this->app['request']
+        );
 
         $response->assertRedirect()
             ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));

@@ -25,6 +25,16 @@ class User extends Model implements MustVerifyEmail
         };
     }
 
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'updated_at' => 'datetime',
+        ];
+    }
+
     public function latestUpload(): HasOne
     {
         return $this->uploads()->one()->ofMany();

@@ -41,7 +41,9 @@ abstract class TestCase extends BaseTestCase
 
         $this->startSession();
 
-        $this->app['request']->setLaravelSession($this->app['session']);
+        $this->app['request']->setLaravelSession(
+            $this->app['session']->driver()
+        );
 
         $this->withoutVite();
 

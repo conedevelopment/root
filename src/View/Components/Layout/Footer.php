@@ -2,6 +2,7 @@
 
 namespace Cone\Root\View\Components\Layout;
 
+use Cone\Root\Root;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
@@ -12,6 +13,8 @@ class Footer extends Component
      */
     public function render(): View
     {
-        return $this->view('root::components.layout.footer');
+        return $this->view('root::components.layout.footer', [
+            'version' => Root::VERSION,
+        ]);
     }
 }
