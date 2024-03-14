@@ -89,7 +89,7 @@ jobs:
                     || test "$?" = 1 && exit 0
         -
             name: "Execute unit tests"
-            run: "composer exec -- phpunit --process-isolation"
+            run: "composer exec -- phpunit"
         -
             name: "Tests have failed: upload logs"
             if: "${{ failure() }}"
