@@ -35,6 +35,7 @@ class RelationControllerTest extends TestCase
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\WithoutErrorHandler]
     public function test_a_relation_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
