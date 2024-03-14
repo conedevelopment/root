@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Traits;
 
-use Cone\Root\Support\Filters;
 use Cone\Root\Widgets\Widget;
 use Cone\Root\Widgets\Widgets;
 use Illuminate\Http\Request;
@@ -28,9 +27,7 @@ trait ResolvesWidgets
     public function resolveWidgets(Request $request): Widgets
     {
         if (is_null($this->widgets)) {
-            $widgets = new Widgets($this->widgets($request));
-
-            $this->widgets = Filters::apply(static::class.'.widgets', $widgets, $this);
+            $this->widgets = new Widgets($this->widgets($request));
 
             $this->widgets->each(function (Widget $widget) use ($request): void {
                 $this->resolveWidget($request, $widget);

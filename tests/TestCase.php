@@ -3,6 +3,7 @@
 namespace Cone\Root\Tests;
 
 use Cone\Root\Interfaces\Models\User as UserInterface;
+use Cone\Root\Root;
 use Cone\Root\Support\Filters;
 use Cone\Root\Tests\Resources\UserResource;
 use Illuminate\Contracts\Console\Kernel;
@@ -21,6 +22,10 @@ abstract class TestCase extends BaseTestCase
 
         $app->booting(static function () use ($app): void {
             $app->bind(UserInterface::class, User::class);
+
+            Root::instance()->resources->register([
+                new UserResource(),
+            ]);
         });
 
         $app->make(Kernel::class)->bootstrap();
@@ -31,8 +36,6 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        Filters::register('root:resources', fn (): array => [new UserResource()]);
 
         $this->app['router']->getRoutes()->refreshNameLookups();
 
