@@ -39,6 +39,7 @@ class RelationControllerTest extends TestCase
     public function test_a_relation_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
+            ->withoutExceptionHandling()
             ->get('/root/users/'.$this->admin->getKey().'/fields/uploads')
             ->assertOk()
             ->assertViewIs('root::resources.index')
