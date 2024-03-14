@@ -4,7 +4,6 @@ namespace Cone\Root\Tests;
 
 use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\Root;
-use Cone\Root\Support\Filters;
 use Cone\Root\Tests\Resources\UserResource;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
