@@ -3,6 +3,7 @@
 namespace Cone\Root\Console\Commands;
 
 use Cone\Root\Database\Seeders\RootTestDataSeeder;
+use Cone\Root\RootServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
@@ -35,5 +36,10 @@ class Install extends Command
         if ($this->option('seed')) {
             $this->call('db:seed', ['--class' => RootTestDataSeeder::class]);
         }
+
+        $this->call('vendor:publish', [
+            '--provider' => RootServiceProvider::class,
+            '--tag' => 'root-stubs',
+        ]);
     }
 }

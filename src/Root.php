@@ -80,7 +80,7 @@ class Root
     }
 
     /**
-     * Boot the Root application.
+     * Boot the Root instance.
      */
     public function boot(): void
     {

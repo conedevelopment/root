@@ -1,0 +1,42 @@
+<?php
+
+namespace {{ namespace }}Providers;
+
+use {{ namespace }}Models\User;
+use {{ namespace }}Root\Resources\UserResource;
+use Cone\Root\Interfaces\Models\User as UserInterface;
+use Cone\Root\Root;
+use Cone\Root\Widgets\Welcome;
+use Illuminate\Support\ServiceProvider;
+
+class RootServiceProvider extends ServiceProvider
+{
+    /**
+     * All of the container bindings that should be registered.
+     */
+    public array $bindings = [
+        UserInterface::class => User::class,
+    ];
+
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Root::instance()->resources->register([
+            new UserResource(),
+        ]);
+
+        Root::instance()->widgets->register([
+            new Welcome(),
+        ]);
+    }
+}

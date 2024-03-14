@@ -1,6 +1,6 @@
 <?php
 
-namespace Cone\Root\Resources;
+namespace {{ namespace }}Root\Resources;
 
 use Cone\Root\Actions\SendPasswordResetNotification;
 use Cone\Root\Actions\SendVerificationNotification;
@@ -9,6 +9,7 @@ use Cone\Root\Fields\Email;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Text;
 use Cone\Root\Models\User;
+use Cone\Root\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;

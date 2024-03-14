@@ -5,10 +5,7 @@ namespace Cone\Root;
 use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Resources\UserResource;
 use Cone\Root\Support\Alert;
-use Cone\Root\Support\Filters;
-use Cone\Root\Widgets\Welcome;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
@@ -16,6 +13,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Foundation\Events\VendorTagPublished;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
@@ -84,12 +82,11 @@ class RootServiceProvider extends ServiceProvider
             $this->registerPublishes();
         }
 
-        $this->registerResources();
-        $this->registerWidgets();
         $this->registerViews();
         $this->registerRoutes();
         $this->registerExceptions();
         $this->registerAuth();
+        $this->registerEvents();
     }
 
     /**
@@ -113,6 +110,11 @@ class RootServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => $this->app->resourcePath('views/vendor/root'),
         ], 'root-views');
+
+        $this->publishes([
+            __DIR__.'/../stubs/RootServiceProvider.stub' => $this->app->basePath('app/Providers/RootServiceProvider.php'),
+            __DIR__.'/../stubs/UserResource.stub' => $this->app->basePath('app/Root/Resources/UserResource.php'),
+        ], 'root-stubs');
     }
 
     /**
@@ -224,26 +226,10 @@ class RootServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the resources.
+     * Register the events.
      */
-    protected function registerResources(): void
+    protected function registerEvents(): void
     {
-        $resources = Filters::apply('root:resources', [
-            new UserResource(),
-        ]);
-
-        Root::instance()->resources->register($resources);
-    }
-
-    /**
-     * Register the widgets.
-     */
-    protected function registerWidgets(): void
-    {
-        $widgets = Filters::apply('root:widgets', [
-            new Welcome(),
-        ]);
-
-        Root::instance()->widgets->register($widgets);
+        $this->app['events']->listen(VendorTagPublished::class, Listeners\FormatRootStubs::class);
     }
 }
