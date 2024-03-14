@@ -77,6 +77,17 @@ jobs:
             with:
                 dependency-versions: "${{ matrix.dependencies }}"
         -
+            name: "Declare strict types"
+            if: "${{ matrix.dependencies == 'highest' }}"
+            run: |
+                echo "::group::Install slevomat/coding-standard"
+                composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer false
+                composer require --no-scripts --dev slevomat/coding-standard
+                echo "::endgroup::"
+                composer exec -- phpcbf --standard=vendor/slevomat/coding-standard/SlevomatCodingStandard \
+                    --sniffs=SlevomatCodingStandard.TypeHints.DeclareStrictTypes src/ \
+                    || test "$?" = 1 && exit 0
+        -
             name: "Execute unit tests"
             run: "composer exec -- phpunit"
         -
