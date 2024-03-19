@@ -382,7 +382,7 @@ abstract class Field implements Arrayable, JsonSerializable
 
         $value = $this->getValue($model);
 
-        if (! is_null($this->defaultValueResolver)) {
+        if (is_null($value) && ! is_null($this->defaultValueResolver)) {
             $value = call_user_func_array($this->defaultValueResolver, [$request, $model]);
         }
 
