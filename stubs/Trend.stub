@@ -8,10 +8,18 @@ use Illuminate\Http\Request;
 class {{ class }} extends Trend
 {
     /**
+     * Create a new Eloquent query.
+     */
+    public function query(): Builder
+    {
+        //
+    }
+
+    /**
      * Calculate the results.
      */
     public function calculate(Request $request): array
     {
-        return $this->count($request, $this->query);
+        return $this->count($request, $this->resolveQuery($request));
     }
 }

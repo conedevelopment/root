@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Widgets;
 
+use Closure;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -11,11 +12,6 @@ use Illuminate\Http\Request;
 
 abstract class Metric extends Widget
 {
-    /**
-     * The Eloquent query.
-     */
-    protected ?Builder $query = null;
-
     /**
      * The metric timezone.
      */
@@ -27,11 +23,35 @@ abstract class Metric extends Widget
     protected bool $async = true;
 
     /**
-     * Set the query.
+     * The query resolver.
      */
-    public function setQuery(Builder $query): static
+    protected ?Closure $queryResolver = null;
+
+    /**
+     * Create a new Eloquent query.
+     */
+    abstract public function query(): Builder;
+
+    /**
+     * Resolve the query.
+     */
+    public function resolveQuery(Request $request): Builder
     {
-        $this->query = $query;
+        $query = $this->query();
+
+        if (! is_null($this->queryResolver)) {
+            call_user_func_array($this->queryResolver, [$request, $query]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Set the query resolver callback.
+     */
+    public function resolverQueryUsing(Closure $callback): static
+    {
+        $this->queryResolver = $callback;
 
         return $this;
     }
@@ -129,7 +149,7 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
-            'data' => ! $this->async || $request->isTurboFrameRequest() ? $this->calculate($request) : [],
+            'data' => (! $this->async || $request->isTurboFrameRequest()) ? $this->calculate($request) : [],
         ]);
     }
 
@@ -215,6 +235,6 @@ abstract class Metric extends Widget
      */
     public function calculate(Request $request): array
     {
-        return $this->count($request, $this->query);
+        return $this->count($request, $this->resolveQuery($request));
     }
 }

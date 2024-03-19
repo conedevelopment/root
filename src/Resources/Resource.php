@@ -20,8 +20,6 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
-use Cone\Root\Widgets\Metric;
-use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
@@ -347,16 +345,6 @@ abstract class Resource implements Arrayable, Form
     protected function resolveAction(Request $request, Action $action): void
     {
         $action->setQuery($this->resolveFilteredQuery($request));
-    }
-
-    /**
-     * Handle the callback for the widget resolution.
-     */
-    protected function resolveWidget(Request $request, Widget $widget): void
-    {
-        if ($widget instanceof Metric) {
-            $widget->setQuery($this->resolveFilteredQuery($request)->clone()->withoutEagerLoads());
-        }
     }
 
     /**
