@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Actions;
 
+use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
@@ -59,9 +60,9 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected bool $standalone = false;
 
     /**
-     * The Eloquent query.
+     * The query resolver.
      */
-    protected ?Builder $query = null;
+    protected ?Closure $queryResolver = null;
 
     /**
      * Handle the action.
@@ -101,25 +102,25 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
-     * Set the Eloquent query.
+     * Resolve the query.
      */
-    public function setQuery(Builder $query): static
+    public function resolveQuery(Request $request): Builder
     {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * Get the Eloquent query.
-     */
-    public function getQuery(): Builder
-    {
-        if (is_null($this->query)) {
+        if (is_null($this->queryResolver)) {
             throw new QueryResolutionException();
         }
 
-        return $this->query;
+        return call_user_func_array($this->queryResolver, [$request]);
+    }
+
+    /**
+     * Set the query resolver callback.
+     */
+    public function withQuery(Closure $callback): static
+    {
+        $this->queryResolver = $callback;
+
+        return $this;
     }
 
     /**
@@ -203,8 +204,8 @@ abstract class Action implements Arrayable, Form, JsonSerializable
 
         $models = match (true) {
             $this->isStandalone() => new Collection([$model]),
-            $request->boolean('all') => $this->getQuery()->get(),
-            default => $this->getQuery()->findMany($request->input('models', [])),
+            $request->boolean('all') => $this->resolveQuery($request)->get(),
+            default => $this->resolveQuery($request)->findMany($request->input('models', [])),
         };
 
         $this->handle($request, $models);
@@ -215,7 +216,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     public function perform(Request $request): Response
     {
-        $this->handleFormRequest($request, $this->getQuery()->getModel());
+        $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
 
         return Redirect::back()->with(
             sprintf('alerts.action-%s', $this->getKey()),
@@ -273,7 +274,6 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
             'template' => $this->template,
-            'url' => $this->getUri(),
         ];
     }
 
@@ -283,6 +283,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function toForm(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'url' => ! is_null($request->route()) ? $this->replaceRoutePlaceholders($request->route()) : null,
             'open' => $this->errors($request)->isNotEmpty(),
             'fields' => $this->resolveFields($request)->mapToInputs($request, $model),
         ]);

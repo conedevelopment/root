@@ -49,7 +49,7 @@ abstract class Metric extends Widget
     /**
      * Set the query resolver callback.
      */
-    public function resolverQueryUsing(Closure $callback): static
+    public function withQuery(Closure $callback): static
     {
         $this->queryResolver = $callback;
 

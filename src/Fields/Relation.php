@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
@@ -407,6 +408,18 @@ abstract class Relation extends Field implements Form
                 return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value();
             });
         }
+    }
+
+    /**
+     * Handle the callback for the field resolution.
+     */
+    protected function resolveAction(Request $request, Action $action): void
+    {
+        $action->withQuery(function (Request $request): Builder {
+            $model = $request->route('resourceModel');
+
+            return $this->resolveFilters($request)->apply($request, $this->getRelation($model)->getQuery());
+        });
     }
 
     /**

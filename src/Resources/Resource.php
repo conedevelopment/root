@@ -344,7 +344,7 @@ abstract class Resource implements Arrayable, Form
      */
     protected function resolveAction(Request $request, Action $action): void
     {
-        $action->setQuery($this->resolveFilteredQuery($request));
+        $action->withQuery(fn (): Builder => $this->resolveFilteredQuery($request));
     }
 
     /**

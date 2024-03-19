@@ -5,6 +5,7 @@ namespace Cone\Root\Tests\Actions;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
+use Illuminate\Routing\Route;
 
 class ActionTest extends TestCase
 {
@@ -16,7 +17,7 @@ class ActionTest extends TestCase
 
         $this->action = new SendPasswordResetNotification();
 
-        $this->action->setQuery(User::query());
+        $this->action->withQuery(fn () => User::query());
     }
 
     public function test_an_action_has_key(): void
@@ -91,7 +92,6 @@ class ActionTest extends TestCase
             'modalKey' => 'action-send-password-reset-notification',
             'name' => $this->action->getName(),
             'template' => 'root::actions.action',
-            'url' => $this->action->getUri(),
         ], $this->action->toArray());
     }
 
@@ -99,11 +99,8 @@ class ActionTest extends TestCase
     {
         $model = new User();
 
-        $fields = $this->action
-            ->resolveFields($this->app['request'])
-            ->mapToInputs($this->app['request'], $model);
-
         $this->assertSame(array_merge($this->action->toArray(), [
+            'url' => null,
             'open' => false,
             'fields' => [],
         ]), $this->action->toForm($this->app['request'], $model));
