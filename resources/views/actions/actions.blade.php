@@ -7,7 +7,7 @@
         {{ __('Actions') }}
         <x-root::icon name="chevron-down" class="btn__icon" />
     </button>
-    <ul x-cloak x-show="open" x-transition class="context-menu context-menu--inline-start">
+    <ul x-cloak x-show="open" x-transition class="context-menu context-menu--inline-end">
         @foreach($actions as $action)
             <li>
                 <button
