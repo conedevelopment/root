@@ -5,7 +5,6 @@ namespace Cone\Root\Tests\Actions;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
-use Illuminate\Routing\Route;
 
 class ActionTest extends TestCase
 {
