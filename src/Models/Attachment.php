@@ -24,4 +24,11 @@ class Attachment extends MorphPivot
         'collection',
         'meta',
     ];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'root_mediables';
 }
