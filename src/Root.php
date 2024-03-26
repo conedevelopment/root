@@ -22,7 +22,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.2.7';
+    public const VERSION = '2.2.8';
 
     /**
      * The registered booting callbacks.
