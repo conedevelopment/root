@@ -4,8 +4,10 @@ namespace Cone\Root\Fields;
 
 use Closure;
 use DateTimeInterface;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date as DateFactory;
 
 class Date extends Field
@@ -18,12 +20,17 @@ class Date extends Field
     /**
      * The timezone.
      */
-    protected string $timezone = 'UTC';
+    protected string $timezone;
 
     /**
      * Indicates if the field should include time.
      */
     protected bool $withTime = false;
+
+    /**
+     * The default timezone.
+     */
+    protected static ?string $defaultTimezone = null;
 
     /**
      * Create a new field instance.
@@ -34,6 +41,15 @@ class Date extends Field
 
         $this->type('date');
         $this->step(1);
+        $this->timezone(static::$defaultTimezone ?: Config::get('app.timezone'));
+    }
+
+    /**
+     * Set the default timezone.
+     */
+    public static function defaultTimezone(string|DateTimeZone $value): void
+    {
+        static::$defaultTimezone = $value instanceof DateTimeZone ? $value->getName() : $value;
     }
 
     /**
@@ -77,11 +93,44 @@ class Date extends Field
     /**
      * Set the timezone.
      */
-    public function timezone(string $value): static
+    public function timezone(string|DateTimeZone $value): static
     {
-        $this->timezone = $value;
+        $this->timezone = $value instanceof DateTimeZone ? $value->getName() : $value;
+
+        $this->suffix($this->timezone);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValueForHydrate(Request $request): ?string
+    {
+        $value = parent::getValueForHydrate($request);
+
+        if (! is_null($value)) {
+            $value = DateFactory::parse($value, $this->timezone)
+                ->setTimezone(Config::get('app.timezone'))
+                ->toISOString();
+        }
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValue(Model $model): mixed
+    {
+        $value = parent::getValue($model);
+
+        if (! is_null($value)) {
+            $value = DateFactory::parse($value, Config::get('app.timezone'))
+                ->setTimezone($this->timezone);
+        }
+
+        return $value;
     }
 
     /**
@@ -91,7 +140,7 @@ class Date extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
-                return is_null($value) ? $value : DateFactory::parse($value)->setTimezone($this->timezone)->format($this->format);
+                return is_null($value) ? $value : $value->format($this->format);
             };
         }
 
