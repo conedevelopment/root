@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\NotificationFactory;
 use Cone\Root\Interfaces\Models\Notification as Contract;
+use Cone\Root\Root;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -68,7 +69,7 @@ class Notification extends DatabaseNotification implements Contract
     {
         return new Attribute(
             get: function (): ?string {
-                return $this->created_at?->isoFormat('YYYY. MMMM DD. HH:mm');
+                return $this->created_at?->setTimezone(Root::instance()->getTimezone())?->isoFormat('YYYY. MMMM DD. HH:mm');
             }
         );
     }

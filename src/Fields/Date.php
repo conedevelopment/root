@@ -3,6 +3,7 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Root;
 use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
@@ -28,11 +29,6 @@ class Date extends Field
     protected bool $withTime = false;
 
     /**
-     * The default timezone.
-     */
-    protected static ?string $defaultTimezone = null;
-
-    /**
      * Create a new field instance.
      */
     public function __construct(string $label, Closure|string|null $modelAttribute = null)
@@ -41,15 +37,7 @@ class Date extends Field
 
         $this->type('date');
         $this->step(1);
-        $this->timezone(static::$defaultTimezone ?: Config::get('app.timezone'));
-    }
-
-    /**
-     * Set the default timezone.
-     */
-    public static function defaultTimezone(string|DateTimeZone $value): void
-    {
-        static::$defaultTimezone = $value instanceof DateTimeZone ? $value->getName() : $value;
+        $this->timezone(Root::instance()->getTimezone());
     }
 
     /**
