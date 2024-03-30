@@ -49,9 +49,7 @@ class LoginController extends Controller
         }
 
         if (! Auth::guard()->user()->hasVerifiedEmail()) {
-            $this->logout($request);
-
-            throw ValidationException::withMessages([
+            return $this->logout($request)->withErrors([
                 'email' => [__('auth.unverified')],
             ]);
         }
