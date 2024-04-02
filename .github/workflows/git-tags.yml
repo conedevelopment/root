@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: "Git tags"
+
+on:
+    push:
+        tags:
+        - "v*"
+
+permissions:
+    contents: "read"
+
+concurrency:
+    group: "${{ github.workflow }}-${{ github.ref }}"
+    cancel-in-progress: true
+
+jobs:
+    missing_tag:
+        name: "Tag without version bump"
+        runs-on: "ubuntu-latest"
+        steps:
+        -
+            name: "Set up PHP"
+            uses: "shivammathur/setup-php@v2"
+            with:
+                php-version: "8.2"
+                extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
+        -
+            name: "Checkout repository"
+            uses: "actions/checkout@v4"
+            with:
+                fetch-depth: 0
+        -
+            name: "Check latest tagged version"
+            run: |
+                LATEST_TAG="$(git describe --tags --abbrev=0)"
+                CURRENT_VERSION="v$(php -r 'require __DIR__.'/src/Root.php'; echo Cone\Root\Root::VERSION;')"
+                if [ "${LATEST_TAG}" != "${CURRENT_VERSION}" ]; then
+                    echo "::error::Latest tag differs from current version"
+                    exit 10
+                fi
