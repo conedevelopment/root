@@ -23,7 +23,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.2.9';
+    public const VERSION = '2.2.10';
 
     /**
      * The registered booting callbacks.
@@ -60,6 +60,9 @@ class Root
      */
     protected ?Closure $authResolver = null;
 
+    /**
+     * The Root timezone.
+     */
     protected string $timezone;
 
     /**
