@@ -17,6 +17,15 @@ class Meta extends Model implements Contract
     use InteractsWithProxy;
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'value' => MetaValue::class,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<string>
@@ -24,15 +33,6 @@ class Meta extends Model implements Contract
     protected $fillable = [
         'key',
         'value',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'value' => MetaValue::class,
     ];
 
     /**

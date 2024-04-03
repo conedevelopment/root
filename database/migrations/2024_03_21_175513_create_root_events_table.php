@@ -15,11 +15,10 @@ return new class() extends Migration
         Schema::create('root_events', static function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::getProxiedClass())->nullable()->constrained()->nullOnDelete();
-            $table->morphs('target');
+            $table->uuidMorphs('target');
             $table->string('action');
-            $table->string('label');
             $table->json('payload')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
     }
 
