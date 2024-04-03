@@ -33,6 +33,6 @@ class ForgotPasswordController extends Controller
             $user->notify(new ResetPassword($token));
         });
 
-        return Redirect::back()->with('status', __(Password::RESET_LINK_SENT));
+        return Redirect::route('root.auth.password.request')->with('status', __(Password::RESET_LINK_SENT));
     }
 }
