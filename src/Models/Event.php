@@ -2,16 +2,14 @@
 
 namespace Cone\Root\Models;
 
-use Cone\Root\Casts\MetaValue;
-use Cone\Root\Database\Factories\MetaFactory;
-use Cone\Root\Interfaces\Models\Meta as Contract;
+use Cone\Root\Interfaces\Models\Event as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Meta extends Model implements Contract
+class Event extends Model implements Contract
 {
     use HasFactory;
     use InteractsWithProxy;
@@ -22,7 +20,7 @@ class Meta extends Model implements Contract
      * @var array<string, string>
      */
     protected $casts = [
-        'value' => MetaValue::class,
+        'payload' => 'json',
     ];
 
     /**
@@ -31,8 +29,8 @@ class Meta extends Model implements Contract
      * @var array<string>
      */
     protected $fillable = [
-        'key',
-        'value',
+        'action',
+        'payload',
     ];
 
     /**
@@ -40,7 +38,7 @@ class Meta extends Model implements Contract
      *
      * @var string
      */
-    protected $table = 'root_meta_data';
+    protected $table = 'root_events';
 
     /**
      * Get the proxied interface.
@@ -51,25 +49,17 @@ class Meta extends Model implements Contract
     }
 
     /**
-     * Create a new factory instance for the model.
+     * Get the event target.
      */
-    protected static function newFactory(): Factory
+    public function user(): BelongsTo
     {
-        return MetaFactory::new();
+        return $this->belongsTo(User::getProxiedClass());
     }
 
     /**
-     * {@inheritdoc}
+     * Get the event target.
      */
-    public function getMorphClass(): string
-    {
-        return static::getProxiedClass();
-    }
-
-    /**
-     * Get the metable model.
-     */
-    public function metable(): MorphTo
+    public function target(): MorphTo
     {
         return $this->morphTo();
     }

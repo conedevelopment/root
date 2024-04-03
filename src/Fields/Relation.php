@@ -14,6 +14,7 @@ use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
+use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFields;
@@ -615,6 +616,13 @@ abstract class Relation extends Field implements Form
             $model->save();
 
             $this->saved($request, $model);
+
+            if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                $model->recordRootEvent(
+                    $model->wasRecentlyCreated ? 'Created' : 'Updated',
+                    $request->user()
+                );
+            }
 
             DB::commit();
         } catch (Throwable $exception) {

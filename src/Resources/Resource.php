@@ -4,7 +4,9 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Fields\Events;
 use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Fields;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
@@ -16,6 +18,7 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
@@ -37,7 +40,9 @@ use Throwable;
 
 abstract class Resource implements Arrayable, Form
 {
-    use AsForm;
+    use AsForm {
+        AsForm::resolveFields as __resolveFields;
+    }
     use Authorizable;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -299,6 +304,22 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Resolve the fields collection.
+     */
+    public function resolveFields(Request $request): Fields
+    {
+        if (is_null($this->fields)) {
+            $this->withFields(function (): array {
+                return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()))
+                    ? [new Events()]
+                    : [];
+            });
+        }
+
+        return $this->__resolveFields($request);
+    }
+
+    /**
      * Define the filters for the object.
      */
     public function filters(Request $request): array
@@ -428,6 +449,13 @@ abstract class Resource implements Arrayable, Form
             $model->save();
 
             $this->saved($request, $model);
+
+            if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                $model->recordRootEvent(
+                    $model->wasRecentlyCreated ? 'Created' : 'Updated',
+                    $request->user()
+                );
+            }
 
             DB::commit();
         } catch (Throwable $exception) {

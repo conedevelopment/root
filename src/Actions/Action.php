@@ -12,6 +12,7 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
@@ -209,6 +210,15 @@ abstract class Action implements Arrayable, Form, JsonSerializable
         };
 
         $this->handle($request, $models);
+
+        if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+            $models->each(static function (Model $model) use ($request): void {
+                $model->recordRootEvent(
+                    Str::of(static::class)->classBasename()->headline()->value(),
+                    $request->user()
+                );
+            });
+        }
     }
 
     /**
