@@ -8,6 +8,7 @@ use Cone\Root\Models\User;
 use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
+use DateTimeZone;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -22,7 +23,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.2.8';
+    public const VERSION = '2.2.11';
 
     /**
      * The registered booting callbacks.
@@ -60,6 +61,11 @@ class Root
     protected ?Closure $authResolver = null;
 
     /**
+     * The Root timezone.
+     */
+    protected string $timezone;
+
+    /**
      * Create a new Root instance.
      */
     public function __construct(Application $app)
@@ -69,6 +75,7 @@ class Root
         $this->widgets = new Widgets();
         $this->navigation = new Navigation();
         $this->breadcrumbs = new Breadcrumbs();
+        $this->timezone = $app['config']->get('app.timezone');
     }
 
     /**
@@ -170,5 +177,21 @@ class Root
     public function authorize(Closure $callback): void
     {
         $this->authResolver = $callback;
+    }
+
+    /**
+     * Set the Root timezone.
+     */
+    public function setTimezone(string|DateTimeZone $value): void
+    {
+        $this->timezone = $value instanceof DateTimeZone ? $value->getName() : $value;
+    }
+
+    /**
+     * Get the Root timezone.
+     */
+    public function getTimezone(): string
+    {
+        return $this->timezone;
     }
 }

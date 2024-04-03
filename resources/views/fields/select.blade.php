@@ -8,7 +8,7 @@
     @if(! empty($options))
         <div class="form-group--stacked">
             @if($prefix)
-                <div class="form-group-label">{!! $prefix !!}</div>
+                <div class="form-group-label" style="white-space: nowrap;">{!! $prefix !!}</div>
             @endif
             <select {{ $attrs }}>
                 @if($nullable)
@@ -27,7 +27,7 @@
                 @endforeach
             </select>
             @if($suffix)
-                <div class="form-group-label">{!! $suffix !!}</div>
+                <div class="form-group-label" style="white-space: nowrap;">{!! $suffix !!}</div>
             @endif
         </div>
         @if($invalid)
