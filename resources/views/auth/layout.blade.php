@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', App::getLocale()) }}">
 <head>
+    {{-- Meta --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {{-- Styles --}}
+    <link rel="icon" href="{{ URL::asset('vendor/root/favicon.png') }}" sizes="32x32">
     <link rel="stylesheet" href="{{ Vite::asset('resources/js/app.css', 'vendor/root/build') }}">
 
+    {{-- Title --}}
     <title>@yield('title') - {{ Config::get('app.name') }}</title>
 </head>
 <body>

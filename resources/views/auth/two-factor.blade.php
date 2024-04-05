@@ -19,7 +19,7 @@
 <span class="or-separator" aria-hidden="true">{{ __('or') }}</span>
 <form method="POST" action="{{ URL::route('root.auth.logout') }}">
     @csrf
-    <div class="form-group-stack">
+    <div class="form-group">
         <button type="submit" class="btn btn--light btn--sm">
             {{ __('Logout') }}
         </button>

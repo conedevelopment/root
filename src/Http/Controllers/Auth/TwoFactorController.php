@@ -2,14 +2,17 @@
 
 namespace Cone\Root\Http\Controllers\Auth;
 
+use Closure;
 use Cone\Root\Http\Controllers\Controller;
 use Cone\Root\Http\Middleware\Authenticate;
+use Cone\Root\Interfaces\TwoFactorAuthenticatable;
 use Cone\Root\Notifications\TwoFactorLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Response as ResponseFactory;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class TwoFactorController extends Controller
 {
@@ -20,6 +23,15 @@ class TwoFactorController extends Controller
     {
         $this->middleware(Authenticate::class);
         $this->middleware('throttle:6,1')->only(['resend']);
+        $this->middleware(static function (Request $request, Closure $next): BaseResponse {
+            if (! $request->user() instanceof TwoFactorAuthenticatable
+                || $request->session()->has('root.auth.two-factor')
+            ) {
+                return ResponseFactory::redirectToIntended(URL::route('root.dashboard'));
+            }
+
+            return $next($request);
+        });
     }
 
     /**
@@ -27,10 +39,6 @@ class TwoFactorController extends Controller
      */
     public function show(Request $request): Response|RedirectResponse
     {
-        if ($request->session()->has('root.auth.two-factor')) {
-            return ResponseFactory::redirectToRoute('root.dashboard');
-        }
-
         return ResponseFactory::view('root::auth.two-factor');
     }
 
@@ -54,10 +62,6 @@ class TwoFactorController extends Controller
      */
     public function resend(Request $request): RedirectResponse
     {
-        if ($request->session()->has('root.auth.two-factor')) {
-            return ResponseFactory::redirectToRoute('root.dashboard');
-        }
-
         $request->user()->notify(new TwoFactorLink());
 
         return ResponseFactory::redirectToRoute('root.auth.two-factor.show')
