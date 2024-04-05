@@ -58,7 +58,7 @@ return [
     |
     */
 
-    'verification' => [
+    'two_factor' => [
         'expiration' => 600,
     ],
 
