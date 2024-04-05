@@ -33,7 +33,7 @@ jobs:
         -
             name: "Check latest tagged version"
             run: |
-                LATEST_TAG="$(git describe --tags --abbrev=0)"
+                LATEST_TAG="${{ github.ref_name }}"
                 CURRENT_VERSION="v$(php -r 'require __DIR__."/src/Root.php"; echo Cone\Root\Root::VERSION;')"
                 if [ "${LATEST_TAG}" != "${CURRENT_VERSION}" ]; then
                     echo "::error::Latest tag differs from current version"
