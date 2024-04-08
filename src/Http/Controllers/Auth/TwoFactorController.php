@@ -25,6 +25,7 @@ class TwoFactorController extends Controller
         $this->middleware('throttle:6,1')->only(['resend']);
         $this->middleware(static function (Request $request, Closure $next): BaseResponse {
             if (! $request->user() instanceof TwoFactorAuthenticatable
+                || ! $request->user()->requiresTwoFactorAuthentication()
                 || $request->session()->has('root.auth.two-factor')
             ) {
                 return ResponseFactory::redirectToIntended(URL::route('root.dashboard'));

@@ -62,7 +62,10 @@ class LoginController extends Controller
             new Login(Auth::getDefaultDriver(), $request->user(), $request->filled('remember'))
         );
 
-        if ($request->user() instanceof TwoFactorAuthenticatable && $request->user()->can('viewRoot')) {
+        if ($request->user()->can('viewRoot')
+            && $request->user() instanceof TwoFactorAuthenticatable
+            && $request->user()->requiresTwoFactorAuthentication()
+        ) {
             $request->user()->notify(new TwoFactorLink());
 
             $request->session()->flash('status', __('The two factor authentication link has been sent!'));

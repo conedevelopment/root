@@ -17,7 +17,10 @@ class TwoFactorAuthenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() instanceof TwoFactorAuthenticatable && ! $request->session()->has('root.auth.two-factor')) {
+        if ($request->user() instanceof TwoFactorAuthenticatable
+            && $request->user()->requiresTwoFactorAuthentication()
+            && ! $request->session()->has('root.auth.two-factor')
+        ) {
             return Redirect::route('root.auth.two-factor.show');
         }
 
