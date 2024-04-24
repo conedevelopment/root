@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
@@ -116,9 +117,17 @@ class Medium extends Model implements Contract
     }
 
     /**
+     * Make a new medium instance from the file.
+     */
+    public static function fromFile(File $file, array $attributes = []): static
+    {
+        return static::fromPath($file->getPathname(), $attributes);
+    }
+
+    /**
      * Make a new medium instance from the given path.
      */
-    public static function makeFromPath(string $path, array $attributes = []): static
+    public static function fromPath(string $path, array $attributes = []): static
     {
         $type = mime_content_type($path);
 

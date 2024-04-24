@@ -171,7 +171,7 @@ class File extends MorphToMany
     {
         $target = str_replace($request->header('X-Chunk-Hash', ''), '', $path);
 
-        $medium = (Medium::proxy())::makeFromPath($path, [
+        $medium = (Medium::proxy())::fromPath($path, [
             'disk' => $this->disk,
             'file_name' => $name = basename($target),
             'name' => pathinfo($name, PATHINFO_FILENAME),
