@@ -73,7 +73,7 @@ jobs:
             uses: "actions/checkout@v4"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "${{ matrix.dependencies }}"
         -
@@ -124,7 +124,7 @@ jobs:
             run: "composer validate --no-interaction --strict"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "locked"
         -
@@ -162,7 +162,7 @@ jobs:
             uses: "actions/checkout@v4"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "locked"
         #-
