@@ -739,7 +739,7 @@ abstract class Relation extends Field implements Form
 
         return is_null($policy)
             || ! method_exists($policy, $ability)
-            || call_user_func_array([$policy, $ability], [$request->user(), $model, ...$arguments]);
+            || Gate::allows($ability, [$model, ...$arguments]);
     }
 
     /**
