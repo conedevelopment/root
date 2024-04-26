@@ -2,9 +2,12 @@
 
 namespace Cone\Root\Models;
 
+use Closure;
 use Cone\Root\Database\Factories\MediumFactory;
 use Cone\Root\Interfaces\Models\Medium as Contract;
 use Cone\Root\Interfaces\Models\User;
+use Cone\Root\Jobs\MoveFile;
+use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -15,7 +18,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Http\File;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
@@ -117,11 +120,27 @@ class Medium extends Model implements Contract
     }
 
     /**
-     * Make a new medium instance from the file.
+     * Upload the given file.
      */
-    public static function fromFile(File $file, array $attributes = []): static
+    public static function upload(UploadedFile $file, ?Closure $callback = null): static
     {
-        return static::fromPath($file->getPathname(), $attributes);
+        $medium = static::fromPath($file->getPathname(), [
+            'file_name' => $file->getClientOriginalName(),
+            'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+        ]);
+
+        if (is_callable($callback)) {
+            call_user_func_array($callback, [$medium, $file]);
+        }
+
+        $medium->save();
+
+        $path = Storage::disk('local')->path(Storage::disk('local')->putFile('root-tmp', $file));
+
+        MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
+            ->dispatch($medium, $path, false);
+
+        return $medium;
     }
 
     /**
