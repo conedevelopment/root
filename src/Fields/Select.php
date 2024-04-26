@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Fields;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ class Select extends Field
 
                 return Collection::make($value)
                     ->map(static function (mixed $value) use ($options): string {
+                        $value = $value instanceof BackedEnum ? $value->value : $value;
+
                         return $options[$value] ?? $value;
                     })
                     ->implode(', ');
