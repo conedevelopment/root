@@ -31,6 +31,10 @@ class RootServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('viewRoot', static function (User $user): bool {
+            return false;
+        });
+
         Root::instance()->resources->register([
             new UserResource(),
         ]);
