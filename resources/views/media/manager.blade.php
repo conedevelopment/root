@@ -52,7 +52,7 @@
                 }"
             >
                 {{ __('Delete') }}
-                <span x-text="`(${selection.length})`"></span>
+                <span x-text="'(' + selection.length.toString() + ')'"></span>
             </button>
         </div>
         <div class="modal__column">
