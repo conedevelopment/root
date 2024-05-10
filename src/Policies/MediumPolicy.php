@@ -2,8 +2,8 @@
 
 namespace Cone\Root\Policies;
 
-use App\Models\User;
 use Cone\Root\Models\Medium;
+use Cone\Root\Models\User;
 
 class MediumPolicy
 {
