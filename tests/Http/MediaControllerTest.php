@@ -66,7 +66,7 @@ class MediaControllerTest extends TestCase
         $this->actingAs($this->admin)
             ->delete('/root/users/'.$this->admin->getKey().'/fields/media', ['ids' => [$medium->getKey()]])
             ->assertOk()
-            ->assertJson(['deleted' => 1]);
+            ->assertJson(['deleted' => [1]]);
 
         $this->assertDatabaseMissing('root_media', ['id' => $medium->getKey()]);
     }
