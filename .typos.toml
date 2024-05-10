@@ -12,3 +12,6 @@ ignore-hidden = false
 "encrypter" = "encrypter"
 "invokable" = "invokable"
 "responsable" = "responsable"
+
+[default.extend-identifiers]
+"conedevel" = ""
