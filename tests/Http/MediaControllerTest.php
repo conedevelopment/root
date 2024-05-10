@@ -36,6 +36,7 @@ class MediaControllerTest extends TestCase
     public function test_a_media_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
+            ->withoutExceptionHandling()
             ->get('/root/users/'.$this->admin->getKey().'/fields/media')
             ->assertOk()
             ->assertJson($this->field->paginateRelatable($this->app['request'], $this->admin)->toArray());
