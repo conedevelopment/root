@@ -76,6 +76,6 @@ class Search extends RenderableFilter
     {
         return SearchField::make($this->getName(), $this->getRequestKey())
             ->value(fn (Request $request): ?string => $this->getValue($request))
-            ->placeholder($this->getName().'...');
+            ->placeholder(sprintf('%s...', $this->getName()));
     }
 }

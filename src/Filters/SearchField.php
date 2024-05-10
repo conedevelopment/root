@@ -19,6 +19,6 @@ class SearchField extends Text
     {
         parent::__construct($label, $modelAttribute);
 
-        $this->class(['search-form__control']);
+        $this->classList()->replace('form-control', 'search-form__control');
     }
 }

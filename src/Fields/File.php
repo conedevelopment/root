@@ -189,7 +189,11 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return $this->toOption($request, $model, $medium);
+        $option = $this->toOption($request, $model, $medium);
+
+        return array_merge($option, [
+            'html' => View::make('root::fields.file-option', $option)->render(),
+        ]);
     }
 
     /**
@@ -229,20 +233,22 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    public function prune(Request $request, Model $model, array $keys): int
+    public function prune(Request $request, Model $model, array $keys): array
     {
-        $count = 0;
+        $deleted = [];
 
         $this->resolveRelatableQuery($request, $model)
             ->whereIn('id', $keys)
             ->cursor()
-            ->each(static function (Medium $medium) use (&$count): void {
-                $medium->delete();
+            ->each(static function (Medium $medium) use ($request, &$deleted): void {
+                if ($request->user()->can('delete', $medium)) {
+                    $medium->delete();
 
-                $count++;
+                    $deleted[] = $medium->getKey();
+                }
             });
 
-        return $count;
+        return $deleted;
     }
 
     /**

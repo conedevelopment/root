@@ -334,13 +334,10 @@ class Medium extends Model implements Contract
      */
     public function scopeType(Builder $query, string $value): Builder
     {
-        switch ($value) {
-            case 'image':
-                return $query->where($query->qualifyColumn('mime_type'), 'like', 'image%');
-            case 'file':
-                return $query->where($query->qualifyColumn('mime_type'), 'not like', 'image%');
-            default:
-                return $query;
-        }
+        return match ($value) {
+            'image' => $query->where($query->qualifyColumn('mime_type'), 'like', 'image%'),
+            'file' => $query->where($query->qualifyColumn('mime_type'), 'not like', 'image%'),
+            default => $query,
+        };
     }
 }

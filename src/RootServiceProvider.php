@@ -3,7 +3,9 @@
 namespace Cone\Root;
 
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
+use Cone\Root\Policies\MediumPolicy;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -223,6 +225,8 @@ class RootServiceProvider extends ServiceProvider
         Gate::define('viewRoot', static function (User $user): bool {
             return Root::instance()->authorized($user);
         });
+
+        Gate::policy(Medium::getProxiedClass(), MediumPolicy::class);
     }
 
     /**
