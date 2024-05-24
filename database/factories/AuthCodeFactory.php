@@ -5,7 +5,6 @@ namespace Cone\Root\Database\Factories;
 use Cone\Root\Models\AuthCode;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Str;
 
 class AuthCodeFactory extends Factory
 {
