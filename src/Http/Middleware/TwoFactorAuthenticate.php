@@ -3,7 +3,6 @@
 namespace Cone\Root\Http\Middleware;
 
 use Closure;
-use Cone\Root\Interfaces\TwoFactorAuthenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +16,7 @@ class TwoFactorAuthenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() instanceof TwoFactorAuthenticatable
-            && $request->user()->requiresTwoFactorAuthentication()
-            && ! $request->session()->has('root.auth.two-factor')
-        ) {
+        if ($request->user()->shouldTwoFactorAuthenticate($request)) {
             return Redirect::route('root.auth.two-factor.show');
         }
 

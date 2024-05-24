@@ -3,8 +3,7 @@
 namespace Cone\Root\Http\Controllers\Auth;
 
 use Cone\Root\Http\Controllers\Controller;
-use Cone\Root\Interfaces\TwoFactorAuthenticatable;
-use Cone\Root\Notifications\TwoFactorLink;
+use Cone\Root\Notifications\AuthCodeNotification;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,11 +61,10 @@ class LoginController extends Controller
             new Login(Auth::getDefaultDriver(), $request->user(), $request->filled('remember'))
         );
 
-        if ($request->user()->can('viewRoot')
-            && $request->user() instanceof TwoFactorAuthenticatable
-            && $request->user()->requiresTwoFactorAuthentication()
-        ) {
-            $request->user()->notify(new TwoFactorLink());
+        if ($request->user()->can('viewRoot') && $request->user()->shouldTwoFactorAuthenticate($request)) {
+            $request->user()->notify(
+                new AuthCodeNotification($request->user()->generateAuthCode())
+            );
 
             $request->session()->flash('status', __('The two factor authentication link has been sent!'));
         }

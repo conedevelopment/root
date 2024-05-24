@@ -17,7 +17,7 @@ Route::post('/password/email', [ForgotPasswordController::class, 'send'])->name(
 Route::get('/password/reset/{token}/{email}', [ResetPasswordController::class, 'show'])->name('password.reset');
 Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-// Verify
-Route::get('/two-factor', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
-Route::get('/two-factor/resend', [TwoFactorController::class, 'show'])->name('two-factor.show');
+// Two Factor Verification
+Route::get('/two-factor', [TwoFactorController::class, 'show'])->name('two-factor.show');
+Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
 Route::post('/two-factor/resend', [TwoFactorController::class, 'resend'])->name('two-factor.resend');
