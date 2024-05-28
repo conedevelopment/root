@@ -422,7 +422,6 @@ abstract class Resource implements Arrayable, Form
             'model' => $model,
             'abilities' => $this->mapModelAbilities($request, $model),
             'fields' => $this->resolveFields($request)
-                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('index')
                 ->mapToDisplay($request, $model),
@@ -448,14 +447,14 @@ abstract class Resource implements Arrayable, Form
 
             $model->save();
 
-            $this->saved($request, $model);
-
             if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
                 $model->recordRootEvent(
                     $model->wasRecentlyCreated ? 'Created' : 'Updated',
                     $request->user()
                 );
             }
+
+            $this->saved($request, $model);
 
             DB::commit();
         } catch (Throwable $exception) {
@@ -575,7 +574,7 @@ abstract class Resource implements Arrayable, Form
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
-                ->map(function (RenderableFilter $filter) use ($request, $model): array {
+                ->map(static function (RenderableFilter $filter) use ($request, $model): array {
                     return $filter->toField()->toInput($request, $model);
                 })
                 ->all(),

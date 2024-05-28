@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Date as DateFactory;
 class Date extends Field
 {
     /**
+     * The Blade template.
+     */
+    protected string $template = 'root::fields.date';
+
+    /**
      * The date format.
      */
     protected string $format = 'Y-m-d';

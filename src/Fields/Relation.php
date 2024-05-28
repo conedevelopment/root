@@ -209,6 +209,10 @@ abstract class Relation extends Field implements Form
     {
         $this->asSubResource = $value;
 
+        $this->format(function (Request $request, Model $model): ?int {
+            return $model->getAttribute(sprintf('%s_count', $this->getRelationName()));
+        });
+
         return $this;
     }
 
@@ -615,14 +619,14 @@ abstract class Relation extends Field implements Form
 
             $model->save();
 
-            $this->saved($request, $model);
-
             if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
                 $model->recordRootEvent(
                     $model->wasRecentlyCreated ? 'Created' : 'Updated',
                     $request->user()
                 );
             }
+
+            $this->saved($request, $model);
 
             DB::commit();
         } catch (Throwable $exception) {
