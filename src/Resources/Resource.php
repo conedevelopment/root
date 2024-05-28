@@ -422,6 +422,7 @@ abstract class Resource implements Arrayable, Form
             'model' => $model,
             'abilities' => $this->mapModelAbilities($request, $model),
             'fields' => $this->resolveFields($request)
+                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('index')
                 ->mapToDisplay($request, $model),
