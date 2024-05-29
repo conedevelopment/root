@@ -485,7 +485,11 @@ abstract class Relation extends Field implements Form
     public function aggregate(string $fn = 'count', string $column = '*'): static
     {
         $this->aggregateResolver = function (Request $request, Builder $query) use ($fn, $column): Builder {
-            $this->setModelAttribute(sprintf('%s_%s', $this->getRelationName(), $fn));
+            $this->setModelAttribute(sprintf(
+                '%s_%s%s', $this->getRelationName(),
+                $fn,
+                $column === '*' ? '' : sprintf('_%s', $column)
+            ));
 
             $this->aggregated = true;
 
