@@ -4,9 +4,13 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Fields\BelongsToMany;
 use Cone\Root\Fields\Events;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Fields;
+use Cone\Root\Fields\HasMany;
+use Cone\Root\Fields\Meta;
+use Cone\Root\Fields\MorphMany;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
@@ -403,6 +407,21 @@ abstract class Resource implements Arrayable, Form
     public function paginate(Request $request): LengthAwarePaginator
     {
         return $this->resolveFilteredQuery($request)
+            ->tap(function (Builder $query) use ($request): void {
+                $this->resolveFields($request)
+                    ->authorized($request, $query->getModel())
+                    ->visible('index')
+                    ->filter(fn (Field $field): bool => $field instanceof Relation)
+                    ->each(static function (Relation $relation) use ($query, $request): void {
+                        if ($relation instanceof BelongsToMany || $relation instanceof HasMany || $relation instanceof MorphMany) {
+                            $relation->resolveAggregate($request, $query);
+                        } elseif ($relation instanceof Meta) {
+                            $query->with('metaData');
+                        } else {
+                            $query->with($relation->getRelationName());
+                        }
+                    });
+            })
             ->latest()
             ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
@@ -422,7 +441,6 @@ abstract class Resource implements Arrayable, Form
             'model' => $model,
             'abilities' => $this->mapModelAbilities($request, $model),
             'fields' => $this->resolveFields($request)
-                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('index')
                 ->mapToDisplay($request, $model),

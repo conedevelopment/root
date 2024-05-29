@@ -83,6 +83,16 @@ abstract class Relation extends Field implements Form
     protected ?Closure $queryResolver = null;
 
     /**
+     * Determine if the field is computed.
+     */
+    protected ?Closure $aggregateResolver = null;
+
+    /**
+     * Determine whether the relation values are aggregated.
+     */
+    protected bool $aggregated = false;
+
+    /**
      * The option group resolver.
      */
     protected string|Closure|null $groupResolver = null;
@@ -209,10 +219,6 @@ abstract class Relation extends Field implements Form
     {
         $this->asSubResource = $value;
 
-        $this->format(function (Request $request, Model $model): ?int {
-            return $model->getAttribute(sprintf('%s_count', $this->getRelationName()));
-        });
-
         return $this;
     }
 
@@ -335,6 +341,10 @@ abstract class Relation extends Field implements Form
      */
     public function getValue(Model $model): mixed
     {
+        if ($this->aggregated) {
+            return parent::getValue($model);
+        }
+
         $name = $this->getRelationName();
 
         if ($this->relation instanceof Closure && ! $model->relationLoaded($name)) {
@@ -352,6 +362,10 @@ abstract class Relation extends Field implements Form
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($model);
+
+                if ($this->aggregated) {
+                    return $default;
+                }
 
                 return Collection::wrap($default)->map(function (Model $related) use ($model, $request): mixed {
                     return $this->formatRelated($request, $model, $related);
@@ -463,6 +477,34 @@ abstract class Relation extends Field implements Form
         return $query->when(! is_null($this->queryResolver), function (Builder $query) use ($request, $model): Builder {
             return call_user_func_array($this->queryResolver, [$request, $query, $model]);
         });
+    }
+
+    /**
+     * Aggregate relation values.
+     */
+    public function aggregate(string $fn = 'count', string $column = '*'): static
+    {
+        $this->aggregateResolver = function (Request $request, Builder $query) use ($fn, $column): Builder {
+            $this->setModelAttribute(sprintf('%s_%s', $this->getRelationName(), $fn));
+
+            $this->aggregated = true;
+
+            return $query->withAggregate($this->getRelationName(), $column, $fn);
+        };
+
+        return $this;
+    }
+
+    /**
+     * Resolve the aggregate query.
+     */
+    public function resolveAggregate(Request $request, Builder $query): Builder
+    {
+        if (! is_null($this->aggregateResolver)) {
+            $query = call_user_func_array($this->aggregateResolver, [$request, $query]);
+        }
+
+        return $query;
     }
 
     /**
