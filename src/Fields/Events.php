@@ -29,6 +29,8 @@ class Events extends MorphMany
     public function __construct(?string $label = null, Closure|string|null $modelAttribute = 'rootEvents', Closure|string|null $relation = null)
     {
         parent::__construct($label ?: __('Events'), $modelAttribute, $relation);
+
+        $this->hiddenOn(['index']);
     }
 
     /**
