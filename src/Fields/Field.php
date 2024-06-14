@@ -445,7 +445,7 @@ abstract class Field implements Arrayable, JsonSerializable
         $value = $this->resolveValue($request, $model);
 
         if (is_null($this->formatResolver)) {
-            return is_array($value) ? json_encode($value) : $value;
+            return is_array($value) ? json_encode($value) : (string) $value;
         }
 
         return call_user_func_array($this->formatResolver, [$request, $model, $value]);
