@@ -6,6 +6,7 @@ use Cone\Root\Models\User as Model;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,5 +44,12 @@ class User extends Model implements MustVerifyEmail
     public function documents(): MorphToMany
     {
         return $this->media()->withPivotValue('collection', 'documents');
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)
+            ->using(Pivot::class)
+            ->withPivot('role');
     }
 }

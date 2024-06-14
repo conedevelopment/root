@@ -20,6 +20,10 @@ abstract class TestCase extends BaseTestCase
         $app = require __DIR__.'/app.php';
 
         $app->booting(static function () use ($app): void {
+            $app->afterResolving('migrator', function ($migrator) {
+                $migrator->path(__DIR__.'/migrations');
+            });
+
             $app->bind(UserInterface::class, User::class);
 
             Root::instance()->resources->register([

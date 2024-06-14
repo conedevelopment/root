@@ -2,10 +2,12 @@
 
 namespace Cone\Root\Tests\Resources;
 
+use Cone\Root\Fields\BelongsToMany;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Media;
+use Cone\Root\Fields\Select;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Tests\Actions\SendPasswordResetNotification;
@@ -43,6 +45,18 @@ class UserResource extends Resource
                         Text::make('Size'),
                         Text::make('Disk'),
                         Text::make('Mime Type'),
+                    ];
+                }),
+            BelongsToMany::make('Teams')
+                ->display('name')
+                ->asSubResource()
+                ->withPivotFields(function () {
+                    return [
+                        Select::make('Role')
+                            ->options([
+                                'admin' => 'Admin',
+                                'member' => 'Member',
+                            ]),
                     ];
                 }),
         ];

@@ -59,9 +59,7 @@ class BelongsToManyController extends RelationController
 
         $relation = $field->getRelation($model);
 
-        $pivot = $related->getRelation($relation->getPivotAccessor());
-
-        $pivot->delete();
+        $related->getRelation($relation->getPivotAccessor())->delete();
 
         return Redirect::to($field->modelUrl($model))
             ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
