@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\phpstan;
+namespace Cone\Root\Tests\phpstan;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Traits\RegistersRoutes;

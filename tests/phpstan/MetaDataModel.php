@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\phpstan;
+namespace Cone\Root\Tests\phpstan;
 
 use Cone\Root\Traits\HasMetaData;
 use Illuminate\Database\Eloquent\Model;
