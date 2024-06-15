@@ -49,7 +49,6 @@ class User extends Model implements MustVerifyEmail
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class)
-            ->using(Pivot::class)
             ->withPivot('role');
     }
 }
