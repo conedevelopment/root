@@ -24,7 +24,7 @@ class Meta extends MorphOne
     public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
-            /** @phpstan-var \Tests\MetaDataModel $model */
+            /** @phpstan-var \Tests\phpstan\MetaDataModel $model */
             $related = $model->metaData()->make();
 
             return $model->metaData()
