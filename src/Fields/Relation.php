@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -605,13 +606,17 @@ abstract class Relation extends Field implements Form
     {
         $relation = $this->getRelation($model);
 
-        return $this->resolveFilters($request)
-            ->apply($request, $relation->getQuery())
+        $this->resolveFilters($request)->apply($request, $relation->getQuery());
+
+        return $relation
             ->with($this->with)
             ->withCount($this->withCount)
             ->latest()
-            ->paginate($request->input($this->getPerPageKey(), $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()))
-            ->withQueryString();
+            ->paginate(
+                $request->input($this->getPerPageKey(), $request->isTurboFrameRequest()
+                    ? 5
+                    : $relation->getRelated()->getPerPage())
+            )->withQueryString();
     }
 
     /**
@@ -838,10 +843,10 @@ abstract class Relation extends Field implements Form
      */
     public function registerRouteConstraints(Request $request, Router $router): void
     {
-        $router->bind($this->getRouteKeyName(), function (string $id) use ($request): Model {
+        $router->bind($this->getRouteKeyName(), function (string $id, Route $route) use ($router): Model {
             return $id === 'create'
-                ? $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->make()
-                : $this->resolveRouteBinding($request, $id);
+                ? $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->make()
+                : $this->resolveRouteBinding($router->getCurrentRequest(), $id);
         });
     }
 

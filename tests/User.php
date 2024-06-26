@@ -18,6 +18,8 @@ class User extends Model implements MustVerifyEmail
 
     protected $guarded = [];
 
+    protected $table = 'users';
+
     protected static function newFactory(): UserFactory
     {
         return new class() extends UserFactory
@@ -49,6 +51,6 @@ class User extends Model implements MustVerifyEmail
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class)
-            ->withPivot('role');
+            ->withPivot(['id', 'role']);
     }
 }

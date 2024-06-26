@@ -82,6 +82,10 @@ class BelongsToMany extends Relation
                             $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
                         );
                     });
+            })->hydrate(function (Request $request, Pivot $model, mixed $value): void {
+                $relation = $this->getRelation($model->pivotParent);
+
+                $model->setAttribute($relation->getRelatedPivotKeyName(), $value);
             })->display(function (Model $model): ?string {
                 return $this->resolveDisplay($model);
             }),
@@ -249,11 +253,11 @@ class BelongsToMany extends Relation
         if ($this->isSubResource()) {
             $router->get('/', [BelongsToManyController::class, 'index']);
             $router->get('/create', [BelongsToManyController::class, 'create']);
-            $router->get("/{{$this->getRouteKeyName()}", [BelongsToManyController::class, 'show']);
+            $router->get("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'show']);
             $router->post('/', [BelongsToManyController::class, 'store']);
-            $router->get("/{{$this->getRouteKeyName()}/edit", [BelongsToManyController::class, 'edit']);
-            $router->patch("/{{$this->getRouteKeyName()}", [BelongsToManyController::class, 'update']);
-            $router->delete("/{{$this->getRouteKeyName()}", [BelongsToManyController::class, 'destroy']);
+            $router->get("/{{$this->getRouteKeyName()}}/edit", [BelongsToManyController::class, 'edit']);
+            $router->patch("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'update']);
+            $router->delete("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'destroy']);
         }
     }
 
