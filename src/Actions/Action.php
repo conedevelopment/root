@@ -211,7 +211,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
 
         $this->handle($request, $models);
 
-        if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+        if (method_exists($model, 'recordRootEvent')) {
             $models->each(static function (Model $model) use ($request): void {
                 $model->recordRootEvent(
                     Str::of(static::class)->classBasename()->headline()->value(),
