@@ -43,12 +43,10 @@ class MorphToMany extends BelongsToMany
                             $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
                         );
                     });
-            })->hydrate(function (Request $request, MorphPivot $model): void {
-                $relation = $this->getRelation($model->pivotParent);
-
+            })->hydrate(function (Request $request, MorphPivot $model, mixed $value): void {
                 $model->setAttribute(
-                    $relation->getRelatedPivotKeyName(),
-                    $model->related->getAttribute($relation->getRelatedKeyName())
+                    $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
+                    $value
                 );
             })->display(function (Model $model): mixed {
                 return $this->resolveDisplay($model);

@@ -83,9 +83,10 @@ class BelongsToMany extends Relation
                         );
                     });
             })->hydrate(function (Request $request, Pivot $model, mixed $value): void {
-                $relation = $this->getRelation($model->pivotParent);
-
-                $model->setAttribute($relation->getRelatedPivotKeyName(), $value);
+                $model->setAttribute(
+                    $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
+                    $value
+                );
             })->display(function (Model $model): ?string {
                 return $this->resolveDisplay($model);
             }),
