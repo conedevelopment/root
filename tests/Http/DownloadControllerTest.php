@@ -3,10 +3,8 @@
 namespace Cone\Root\Tests\Http;
 
 use Cone\Root\Models\Medium;
-use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
