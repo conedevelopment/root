@@ -53,7 +53,7 @@ class ResourceTest extends TestCase
         $this->assertSame(['documents'], array_keys($query->getEagerLoads()));
 
         $this->assertSame(
-            'select * from "users"',
+            'select * from "users" where "users"."deleted_at" is null',
             $query->toRawSql()
         );
     }
@@ -68,7 +68,7 @@ class ResourceTest extends TestCase
         $query = $this->resource->resolveFilteredQuery($this->app['request']);
 
         $this->assertSame(
-            'select * from "users" where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') order by "users"."id" asc',
+            'select * from "users" where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') and "users"."deleted_at" is null order by "users"."id" asc',
             $query->toRawSql()
         );
     }

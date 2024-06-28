@@ -8,13 +8,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model implements MustVerifyEmail
 {
     use HasFactory;
-    // use SoftDeletes;
+    use SoftDeletes;
 
     protected $guarded = [];
 
@@ -25,6 +26,15 @@ class User extends Model implements MustVerifyEmail
         return new class() extends UserFactory
         {
             protected $model = User::class;
+
+            public function definition(): array
+            {
+                return array_merge(parent::definition(), [
+                    'employer_id' => null,
+                    'employer_type' => null,
+                    'deleted_at' => null,
+                ]);
+            }
         };
     }
 
@@ -52,5 +62,10 @@ class User extends Model implements MustVerifyEmail
     {
         return $this->belongsToMany(Team::class)
             ->withPivot(['id', 'role']);
+    }
+
+    public function employer(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

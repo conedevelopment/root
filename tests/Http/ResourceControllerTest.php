@@ -88,6 +88,12 @@ class ResourceControllerTest extends TestCase
             ->delete($this->resource->getUri().'/'.$user->getKey())
             ->assertRedirect();
 
+        $this->assertTrue($user->refresh()->trashed());
+
+        $this->actingAs($this->admin)
+            ->delete($this->resource->getUri().'/'.$user->getKey())
+            ->assertRedirect();
+
         $this->assertDatabaseMissing('users', ['id' => $user->getKey()]);
     }
 }

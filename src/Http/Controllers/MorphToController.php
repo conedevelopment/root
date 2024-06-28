@@ -12,11 +12,11 @@ class MorphToController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Model $model, ?Model $related = null): Response
+    public function __invoke(Request $request, Model $model): Response
     {
         $field = $request->route('field');
 
-        $data = $field->toInput($request, $related ?: $model);
+        $data = $field->toInput($request, $model);
 
         return ResponseFactory::view($data['template'], $data);
     }

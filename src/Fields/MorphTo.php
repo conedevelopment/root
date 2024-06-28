@@ -55,13 +55,13 @@ class MorphTo extends BelongsTo
      */
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
-        $value = explode(':', $value);
+        $value = is_null($value) ? $value : explode(':', $value);
 
-        $model->setAttribute($this->getRelation($model)->getMorphType(), $value[0]);
-
-        $related = tap(new $value[0], static function (Model $related) use ($value): void {
-            $related->forceFill([$related->getKeyName() => $value[1]]);
-        });
+        $related = is_null($value)
+            ? $value
+            : tap(new $value[0], static function (Model $related) use ($value): void {
+                $related->forceFill([$related->getKeyName() => $value[1]]);
+            });
 
         parent::resolveHydrate($request, $model, $related);
     }
