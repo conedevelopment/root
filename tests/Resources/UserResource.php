@@ -8,6 +8,7 @@ use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Media;
 use Cone\Root\Fields\MorphTo;
+use Cone\Root\Fields\Repeater;
 use Cone\Root\Fields\Select;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
@@ -61,7 +62,6 @@ class UserResource extends Resource
                             ]),
                     ];
                 }),
-
             MorphTo::make('Employer')
                 ->display('name')
                 ->nullable()
@@ -69,6 +69,13 @@ class UserResource extends Resource
                     User::class,
                     Team::class,
                 ]),
+            Repeater::make('Settings')
+                ->withFields(function () {
+                    return [
+                        Text::make('Key'),
+                        Text::make('Value'),
+                    ];
+                }),
         ];
     }
 

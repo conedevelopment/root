@@ -15,6 +15,9 @@ return new class extends Migration
             $table->after('id', function (Blueprint $table) {
                 $table->nullableMorphs('employer');
             });
+            $table->after('password', function (Blueprint $table) {
+                $table->json('settings')->nullable();
+            });
             $table->after('updated_at', function (Blueprint $table) {
                 $table->softDeletes();
             });
@@ -28,6 +31,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropMorphs('employer');
+            $table->dropColumn('settings');
             $table->dropSoftDeletes();
         });
     }

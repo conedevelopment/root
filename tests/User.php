@@ -33,6 +33,7 @@ class User extends Model implements MustVerifyEmail
                     'employer_id' => null,
                     'employer_type' => null,
                     'deleted_at' => null,
+                    'settings' => null,
                 ]);
             }
         };
@@ -41,10 +42,9 @@ class User extends Model implements MustVerifyEmail
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'updated_at' => 'datetime',
+            'settings' => 'json',
         ];
     }
 

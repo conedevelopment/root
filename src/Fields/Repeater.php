@@ -218,13 +218,13 @@ class Repeater extends Field
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, array $value): string {
+            $this->formatResolver = function (Request $request, Model $model, ?array $value = null): string {
                 $values = array_map(function (array $value) use ($request, $model): array {
                     return $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
                         ->authorized($request, $model)
                         ->visible('show')
                         ->mapToDisplay($request, $model);
-                }, $value);
+                }, (array) $value);
 
                 return View::make('root::fields.repeater-table', ['values' => $values])->render();
             };
