@@ -2,10 +2,12 @@
 
 namespace Cone\Root\Tests\Http;
 
+use Cone\Root\Notifications\AuthCodeNotification;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 
 class AuthLoginControllerTest extends TestCase
 {
@@ -61,6 +63,23 @@ class AuthLoginControllerTest extends TestCase
         });
 
         $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_login_controller_two_factor_login(): void
+    {
+        Notification::fake([
+            AuthCodeNotification::class,
+        ]);
+
+        $user = User::factory()->create(['email' => 'twofactor@root.local']);
+
+        $this->post('/root/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect()
+            ->assertSessionHas('status', __('The two factor authentication link has been sent!'));
+
+        Notification::assertSentTo($user, AuthCodeNotification::class);
     }
 
     public function test_login_controller_logout(): void

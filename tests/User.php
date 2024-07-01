@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 
 class User extends Model implements MustVerifyEmail
 {
@@ -67,5 +68,10 @@ class User extends Model implements MustVerifyEmail
     public function employer(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function shouldTwoFactorAuthenticate(Request $request): bool
+    {
+        return $this->email === 'twofactor@root.local';
     }
 }

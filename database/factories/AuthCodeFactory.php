@@ -25,4 +25,14 @@ class AuthCodeFactory extends Factory
             'expires_at' => Date::now()->addMinutes(5),
         ];
     }
+
+    /**
+     * Indicate that the model should be expired.
+     */
+    public function expired(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'expires_at' => Date::now()->subMinute(),
+        ]);
+    }
 }

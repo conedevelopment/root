@@ -18,7 +18,7 @@ class AuthResetPasswordControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->unverified()->create();
 
         $this->token = Password::broker()->createToken($this->user);
     }
