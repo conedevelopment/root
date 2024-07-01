@@ -16,7 +16,7 @@ class ActionControllerTest extends TestCase
         $this->admin = User::factory()->create();
     }
 
-    public function test_an_action_controller_handles_action_request(): void
+    public function test_action_controller_handles_action_request(): void
     {
         $this->actingAs($this->admin)
             ->post('/root/users/actions/send-password-reset-notification')

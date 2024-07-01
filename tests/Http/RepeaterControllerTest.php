@@ -28,7 +28,7 @@ class RepeaterControllerTest extends TestCase
         $this->admin = User::factory()->create();
     }
 
-    public function test_a_repeater_controller_handles_request(): void
+    public function test_repeater_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
             ->post('/root/users/'.$this->admin->getKey().'/fields/settings')

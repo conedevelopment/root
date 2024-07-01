@@ -37,7 +37,7 @@ class BelongsToManyControllerTest extends TestCase
             });
     }
 
-    public function test_a_belongs_to_many_controller_handles_index(): void
+    public function test_belongs_to_many_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
             ->get('/root/users/'.$this->admin->getKey().'/fields/teams')
@@ -46,7 +46,7 @@ class BelongsToManyControllerTest extends TestCase
             ->assertViewHas($this->field->toIndex($this->app['request'], $this->admin));
     }
 
-    public function test_a_belongs_to_many_controller_handles_store(): void
+    public function test_belongs_to_many_controller_handles_store(): void
     {
         $team = Team::factory()->create();
 
@@ -65,7 +65,7 @@ class BelongsToManyControllerTest extends TestCase
         ]);
     }
 
-    public function test_a_belongs_to_many_controller_handles_update(): void
+    public function test_belongs_to_many_controller_handles_update(): void
     {
         $team = $this->admin->teams->first();
 
@@ -82,7 +82,7 @@ class BelongsToManyControllerTest extends TestCase
         $this->assertSame('member', $team->pivot->refresh()->role);
     }
 
-    public function test_a_belongs_to_many_controller_handles_destroy(): void
+    public function test_belongs_to_many_controller_handles_destroy(): void
     {
         $team = $this->admin->teams->first();
 

@@ -19,7 +19,7 @@ class DownloadControllerTest extends TestCase
         $this->admin = User::factory()->create();
     }
 
-    public function test_a_download_controller_handles_request(): void
+    public function test_download_controller_handles_request(): void
     {
         $medium = Medium::factory()->create();
 

@@ -35,7 +35,7 @@ class RelationControllerTest extends TestCase
         );
     }
 
-    public function test_a_relation_controller_handles_index(): void
+    public function test_relation_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
             ->get('/root/users/'.$this->admin->getKey().'/fields/uploads')
@@ -44,7 +44,7 @@ class RelationControllerTest extends TestCase
             ->assertViewHas($this->field->toIndex($this->app['request'], $this->admin));
     }
 
-    public function test_a_relation_controller_handles_create(): void
+    public function test_relation_controller_handles_create(): void
     {
         $this->actingAs($this->admin)
             ->get('/root/users/'.$this->admin->getKey().'/fields/uploads/create')
@@ -53,7 +53,7 @@ class RelationControllerTest extends TestCase
             ->assertViewHas($this->field->toCreate($this->app['request'], $this->admin));
     }
 
-    public function test_a_relation_controller_handles_store(): void
+    public function test_relation_controller_handles_store(): void
     {
         $this->actingAs($this->admin)
             ->post('/root/users/'.$this->admin->getKey().'/fields/uploads', $data = Medium::factory()->make()->toArray())
@@ -65,7 +65,7 @@ class RelationControllerTest extends TestCase
         );
     }
 
-    public function test_a_relation_controller_handles_show(): void
+    public function test_relation_controller_handles_show(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
@@ -78,7 +78,7 @@ class RelationControllerTest extends TestCase
             ->assertViewHas($this->field->toShow($this->app['request'], $this->admin, $this->medium));
     }
 
-    public function test_a_relation_controller_handles_edit(): void
+    public function test_relation_controller_handles_edit(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}/edit'];
@@ -91,7 +91,7 @@ class RelationControllerTest extends TestCase
             ->assertViewHas($this->field->toEdit($this->app['request'], $this->admin, $this->medium));
     }
 
-    public function test_a_relation_controller_handles_update(): void
+    public function test_relation_controller_handles_update(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('PATCH')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
@@ -108,7 +108,7 @@ class RelationControllerTest extends TestCase
         $this->assertSame('updated.png', $this->medium->refresh()->file_name);
     }
 
-    public function test_a_relation_controller_handles_destroy(): void
+    public function test_relation_controller_handles_destroy(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('DELETE')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];

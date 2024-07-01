@@ -28,7 +28,7 @@ class MorphToControllerTest extends TestCase
         $this->admin = User::factory()->create();
     }
 
-    public function test_a_morph_to_controller_handles_request(): void
+    public function test_morph_to_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
             ->get('/root/users/'.$this->admin->getKey().'/fields/employer')

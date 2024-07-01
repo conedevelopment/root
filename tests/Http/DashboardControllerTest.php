@@ -17,7 +17,7 @@ class DashboardControllerTest extends TestCase
         $this->admin = User::factory()->create();
     }
 
-    public function test_a_dashboard_controller_handles_request(): void
+    public function test_dashboard_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
             ->get('/root')

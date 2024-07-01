@@ -65,6 +65,14 @@ abstract class Widget implements Arrayable
     }
 
     /**
+     * Get the blade template.
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    /**
      * Get the view data.
      */
     public function data(Request $request): array

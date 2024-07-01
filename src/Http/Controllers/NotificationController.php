@@ -53,6 +53,6 @@ class NotificationController extends Controller
 
         $notification->delete();
 
-        return new JsonResponse($notification);
+        return new JsonResponse(['deleted' => true]);
     }
 }

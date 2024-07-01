@@ -27,7 +27,7 @@ class RepeaterTest extends TestCase
         $this->assertSame('root::fields.repeater', $this->field->getTemplate());
     }
 
-    public function test_a_repeater_field_register_routes(): void
+    public function test_a_repeater_field_registers_routes(): void
     {
         $this->app['router']->prefix('posts/fields')->group(function ($router) {
             $this->field->registerRoutes($this->app['request'], $router);

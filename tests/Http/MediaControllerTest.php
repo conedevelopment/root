@@ -33,7 +33,7 @@ class MediaControllerTest extends TestCase
             });
     }
 
-    public function test_a_media_controller_handles_index(): void
+    public function test_media_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
             ->get('/root/users/'.$this->admin->getKey().'/fields/media')
@@ -41,7 +41,7 @@ class MediaControllerTest extends TestCase
             ->assertJson($this->field->paginateRelatable($this->app['request'], $this->admin)->toArray());
     }
 
-    public function test_a_media_controller_handles_store(): void
+    public function test_media_controller_handles_store(): void
     {
         Queue::fake();
 
@@ -59,7 +59,7 @@ class MediaControllerTest extends TestCase
         Queue::assertPushedWithChain(MoveFile::class, [PerformConversions::class]);
     }
 
-    public function test_a_media_controller_handles_destroy(): void
+    public function test_media_controller_handles_destroy(): void
     {
         $medium = Medium::factory()->create();
 
