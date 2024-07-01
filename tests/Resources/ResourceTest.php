@@ -68,7 +68,8 @@ class ResourceTest extends TestCase
         $query = $this->resource->resolveFilteredQuery($this->app['request']);
 
         $this->assertSame(
-            'select * from "users" where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') and "users"."deleted_at" is null order by "users"."id" asc',
+            'select * from "users"'
+                . ' where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') and "users"."deleted_at" is null order by "users"."id" asc',
             $query->toRawSql()
         );
     }
