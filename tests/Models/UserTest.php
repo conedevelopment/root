@@ -3,6 +3,7 @@
 namespace Cone\Root\Tests\Models;
 
 use Cone\Root\Models\AuthCode;
+use Cone\Root\Models\Event;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\Notification;
 use Cone\Root\Tests\TestCase;
@@ -53,5 +54,23 @@ class UserTest extends TestCase
         $this->assertTrue($this->user->authCodes->contains($code));
 
         $this->assertTrue($this->user->authCode->is($code));
+    }
+
+    public function test_a_user_has_triggered_root_events(): void
+    {
+        $event = $this->user->triggeredRootEvents()->save(
+            Event::factory()->for($this->user, 'target')->make()
+        );
+
+        $this->assertTrue($this->user->triggeredRootEvents->contains($event));
+    }
+
+    public function test_a_user_has_root_events(): void
+    {
+        $event = $this->user->rootEvents()->save(
+            Event::factory()->for($this->user)->make()
+        );
+
+        $this->assertTrue($this->user->rootEvents->contains($event));
     }
 }

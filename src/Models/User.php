@@ -71,6 +71,14 @@ class User extends Authenticatable implements Contract
     }
 
     /**
+     * Get the triggered root events for the user.
+     */
+    public function triggeredRootEvents(): HasMany
+    {
+        return $this->hasMany(Event::getProxiedClass());
+    }
+
+    /**
      * Determine whether the object requires two factor authentitaction.
      */
     public function requiresTwoFactorAuthentication(): bool

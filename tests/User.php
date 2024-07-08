@@ -3,6 +3,7 @@
 namespace Cone\Root\Tests;
 
 use Cone\Root\Models\User as Model;
+use Cone\Root\Traits\HasRootEvents;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 class User extends Model implements MustVerifyEmail
 {
     use HasFactory;
+    use HasRootEvents;
     use SoftDeletes;
 
     protected $guarded = [];
