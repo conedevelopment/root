@@ -7,7 +7,7 @@
         </div>
     @endif
     <x-slot:footer>
-        <form id="{{ $key }}" method="POST" action="{{ $url }}">
+        <form id="{{ $key }}" method="POST" action="{{ $url }}" x-on:submit="open = false">
             @csrf
             <button type="submit" class="btn btn--primary">
                 {{ __('Run') }}
