@@ -30,8 +30,10 @@ class RootServiceProvider extends ServiceProvider
 {
     /**
      * All of the container bindings that should be registered.
+     *
+     * @var array
      */
-    public array $bindings = [
+    public $bindings = [
         Interfaces\Models\AuthCode::class => Models\AuthCode::class,
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
