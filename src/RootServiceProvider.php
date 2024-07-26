@@ -43,8 +43,10 @@ class RootServiceProvider extends ServiceProvider
 
     /**
      * All of the container singletons that should be registered.
+     *
+     * @var array
      */
-    public array $singletons = [
+    public $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
     ];
 
