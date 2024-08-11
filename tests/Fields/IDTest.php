@@ -13,7 +13,7 @@ class IDTest extends TestCase
     {
         parent::setUp();
 
-        $this->field = new ID();
+        $this->field = new ID;
     }
 
     public function test_an_id_field_has_default_attributes(): void

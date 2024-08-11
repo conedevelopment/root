@@ -108,7 +108,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function resolveQuery(Request $request): Builder
     {
         if (is_null($this->queryResolver)) {
-            throw new QueryResolutionException();
+            throw new QueryResolutionException;
         }
 
         return call_user_func_array($this->queryResolver, [$request]);

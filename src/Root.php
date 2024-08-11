@@ -71,10 +71,10 @@ class Root
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->resources = new Resources();
-        $this->widgets = new Widgets();
-        $this->navigation = new Navigation();
-        $this->breadcrumbs = new Breadcrumbs();
+        $this->resources = new Resources;
+        $this->widgets = new Widgets;
+        $this->navigation = new Navigation;
+        $this->breadcrumbs = new Breadcrumbs;
         $this->timezone = $app['config']->get('app.timezone');
     }
 

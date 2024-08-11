@@ -27,7 +27,7 @@ abstract class TestCase extends BaseTestCase
             $app->bind(UserInterface::class, User::class);
 
             Root::instance()->resources->register([
-                new UserResource(),
+                new UserResource,
             ]);
         });
 

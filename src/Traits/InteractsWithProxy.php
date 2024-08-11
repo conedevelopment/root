@@ -25,7 +25,7 @@ trait InteractsWithProxy
                     static::getProxiedInterface()
                 );
             } catch (Throwable) {
-                $proxy = new static();
+                $proxy = new static;
             }
         }
 

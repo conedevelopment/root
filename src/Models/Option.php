@@ -2,15 +2,13 @@
 
 namespace Cone\Root\Models;
 
-use Cone\Root\Database\Factories\EventFactory;
-use Cone\Root\Interfaces\Models\Event as Contract;
+use Cone\Root\Database\Factories\OptionFactory;
+use Cone\Root\Interfaces\Models\Option as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Event extends Model implements Contract
+class Option extends Model implements Contract
 {
     use HasFactory;
     use InteractsWithProxy;
@@ -21,7 +19,7 @@ class Event extends Model implements Contract
      * @var array<string, string>
      */
     protected $casts = [
-        'payload' => 'json',
+        //
     ];
 
     /**
@@ -30,8 +28,8 @@ class Event extends Model implements Contract
      * @var array<string>
      */
     protected $fillable = [
-        'action',
-        'payload',
+        'key',
+        'value',
     ];
 
     /**
@@ -39,7 +37,7 @@ class Event extends Model implements Contract
      *
      * @var string
      */
-    protected $table = 'root_events';
+    protected $table = 'root_options';
 
     /**
      * Get the proxied interface.
@@ -52,24 +50,8 @@ class Event extends Model implements Contract
     /**
      * Create a new factory instance for the model.
      */
-    protected static function newFactory(): EventFactory
+    protected static function newFactory(): OptionFactory
     {
-        return EventFactory::new();
-    }
-
-    /**
-     * Get the event target.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::getProxiedClass());
-    }
-
-    /**
-     * Get the event target.
-     */
-    public function target(): MorphTo
-    {
-        return $this->morphTo();
+        return OptionFactory::new();
     }
 }

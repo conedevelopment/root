@@ -40,7 +40,7 @@ class UserTest extends TestCase
 
     public function test_a_user_has_avatar(): void
     {
-        $this->assertNull((new User())->avatar);
+        $this->assertNull((new User)->avatar);
 
         $this->assertNotNull($this->user->avatar);
     }
