@@ -3,9 +3,10 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Interfaces\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Interfaces\Navigation\Registry as Navigation;
+use Cone\Root\Interfaces\Options\Repository as Options;
 use Cone\Root\Models\User;
-use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
 use DateTimeZone;
@@ -23,7 +24,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.3.3';
+    public const VERSION = '2.4.0';
 
     /**
      * The registered booting callbacks.
@@ -56,6 +57,11 @@ class Root
     public readonly Breadcrumbs $breadcrumbs;
 
     /**
+     * The options instance.
+     */
+    public readonly Options $options;
+
+    /**
      * The auth resolver.
      */
     protected ?Closure $authResolver = null;
@@ -73,8 +79,9 @@ class Root
         $this->app = $app;
         $this->resources = new Resources;
         $this->widgets = new Widgets;
-        $this->navigation = new Navigation;
-        $this->breadcrumbs = new Breadcrumbs;
+        $this->navigation = $app->make(Navigation::class);
+        $this->breadcrumbs = $app->make(Breadcrumbs::class);
+        $this->options = $app->make(Options::class);
         $this->timezone = $app['config']->get('app.timezone');
     }
 

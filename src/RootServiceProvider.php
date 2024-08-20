@@ -34,12 +34,15 @@ class RootServiceProvider extends ServiceProvider
      * @var array
      */
     public $bindings = [
+        Interfaces\Breadcrumbs\Registry::class => Breadcrumbs\Registry::class,
         Interfaces\Models\AuthCode::class => Models\AuthCode::class,
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
         Interfaces\Models\Option::class => Models\Option::class,
         Interfaces\Models\User::class => Models\User::class,
+        Interfaces\Navigation\Registry::class => Navigation\Registry::class,
+        Interfaces\Options\Repository::class => Options\Repository::class,
     ];
 
     /**

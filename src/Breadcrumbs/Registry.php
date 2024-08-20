@@ -3,10 +3,11 @@
 namespace Cone\Root\Breadcrumbs;
 
 use Closure;
+use Cone\Root\Interfaces\Breadcrumbs\Registry as Contract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
-class Registry
+class Registry implements Contract
 {
     /**
      * The registered patterns.
