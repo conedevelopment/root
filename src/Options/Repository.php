@@ -15,6 +15,11 @@ class Repository implements Contract
     protected Collection $cache;
 
     /**
+     * The the casts.
+     */
+    protected array $casts = [];
+
+    /**
      * Create a new repository instance.
      */
     public function __construct()
@@ -106,5 +111,23 @@ class Repository implements Contract
         $this->query()->whereIn('key', $keys)->delete();
 
         $this->cache->forget($keys);
+    }
+
+    /**
+     * Set the cast to the given key.
+     */
+    public function cast(string $key, string $cast): static
+    {
+        $this->casts[$key] = $cast;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the cast for the given key.
+     */
+    public function resolveCast(string $key): string
+    {
+        return $this->casts[$key] ?? 'string';
     }
 }

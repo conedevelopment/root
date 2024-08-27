@@ -4,6 +4,7 @@ namespace Cone\Root\Models;
 
 use Cone\Root\Database\Factories\OptionFactory;
 use Cone\Root\Interfaces\Models\Option as Contract;
+use Cone\Root\Root;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,15 +13,6 @@ class Option extends Model implements Contract
 {
     use HasFactory;
     use InteractsWithProxy;
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        //
-    ];
 
     /**
      * The attributes that are mass assignable.
@@ -53,5 +45,17 @@ class Option extends Model implements Contract
     protected static function newFactory(): OptionFactory
     {
         return OptionFactory::new();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'value' => Root::instance()->options->resolveCast($this->key),
+        ];
     }
 }
