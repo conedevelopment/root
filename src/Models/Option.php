@@ -55,7 +55,10 @@ class Option extends Model implements Contract
     protected function casts(): array
     {
         return [
-            'value' => Root::instance()->options->resolveCast($this->key),
+            'value' => match (true) {
+                is_null($this->key) => 'string',
+                default => Root::instance()->options->resolveCast($this->key),
+            },
         ];
     }
 }
