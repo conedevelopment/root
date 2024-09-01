@@ -131,7 +131,7 @@ class BelongsToMany extends Relation
         $this->withFields($callback);
 
         $this->pivotFieldsResolver = function (Request $request, Model $model, Model $related) use ($callback): Fields {
-            $fields = new Fields();
+            $fields = new Fields;
 
             $fields->register(Arr::wrap(call_user_func_array($callback, [$request])));
 

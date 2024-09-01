@@ -60,7 +60,7 @@ class Media extends File
      */
     public function getModel(): Model
     {
-        return $this->model ?: new class() extends Model
+        return $this->model ?: new class extends Model
         {
             use HasMedia;
         };
@@ -80,7 +80,7 @@ class Media extends File
     public function filters(Request $request): array
     {
         return [
-            new MediaSearch(),
+            new MediaSearch,
         ];
     }
 
@@ -147,7 +147,7 @@ class Media extends File
         $disk->append($file->getClientOriginalName(), $file->get());
 
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return array_merge($this->toOption($request, $model, new Medium()), [
+            return array_merge($this->toOption($request, $model, new Medium), [
                 'processing' => true,
                 'fileName' => null,
             ]);

@@ -38,7 +38,7 @@ class Resources extends Collection
     public function resolve(string $key): Resource
     {
         if (! $this->has($key)) {
-            throw new ResourceResolutionException();
+            throw new ResourceResolutionException;
         }
 
         return $this->get($key);

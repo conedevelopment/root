@@ -14,7 +14,7 @@ class NavigationTest extends TestCase
     {
         parent::setUp();
 
-        $this->registry = new Registry();
+        $this->registry = new Registry;
     }
 
     public function test_a_navigation_registry_can_register_locations(): void

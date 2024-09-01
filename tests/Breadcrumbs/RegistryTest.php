@@ -15,7 +15,7 @@ class RegistryTest extends TestCase
     {
         parent::setUp();
 
-        $this->registry = new Registry();
+        $this->registry = new Registry;
     }
 
     public function test_a_breadcrumb_registry_can_register_patterns(): void

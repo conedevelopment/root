@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('root_meta_data', static function (Blueprint $table): void {
+        Schema::create('root_auth_codes', static function (Blueprint $table): void {
             $table->id();
-            $table->uuidMorphs('metable');
-            $table->string('key')->index();
-            $table->text('value')->nullable();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->integer('code')->unsigned();
+            $table->timestamp('expires_at');
             $table->timestamps();
-
-            $table->unique(['metable_id', 'metable_type', 'key']);
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('root_meta_data');
+        Schema::dropIfExists('root_auth_codes');
     }
 };

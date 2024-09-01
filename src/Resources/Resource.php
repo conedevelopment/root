@@ -315,7 +315,7 @@ abstract class Resource implements Arrayable, Form
         if (is_null($this->fields)) {
             $this->withFields(function (): array {
                 return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()))
-                    ? [new Events()]
+                    ? [new Events]
                     : [];
             });
         }
@@ -337,7 +337,7 @@ abstract class Resource implements Arrayable, Form
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,
             $sortables->isNotEmpty() ? new Sort($sortables) : null,
-            $this->isSoftDeletable() ? new TrashStatus() : null,
+            $this->isSoftDeletable() ? new TrashStatus : null,
         ]));
     }
 

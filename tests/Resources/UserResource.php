@@ -26,7 +26,7 @@ class UserResource extends Resource
     public function actions(Request $request): array
     {
         return [
-            new SendPasswordResetNotification(),
+            new SendPasswordResetNotification,
         ];
     }
 
@@ -82,8 +82,8 @@ class UserResource extends Resource
     public function widgets(Request $request): array
     {
         return [
-            new UsersCount(),
-            new UsersTrend(),
+            new UsersCount,
+            new UsersTrend,
         ];
     }
 }

@@ -43,7 +43,7 @@ trait AsForm
     public function errors(Request $request): MessageBag
     {
         if (is_null($this->errors)) {
-            $this->errors = $request->session()->get('errors', new ViewErrorBag())->getBag($this->errorBag);
+            $this->errors = $request->session()->get('errors', new ViewErrorBag)->getBag($this->errorBag);
         }
 
         return $this->errors;

@@ -59,7 +59,7 @@ class SelectTest extends TestCase
 
     public function test_a_select_field_has_options(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertEmpty($this->field->resolveOptions($this->app->request, $model));
 
@@ -88,7 +88,7 @@ class SelectTest extends TestCase
 
     public function test_a_select_field_resolves_format(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->field->options([
             'edit' => 'Edit',
@@ -106,7 +106,7 @@ class SelectTest extends TestCase
 
     public function test_a_select_field_has_input_representation(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertEmpty(
             array_diff(

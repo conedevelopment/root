@@ -14,7 +14,7 @@ class ActionTest extends TestCase
     {
         parent::setUp();
 
-        $this->action = new SendPasswordResetNotification();
+        $this->action = new SendPasswordResetNotification;
 
         $this->action->withQuery(fn () => User::query());
     }
@@ -96,7 +96,7 @@ class ActionTest extends TestCase
 
     public function test_an_action_has_form_representation(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertSame(array_merge($this->action->toArray(), [
             'url' => null,

@@ -14,7 +14,7 @@ class Team extends Model
 
     protected static function newFactory()
     {
-        $factory = new class() extends Factory
+        $factory = new class extends Factory
         {
             protected $model = Team::class;
 

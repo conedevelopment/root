@@ -20,7 +20,7 @@ class MediaSearch extends Search
     {
         $this->attributes = $attributes;
 
-        parent::__construct(new Fields());
+        parent::__construct(new Fields);
     }
 
     /**

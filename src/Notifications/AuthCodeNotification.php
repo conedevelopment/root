@@ -42,7 +42,7 @@ class AuthCodeNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(sprintf('%s - %s', Config::get('app.name'), __('Two Factor Code')))
             ->line(__('Your verification code is: :code.', ['code' => $this->code->code]))
             ->action(__('Verify Authentication'), URL::route('root.auth.two-factor.show', ['code' => $this->code->code]))

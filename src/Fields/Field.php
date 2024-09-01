@@ -547,7 +547,7 @@ abstract class Field implements Arrayable, JsonSerializable
     public function resolveErrors(Request $request): MessageBag
     {
         return is_null($this->errorsResolver)
-            ? $request->session()->get('errors', new ViewErrorBag())->getBag('default')
+            ? $request->session()->get('errors', new ViewErrorBag)->getBag('default')
             : call_user_func_array($this->errorsResolver, [$request]);
     }
 
