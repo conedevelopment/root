@@ -15,7 +15,7 @@ class FilterTest extends TestCase
     {
         parent::setUp();
 
-        $this->filter = new class() extends Filter
+        $this->filter = new class extends Filter
         {
             public function __construct()
             {

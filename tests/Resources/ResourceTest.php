@@ -115,7 +115,7 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_handles_form_requests(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->app['request']->merge([
             'name' => 'Test',

@@ -39,7 +39,7 @@ class DateTest extends TestCase
 
     public function test_a_date_field_has_time(): void
     {
-        $model = new User();
+        $model = new User;
 
         $now = DateFactory::now();
 

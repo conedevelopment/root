@@ -22,7 +22,7 @@ class BelongsToTest extends TestCase
     {
         $medium = Medium::factory()->make();
 
-        $user = new User();
+        $user = new User;
 
         $this->field->resolveHydrate($this->app['request'], $medium, $user);
 

@@ -158,7 +158,7 @@ class Repeater extends Field
     public function resolveOptionFields(Request $request, Model $model, Model $tmpModel): Fields
     {
         return is_null($this->optionFieldsResolver)
-            ? new Fields()
+            ? new Fields
             : call_user_func_array($this->optionFieldsResolver, [$request, $model, $tmpModel]);
     }
 
@@ -167,7 +167,7 @@ class Repeater extends Field
      */
     public function newTemporaryModel(array $attributes = []): Model
     {
-        $model = new class() extends Model
+        $model = new class extends Model
         {
             //
         };

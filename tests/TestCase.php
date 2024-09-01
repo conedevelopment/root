@@ -7,13 +7,13 @@ use Cone\Root\Root;
 use Cone\Root\Tests\Resources\UserResource;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Storage;
 
 abstract class TestCase extends BaseTestCase
 {
-    use LazilyRefreshDatabase;
+    use DatabaseMigrations;
 
     public function createApplication(): Application
     {
@@ -27,7 +27,7 @@ abstract class TestCase extends BaseTestCase
             $app->bind(UserInterface::class, User::class);
 
             Root::instance()->resources->register([
-                new UserResource(),
+                new UserResource,
             ]);
         });
 

@@ -38,7 +38,7 @@ trait HasAttributes
     public function classList(): ClassList
     {
         if (! isset($this->attributes['class'])) {
-            $this->attributes['class'] = new ClassList();
+            $this->attributes['class'] = new ClassList;
         }
 
         return $this->attributes['class'];
