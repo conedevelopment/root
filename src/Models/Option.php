@@ -57,7 +57,7 @@ class Option extends Model implements Contract
         return [
             'value' => match (true) {
                 is_null($this->key) => 'string',
-                default => Root::instance()->options->resolveCast($this->key),
+                default => Root::instance()->options->repository->resolveCast($this->key),
             },
         ];
     }

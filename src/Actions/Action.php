@@ -4,6 +4,7 @@ namespace Cone\Root\Actions;
 
 use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Http\Controllers\ActionController;
@@ -23,11 +24,13 @@ use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 abstract class Action implements Arrayable, Form, JsonSerializable
 {
@@ -226,12 +229,24 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     public function perform(Request $request): Response
     {
-        $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
+        try {
+            DB::beginTransaction();
 
-        return Redirect::back()->with(
-            sprintf('alerts.action-%s', $this->getKey()),
-            Alert::info(__(':action was successful!', ['action' => $this->getName()]))
-        );
+            $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
+
+            return Redirect::back()->with(
+                sprintf('alerts.action-%s', $this->getKey()),
+                Alert::info(__(':action was successful!', ['action' => $this->getName()]))
+            );
+
+            DB::commit();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            DB::rollBack();
+
+            throw new SaveFormDataException($exception->getMessage());
+        }
     }
 
     /**

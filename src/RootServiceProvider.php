@@ -42,6 +42,7 @@ class RootServiceProvider extends ServiceProvider
         Interfaces\Models\Option::class => Models\Option::class,
         Interfaces\Models\User::class => Models\User::class,
         Interfaces\Navigation\Registry::class => Navigation\Registry::class,
+        Interfaces\Options\Registry::class => Options\Registry::class,
         Interfaces\Options\Repository::class => Options\Repository::class,
     ];
 

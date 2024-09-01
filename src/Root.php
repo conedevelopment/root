@@ -5,7 +5,7 @@ namespace Cone\Root;
 use Closure;
 use Cone\Root\Interfaces\Breadcrumbs\Registry as Breadcrumbs;
 use Cone\Root\Interfaces\Navigation\Registry as Navigation;
-use Cone\Root\Interfaces\Options\Repository as Options;
+use Cone\Root\Interfaces\Options\Registry as Options;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
@@ -115,6 +115,14 @@ class Root
             },
             sprintf('%s/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
         ]);
+
+        foreach ($this->options->groups() as $group) {
+            $this->navigation->location('sidebar')->new(
+                $group->getUri(),
+                $group->getName(),
+                ['icon' => $this->getIcon(), 'group' => __('Options')],
+            );
+        }
     }
 
     /**
