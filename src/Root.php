@@ -5,6 +5,7 @@ namespace Cone\Root;
 use Closure;
 use Cone\Root\Interfaces\Breadcrumbs\Registry as Breadcrumbs;
 use Cone\Root\Interfaces\Navigation\Registry as Navigation;
+use Cone\Root\Interfaces\Settings\Registry as Settings;
 use Cone\Root\Models\User;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
@@ -56,6 +57,11 @@ class Root
     public readonly Breadcrumbs $breadcrumbs;
 
     /**
+     * The settings instance.
+     */
+    public readonly Settings $settings;
+
+    /**
      * The auth resolver.
      */
     protected ?Closure $authResolver = null;
@@ -75,6 +81,7 @@ class Root
         $this->widgets = new Widgets;
         $this->navigation = $app->make(Navigation::class);
         $this->breadcrumbs = $app->make(Breadcrumbs::class);
+        $this->settings = $app->make(Settings::class);
         $this->timezone = $app['config']->get('app.timezone');
     }
 
