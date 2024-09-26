@@ -234,12 +234,12 @@ abstract class Action implements Arrayable, Form, JsonSerializable
 
             $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
 
+            DB::commit();
+
             return Redirect::back()->with(
                 sprintf('alerts.action-%s', $this->getKey()),
                 Alert::info(__(':action was successful!', ['action' => $this->getName()]))
             );
-
-            DB::commit();
         } catch (Throwable $exception) {
             report($exception);
 
