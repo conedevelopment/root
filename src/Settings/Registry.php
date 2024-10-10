@@ -13,11 +13,6 @@ class Registry implements Contract
     protected Repository $repository;
 
     /**
-     * The settings groups.
-     */
-    protected array $groups = [];
-
-    /**
      * Create a new registry instance.
      */
     public function __construct(Repository $repository)

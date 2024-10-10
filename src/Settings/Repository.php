@@ -3,18 +3,39 @@
 namespace Cone\Root\Settings;
 
 use Cone\Root\Interfaces\Settings\Repository as Contract;
+use Cone\Root\Models\Setting;
 
 class Repository implements Contract
 {
     protected array $cache = [];
-    protected array $casts = [];
 
     public function __construct()
     {
         //
     }
 
-    // get
-    // set
-    // delete
+    public function model(): Setting
+    {
+        return Setting::proxy();
+    }
+
+    public function get()
+    {
+        //
+    }
+
+    public function set()
+    {
+        //
+    }
+
+    public function delete()
+    {
+        //
+    }
+
+    public function cast(string $key, string $type)
+    {
+        //
+    }
 }
