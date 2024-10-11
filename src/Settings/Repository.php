@@ -15,11 +15,58 @@ class Repository implements Arrayable, ArrayAccess, Contract
     protected array $cache = [];
 
     /**
+     * The value casts.
+     */
+    protected array $casts = [];
+
+    /**
      * Get the setting model.
      */
     public function model(): Setting
     {
         return Setting::proxy();
+    }
+
+    /**
+     * Set the value cast.
+     */
+    public function cast(string $key, string $type): void
+    {
+        $this->casts[$key] = $type;
+    }
+
+    /**
+     * Merge the casts.
+     */
+    public function mergeCasts(array $casts): void
+    {
+        $this->casts = array_merge($this->casts, $casts);
+    }
+
+    /**
+     * Remove the given casts.
+     */
+    public function removeCasts(string|array $keys): void
+    {
+        foreach ((array) $keys as $key) {
+            unset($this->casts[$key]);
+        }
+    }
+
+    /**
+     * Remove the given casts.
+     */
+    public function clearCasts(): void
+    {
+        $this->casts = [];
+    }
+
+    /**
+     * Get the value casts.
+     */
+    public function getCasts(): array
+    {
+        return $this->casts;
     }
 
     /**
@@ -34,6 +81,8 @@ class Repository implements Arrayable, ArrayAccess, Contract
         $model = $this->model()->newQuery()->firstWhere('key', '=', $key);
 
         if (! is_null($model)) {
+            $model->castValue($this->casts[$key] ?? null);
+
             $this->offsetSet($key, $model->value);
         }
 
@@ -45,10 +94,13 @@ class Repository implements Arrayable, ArrayAccess, Contract
      */
     public function set(string $key, mixed $value): mixed
     {
-        $model = $this->model()->newQuery()->updateOrCreate(
-            ['key' => $key],
-            ['value' => $value]
-        );
+        $model = $this->model()->newQuery()->firstOrNew(['key' => $key]);
+
+        $model->castValue($this->casts[$key] ?? null);
+
+        $model->fill(['value' => $value]);
+
+        $model->save();
 
         $this->offsetSet($key, $model->value);
 

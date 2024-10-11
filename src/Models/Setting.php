@@ -45,4 +45,16 @@ class Setting extends Model implements Contract
     {
         return SettingFactory::new();
     }
+
+    /**
+     * Cast the value attribute to the given type.
+     */
+    public function castValue(?string $type = null): void
+    {
+        if (is_null($type)) {
+            unset($this->casts['value']);
+        } else {
+            $this->casts['value'] = $type;
+        }
+    }
 }
