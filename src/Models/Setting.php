@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Models;
 
-use Cone\Root\Casts\SettingValue;
 use Cone\Root\Database\Factories\SettingFactory;
 use Cone\Root\Interfaces\Models\Setting as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -45,15 +44,5 @@ class Setting extends Model implements Contract
     protected static function newFactory(): SettingFactory
     {
         return SettingFactory::new();
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     */
-    protected function casts(): array
-    {
-        return [
-            'value' => SettingValue::class.':'.$this->key,
-        ];
     }
 }
