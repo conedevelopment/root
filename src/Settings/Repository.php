@@ -43,7 +43,7 @@ class Repository implements Arrayable, ArrayAccess, Contract
     /**
      * Set the value for the given key.
      */
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value): mixed
     {
         $model = $this->model()->newQuery()->updateOrCreate(
             ['key' => $key],
@@ -51,6 +51,8 @@ class Repository implements Arrayable, ArrayAccess, Contract
         );
 
         $this->offsetSet($key, $model->value);
+
+        return $this->offsetGet($key);
     }
 
     /**
@@ -71,6 +73,14 @@ class Repository implements Arrayable, ArrayAccess, Contract
     public function flush(): void
     {
         $this->cache = [];
+    }
+
+    /**
+     * Get all the settings.
+     */
+    public function all(): array
+    {
+        return $this->toArray();
     }
 
     /**

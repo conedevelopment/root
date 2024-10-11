@@ -19,4 +19,9 @@ class Registry implements Contract
     {
         $this->repository = $repository;
     }
+
+    public function __call(string $name, array $arguments): mixed
+    {
+        return call_user_func_array([$this->repository, $name], $arguments);
+    }
 }
