@@ -49,12 +49,14 @@ class Setting extends Model implements Contract
     /**
      * Cast the value attribute to the given type.
      */
-    public function castValue(?string $type = null): void
+    public function castValue(?string $type = null): static
     {
-        if (is_null($type)) {
-            unset($this->casts['value']);
-        } else {
+        if (! is_null($type)) {
             $this->casts['value'] = $type;
+        } else {
+            unset($this->casts['value']);
         }
+
+        return $this;
     }
 }

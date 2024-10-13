@@ -21,6 +21,14 @@ class Registry implements Contract
     }
 
     /**
+     * Get the repository instance.
+     */
+    public function getRepository(): Repository
+    {
+        return $this->repository;
+    }
+
+    /**
      * Dynamically call the given method.
      */
     public function __call(string $name, array $arguments): mixed

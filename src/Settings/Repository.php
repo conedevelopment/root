@@ -6,6 +6,7 @@ use ArrayAccess;
 use Cone\Root\Interfaces\Settings\Repository as Contract;
 use Cone\Root\Models\Setting;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Repository implements Arrayable, ArrayAccess, Contract
 {
@@ -25,6 +26,14 @@ class Repository implements Arrayable, ArrayAccess, Contract
     public function model(): Setting
     {
         return Setting::proxy();
+    }
+
+    /**
+     * Get the base query for the repository.
+     */
+    public function query(): Builder
+    {
+        return $this->model()->newQuery();
     }
 
     /**
@@ -78,15 +87,23 @@ class Repository implements Arrayable, ArrayAccess, Contract
             return $this->offsetGet($key);
         }
 
-        $model = $this->model()->newQuery()->firstWhere('key', '=', $key);
+        return $this->refresh($key, $default);
+    }
 
-        if (! is_null($model)) {
-            $model->castValue($this->casts[$key] ?? null);
+    /**
+     * Refresh the given key.
+     */
+    public function refresh(string $key, mixed $default = null): mixed
+    {
+        $model = $this->query()->firstWhere('key', '=', $key);
 
-            $this->offsetSet($key, $model->value);
-        }
+        $value = is_null($model)
+            ? $default
+            : $model->castValue($this->casts[$key] ?? null)->value;
 
-        return $this->cache[$key] ?? $default;
+        $this->offsetSet($key, $value);
+
+        return $value;
     }
 
     /**
@@ -94,7 +111,7 @@ class Repository implements Arrayable, ArrayAccess, Contract
      */
     public function set(string $key, mixed $value): mixed
     {
-        $model = $this->model()->newQuery()->firstOrNew(['key' => $key]);
+        $model = $this->query()->firstOrNew(['key' => $key]);
 
         $model->castValue($this->casts[$key] ?? null);
 
@@ -116,7 +133,7 @@ class Repository implements Arrayable, ArrayAccess, Contract
             $this->offsetUnset($key);
         }
 
-        $this->model()->newQuery()->whereIn('key', (array) $keys)->delete();
+        $this->query()->whereIn('key', (array) $keys)->delete();
     }
 
     /**

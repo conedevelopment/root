@@ -20,7 +20,8 @@ class SettingFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'key' => $this->faker->slug(1),
+            'value' => mt_rand(10, 1000),
         ];
     }
 }
