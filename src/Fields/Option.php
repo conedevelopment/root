@@ -4,8 +4,10 @@ namespace Cone\Root\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
+use function Illuminate\Support\enum_value;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
+
 use JsonSerializable;
 
 class Option implements Arrayable, JsonSerializable
@@ -25,7 +27,7 @@ class Option implements Arrayable, JsonSerializable
     public function __construct(mixed $value, string $label)
     {
         $this->label = $label;
-        $this->setAttribute('value', $value);
+        $this->setAttribute('value', enum_value($value));
         $this->selected(false);
     }
 
