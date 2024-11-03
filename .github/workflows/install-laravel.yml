@@ -26,11 +26,11 @@ jobs:
                 os:
                 - "ubuntu-22.04"
                 php:
-                - "8.2"
+                - "8.3"
                 stability:
                 - "prefer-stable"
                 laravel:
-                - "10.x"
+                - "11.x"
 
         runs-on: "${{ matrix.os }}"
 
