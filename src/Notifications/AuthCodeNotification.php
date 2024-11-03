@@ -15,6 +15,13 @@ class AuthCodeNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
+
+    /**
      * The auth code instance.
      */
     protected AuthCode $code;
