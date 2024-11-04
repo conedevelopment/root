@@ -4,10 +4,11 @@ namespace Cone\Root\Fields;
 
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
-use function Illuminate\Support\enum_value;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
 use JsonSerializable;
+
+use function Illuminate\Support\enum_value;
 
 class Option implements Arrayable, JsonSerializable
 {
