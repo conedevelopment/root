@@ -664,4 +664,12 @@ abstract class Field implements Arrayable, JsonSerializable
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
     }
+
+    /**
+     * Clone the field.
+     */
+    public function __clone(): void
+    {
+        //
+    }
 }

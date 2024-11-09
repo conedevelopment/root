@@ -14,7 +14,11 @@ return new class extends Migration
         Schema::create('root_translation_values', static function (Blueprint $table): void {
             $table->id();
             $table->foreignId('translation_id')->constrained('root_translations')->cascadeOnDelete();
+            $table->string('key');
+            $table->text('value')->nullable();
             $table->timestamps();
+
+            $table->unique(['translation_id', 'key']);
         });
     }
 

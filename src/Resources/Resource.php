@@ -318,6 +318,14 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Resovle the events field.
+     */
+    public function resolveEventsField(Request $request): ?Events
+    {
+        return $this->hasRootEvents() ? new Events : null;
+    }
+
+    /**
      * Determine whether the resuorce model has root events.
      */
     public function translatable(): bool
@@ -326,15 +334,31 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Resolve the translations field.
+     */
+    public function resolveTranslationsField(Request $request): ?Translations
+    {
+        return $this->translatable()
+            ? Translations::make()
+                ->withFields(function () use ($request): array {
+                    return $this->resolveFields($request)
+                        ->translatable()
+                        ->map(static fn (Field $field): Field => clone $field)
+                        ->all();
+                })
+            : null;
+    }
+
+    /**
      * Resolve the fields collection.
      */
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
-            $this->withFields(function (): array {
+            $this->withFields(function () use ($request): array {
                 return array_values(array_filter([
-                    $this->translatable() ? new Translations : null,
-                    $this->hasRootEvents() ? new Events : null,
+                    $this->resolveTranslationsField($request),
+                    $this->resolveEventsField($request),
                 ]));
             });
         }

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->morphs('translatable');
             $table->string('language', 8);
             $table->timestamps();
+
+            $table->unique(['translatable_id', 'translatable_type', 'language']);
         });
     }
 

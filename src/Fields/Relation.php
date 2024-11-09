@@ -912,7 +912,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
-            'model' => $this->getRelation($model)->make(),
+            'model' => $this->getRelation($model)->make()->setRelation('related', $model),
             'standaloneActions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->standalone()
@@ -948,7 +948,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => 'root::resources.form',
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
-            'model' => $related = $this->getRelation($model)->make(),
+            'model' => $related = $this->getRelation($model)->make()->setRelation('related', $model),
             'action' => $this->modelUrl($model),
             'uploads' => $this->hasFileField($request),
             'method' => 'POST',
