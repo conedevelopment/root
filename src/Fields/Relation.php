@@ -310,6 +310,24 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Set the translatable attribute.
+     */
+    public function translatable(bool|Closure $value = false): static
+    {
+        $this->translatable = false;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is translatable.
+     */
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    /**
      * Set the display resolver.
      */
     public function display(Closure|string $callback): static

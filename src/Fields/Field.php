@@ -126,6 +126,11 @@ abstract class Field implements Arrayable, JsonSerializable
     protected bool $computed = false;
 
     /**
+     * Indicates whether the field is translatable.
+     */
+    protected bool|Closure $translatable = false;
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, Closure|string|null $modelAttribute = null)
@@ -335,6 +340,28 @@ abstract class Field implements Arrayable, JsonSerializable
         $this->searchQueryResolver = $callback;
 
         return $this;
+    }
+
+    /**
+     * Set the translatable attribute.
+     */
+    public function translatable(bool|Closure $value = true): static
+    {
+        $this->translatable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is translatable.
+     */
+    public function isTranslatable(): bool
+    {
+        if ($this->computed) {
+            return false;
+        }
+
+        return $this->translatable instanceof Closure ? call_user_func($this->translatable) : $this->translatable;
     }
 
     /**

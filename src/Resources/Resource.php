@@ -12,6 +12,7 @@ use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\Meta;
 use Cone\Root\Fields\MorphMany;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Fields\Translations;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
@@ -27,6 +28,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Traits\Translatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
@@ -308,15 +310,32 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Determine whether the resuorce model has root events.
+     */
+    public function hasRootEvents(): bool
+    {
+        return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Determine whether the resuorce model has root events.
+     */
+    public function translatable(): bool
+    {
+        return in_array(Translatable::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
      * Resolve the fields collection.
      */
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
             $this->withFields(function (): array {
-                return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()))
-                    ? [new Events]
-                    : [];
+                return array_values(array_filter([
+                    $this->translatable() ? new Translations : null,
+                    $this->hasRootEvents() ? new Events : null,
+                ]));
             });
         }
 
