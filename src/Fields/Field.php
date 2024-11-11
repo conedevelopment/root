@@ -451,7 +451,12 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function getValue(Model $model): mixed
     {
-        return $model->getAttribute($this->getModelAttribute());
+        $attribute = $this->getModelAttribute();
+
+        return match (true) {
+            str_contains($attribute, '->') => data_get($model, str_replace('->', '.', $attribute)),
+            default => $model->getAttribute($this->getModelAttribute()),
+        };
     }
 
     /**

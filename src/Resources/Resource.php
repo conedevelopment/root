@@ -344,19 +344,11 @@ abstract class Resource implements Arrayable, Form
                     return $this->resolveFields($request)
                         ->translatable()
                         ->map(static function (Field $field): Field {
-                            $field = clone $field;
-
-                            $field->translatable(false);
-
-                            return $field->value(static function (Request $request, Model $model) use ($field): mixed {
-                                $key = $field->getModelAttribute();
-
-                                $cast = $model->related->getCasts()[$key] ?? 'string';
-
-                                return $model->values->firstWhere('key', $key)
-                                    ?->mergeCasts(['value' => $cast])
-                                    ?->value;
-                            });
+                            return (clone $field)
+                                ->translatable(false)
+                                ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
+                                ->name($key)
+                                ->id($key);
                         })
                         ->all();
                 })

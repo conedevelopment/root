@@ -3,8 +3,6 @@
 namespace Cone\Root\Fields;
 
 use Closure;
-use Cone\Root\Models\TranslationValue;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -84,63 +82,6 @@ class Translations extends MorphMany
     /**
      * {@inheritdoc}
      */
-    public function persist(Request $request, Model $model, mixed $value): void
-    {
-        $this->resolveHydrate($request, $model, $value);
-
-        $model->saved(static function (Model $model): void {
-            $model->values->each(function (TranslationValue $value) use ($model): void {
-                $value->translation()->associate($model)->save();
-            });
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveHydrate(Request $request, Model $model, mixed $value): void
-    {
-        if (is_null($this->hydrateResolver)) {
-            $this->hydrateResolver = function (Request $request, Model $model, array $value): void {
-                foreach ($value as $key => $attr) {
-                    if ($key === 'language') {
-                        $model->setAttribute($key, $attr);
-                    } else {
-                        $related = $model->values->firstWhere('key', $key) ?: $model->values()->make();
-
-                        $cast = $model->related->getCasts()[$key] ?? 'string';
-
-                        $related->mergeCasts(['value' => $cast])->fill(['key' => $key, 'value' => $attr]);
-
-                        $model->values->when(
-                            ! $related->exists,
-                            fn (Collection $collection): Collection => $collection->push($related)
-                        );
-                    }
-                }
-            };
-        }
-
-        parent::resolveHydrate($request, $model, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValueForHydrate(Request $request): mixed
-    {
-        return $this->resolveFields($request)
-            ->mapWithKeys(static function (Field $field) use ($request): mixed {
-                return [
-                    $field->getModelAttribute() => $field->getValueForHydrate($request),
-                ];
-            })
-            ->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function fields(Request $request): array
     {
         return [
@@ -153,9 +94,11 @@ class Translations extends MorphMany
                         $model->related->translations->pluck('language')->all()
                     );
 
-                    return is_null($model->language)
+                    $options = is_null($model->language)
                         ? $options
                         : array_unique(array_merge([$model->language], $options));
+
+                    return array_combine($options, $options);
                 })
                 ->required()
                 ->rules(['required', 'string', Rule::in($this->getLanguages())]),

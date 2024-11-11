@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->morphs('translatable');
             $table->string('language', 8);
+            $table->json('values')->nullable();
             $table->timestamps();
 
-            $table->unique(['translatable_id', 'translatable_type', 'language']);
+            $table->unique(['translatable_id', 'translatable_type', 'language'], 'root_translatable_language');
         });
     }
 

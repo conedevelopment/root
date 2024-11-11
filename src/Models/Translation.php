@@ -8,7 +8,6 @@ use Cone\Root\Interfaces\Models\Translation as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Translation extends Model implements Contract
@@ -21,14 +20,19 @@ class Translation extends Model implements Contract
      *
      * @var array<string, string>
      */
-    protected $casts = [];
+    protected $casts = [
+        'values' => 'json',
+    ];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'language',
+        'values',
+    ];
 
     /**
      * The table associated with the model.
@@ -59,13 +63,5 @@ class Translation extends Model implements Contract
     public function translatable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    /**
-     * Get the translation values for the translation.
-     */
-    public function values(): HasMany
-    {
-        return $this->hasMany(TranslationValue::getProxiedClass());
     }
 }
