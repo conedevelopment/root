@@ -70,6 +70,18 @@ class Translations extends MorphMany
     }
 
     /**
+     * Resolve the display format or the query result.
+     */
+    public function resolveDisplay(Model $related): ?string
+    {
+        if (is_null($this->displayResolver)) {
+            $this->display('language');
+        }
+
+        return parent::resolveDisplay($related);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function persist(Request $request, Model $model, mixed $value): void
