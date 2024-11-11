@@ -310,7 +310,7 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Determine whether the resuorce model has root events.
+     * Determine whether the resource model has root events.
      */
     public function hasRootEvents(): bool
     {
@@ -318,7 +318,7 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Resovle the events field.
+     * Resolve the events field.
      */
     public function resolveEventsField(Request $request): ?Events
     {
@@ -326,7 +326,7 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Determine whether the resuorce model has root events.
+     * Determine whether the resource model has root events.
      */
     public function translatable(): bool
     {
