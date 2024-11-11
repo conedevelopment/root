@@ -343,7 +343,21 @@ abstract class Resource implements Arrayable, Form
                 ->withFields(function () use ($request): array {
                     return $this->resolveFields($request)
                         ->translatable()
-                        ->map(static fn (Field $field): Field => clone $field)
+                        ->map(static function (Field $field): Field {
+                            $field = clone $field;
+
+                            $field->translatable(false);
+
+                            return $field->value(static function (Request $request, Model $model) use ($field): mixed {
+                                $key = $field->getModelAttribute();
+
+                                $cast = $model->related->getCasts()[$key] ?? 'string';
+
+                                return $model->values->firstWhere('key', $key)
+                                    ?->mergeCasts(['value' => $cast])
+                                    ?->value;
+                            });
+                        })
                         ->all();
                 })
             : null;
@@ -503,6 +517,7 @@ abstract class Resource implements Arrayable, Form
             $this->resolveFields($request)
                 ->authorized($request, $model)
                 ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->subResource(false)
                 ->persist($request, $model);
 
             $this->saving($request, $model);

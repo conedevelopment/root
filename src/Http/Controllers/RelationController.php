@@ -51,7 +51,7 @@ class RelationController extends Controller
         /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
-        $related = $field->getRelation($model)->make();
+        $related = $field->getRelation($model)->make()->setRelation('related', $model);
 
         $field->handleFormRequest($request, $related);
 
@@ -96,6 +96,8 @@ class RelationController extends Controller
     {
         /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
+
+        $related->setRelation('related', $model);
 
         $field->handleFormRequest($request, $related);
 

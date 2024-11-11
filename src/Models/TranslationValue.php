@@ -27,7 +27,10 @@ class TranslationValue extends Model implements Contract
      *
      * @var array<string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'key',
+        'value',
+    ];
 
     /**
      * The table associated with the model.
