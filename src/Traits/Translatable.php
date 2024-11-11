@@ -6,6 +6,7 @@ use Cone\Root\Models\Translation;
 use Cone\Root\Models\TranslationValue;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\App;
 
 trait Translatable
 {
@@ -30,14 +31,16 @@ trait Translatable
     /**
      * Translate the value of the given key.
      */
-    public function translate(string $key, string $language): mixed
+    public function translate(string $key, ?string $language = null): mixed
     {
+        $language ??= App::getLocale();
+
         $value = $this->translationValues->first(function (TranslationValue $value) use ($key, $language): bool {
             return $value->key === $key && $value->language === $language;
         });
 
         if (is_null($value)) {
-            return null;
+            return $this->getAttribute($key);
         }
 
         return $value->mergeCasts(['key' => $this->getCasts()[$key] ?? 'string'])->value;
