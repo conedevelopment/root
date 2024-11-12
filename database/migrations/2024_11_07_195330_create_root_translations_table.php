@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('root_translations', static function (Blueprint $table): void {
             $table->id();
             $table->morphs('translatable');
-            $table->string('language', 8);
+            $table->string('locale', 8);
             $table->json('values')->nullable();
             $table->timestamps();
 
-            $table->unique(['translatable_id', 'translatable_type', 'language'], 'root_translatable_language');
+            $table->unique(['translatable_id', 'translatable_type', 'locale'], 'root_translatable_locale');
         });
     }
 

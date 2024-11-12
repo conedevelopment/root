@@ -30,7 +30,7 @@ class Translation extends Model implements Contract
      * @var array<string>
      */
     protected $fillable = [
-        'language',
+        'locale',
         'values',
     ];
 
@@ -40,6 +40,11 @@ class Translation extends Model implements Contract
      * @var string
      */
     protected $table = 'root_translations';
+
+    /**
+     * The translatable model's locale.
+     */
+    protected static string $translatableLocale = 'en';
 
     /**
      * Get the proxied interface.
@@ -55,6 +60,22 @@ class Translation extends Model implements Contract
     protected static function newFactory(): TranslationFactory
     {
         return TranslationFactory::new();
+    }
+
+    /**
+     * Set the translatable model's locale.
+     */
+    public static function setTranslatableLocale(string $locale): void
+    {
+        static::$translatableLocale = $locale;
+    }
+
+    /**
+     * Get the translatable model's locale.
+     */
+    public static function getTranslatableLocale(): string
+    {
+        return static::$translatableLocale;
     }
 
     /**

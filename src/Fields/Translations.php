@@ -10,26 +10,19 @@ use Illuminate\Validation\Rule;
 class Translations extends MorphMany
 {
     /**
-     * The default languages.
+     * The default locales.
      */
-    protected static array $defaultLanguages = [];
+    protected static array $defaultLocales = [];
 
     /**
-     * The field specific languages.
+     * The field specific locales.
      */
-    protected array $languages = [];
+    protected array $locales = [];
 
     /**
      * Indicates whether the relation is a sub resource.
      */
     protected bool $asSubResource = true;
-
-    /**
-     * The relations to eager load on every query.
-     */
-    protected array $with = [
-        'values',
-    ];
 
     /**
      * Create a new relation field instance.
@@ -42,29 +35,29 @@ class Translations extends MorphMany
     }
 
     /**
-     * Set the default languages.
+     * Set the default locales.
      */
-    public static function defaultLanguages(array $languages): void
+    public static function defaultLocales(array $locales): void
     {
-        static::$defaultLanguages = $languages;
+        static::$defaultLocales = $locales;
     }
 
     /**
-     * Set the field specific languages.
+     * Set the field specific locales.
      */
-    public function languages(array $languages): static
+    public function locales(array $locales): static
     {
-        $this->languages = $languages;
+        $this->locales = $locales;
 
         return $this;
     }
 
     /**
-     * Get the available languages.
+     * Get the available locales.
      */
-    public function getLanguages(): array
+    public function getLocales(): array
     {
-        return $this->languages ?: static::$defaultLanguages;
+        return $this->locales ?: static::$defaultLocales;
     }
 
     /**
@@ -73,7 +66,7 @@ class Translations extends MorphMany
     public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
-            $this->display('language');
+            $this->display('locale');
         }
 
         return parent::resolveDisplay($related);
@@ -85,23 +78,23 @@ class Translations extends MorphMany
     public function fields(Request $request): array
     {
         return [
-            Select::make(__('Language'), 'language')
+            Select::make(__('Locale'), 'locale')
                 ->options(function (Request $request, Model $model): array {
-                    $languages = $this->getLanguages();
+                    $locales = $this->getLocales();
 
                     $options = array_diff(
-                        $languages,
-                        $model->related->translations->pluck('language')->all()
+                        $locales,
+                        $model->related->translations->pluck('locale')->all()
                     );
 
-                    $options = is_null($model->language)
+                    $options = is_null($model->locale)
                         ? $options
-                        : array_unique(array_merge([$model->language], $options));
+                        : array_unique(array_merge([$model->locale], $options));
 
-                    return array_combine($options, $options);
+                    return array_combine($options, array_map('strtoupper', $options));
                 })
                 ->required()
-                ->rules(['required', 'string', Rule::in($this->getLanguages())]),
+                ->rules(['required', 'string', Rule::in(array_keys($this->getLocales()))]),
         ];
     }
 }

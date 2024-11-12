@@ -19,12 +19,13 @@ trait Translatable
     /**
      * Translate the value of the given key.
      */
-    public function translate(string $key, ?string $language = null): mixed
+    public function translate(string $key, ?string $locale = null): mixed
     {
-        $language ??= App::getLocale();
+        $locale ??= App::getLocale();
 
-        $translation = $this->translations->firstWhere('language', $language);
-
-        return $translation?->values[$key] ?? null;
+        return match ($locale) {
+            (Translation::proxy())::getTranslatableLocale() => $this->getAttribute($key),
+            default => $this->translations->firstWhere('locale', $locale)?->values[$key] ?? null,
+        };
     }
 }
