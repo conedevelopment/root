@@ -7,9 +7,9 @@ use Illuminate\Console\Command;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class CommandsTest extends TestCase
+class ClearChunkTest extends TestCase
 {
-    public function test_a_command_can_clear_chunks(): void
+    public function test_clear_chunk_command(): void
     {
         Storage::disk('local')->putFileAs(
             '',

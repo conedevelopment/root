@@ -4,10 +4,11 @@ namespace Cone\Root\Tests\Console;
 
 use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class TrendMakeTest extends TestCase
 {
-    public function test_a_trend_make_command_creates_trend_widget(): void
+    public function test_trend_make_command(): void
     {
         $this->artisan('root:trend', ['name' => 'TrendWidget'])
             ->assertExitCode(Command::SUCCESS);
@@ -17,7 +18,7 @@ class TrendMakeTest extends TestCase
 
     public function tearDown(): void
     {
-        unlink($this->app->path('/Root/Widgets/TrendWidget.php'));
+        File::delete($this->app->path('Root/Widgets/TrendWidget.php'));
 
         parent::tearDown();
     }

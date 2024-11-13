@@ -4,10 +4,11 @@ namespace Cone\Root\Tests\Console;
 
 use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class ValueMakeTest extends TestCase
 {
-    public function test_a_value_make_command_creates_value_widget(): void
+    public function test_value_make_command(): void
     {
         $this->artisan('root:value', ['name' => 'ValueWidget'])
             ->assertExitCode(Command::SUCCESS);
@@ -17,7 +18,7 @@ class ValueMakeTest extends TestCase
 
     public function tearDown(): void
     {
-        unlink($this->app->path('/Root/Widgets/ValueWidget.php'));
+        File::delete($this->app->path('Root/Widgets/ValueWidget.php'));
 
         parent::tearDown();
     }

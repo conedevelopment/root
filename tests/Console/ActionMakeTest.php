@@ -4,10 +4,11 @@ namespace Cone\Root\Tests\Console;
 
 use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class ActionMakeTest extends TestCase
 {
-    public function test_an_action_make_command_creates_action(): void
+    public function test_action_make_command(): void
     {
         $this->artisan('root:action', ['name' => 'TestAction'])
             ->assertExitCode(Command::SUCCESS);
@@ -17,7 +18,7 @@ class ActionMakeTest extends TestCase
 
     public function tearDown(): void
     {
-        unlink($this->app->path('/Root/Actions/TestAction.php'));
+        File::delete($this->app->path('Root/Actions/TestAction.php'));
 
         parent::tearDown();
     }

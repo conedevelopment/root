@@ -3,7 +3,7 @@
 namespace {{ namespace }}Providers;
 
 use {{ namespace }}Models\User;
-use {{ namespace }}Root\Resources\UserResource;
+use {{ namespace }}Root\Resources\UserResource;
 use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\Root;
 use Cone\Root\Widgets\Welcome;
