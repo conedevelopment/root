@@ -16,7 +16,7 @@ class FieldMakeTest extends TestCase
         ])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Fields/TestField.php'));
+        $this->assertFileExists($this->app->path('Root/Fields/TestField.php'));
     }
 
     public function tearDown(): void

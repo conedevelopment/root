@@ -13,7 +13,7 @@ class ResourceMakeTest extends TestCase
         $this->artisan('root:resource', ['name' => 'TestResource'])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Resources/TestResource.php'));
+        $this->assertFileExists($this->app->path('Root/Resources/TestResource.php'));
     }
 
     public function tearDown(): void

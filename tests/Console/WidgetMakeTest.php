@@ -13,7 +13,7 @@ class WidgetMakeTest extends TestCase
         $this->artisan('root:widget', ['name' => 'TestWidget'])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Widgets/TestWidget.php'));
+        $this->assertFileExists($this->app->path('Root/Widgets/TestWidget.php'));
     }
 
     public function tearDown(): void

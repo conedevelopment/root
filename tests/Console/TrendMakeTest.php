@@ -13,7 +13,7 @@ class TrendMakeTest extends TestCase
         $this->artisan('root:trend', ['name' => 'TrendWidget'])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Widgets/TrendWidget.php'));
+        $this->assertFileExists($this->app->path('Root/Widgets/TrendWidget.php'));
     }
 
     public function tearDown(): void

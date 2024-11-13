@@ -13,7 +13,7 @@ class ValueMakeTest extends TestCase
         $this->artisan('root:value', ['name' => 'ValueWidget'])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Widgets/ValueWidget.php'));
+        $this->assertFileExists($this->app->path('Root/Widgets/ValueWidget.php'));
     }
 
     public function tearDown(): void

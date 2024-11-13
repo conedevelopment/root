@@ -13,7 +13,7 @@ class ActionMakeTest extends TestCase
         $this->artisan('root:action', ['name' => 'TestAction'])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Actions/TestAction.php'));
+        $this->assertFileExists($this->app->path('Root/Actions/TestAction.php'));
     }
 
     public function tearDown(): void

@@ -34,6 +34,6 @@ class ClearMedia extends Command
             $count++;
         });
 
-        $this->info(sprintf('%d media are cleared!', $count));
+        $this->info(sprintf('%d media have been deleted!', $count));
     }
 }

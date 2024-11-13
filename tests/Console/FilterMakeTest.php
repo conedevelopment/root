@@ -17,7 +17,7 @@ class FilterMakeTest extends TestCase
         ])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Filters/TestFilter.php'));
+        $this->assertFileExists($this->app->path('Root/Filters/TestFilter.php'));
     }
 
     public function tearDown(): void
