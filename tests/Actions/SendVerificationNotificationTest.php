@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Notification;
 
-class SendVerificaionNotificationTest extends TestCase
+class SendVerificationNotificationTest extends TestCase
 {
     public function test_send_verification_notifications_action(): void
     {
