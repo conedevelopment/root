@@ -3,9 +3,9 @@
 namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Actions\SendVerificationNotification;
-use Cone\Root\Notifications\VerifyEmail;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 
 class SendVerificationNotificationTest extends TestCase
@@ -16,7 +16,7 @@ class SendVerificationNotificationTest extends TestCase
 
         $action = new SendVerificationNotification;
 
-        $user = User::factory()->create();
+        $user = User::factory()->unverified()->create();
 
         $action->withQuery(fn () => User::query());
 
@@ -24,6 +24,6 @@ class SendVerificationNotificationTest extends TestCase
 
         $action->perform($this->app['request']);
 
-        Notification::assertNotSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 }

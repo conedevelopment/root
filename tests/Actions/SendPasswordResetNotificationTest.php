@@ -3,9 +3,9 @@
 namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Actions\SendPasswordResetNotification;
-use Cone\Root\Notifications\ResetPassword;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
 class SendPasswordResetNotificationTest extends TestCase
@@ -24,6 +24,6 @@ class SendPasswordResetNotificationTest extends TestCase
 
         $action->perform($this->app['request']);
 
-        Notification::assertNotSentTo($user, ResetPassword::class);
+        Notification::assertSentTo($user, ResetPassword::class);
     }
 }
