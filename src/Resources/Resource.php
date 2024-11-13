@@ -12,6 +12,7 @@ use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\Meta;
 use Cone\Root\Fields\MorphMany;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Fields\Translations;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
@@ -27,6 +28,7 @@ use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Traits\Translatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\MessageBag;
@@ -308,15 +310,62 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Determine whether the resource model has root events.
+     */
+    public function hasRootEvents(): bool
+    {
+        return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Resolve the events field.
+     */
+    public function resolveEventsField(Request $request): ?Events
+    {
+        return $this->hasRootEvents() ? new Events : null;
+    }
+
+    /**
+     * Determine whether the resource model has root events.
+     */
+    public function translatable(): bool
+    {
+        return in_array(Translatable::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Resolve the translations field.
+     */
+    public function resolveTranslationsField(Request $request): ?Translations
+    {
+        return $this->translatable()
+            ? Translations::make()
+                ->withFields(function () use ($request): array {
+                    return $this->resolveFields($request)
+                        ->translatable()
+                        ->map(static function (Field $field): Field {
+                            return (clone $field)
+                                ->translatable(false)
+                                ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
+                                ->name($key)
+                                ->id($key);
+                        })
+                        ->all();
+                })
+            : null;
+    }
+
+    /**
      * Resolve the fields collection.
      */
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
-            $this->withFields(function (): array {
-                return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()))
-                    ? [new Events]
-                    : [];
+            $this->withFields(function () use ($request): array {
+                return array_values(array_filter([
+                    $this->resolveTranslationsField($request),
+                    $this->resolveEventsField($request),
+                ]));
             });
         }
 
@@ -460,6 +509,7 @@ abstract class Resource implements Arrayable, Form
             $this->resolveFields($request)
                 ->authorized($request, $model)
                 ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->subResource(false)
                 ->persist($request, $model);
 
             $this->saving($request, $model);

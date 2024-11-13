@@ -78,6 +78,16 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the translatable fields.
+     */
+    public function translatable(): static
+    {
+        return $this->filter(static function (Field $field): bool {
+            return $field->isTranslatable();
+        });
+    }
+
+    /**
      * Filter the subresource fields.
      */
     public function subResource(bool $value = true): static

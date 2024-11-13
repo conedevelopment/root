@@ -40,6 +40,7 @@ class RootServiceProvider extends ServiceProvider
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
         Interfaces\Models\Setting::class => Models\Setting::class,
+        Interfaces\Models\Translation::class => Models\Translation::class,
         Interfaces\Models\User::class => Models\User::class,
         Interfaces\Navigation\Registry::class => Navigation\Registry::class,
         Interfaces\Settings\Registry::class => Settings\Registry::class,

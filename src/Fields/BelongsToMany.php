@@ -184,11 +184,15 @@ class BelongsToMany extends Relation
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request, $value): void {
-            $this->resolveHydrate($request, $model, $value);
+        if ($this->isSubResource()) {
+            parent::persist($request, $model, $value);
+        } else {
+            $model->saved(function (Model $model) use ($request, $value): void {
+                $this->resolveHydrate($request, $model, $value);
 
-            $this->getRelation($model)->sync($value);
-        });
+                $this->getRelation($model)->sync($value);
+            });
+        }
     }
 
     /**

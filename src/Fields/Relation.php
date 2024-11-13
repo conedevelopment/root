@@ -310,6 +310,24 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Set the translatable attribute.
+     */
+    public function translatable(bool|Closure $value = false): static
+    {
+        $this->translatable = false;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is translatable.
+     */
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    /**
      * Set the display resolver.
      */
     public function display(Closure|string $callback): static
@@ -627,7 +645,7 @@ abstract class Relation extends Field implements Form
         return [
             'id' => $related->getKey(),
             'url' => $this->relatedUrl($model, $related),
-            'model' => $related,
+            'model' => $related->setRelation('related', $model),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
@@ -654,6 +672,21 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function persist(Request $request, Model $model, mixed $value): void
+    {
+        if ($this->isSubResource()) {
+            $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->persist($request, $model);
+        } else {
+            parent::persist($request, $model, $value);
+        }
+    }
+
+    /**
      * Handle the request.
      */
     public function handleFormRequest(Request $request, Model $model): void
@@ -663,10 +696,7 @@ abstract class Relation extends Field implements Form
         try {
             DB::beginTransaction();
 
-            $this->resolveFields($request)
-                ->authorized($request, $model)
-                ->visible($request->isMethod('POST') ? 'create' : 'update')
-                ->persist($request, $model);
+            $this->persist($request, $model, $this->getValueForHydrate($request));
 
             $model->save();
 
@@ -894,7 +924,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => $request->isTurboFrameRequest() ? 'root::resources.relation' : 'root::resources.index',
             'title' => $this->label,
-            'model' => $this->getRelation($model)->make(),
+            'model' => $this->getRelation($model)->make()->setRelation('related', $model),
             'standaloneActions' => $this->resolveActions($request)
                 ->authorized($request, $model)
                 ->standalone()
@@ -930,7 +960,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => 'root::resources.form',
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
-            'model' => $related = $this->getRelation($model)->make(),
+            'model' => $related = $this->getRelation($model)->make()->setRelation('related', $model),
             'action' => $this->modelUrl($model),
             'uploads' => $this->hasFileField($request),
             'method' => 'POST',
@@ -950,7 +980,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => 'root::resources.show',
             'title' => $this->resolveDisplay($related),
-            'model' => $related,
+            'model' => $related->setRelation('related', $model),
             'action' => $this->relatedUrl($model, $related),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
@@ -977,7 +1007,7 @@ abstract class Relation extends Field implements Form
         return array_merge($this->toSubResource($request, $model), [
             'template' => 'root::resources.form',
             'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
-            'model' => $related,
+            'model' => $related->setRelation('related', $model),
             'action' => $this->relatedUrl($model, $related),
             'method' => 'PATCH',
             'uploads' => $this->hasFileField($request),

@@ -4,6 +4,7 @@ namespace Cone\Root\Tests;
 
 use Cone\Root\Models\User as Model;
 use Cone\Root\Traits\HasRootEvents;
+use Cone\Root\Traits\Translatable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ class User extends Model implements MustVerifyEmail
     use HasFactory;
     use HasRootEvents;
     use SoftDeletes;
+    use Translatable;
 
     protected $guarded = [];
 

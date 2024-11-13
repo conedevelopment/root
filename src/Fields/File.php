@@ -252,6 +252,14 @@ class File extends MorphToMany
     }
 
     /**
+     * Determine if the relation is a subresource.
+     */
+    public function isSubResource(): bool
+    {
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toOption(Request $request, Model $model, Model $related): array

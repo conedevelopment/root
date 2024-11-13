@@ -126,6 +126,11 @@ abstract class Field implements Arrayable, JsonSerializable
     protected bool $computed = false;
 
     /**
+     * Indicates whether the field is translatable.
+     */
+    protected bool|Closure $translatable = false;
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, Closure|string|null $modelAttribute = null)
@@ -338,6 +343,28 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Set the translatable attribute.
+     */
+    public function translatable(bool|Closure $value = true): static
+    {
+        $this->translatable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is translatable.
+     */
+    public function isTranslatable(): bool
+    {
+        if ($this->computed) {
+            return false;
+        }
+
+        return $this->translatable instanceof Closure ? call_user_func($this->translatable) : $this->translatable;
+    }
+
+    /**
      * Resolve the search query.
      */
     public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
@@ -424,7 +451,12 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function getValue(Model $model): mixed
     {
-        return $model->getAttribute($this->getModelAttribute());
+        $attribute = $this->getModelAttribute();
+
+        return match (true) {
+            str_contains($attribute, '->') => data_get($model, str_replace('->', '.', $attribute)),
+            default => $model->getAttribute($this->getModelAttribute()),
+        };
     }
 
     /**
@@ -636,5 +668,13 @@ abstract class Field implements Arrayable, JsonSerializable
         );
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
+    }
+
+    /**
+     * Clone the field.
+     */
+    public function __clone(): void
+    {
+        //
     }
 }

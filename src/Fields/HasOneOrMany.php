@@ -28,19 +28,23 @@ abstract class HasOneOrMany extends Relation
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        $model->saved(function (Model $model) use ($request, $value): void {
-            $relation = $this->getRelation($model);
+        if ($this->isSubResource()) {
+            parent::persist($request, $model, $value);
+        } else {
+            $model->saved(function (Model $model) use ($request, $value): void {
+                $relation = $this->getRelation($model);
 
-            $this->resolveHydrate($request, $model, $value);
+                $this->resolveHydrate($request, $model, $value);
 
-            $models = $model->getRelation($this->getRelationName());
+                $models = $model->getRelation($this->getRelationName());
 
-            $models = is_iterable($models) ? $models : Arr::wrap($models);
+                $models = is_iterable($models) ? $models : Arr::wrap($models);
 
-            foreach ($models as $related) {
-                $relation->save($related);
-            }
-        });
+                foreach ($models as $related) {
+                    $relation->save($related);
+                }
+            });
+        }
     }
 
     /**
