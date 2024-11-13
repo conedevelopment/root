@@ -11,7 +11,7 @@ class PublishTest extends TestCase
     public function test_publish_command(): void
     {
         $this->artisan('root:publish', ['--packages' => true])
-            ->expectsOutput('Root files has been publised.')
+            ->expectsOutput('Root files has been published.')
             ->assertExitCode(Command::SUCCESS);
 
         $this->assertDirectoryExists($this->app->publicPath('vendor/root'));

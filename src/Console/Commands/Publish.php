@@ -38,7 +38,7 @@ class Publish extends Command
             ['--tag' => $this->option('tag') ?: ['root-compiled']]
         ));
 
-        $this->info('Root files has been publised.');
+        $this->info('Root files has been published.');
     }
 
     /**
