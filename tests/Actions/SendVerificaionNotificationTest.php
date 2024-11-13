@@ -2,19 +2,19 @@
 
 namespace Cone\Root\Tests\Actions;
 
-use Cone\Root\Actions\SendPasswordResetNotification;
-use Cone\Root\Notifications\ResetPassword;
+use Cone\Root\Actions\SendVerificationNotification;
+use Cone\Root\Notifications\VerifyEmail;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Notification;
 
-class SendPasswordResetNotificationTest extends TestCase
+class SendVerificaionNotificationTest extends TestCase
 {
-    public function test_send_password_reset_notifications_action(): void
+    public function test_send_verification_notifications_action(): void
     {
         Notification::fake();
 
-        $action = new SendPasswordResetNotification;
+        $action = new SendVerificationNotification;
 
         $user = User::factory()->create();
 
@@ -24,6 +24,6 @@ class SendPasswordResetNotificationTest extends TestCase
 
         $action->perform($this->app['request']);
 
-        Notification::assertNotSentTo($user, ResetPassword::class);
+        Notification::assertNotSentTo($user, VerifyEmail::class);
     }
 }
