@@ -20,7 +20,7 @@ class TranslationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'locale' => $this->faker->locale(),
         ];
     }
 }
