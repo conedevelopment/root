@@ -2,6 +2,7 @@
 
 namespace Cone\Root\Tests\Resources;
 
+use Cone\Root\Actions\SendPasswordResetNotification;
 use Cone\Root\Fields\BelongsToMany;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\HasMany;
@@ -12,7 +13,6 @@ use Cone\Root\Fields\Repeater;
 use Cone\Root\Fields\Select;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Tests\Actions\SendPasswordResetNotification;
 use Cone\Root\Tests\Team;
 use Cone\Root\Tests\User;
 use Cone\Root\Tests\Widgets\UsersCount;

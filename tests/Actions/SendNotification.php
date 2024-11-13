@@ -6,11 +6,8 @@ use Cone\Root\Actions\Action;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
-class SendPasswordResetNotification extends Action
+class SendNotification extends Action
 {
-    /**
-     * Handle the action.
-     */
     public function handle(Request $request, Collection $models): void
     {
         //

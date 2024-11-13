@@ -298,6 +298,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'key' => $this->getKey(),
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
+            'standalone' => $this->isStandalone(),
             'template' => $this->template,
         ];
     }
