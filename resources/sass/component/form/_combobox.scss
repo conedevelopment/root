@@ -49,7 +49,7 @@
     z-index: 5;
   }
 
-  [role="listbox"] {
+  [role='listbox'] {
     @include clear-list;
     @include scrollbar;
     display: flex;
@@ -64,7 +64,7 @@
     }
   }
 
-  [role="option"] {
+  [role='option'] {
     align-items: center;
     border-radius: config('border-radius', $form-control);
     display: flex;
@@ -73,7 +73,7 @@
     padding-inline: spacer('xs');
     user-select: none;
 
-    &[aria-selected="true"] {
+    &[aria-selected='true'] {
       background-color: color('light-background', 'btn');
       color: color('light-foreground', 'btn');
     }

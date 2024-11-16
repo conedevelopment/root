@@ -167,11 +167,11 @@
     margin-inline-start: calc(var(--icon-size) / 2);
     padding-inline-start: calc(var(--icon-size) / 2);
 
-    &[aria-hidden="true"] {
+    &[aria-hidden='true'] {
       grid-template-rows: 0fr;
     }
 
-    &[aria-hidden="false"] {
+    &[aria-hidden='false'] {
       grid-template-rows: 1fr;
       margin-block-start: spacer('s');
     }
