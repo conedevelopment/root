@@ -38,6 +38,11 @@ class Slug extends Text
     protected bool $nullable = false;
 
     /**
+     * Indicates if the slug should be generated always.
+     */
+    protected bool $always = false;
+
+    /**
      * The slug resolver.
      */
     protected ?Closure $generatorResolver = null;
@@ -72,11 +77,21 @@ class Slug extends Text
     }
 
     /**
+     * Set the "always" property.
+     */
+    public function alsways(bool $value = true): static
+    {
+        $this->always = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function persist(Request $request, Model $model, mixed $value): void
     {
-        if (! $model->exists) {
+        if (! $model->exists || $this->always) {
             $model->saved(function (Model $model) use ($request): void {
                 $value = $this->generate($request, $model);
 
