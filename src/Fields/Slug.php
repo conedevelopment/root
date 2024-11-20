@@ -79,7 +79,7 @@ class Slug extends Text
     /**
      * Set the "always" property.
      */
-    public function alsways(bool $value = true): static
+    public function always(bool $value = true): static
     {
         $this->always = $value;
 
