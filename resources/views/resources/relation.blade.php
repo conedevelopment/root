@@ -18,6 +18,9 @@
     </div>
 
     {{-- Script --}}
+    <script>
+        document.dispatchEvent(new CustomEvent('relation-frame-loaded', { detail: { url: '{!! $parentUrl !!}' } }));
+    </script>
     @pushOnce('scripts')
         {{
             Vite::withEntryPoints('resources/js/table.js')

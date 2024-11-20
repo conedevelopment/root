@@ -30,6 +30,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Throwable;
@@ -881,6 +882,20 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Parse the given query string.
+     */
+    protected function parseQueryString(string $url): array
+    {
+        $query = parse_url($url, PHP_URL_QUERY);
+
+        parse_str($query, $result);
+
+        return array_filter($result, function (string $key): bool {
+            return str_starts_with($key, $this->getRequestKey());
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
      * Get the option representation of the model and the related model.
      */
     public function toOption(Request $request, Model $model, Model $related): array
@@ -948,7 +963,8 @@ abstract class Relation extends Field implements Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
-            'url' => $this->modelUrl($model),
+            'url' => URL::query($this->modelUrl($model), $this->parseQueryString($request->server('HTTP_REFERER', $request->url()))),
+            'parentUrl' => URL::query($request->server('HTTP_REFERER'), $request->query()),
         ]);
     }
 
