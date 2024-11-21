@@ -101,7 +101,7 @@ document.addEventListener('alpine:init', () => {
             selected(item) {
                 return this.selection.findIndex((selected) => selected.value === item.value) > -1;
             },
-            destroy() {
+            prune() {
                 this.processing = true;
 
                 const ids = this.selection.map((item) => item.value);

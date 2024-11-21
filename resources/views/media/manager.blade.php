@@ -47,7 +47,7 @@
                 x-bind:disabled="selection.length == 0"
                 x-on:click="() => {
                     if (window.confirm('{{ __('Are you sure?') }}')) {
-                        destroy();
+                        prune();
                     }
                 }"
             >
