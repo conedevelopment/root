@@ -26,6 +26,7 @@ window.$http = Axios.create({
 // Cookie
 window.$cookie = new Cookie('__root_');
 
+// Handle the relation frame load event
 document.addEventListener('relation-frame-loaded', (event) => {
     if (window.location.href !== event.detail.url) {
         window.history.replaceState(window.history.state, document.title, event.detail.url);

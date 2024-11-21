@@ -632,9 +632,10 @@ abstract class Relation extends Field implements Form
             ->withCount($this->withCount)
             ->latest()
             ->paginate(
-                $request->input($this->getPerPageKey(), $request->isTurboFrameRequest()
-                    ? 5
-                    : $relation->getRelated()->getPerPage())
+                $request->input(
+                    $this->getPerPageKey(),
+                    $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()
+                )
             )->withQueryString();
     }
 
@@ -875,9 +876,10 @@ abstract class Relation extends Field implements Form
     public function registerRouteConstraints(Request $request, Router $router): void
     {
         $router->bind($this->getRouteKeyName(), function (string $id, Route $route) use ($router): Model {
-            return $id === 'create'
-                ? $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->make()
-                : $this->resolveRouteBinding($router->getCurrentRequest(), $id);
+            return match ($id) {
+                'create' => $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->make(),
+                default => $this->resolveRouteBinding($router->getCurrentRequest(), $id),
+            };
         });
     }
 
