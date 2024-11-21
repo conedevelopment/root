@@ -9,7 +9,7 @@ class ActionControllerTest extends TestCase
 {
     protected User $admin;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

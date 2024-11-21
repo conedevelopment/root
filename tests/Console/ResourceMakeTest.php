@@ -16,7 +16,7 @@ class ResourceMakeTest extends TestCase
         $this->assertFileExists($this->app->path('Root/Resources/TestResource.php'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         File::delete($this->app->path('Root/Resources/TestResource.php'));
 

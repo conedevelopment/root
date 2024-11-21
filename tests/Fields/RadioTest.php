@@ -9,7 +9,7 @@ class RadioTest extends TestCase
 {
     protected Radio $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

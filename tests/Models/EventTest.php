@@ -12,7 +12,7 @@ class EventTest extends TestCase
 
     protected Event $event;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

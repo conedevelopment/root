@@ -11,7 +11,7 @@ class SettingsTest extends TestCase
 {
     protected Registry $registry;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

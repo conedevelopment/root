@@ -10,7 +10,7 @@ class WidgetTest extends TestCase
 {
     protected Widget $widget;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

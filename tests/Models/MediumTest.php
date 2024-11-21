@@ -12,7 +12,7 @@ class MediumTest extends TestCase
 
     protected Medium $medium;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

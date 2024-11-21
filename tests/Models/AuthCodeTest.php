@@ -12,7 +12,7 @@ class AuthCodeTest extends TestCase
 
     protected AuthCode $code;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

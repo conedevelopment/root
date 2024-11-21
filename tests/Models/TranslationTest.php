@@ -12,7 +12,7 @@ class TranslationTest extends TestCase
 
     protected Translation $translation;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

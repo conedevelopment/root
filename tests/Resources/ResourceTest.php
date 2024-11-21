@@ -10,7 +10,7 @@ class ResourceTest extends TestCase
 {
     protected UserResource $resource;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

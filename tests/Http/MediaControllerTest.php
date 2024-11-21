@@ -18,7 +18,7 @@ class MediaControllerTest extends TestCase
 
     protected Media $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

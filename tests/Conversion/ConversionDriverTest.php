@@ -14,7 +14,7 @@ class ConversionDriverTest extends TestCase
 {
     protected Manager $manager;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

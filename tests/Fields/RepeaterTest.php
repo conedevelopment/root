@@ -10,7 +10,7 @@ class RepeaterTest extends TestCase
 {
     protected Repeater $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

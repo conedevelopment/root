@@ -12,7 +12,7 @@ class MetaTest extends TestCase
 {
     protected Meta $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

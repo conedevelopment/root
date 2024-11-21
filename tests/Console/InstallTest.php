@@ -17,7 +17,7 @@ class InstallTest extends TestCase
         $this->assertDirectoryExists($this->app->storagePath('framework/testing/disks/local/root-tmp'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         File::deleteDirectory($this->app->path('Root'));
         File::delete($this->app->path('Providers/RootServiceProvider.php'));

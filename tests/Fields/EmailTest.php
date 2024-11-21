@@ -9,7 +9,7 @@ class EmailTest extends TestCase
 {
     protected Email $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

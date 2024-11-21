@@ -11,7 +11,7 @@ class SelectFilterTest extends TestCase
 {
     protected Select $filter;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

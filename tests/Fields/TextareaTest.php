@@ -9,7 +9,7 @@ class TextareaTest extends TestCase
 {
     protected Textarea $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

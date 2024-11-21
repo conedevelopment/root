@@ -16,7 +16,7 @@ class ValueMakeTest extends TestCase
         $this->assertFileExists($this->app->path('Root/Widgets/ValueWidget.php'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         File::delete($this->app->path('Root/Widgets/ValueWidget.php'));
 

@@ -17,7 +17,7 @@ class PublishTest extends TestCase
         $this->assertDirectoryExists($this->app->publicPath('vendor/root'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         File::deleteDirectory($this->app->publicPath('vendor'));
 

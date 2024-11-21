@@ -11,7 +11,7 @@ class BooleanTest extends TestCase
 {
     protected Boolean $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

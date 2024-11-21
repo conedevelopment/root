@@ -20,7 +20,7 @@ class FilterMakeTest extends TestCase
         $this->assertFileExists($this->app->path('Root/Filters/TestFilter.php'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         File::delete($this->app->path('Root/Filters/TestFilter.php'));
 

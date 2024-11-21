@@ -11,7 +11,7 @@ class BelongsToTest extends TestCase
 {
     protected BelongsTo $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -9,7 +9,7 @@ class EditorTest extends TestCase
 {
     protected Editor $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

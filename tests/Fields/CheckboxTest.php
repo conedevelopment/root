@@ -9,7 +9,7 @@ class CheckboxTest extends TestCase
 {
     protected Checkbox $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
