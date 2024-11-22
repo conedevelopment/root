@@ -219,13 +219,13 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerExceptions(): void
     {
-        $this->app->make(ExceptionHandler::class)->renderable(
-            static function (SaveFormDataException $exception): RedirectResponse {
-                return Redirect::back()
-                    ->withInput()
-                    ->with('alerts.form-save', Alert::error($exception->getMessage()));
-            }
-        );
+        $exceptions = $this->app->make(ExceptionHandler::class);
+
+        $exceptions->renderable(static function (SaveFormDataException $exception): RedirectResponse {
+            return Redirect::back()
+                ->withInput()
+                ->with('alerts.form-save', Alert::error($exception->getMessage()));
+        });
     }
 
     /**

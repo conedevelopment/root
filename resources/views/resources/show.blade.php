@@ -58,7 +58,11 @@
                                     <h2 class="app-card__title">{{ $relation['label'] }}</h2>
                                 </div>
                                 <div class="app-card__body">
-                                    {{ __('Loading') }}...
+                                    <div class="data-table">
+                                        <x-root::alert>
+                                            {{ __('Loading') }}...
+                                        </x-root::alert>
+                                    </div>
                                 </div>
                             </div>
                         </turbo-frame>

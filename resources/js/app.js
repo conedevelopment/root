@@ -32,3 +32,8 @@ document.addEventListener('relation-frame-loaded', (event) => {
         window.history.replaceState(window.history.state, document.title, event.detail.url);
     }
 });
+
+// Handle the turbo:frame-missing
+document.addEventListener('turbo:frame-missing', (event) => {
+    event.preventDefault();
+});
