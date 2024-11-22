@@ -71,7 +71,7 @@ class User extends Model implements MustVerifyEmail
 
     public function employer(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(ownerKey: 'id');
     }
 
     public function shouldTwoFactorAuthenticate(Request $request): bool
