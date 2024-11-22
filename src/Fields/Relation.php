@@ -886,7 +886,7 @@ abstract class Relation extends Field implements Form
     /**
      * Parse the given query string.
      */
-    protected function parseQueryString(string $url): array
+    public function parseQueryString(string $url): array
     {
         $query = parse_url($url, PHP_URL_QUERY);
 
@@ -927,7 +927,9 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
-            'url' => $this->modelUrl($model),
+            'createUrl' => sprintf('%s/create', $this->modelUrl($model)),
+            'baseUrl' => $this->modelUrl($model),
+            'url' => URL::query($this->modelUrl($model), $this->parseQueryString($request->fullUrl())),
             'modelName' => $this->getRelatedName(),
             'abilities' => $this->mapRelationAbilities($request, $model),
         ]);
@@ -965,7 +967,6 @@ abstract class Relation extends Field implements Form
                 })
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
-            'url' => URL::query($this->modelUrl($model), $this->parseQueryString($request->server('HTTP_REFERER', $request->url()))),
             'parentUrl' => URL::query($request->server('HTTP_REFERER'), $request->query()),
         ]);
     }

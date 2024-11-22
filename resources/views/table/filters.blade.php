@@ -21,7 +21,7 @@
                         <button type="submit" class="btn btn--primary btn--sm">
                             {{ __('Filter') }}
                         </button>
-                        <a href="{{ $url }}" class="btn btn--light btn--sm">
+                        <a href="{{ $baseUrl }}" class="btn btn--light btn--sm">
                             {{ __('Reset') }}
                         </a>
                     </div>

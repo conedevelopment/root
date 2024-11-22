@@ -6,7 +6,7 @@
             </h2>
             <div class="app-card__actions">
                 @if($abilities['create'])
-                    <a href="{{ $url }}/create" class="btn btn--primary btn--icon" data-turbo-frame="_top">
+                    <a href="{{ $createUrl }}" class="btn btn--primary btn--icon" data-turbo-frame="_top">
                         <x-root::icon name="plus" class="btn__icon" />
                         {{ __('Add :resource', ['resource' => $modelName]) }}
                     </a>

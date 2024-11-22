@@ -41,6 +41,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -612,6 +613,7 @@ abstract class Resource implements Arrayable, Form
             'name' => $this->getName(),
             'uriKey' => $this->getUriKey(),
             'url' => $this->getUri(),
+            'baseUrl' => $this->getUri(),
         ];
     }
 
@@ -703,7 +705,7 @@ abstract class Resource implements Arrayable, Form
                 ->authorized($request, $model)
                 ->map(static function (Relation $relation) use ($request, $model): array {
                     return array_merge($relation->toSubResource($request, $model), [
-                        'url' => trim(sprintf('%s?%s', $relation->modelUrl($model), $request->getQueryString()), '?'),
+                        'url' => URL::query($relation->modelUrl($model), $relation->parseQueryString($request->fullUrl())),
                     ]);
                 }),
             'abilities' => array_merge(
