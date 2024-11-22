@@ -24,7 +24,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.5.1';
+    public const VERSION = '2.5.2';
 
     /**
      * The registered booting callbacks.
@@ -98,6 +98,8 @@ class Root
      */
     public function boot(): void
     {
+        $this->resources->discoverIn($this->app->path('Root/Resources'));
+
         $this->resources->each->boot($this);
 
         foreach ($this->booting as $callback) {
