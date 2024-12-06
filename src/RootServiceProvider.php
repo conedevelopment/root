@@ -2,6 +2,7 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Exceptions\ResourceResolutionException;
 use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RootServiceProvider extends ServiceProvider
 {
@@ -142,7 +144,11 @@ class RootServiceProvider extends ServiceProvider
         $root = $this->app->make(Root::class);
 
         $this->app['router']->bind('resource', function (string $key) use ($root): Resource {
-            return $root->resources->resolve($key);
+            try {
+                return $root->resources->resolve($key);
+            } catch (ResourceResolutionException $exception) {
+                throw new NotFoundHttpException();
+            }
         });
 
         $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {

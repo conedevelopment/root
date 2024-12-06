@@ -927,7 +927,6 @@ abstract class Relation extends Field implements Form
     {
         return array_merge($this->toArray(), [
             'key' => $this->modelAttribute,
-            'createUrl' => sprintf('%s/create', $this->modelUrl($model)),
             'baseUrl' => $this->modelUrl($model),
             'url' => URL::query($this->modelUrl($model), $this->parseQueryString($request->fullUrl())),
             'modelName' => $this->getRelatedName(),
