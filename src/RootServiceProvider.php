@@ -147,7 +147,7 @@ class RootServiceProvider extends ServiceProvider
             try {
                 return $root->resources->resolve($key);
             } catch (ResourceResolutionException $exception) {
-                throw new NotFoundHttpException();
+                throw new NotFoundHttpException;
             }
         });
 
