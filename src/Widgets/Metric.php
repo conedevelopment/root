@@ -3,6 +3,7 @@
 namespace Cone\Root\Widgets;
 
 use Closure;
+use Cone\Root\Exceptions\QueryResolutionException;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -28,22 +29,15 @@ abstract class Metric extends Widget
     protected ?Closure $queryResolver = null;
 
     /**
-     * Create a new Eloquent query.
-     */
-    abstract public function query(): Builder;
-
-    /**
      * Resolve the query.
      */
     public function resolveQuery(Request $request): Builder
     {
-        $query = $this->query();
-
-        if (! is_null($this->queryResolver)) {
-            call_user_func_array($this->queryResolver, [$request, $query]);
+        if (is_null($this->queryResolver)) {
+            throw new QueryResolutionException;
         }
 
-        return $query;
+        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**

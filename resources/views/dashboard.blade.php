@@ -1,7 +1,7 @@
 @extends('root::app')
 
 {{-- Title --}}
-@section('title', 'Dashboard')
+@section('title', __('Dashboard'))
 
 {{-- Content --}}
 @section('content')
