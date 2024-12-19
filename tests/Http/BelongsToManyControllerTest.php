@@ -40,7 +40,7 @@ class BelongsToManyControllerTest extends TestCase
     public function test_belongs_to_many_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/teams')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/teams')
             ->assertOk()
             ->assertViewIs('root::resources.index')
             ->assertViewHas($this->field->toIndex($this->app['request'], $this->admin));
@@ -51,7 +51,7 @@ class BelongsToManyControllerTest extends TestCase
         $team = Team::factory()->create();
 
         $this->actingAs($this->admin)
-            ->post('/root/users/'.$this->admin->getKey().'/fields/teams', [
+            ->post('/root/resources/users/'.$this->admin->getKey().'/fields/teams', [
                 'related' => $team->getKey(),
                 'role' => 'member',
             ])
@@ -72,7 +72,7 @@ class BelongsToManyControllerTest extends TestCase
         $this->assertSame('admin', $team->pivot->role);
 
         $this->actingAs($this->admin)
-            ->patch('/root/users/'.$this->admin->getKey().'/fields/teams/'.$team->pivot->getKey(), [
+            ->patch('/root/resources/users/'.$this->admin->getKey().'/fields/teams/'.$team->pivot->getKey(), [
                 'related' => $team->getKey(),
                 'role' => 'member',
             ])
@@ -87,7 +87,7 @@ class BelongsToManyControllerTest extends TestCase
         $team = $this->admin->teams->first();
 
         $this->actingAs($this->admin)
-            ->delete('/root/users/'.$this->admin->getKey().'/fields/teams/'.$team->pivot->getKey())
+            ->delete('/root/resources/users/'.$this->admin->getKey().'/fields/teams/'.$team->pivot->getKey())
             ->assertRedirect()
             ->assertSessionHas('alerts.relation-deleted');
 

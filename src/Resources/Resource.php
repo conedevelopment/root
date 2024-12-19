@@ -127,6 +127,14 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the route prefix.
+     */
+    public function getRoutePrefix(): string
+    {
+        return sprintf('resources/%s', $this->getUriKey());
+    }
+
+    /**
      * Get the route parameter name.
      */
     public function getRouteParameterName(): string
@@ -572,7 +580,7 @@ abstract class Resource implements Arrayable, Form
         $this->__registerRoutes($request, $router);
 
         $router->group([
-            'prefix' => $this->getUriKey(),
+            'prefix' => $this->getRoutePrefix(),
             'middleware' => $this->getRouteMiddleware(),
         ], function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);

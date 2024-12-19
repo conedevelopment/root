@@ -36,7 +36,7 @@ class MediaControllerTest extends TestCase
     public function test_media_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/media')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/media')
             ->assertOk()
             ->assertJson($this->field->paginateRelatable($this->app['request'], $this->admin)->toArray());
     }
@@ -47,7 +47,7 @@ class MediaControllerTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post(
-                '/root/users/'.$this->admin->getKey().'/fields/media',
+                '/root/resources/users/'.$this->admin->getKey().'/fields/media',
                 ['file' => UploadedFile::fake()->image('test.png')],
                 ['X-Chunk-Index' => 1, 'X-Chunk-Total' => 1]
             )
@@ -64,7 +64,7 @@ class MediaControllerTest extends TestCase
         $medium = Medium::factory()->create();
 
         $this->actingAs($this->admin)
-            ->delete('/root/users/'.$this->admin->getKey().'/fields/media', ['ids' => [$medium->getKey()]])
+            ->delete('/root/resources/users/'.$this->admin->getKey().'/fields/media', ['ids' => [$medium->getKey()]])
             ->assertOk()
             ->assertJson(['deleted' => [1]]);
 

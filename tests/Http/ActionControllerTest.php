@@ -19,7 +19,7 @@ class ActionControllerTest extends TestCase
     public function test_action_controller_handles_action_request(): void
     {
         $this->actingAs($this->admin)
-            ->post('/root/users/actions/send-password-reset-notification')
+            ->post('/root/resources/users/actions/send-password-reset-notification')
             ->assertRedirect()
             ->assertSessionHas('alerts.action-send-password-reset-notification');
     }

@@ -31,7 +31,7 @@ class MorphToControllerTest extends TestCase
     public function test_morph_to_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/employer')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/employer')
             ->assertOk()
             ->assertViewIs('root::fields.morph-to')
             ->assertViewHas($this->field->toInput($this->app['request'], $this->admin));

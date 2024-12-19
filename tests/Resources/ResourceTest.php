@@ -105,7 +105,7 @@ class ResourceTest extends TestCase
     {
         $action = $this->resource->resolveActions($this->app['request'])->first();
 
-        $this->assertSame('/root/users/actions/send-password-reset-notification', $action->getUri());
+        $this->assertSame('/root/resources/users/actions/send-password-reset-notification', $action->getUri());
 
         $this->assertArrayHasKey(
             trim($action->getUri(), '/'),

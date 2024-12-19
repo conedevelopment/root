@@ -31,7 +31,7 @@ class WidgetControllerTest extends TestCase
     public function test_widget_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/widgets/users-count')
+            ->get('/root/resources/users/widgets/users-count')
             ->assertOk()
             ->assertViewIs($this->widget->getTemplate())
             ->assertViewHas($this->widget->data($this->app['request']));

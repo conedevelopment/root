@@ -12,6 +12,7 @@ use Cone\Root\Widgets\Widgets;
 use DateTimeZone;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -98,6 +99,10 @@ class Root
      */
     public function boot(): void
     {
+        $this->routes(function (Router $router): void {
+            $this->widgets->registerRoutes($this->app['request'], $router);
+        });
+
         $this->resources->discoverIn($this->app->path('Root/Resources'));
 
         $this->resources->each->boot($this);
@@ -108,14 +113,14 @@ class Root
 
         $this->breadcrumbs->patterns([
             $this->getPath() => __('Dashboard'),
-            sprintf('%s/{resource}', $this->getPath()) => static function (Request $request): string {
+            sprintf('%s/resources/{resource}', $this->getPath()) => static function (Request $request): string {
                 return $request->route('_resource')->getName();
             },
-            sprintf('%s/{resource}/create', $this->getPath()) => __('Create'),
-            sprintf('%s/{resource}/{resourceModel}', $this->getPath()) => static function (Request $request): string {
+            sprintf('%s/resources/{resource}/create', $this->getPath()) => __('Create'),
+            sprintf('%s/resources/{resource}/{resourceModel}', $this->getPath()) => static function (Request $request): string {
                 return $request->route('_resource')->modelTitle($request->route('resourceModel'));
             },
-            sprintf('%s/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
+            sprintf('%s/resources/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
         ]);
     }
 

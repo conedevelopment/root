@@ -31,7 +31,7 @@ class RepeaterControllerTest extends TestCase
     public function test_repeater_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
-            ->post('/root/users/'.$this->admin->getKey().'/fields/settings')
+            ->post('/root/resources/users/'.$this->admin->getKey().'/fields/settings')
             ->assertOk();
     }
 }
