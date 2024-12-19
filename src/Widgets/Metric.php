@@ -143,6 +143,7 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
+            'currentRange' => $this->getCurrentRange($request),
             'data' => (! $this->async || $request->isTurboFrameRequest()) ? $this->calculate($request) : [],
         ]);
     }

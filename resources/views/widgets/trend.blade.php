@@ -9,6 +9,16 @@
             @endif
         </div>
         <div class="app-widget__chart">
+            <form method="GET" action="{{ $url }}" onchange="this.requestSubmit();">
+                <div class="form-group">
+                    <label class="form-label sr-only" for="widget-{{ $key }}}-interval">{{ __('Interval') }}</label>
+                    <select class="form-control form-control--sm" name="range" id="widget-{{ $key }}}-interval">
+                        @foreach($ranges as $range => $rangeLabel)
+                            <option value="{{ $range }}" @selected($range === $currentRange)>{{ $rangeLabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </form>
             <x-root::chart :config="$data['chart']" />
         </div>
     </div>
