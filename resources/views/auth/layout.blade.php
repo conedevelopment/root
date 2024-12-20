@@ -7,7 +7,7 @@
 
     {{-- Styles --}}
     <link rel="icon" href="{{ URL::asset('vendor/root/favicon.png') }}" sizes="32x32">
-    <link rel="stylesheet" href="{{ Vite::asset('resources/js/app.css', 'vendor/root/build') }}">
+    @vite('resources/sass/app.scss', 'vendor/root/build')
 
     {{-- Title --}}
     <title>@yield('title') - {{ Config::get('app.name') }}</title>

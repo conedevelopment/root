@@ -1,70 +1,74 @@
 {
-  "resources/js/app.css": {
-    "file": "assets/app-99097d46.css",
-    "src": "resources/js/app.css"
-  },
   "resources/js/app.js": {
-    "css": [
-      "assets/app-99097d46.css"
-    ],
-    "file": "assets/app-04c0bce6.js",
+    "file": "assets/app-DM333Ixt.js",
+    "name": "app",
+    "src": "resources/js/app.js",
     "isEntry": true,
-    "src": "resources/js/app.js"
+    "css": [
+      "assets/app-BhI0qz-j.css"
+    ]
   },
   "resources/js/chart.js": {
-    "file": "assets/chart-10255d84.js",
+    "file": "assets/chart-ztEW8vpr.js",
+    "name": "chart",
+    "src": "resources/js/chart.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/chart.js"
+    ]
   },
   "resources/js/dropdown.js": {
-    "file": "assets/dropdown-10255d84.js",
+    "file": "assets/dropdown-ztEW8vpr.js",
+    "name": "dropdown",
+    "src": "resources/js/dropdown.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/dropdown.js"
+    ]
   },
   "resources/js/editor.js": {
-    "file": "assets/editor-10255d84.js",
+    "file": "assets/editor-ztEW8vpr.js",
+    "name": "editor",
+    "src": "resources/js/editor.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/editor.js"
+    ]
   },
   "resources/js/media-manager.js": {
-    "file": "assets/media-manager-10255d84.js",
+    "file": "assets/media-manager-ztEW8vpr.js",
+    "name": "media-manager",
+    "src": "resources/js/media-manager.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/media-manager.js"
+    ]
   },
   "resources/js/repeater.js": {
-    "file": "assets/repeater-10255d84.js",
+    "file": "assets/repeater-ztEW8vpr.js",
+    "name": "repeater",
+    "src": "resources/js/repeater.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/repeater.js"
+    ]
   },
   "resources/js/table.js": {
-    "file": "assets/table-10255d84.js",
+    "file": "assets/table-ztEW8vpr.js",
+    "name": "table",
+    "src": "resources/js/table.js",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/table.js"
+    ]
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-971c9d81.js",
+    "file": "assets/app-ztEW8vpr.js",
+    "name": "app",
+    "src": "resources/sass/app.scss",
+    "isEntry": true,
     "imports": [
       "resources/js/app.js"
-    ],
-    "isEntry": true,
-    "src": "resources/sass/app.scss"
+    ]
   }
 }

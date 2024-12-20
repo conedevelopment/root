@@ -30,6 +30,13 @@
 
 {{-- Content --}}
 @section('content')
+    @if(! empty($widgets))
+        <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
+            @foreach($widgets as $widget)
+                @include($widget['template'], $widget)
+            @endforeach
+        </div>
+    @endif
     <div class="l-row">
         <div class="l-row__column">
             <div class="app-card">

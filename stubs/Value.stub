@@ -3,19 +3,10 @@
 namespace {{ namespace }};
 
 use Cone\Root\Widgets\Value;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Value
 {
-    /**
-     * Create a new Eloquent query.
-     */
-    public function query(): Builder
-    {
-        //
-    }
-
     /**
      * Calculate the results.
      */

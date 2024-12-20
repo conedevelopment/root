@@ -3,19 +3,10 @@
 namespace {{ namespace }};
 
 use Cone\Root\Widgets\Trend;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class {{ class }} extends Trend
 {
-    /**
-     * Create a new Eloquent query.
-     */
-    public function query(): Builder
-    {
-        //
-    }
-
     /**
      * Calculate the results.
      */
