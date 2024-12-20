@@ -15,5 +15,5 @@
 /public/build/assets/** linguist-generated
 /tests export-ignore
 /yarn.lock export-ignore linguist-generated
-/vite.config.js export-ignore
+/vite.config.mjs export-ignore
 /webpack.mix.js export-ignore
