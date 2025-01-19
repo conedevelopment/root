@@ -6,7 +6,7 @@
 {{-- Content --}}
 @section('content')
 <p>{{ __('Hey there, welcome back!') }}</p>
-<form method="POST" action="{{ URL::route('root.auth.login') }}">
+<form method="POST" action="{{ URL::route('root.auth.login') }}" data-turbo="false">
     @csrf
     <div class="form-group-stack">
         <div class="form-group">

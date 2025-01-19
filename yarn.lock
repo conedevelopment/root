@@ -24,10 +24,10 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.25.9.tgz#24b64e2c3ec7cd3b3c547729b8d16871f22cbdc7"
   integrity sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==
 
-"@conedevelopment/qkie@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@conedevelopment/qkie/-/qkie-1.1.1.tgz#40b3e4eb6e4ff2a5976b16c6d802bee513106442"
-  integrity sha512-8H8YPBCgmF6h27IboL3+wYTeDcMJsvN9Yl5c8muQDFzlUTtUm88Wha8edGk5Gi5n+Ax+xaxiKhBLp9SODT5vZg==
+"@conedevelopment/qkie@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@conedevelopment/qkie/-/qkie-1.2.1.tgz#ccfc2e38933b4ea92861e40bf2b744b305bc6b3d"
+  integrity sha512-92MXPhgj9ZW4Maan7zZDHnfLnOKAvJmlKk0CAftHPG6IEiJJNiB1+0BRAPUHej0EroQ0OJM4QUbDhBQuJ1KMkw==
 
 "@csstools/css-parser-algorithms@^3.0.1":
   version "3.0.4"

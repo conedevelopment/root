@@ -86,7 +86,7 @@
         });
     </script>
     {{-- Logout Form --}}
-    <form id="logout-form" style="display:none" method="POST" action="{{ URL::route('root.auth.logout') }}">
+    <form id="logout-form" style="display:none" method="POST" action="{{ URL::route('root.auth.logout') }}" data-turbo="false">
         @csrf
     </form>
 </body>
