@@ -28,9 +28,9 @@ class {{ class }} extends Resource
      */
     public function filters(Request $request): array
     {
-        return [
+        return array_merge(parent::filters($request), [
             //
-        ];
+        ]);
     }
 
     /**
