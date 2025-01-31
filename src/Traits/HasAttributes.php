@@ -78,7 +78,7 @@ trait HasAttributes
     public function getAttribute(string $key, mixed $default = null): mixed
     {
         return match ($key) {
-            'class' => $this->classList()->__toString(),
+            'class' => (string)$this->classList(),
             default => $this->attributes[$key] ?? $default,
         };
     }
