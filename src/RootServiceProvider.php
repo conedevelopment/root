@@ -146,7 +146,7 @@ class RootServiceProvider extends ServiceProvider
         $this->app['router']->bind('resource', function (string $key) use ($root): Resource {
             try {
                 return $root->resources->resolve($key);
-            } catch (ResourceResolutionException $exception) {
+            } catch (ResourceResolutionException) {
                 throw new NotFoundHttpException;
             }
         });
