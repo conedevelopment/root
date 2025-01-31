@@ -48,7 +48,7 @@ class Filters extends Collection
      */
     public function renderable(): static
     {
-        return $this->filter(static fn(Filter $filter): bool => $filter instanceof RenderableFilter);
+        return $this->filter(static fn (Filter $filter): bool => $filter instanceof RenderableFilter);
     }
 
     /**
@@ -56,7 +56,7 @@ class Filters extends Collection
      */
     public function functional(): static
     {
-        return $this->reject(static fn(Filter $filter): bool => $filter instanceof RenderableFilter);
+        return $this->reject(static fn (Filter $filter): bool => $filter instanceof RenderableFilter);
     }
 
     /**
@@ -72,6 +72,6 @@ class Filters extends Collection
      */
     public function mapToData(Request $request): array
     {
-        return $this->mapWithKeys(static fn(Filter $filter): array => [$filter->getKey() => $filter->getValue($request)])->toArray();
+        return $this->mapWithKeys(static fn (Filter $filter): array => [$filter->getKey() => $filter->getValue($request)])->toArray();
     }
 }

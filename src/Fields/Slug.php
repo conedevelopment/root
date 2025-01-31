@@ -148,7 +148,7 @@ class Slug extends Text
         $this->unique = $value;
 
         if ($value) {
-            $this->createRules(static fn(Request $request, Model $model): array => [Rule::unique($model->getTable())])->updateRules(static fn(Request $request, Model $model): array => [Rule::unique($model->getTable())->ignoreModel($model)]);
+            $this->createRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())])->updateRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())->ignoreModel($model)]);
         }
 
         return $this;
@@ -194,7 +194,7 @@ class Slug extends Text
 
         $value = is_null($match) ? $value : preg_replace_callback(
             sprintf('/%s([\d]+)?$/', preg_quote($this->separator)),
-            static fn(array $match): string => str_replace($match[1], (string) (((int) $match[1]) + 1), $match[0]),
+            static fn (array $match): string => str_replace($match[1], (string) (((int) $match[1]) + 1), $match[0]),
             $match
         );
 

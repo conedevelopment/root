@@ -67,21 +67,21 @@ class BelongsToMany extends Relation
     public function fields(Request $request): array
     {
         return [
-            BelongsTo::make($this->getRelatedName(), 'related', static fn(Pivot $model): BelongsToRelation => $model->belongsTo(
+            BelongsTo::make($this->getRelatedName(), 'related', static fn (Pivot $model): BelongsToRelation => $model->belongsTo(
                 $model->getRelation('related')::class,
                 $model->getRelatedKey(),
                 $model->getForeignKey(),
                 'related'
-            )->withDefault())->withRelatableQuery(fn(Request $request, Builder $query, Pivot $model): Builder => $this->resolveRelatableQuery($request, $model->pivotParent)
-                ->unless($this->allowDuplicateRelations, fn(Builder $query): Builder => $query->whereNotIn(
+            )->withDefault())->withRelatableQuery(fn (Request $request, Builder $query, Pivot $model): Builder => $this->resolveRelatableQuery($request, $model->pivotParent)
+                ->unless($this->allowDuplicateRelations, fn (Builder $query): Builder => $query->whereNotIn(
                     $query->getModel()->getQualifiedKeyName(),
                     $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
                 )))->hydrate(function (Request $request, Pivot $model, mixed $value): void {
-                $model->setAttribute(
-                    $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
-                    $value
-                );
-            })->display(fn(Model $model): ?string => $this->resolveDisplay($model)),
+                    $model->setAttribute(
+                        $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
+                        $value
+                    );
+                })->display(fn (Model $model): ?string => $this->resolveDisplay($model)),
         ];
     }
 
@@ -107,7 +107,7 @@ class BelongsToMany extends Relation
         }
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(fn(): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value());
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value());
         }
 
         parent::resolveField($request, $field);
@@ -136,7 +136,7 @@ class BelongsToMany extends Relation
                 $field->setModelAttribute($attribute)
                     ->name($attribute)
                     ->id($attribute)
-                    ->value(fn(): mixed => $related->getRelation($this->getRelation($model)->getPivotAccessor())->getAttribute($key));
+                    ->value(fn (): mixed => $related->getRelation($this->getRelation($model)->getPivotAccessor())->getAttribute($key));
             });
 
             return $fields;
@@ -162,7 +162,7 @@ class BelongsToMany extends Relation
     {
         $value = array_is_list($value) ? array_fill_keys($value, []) : $value;
 
-        return array_map(fn(array $pivot): array => array_merge($this->pivotValues, $pivot), $value);
+        return array_map(fn (array $pivot): array => array_merge($this->pivotValues, $pivot), $value);
     }
 
     /**

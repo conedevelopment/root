@@ -67,7 +67,7 @@ class Meta extends MorphOne
     {
         $this->field = new $field($this->label, $this->getModelAttribute());
 
-        $this->field->value(fn(Request $request, Model $model): mixed => $this->resolveValue($request, $model));
+        $this->field->value(fn (Request $request, Model $model): mixed => $this->resolveValue($request, $model));
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
@@ -113,7 +113,7 @@ class Meta extends MorphOne
     public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static fn(Request $request, Model $model, mixed $value): mixed => $value?->value;
+            $this->valueResolver = static fn (Request $request, Model $model, mixed $value): mixed => $value?->value;
         }
 
         return parent::resolveValue($request, $model);

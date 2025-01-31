@@ -42,7 +42,7 @@ class URL extends Text
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = fn(Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : sprintf(
+            $this->formatResolver = fn (Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : sprintf(
                 '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
                 $value,
                 $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',

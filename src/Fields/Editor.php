@@ -119,7 +119,7 @@ class Editor extends Field
         {
             public function __construct(string $modelAttribute)
             {
-                parent::__construct(__('Media'), $modelAttribute.'-media', static fn(): MorphToMany => new MorphToMany(
+                parent::__construct(__('Media'), $modelAttribute.'-media', static fn (): MorphToMany => new MorphToMany(
                     Medium::proxy()->newQuery(),
                     new class extends Model
                     {

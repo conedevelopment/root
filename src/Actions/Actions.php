@@ -44,7 +44,7 @@ class Actions extends Collection
      */
     public function standalone(bool $value = true): static
     {
-        return $this->filter(static fn(Action $action): bool => $value ? $action->isStandalone() : ! $action->isStandalone());
+        return $this->filter(static fn (Action $action): bool => $value ? $action->isStandalone() : ! $action->isStandalone());
     }
 
     /**

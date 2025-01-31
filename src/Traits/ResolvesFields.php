@@ -48,7 +48,7 @@ trait ResolvesFields
         return $this->resolveFields($request)
             ->subResource(false)
             ->visible(['update', 'create'])
-            ->some(static fn(Field $field): bool => ($field instanceof File && ! $field instanceof Media)
+            ->some(static fn (Field $field): bool => ($field instanceof File && ! $field instanceof Media)
                 || (in_array(ResolvesFields::class, class_uses_recursive($field)) && $field->hasFileField($request)));
     }
 

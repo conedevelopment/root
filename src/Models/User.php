@@ -135,7 +135,7 @@ class User extends Authenticatable implements Contract
     protected function avatar(): Attribute
     {
         return new Attribute(
-            get: static fn(mixed $value, array $attributes): ?string => isset($attributes['email'])
+            get: static fn (mixed $value, array $attributes): ?string => isset($attributes['email'])
                 ? sprintf('https://www.gravatar.com/avatar/%s?d=mp', md5($attributes['email']))
                 : null
         );

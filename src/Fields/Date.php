@@ -132,7 +132,7 @@ class Date extends Field
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = fn(Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : $value->format($this->format);
+            $this->formatResolver = fn (Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : $value->format($this->format);
         }
 
         return parent::resolveFormat($request, $model);

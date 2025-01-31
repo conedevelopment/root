@@ -661,7 +661,7 @@ abstract class Field implements Arrayable, JsonSerializable
         $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(
-            static fn(array|Closure $rule): array => is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]),
+            static fn (array|Closure $rule): array => is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]),
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 

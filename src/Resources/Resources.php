@@ -65,7 +65,7 @@ class Resources extends Collection
     {
         $model = is_string($model) ? $model : $model::class;
 
-        return $this->first(static fn(Resource $resource): bool => $resource->getModel() === $model);
+        return $this->first(static fn (Resource $resource): bool => $resource->getModel() === $model);
     }
 
     /**

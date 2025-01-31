@@ -55,7 +55,7 @@ abstract class HasOneOrMany extends Relation
         if (is_null($this->hydrateResolver)) {
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $related = $this->resolveRelatableQuery($request, $model)
-                    ->where(fn(Builder $query): Builder => $query->whereIn($this->getRelation($model)->getRelated()->getQualifiedKeyName(), (array) $value))
+                    ->where(fn (Builder $query): Builder => $query->whereIn($this->getRelation($model)->getRelated()->getQualifiedKeyName(), (array) $value))
                     ->get();
 
                 $model->setRelation($this->getRelationName(), is_array($value) ? $related : $related->first());

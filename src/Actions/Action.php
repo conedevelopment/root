@@ -134,10 +134,10 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     {
         $field->setAttribute('form', $this->getKey());
         $field->id($this->getKey().'-'.$field->getAttribute('id'));
-        $field->resolveErrorsUsing(fn(Request $request): MessageBag => $this->errors($request));
+        $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(fn(): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
         }
     }
 

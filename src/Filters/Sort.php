@@ -34,7 +34,7 @@ class Sort extends Filter
     {
         $value = array_replace(['by' => 'id', 'order' => 'desc'], (array) $value);
 
-        $attributes = $this->fields->mapWithKeys(static fn(Field $field): array => [
+        $attributes = $this->fields->mapWithKeys(static fn (Field $field): array => [
             $field->getModelAttribute() => $field instanceof Relation ? $field->getSortableColumn() : null,
         ])->all();
 

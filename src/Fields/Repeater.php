@@ -114,7 +114,7 @@ class Repeater extends Field
         );
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(fn(): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value());
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value());
         }
     }
 
@@ -183,7 +183,7 @@ class Repeater extends Field
     {
         $value = (array) $this->resolveValue($request, $model);
 
-        return array_map(fn(array $option): array => $this->toOption($request, $model, $this->newTemporaryModel($option)), $value);
+        return array_map(fn (array $option): array => $this->toOption($request, $model, $this->newTemporaryModel($option)), $value);
     }
 
     /**
@@ -215,7 +215,7 @@ class Repeater extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, ?array $value = null): string {
-                $values = array_map(fn(array $value): array => $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
+                $values = array_map(fn (array $value): array => $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
                     ->authorized($request, $model)
                     ->visible('show')
                     ->mapToDisplay($request, $model), (array) $value);

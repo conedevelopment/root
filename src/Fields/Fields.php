@@ -72,7 +72,7 @@ class Fields extends Collection
      */
     public function relation(): static
     {
-        return $this->filter(static fn(Field $field): bool => $field instanceof Relation);
+        return $this->filter(static fn (Field $field): bool => $field instanceof Relation);
     }
 
     /**
@@ -80,7 +80,7 @@ class Fields extends Collection
      */
     public function translatable(): static
     {
-        return $this->filter(static fn(Field $field): bool => $field->isTranslatable());
+        return $this->filter(static fn (Field $field): bool => $field->isTranslatable());
     }
 
     /**
@@ -88,7 +88,7 @@ class Fields extends Collection
      */
     public function subResource(bool $value = true): static
     {
-        return $this->filter(static fn(Field $field): bool => $value
+        return $this->filter(static fn (Field $field): bool => $value
             ? $field instanceof Relation && $field->isSubResource()
             : ! $field instanceof Relation || ! $field->isSubResource());
     }
@@ -98,7 +98,7 @@ class Fields extends Collection
      */
     public function mapToValidate(Request $request, Model $model): array
     {
-        return $this->reduce(static fn(array $rules, Field $field): array => array_merge_recursive($rules, $field->toValidate($request, $model)), []);
+        return $this->reduce(static fn (array $rules, Field $field): array => array_merge_recursive($rules, $field->toValidate($request, $model)), []);
     }
 
     /**
