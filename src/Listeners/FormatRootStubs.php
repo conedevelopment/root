@@ -13,7 +13,7 @@ class FormatRootStubs
     public function handle(VendorTagPublished $event): void
     {
         if ($event->tag === 'root-stubs') {
-            foreach ($event->paths as $from => $to) {
+            foreach ($event->paths as $to) {
                 $contents = file_get_contents($to);
 
                 $contents = str_replace('{{ namespace }}', App::getNamespace(), $contents);
