@@ -282,7 +282,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): string|false
     {
         return json_encode($this->toArray());
     }

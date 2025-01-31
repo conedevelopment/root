@@ -170,7 +170,7 @@ class BelongsToMany extends Relation
     /**
      * Merge the pivot values.
      */
-    public function mergePivotValues(array $value): mixed
+    public function mergePivotValues(array $value): array
     {
         $value = array_is_list($value) ? array_fill_keys($value, []) : $value;
 

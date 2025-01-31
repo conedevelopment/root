@@ -27,7 +27,7 @@ class Boolean extends Field
     /**
      * {@inheritdoc}
      */
-    public function getValueForHydrate(Request $request): mixed
+    public function getValueForHydrate(Request $request): bool
     {
         return $request->boolean($this->getRequestKey());
     }

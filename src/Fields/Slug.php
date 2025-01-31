@@ -109,7 +109,7 @@ class Slug extends Text
     /**
      * {@inheritdoc}
      */
-    public function getValueForHydrate(Request $request): mixed
+    public function getValueForHydrate(Request $request): string
     {
         $value = parent::getValueForHydrate($request);
 

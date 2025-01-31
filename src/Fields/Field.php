@@ -441,7 +441,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the with old value attribute to false.
      */
-    public function withoutOldValue(): mixed
+    public function withoutOldValue(): static
     {
         return $this->withOldValue(false);
     }
@@ -602,7 +602,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

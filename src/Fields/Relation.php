@@ -387,7 +387,7 @@ abstract class Relation extends Field implements Form
                     return $default;
                 }
 
-                return Collection::wrap($default)->map(function (Model $related) use ($model, $request): mixed {
+                return Collection::wrap($default)->map(function (Model $related) use ($model, $request): ?string {
                     return $this->formatRelated($request, $model, $related);
                 })->filter()->join(', ');
             };

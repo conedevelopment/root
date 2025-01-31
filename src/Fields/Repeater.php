@@ -91,7 +91,7 @@ class Repeater extends Field
     /**
      * {@inheritdoc}
      */
-    public function getValueForHydrate(Request $request): mixed
+    public function getValueForHydrate(Request $request): array
     {
         return array_values((array) parent::getValueForHydrate($request));
     }
@@ -99,7 +99,7 @@ class Repeater extends Field
     /**
      * {@inheritdoc}
      */
-    public function getOldValue(Request $request): mixed
+    public function getOldValue(Request $request): array
     {
         return array_values((array) parent::getOldValue($request));
     }

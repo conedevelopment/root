@@ -23,7 +23,7 @@ class MetaValue implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set(Model $model, string $key, mixed $value, array $attributes): string|false|null
     {
         return match (true) {
             is_null($value) => null,

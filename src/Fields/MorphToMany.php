@@ -48,7 +48,7 @@ class MorphToMany extends BelongsToMany
                     $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
                     $value
                 );
-            })->display(function (Model $model): mixed {
+            })->display(function (Model $model): ?string {
                 return $this->resolveDisplay($model);
             }),
         ];
