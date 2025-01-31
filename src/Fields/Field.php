@@ -588,7 +588,7 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function invalid(Request $request): bool
     {
-        return $this->resolveErrors($request)->has($this->getValidationKey()) ?: false;
+        return $this->resolveErrors($request)->has($this->getValidationKey());
     }
 
     /**
