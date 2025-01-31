@@ -162,22 +162,13 @@ class Image
      */
     public function save(): void
     {
-        switch ($this->type) {
-            case IMAGETYPE_GIF:
-                imagegif($this->resource, $this->path);
-                break;
-            case IMAGETYPE_JPEG:
-                imagejpeg($this->resource, $this->path, $this->attributes['quality']);
-                break;
-            case IMAGETYPE_PNG:
-                imagepng($this->resource, $this->path, 1);
-                break;
-            case IMAGETYPE_WEBP:
-                imagewebp($this->resource, $this->path, $this->attributes['quality']);
-                break;
-            default:
-                throw new Exception("The file type [{$this->type}] is not supported.");
-        }
+        match ($this->type) {
+            IMAGETYPE_GIF => imagegif($this->resource, $this->path),
+            IMAGETYPE_JPEG => imagejpeg($this->resource, $this->path, $this->attributes['quality']),
+            IMAGETYPE_PNG => imagepng($this->resource, $this->path, 1),
+            IMAGETYPE_WEBP => imagewebp($this->resource, $this->path, $this->attributes['quality']),
+            default => throw new Exception("The file type [{$this->type}] is not supported."),
+        };
     }
 
     /**
@@ -185,22 +176,13 @@ class Image
      */
     protected function create(): void
     {
-        switch ($this->type) {
-            case IMAGETYPE_GIF:
-                $this->resource = imagecreatefromgif($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_JPEG:
-                $this->resource = imagecreatefromjpeg($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_PNG:
-                $this->resource = imagecreatefrompng($this->medium->getAbsolutePath());
-                break;
-            case IMAGETYPE_WEBP:
-                $this->resource = imagecreatefromwebp($this->medium->getAbsolutePath());
-                break;
-            default:
-                throw new Exception("The file type [{$this->type}] is not supported.");
-        }
+        $this->resource = match ($this->type) {
+            IMAGETYPE_GIF => imagecreatefromgif($this->medium->getAbsolutePath()),
+            IMAGETYPE_JPEG => imagecreatefromjpeg($this->medium->getAbsolutePath()),
+            IMAGETYPE_PNG => imagecreatefrompng($this->medium->getAbsolutePath()),
+            IMAGETYPE_WEBP => imagecreatefromwebp($this->medium->getAbsolutePath()),
+            default => throw new Exception("The file type [{$this->type}] is not supported."),
+        };
     }
 
     /**
