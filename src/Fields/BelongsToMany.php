@@ -69,7 +69,7 @@ class BelongsToMany extends Relation
         return [
             BelongsTo::make($this->getRelatedName(), 'related', static function (Pivot $model): BelongsToRelation {
                 return $model->belongsTo(
-                    get_class($model->getRelation('related')),
+                    $model->getRelation('related')::class,
                     $model->getRelatedKey(),
                     $model->getForeignKey(),
                     'related'

@@ -185,7 +185,7 @@ class Medium extends Model implements Contract
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(get_class(App::make(User::class)));
+        return $this->belongsTo(App::make(User::class)::class);
     }
 
     /**
