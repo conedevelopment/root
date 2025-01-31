@@ -15,7 +15,7 @@ trait HasMedia
     protected static function bootHasMedia(): void
     {
         static::deleting(static function (self $model): void {
-            if (! in_array(SoftDeletes::class, class_uses_recursive($model)) || $model->forceDeleting) {
+            if ($model->forceDeleting || ! in_array(SoftDeletes::class, class_uses_recursive($model))) {
                 $model->media()->detach();
             }
         });

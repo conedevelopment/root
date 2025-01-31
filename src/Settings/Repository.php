@@ -83,7 +83,7 @@ class Repository implements Arrayable, ArrayAccess, Contract
      */
     public function get(string $key, mixed $default = null, bool $fresh = false): mixed
     {
-        if ($this->offsetExists($key) && ! $fresh) {
+        if (! $fresh && $this->offsetExists($key)) {
             return $this->offsetGet($key);
         }
 

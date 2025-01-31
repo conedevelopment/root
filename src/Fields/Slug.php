@@ -113,7 +113,7 @@ class Slug extends Text
     {
         $value = parent::getValueForHydrate($request);
 
-        if (! $this->isNullable() && empty($value)) {
+        if (empty($value) && ! $this->isNullable()) {
             $value = Str::random();
         }
 
