@@ -156,8 +156,8 @@ class Medium extends Model implements Contract
         return new static(array_merge([
             'file_name' => $name = basename($path),
             'mime_type' => $type,
-            'width' => isset($width) ? $width : null,
-            'height' => isset($height) ? $height : null,
+            'width' => $width ?? null,
+            'height' => $height ?? null,
             'disk' => Config::get('root.media.disk', 'public'),
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
