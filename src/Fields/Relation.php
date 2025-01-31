@@ -198,9 +198,7 @@ abstract class Relation extends Field implements Form
     public function getRouteKeyName(): string
     {
         $callback = is_null($this->routeKeyNameResolver)
-            ? function (): string {
-                return Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value();
-            }
+            ? fn(): string => Str::of($this->getRelationName())->singular()->ucfirst()->prepend('relation')->value()
         : $this->routeKeyNameResolver;
 
         return call_user_func($callback);
@@ -334,9 +332,7 @@ abstract class Relation extends Field implements Form
     public function display(Closure|string $callback): static
     {
         if (is_string($callback)) {
-            $callback = static function (Model $model) use ($callback) {
-                return $model->getAttribute($callback);
-            };
+            $callback = static fn(Model $model) => $model->getAttribute($callback);
         }
 
         $this->displayResolver = $callback;
@@ -387,9 +383,7 @@ abstract class Relation extends Field implements Form
                     return $default;
                 }
 
-                return Collection::wrap($default)->map(function (Model $related) use ($model, $request): ?string {
-                    return $this->formatRelated($request, $model, $related);
-                })->filter()->join(', ');
+                return Collection::wrap($default)->map(fn(Model $related): ?string => $this->formatRelated($request, $model, $related))->filter()->join(', ');
             };
         }
 
@@ -443,9 +437,7 @@ abstract class Relation extends Field implements Form
         }
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value();
-            });
+            $field->resolveRouteKeyNameUsing(fn(): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value());
         }
     }
 
@@ -494,9 +486,7 @@ abstract class Relation extends Field implements Form
             $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
-        return $query->when(! is_null($this->queryResolver), function (Builder $query) use ($request, $model): Builder {
-            return call_user_func_array($this->queryResolver, [$request, $query, $model]);
-        });
+        return $query->when(! is_null($this->queryResolver), fn(Builder $query): Builder => call_user_func_array($this->queryResolver, [$request, $query, $model]));
     }
 
     /**
@@ -548,21 +538,11 @@ abstract class Relation extends Field implements Form
     {
         return $this->resolveRelatableQuery($request, $model)
             ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection) use ($request, $model): Collection {
-                return $collection->groupBy($this->groupResolver)
-                    ->map(function (Collection $group, string $key) use ($request, $model): array {
-                        return [
-                            'label' => $key,
-                            'options' => $group->map(function (Model $related) use ($request, $model): array {
-                                return $this->toOption($request, $model, $related);
-                            })->all(),
-                        ];
-                    });
-            }, function (Collection $collection) use ($request, $model): Collection {
-                return $collection->map(function (Model $related) use ($request, $model): array {
-                    return $this->toOption($request, $model, $related);
-                });
-            })
+            ->when(! is_null($this->groupResolver), fn(Collection $collection): Collection => $collection->groupBy($this->groupResolver)
+                ->map(fn(Collection $group, string $key): array => [
+                    'label' => $key,
+                    'options' => $group->map(fn(Model $related): array => $this->toOption($request, $model, $related))->all(),
+                ]), fn(Collection $collection): Collection => $collection->map(fn(Model $related): array => $this->toOption($request, $model, $related)))
             ->toArray();
     }
 
@@ -775,9 +755,7 @@ abstract class Relation extends Field implements Form
         Root::instance()->breadcrumbs->patterns([
             $this->getUri() => $this->label,
             sprintf('%s/create', $this->getUri()) => __('Add'),
-            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => function (Request $request): string {
-                return $this->resolveDisplay($request->route($this->getRouteKeyName()));
-            },
+            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => fn(Request $request): string => $this->resolveDisplay($request->route($this->getRouteKeyName())),
             sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
         ]);
     }
@@ -875,11 +853,9 @@ abstract class Relation extends Field implements Form
      */
     public function registerRouteConstraints(Request $request, Router $router): void
     {
-        $router->bind($this->getRouteKeyName(), function (string $id, Route $route) use ($router): Model {
-            return match ($id) {
-                'create' => $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->make(),
-                default => $this->resolveRouteBinding($router->getCurrentRequest(), $id),
-            };
+        $router->bind($this->getRouteKeyName(), fn(string $id, Route $route): Model => match ($id) {
+            'create' => $this->getRelation($route->parentOfParameter($this->getRouteKeyName()))->make(),
+            default => $this->resolveRouteBinding($router->getCurrentRequest(), $id),
         });
     }
 
@@ -892,9 +868,7 @@ abstract class Relation extends Field implements Form
 
         parse_str($query, $result);
 
-        return array_filter($result, function (string $key): bool {
-            return str_starts_with($key, $this->getRequestKey());
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($result, fn(string $key): bool => str_starts_with($key, $this->getRequestKey()), ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -952,18 +926,14 @@ abstract class Relation extends Field implements Form
                 ->visible('index')
                 ->standalone(false)
                 ->mapToForms($request, $model),
-            'data' => $this->paginate($request, $model)->through(function (Model $related) use ($request, $model): array {
-                return $this->mapRelated($request, $model, $related);
-            }),
+            'data' => $this->paginate($request, $model)->through(fn(Model $related): array => $this->mapRelated($request, $model, $related)),
             'perPageOptions' => $this->getPerPageOptions(),
             'perPageKey' => $this->getPerPageKey(),
             'sortKey' => $this->getSortKey(),
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
-                ->map(static function (RenderableFilter $filter) use ($request, $model): array {
-                    return $filter->toField()->toInput($request, $model);
-                })
+                ->map(static fn(RenderableFilter $filter): array => $filter->toField()->toInput($request, $model))
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
             'parentUrl' => URL::query($request->server('HTTP_REFERER'), $request->query()),

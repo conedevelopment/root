@@ -282,9 +282,7 @@ abstract class Resource implements Arrayable, Form
             ->withoutEagerLoads()
             ->when(
                 $this->isSoftDeletable(),
-                static function (Builder $query): Builder {
-                    return $query->withTrashed();
-                }
+                static fn(Builder $query): Builder => $query->withTrashed()
             );
     }
 
@@ -351,18 +349,14 @@ abstract class Resource implements Arrayable, Form
     {
         return $this->translatable()
             ? Translations::make()
-                ->withFields(function () use ($request): array {
-                    return $this->resolveFields($request)
-                        ->translatable()
-                        ->map(static function (Field $field): Field {
-                            return (clone $field)
-                                ->translatable(false)
-                                ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
-                                ->name($key)
-                                ->id($key);
-                        })
-                        ->all();
-                })
+                ->withFields(fn(): array => $this->resolveFields($request)
+                    ->translatable()
+                    ->map(static fn(Field $field): Field => (clone $field)
+                        ->translatable(false)
+                        ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
+                        ->name($key)
+                        ->id($key))
+                    ->all())
             : null;
     }
 
@@ -372,12 +366,10 @@ abstract class Resource implements Arrayable, Form
     public function resolveFields(Request $request): Fields
     {
         if (is_null($this->fields)) {
-            $this->withFields(function () use ($request): array {
-                return array_values(array_filter([
-                    $this->resolveTranslationsField($request),
-                    $this->resolveEventsField($request),
-                ]));
-            });
+            $this->withFields(fn(): array => array_values(array_filter([
+                $this->resolveTranslationsField($request),
+                $this->resolveEventsField($request),
+            ])));
         }
 
         return $this->__resolveFields($request);
@@ -410,9 +402,7 @@ abstract class Resource implements Arrayable, Form
         $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
-            });
+            $field->resolveRouteKeyNameUsing(fn(): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
         }
     }
 
@@ -495,9 +485,7 @@ abstract class Resource implements Arrayable, Form
             ->latest()
             ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
-            ->through(function (Model $model) use ($request): array {
-                return $this->mapModel($request, $model);
-            });
+            ->through(fn(Model $model): array => $this->mapModel($request, $model));
     }
 
     /**
@@ -665,9 +653,7 @@ abstract class Resource implements Arrayable, Form
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
-                ->map(static function (RenderableFilter $filter) use ($request, $model): array {
-                    return $filter->toField()->toInput($request, $model);
-                })
+                ->map(static fn(RenderableFilter $filter): array => $filter->toField()->toInput($request, $model))
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
             'url' => $this->getUri(),
@@ -723,11 +709,9 @@ abstract class Resource implements Arrayable, Form
             'relations' => $this->resolveFields($request)
                 ->subResource()
                 ->authorized($request, $model)
-                ->map(static function (Relation $relation) use ($request, $model): array {
-                    return array_merge($relation->toSubResource($request, $model), [
-                        'url' => URL::query($relation->modelUrl($model), $relation->parseQueryString($request->fullUrl())),
-                    ]);
-                }),
+                ->map(static fn(Relation $relation): array => array_merge($relation->toSubResource($request, $model), [
+                    'url' => URL::query($relation->modelUrl($model), $relation->parseQueryString($request->fullUrl())),
+                ])),
             'abilities' => array_merge(
                 $this->mapResourceAbilities($request),
                 $this->mapModelAbilities($request, $model)

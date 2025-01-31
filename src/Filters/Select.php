@@ -53,9 +53,7 @@ abstract class Select extends RenderableFilter
     public function toField(): Field
     {
         return Field::make($this->getName(), $this->getRequestKey())
-            ->options(App::call(function (Request $request): array {
-                return $this->options($request);
-            }))
+            ->options(App::call(fn(Request $request): array => $this->options($request)))
             ->value(fn (Request $request): mixed => $this->getValue($request))
             ->multiple($this->isMultiple());
     }

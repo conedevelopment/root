@@ -102,11 +102,9 @@ class File extends MorphToMany
     public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
-            $this->display(function (Medium $related): string {
-                return $related->isImage
-                    ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
-                    : $related->file_name;
-            });
+            $this->display(fn(Medium $related): string => $related->isImage
+                ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
+                : $related->file_name);
         }
 
         return parent::resolveDisplay($related);
@@ -214,9 +212,7 @@ class File extends MorphToMany
         $model->saved(function (Model $model) use ($request, $value): void {
             $files = Arr::wrap($request->file($this->getRequestKey(), []));
 
-            $ids = array_map(function (UploadedFile $file) use ($request, $model): int {
-                return $this->store($request, $model, $file)['value'];
-            }, $files);
+            $ids = array_map(fn(UploadedFile $file): int => $this->store($request, $model, $file)['value'], $files);
 
             $value += $this->mergePivotValues($ids);
 

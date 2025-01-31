@@ -68,9 +68,7 @@ class Notification extends DatabaseNotification implements Contract
     protected function formattedCreatedAt(): Attribute
     {
         return new Attribute(
-            get: function (): ?string {
-                return $this->created_at?->setTimezone(Root::instance()->getTimezone())?->isoFormat('YYYY. MMMM DD. HH:mm');
-            }
+            get: fn(): ?string => $this->created_at?->setTimezone(Root::instance()->getTimezone())?->isoFormat('YYYY. MMMM DD. HH:mm')
         );
     }
 
@@ -82,9 +80,7 @@ class Notification extends DatabaseNotification implements Contract
     protected function isRead(): Attribute
     {
         return new Attribute(
-            get: function (): bool {
-                return ! is_null($this->read_at);
-            }
+            get: fn(): bool => ! is_null($this->read_at)
         );
     }
 
@@ -96,9 +92,7 @@ class Notification extends DatabaseNotification implements Contract
     protected function url(): Attribute
     {
         return new Attribute(
-            get: function (): ?string {
-                return $this->exists ? URL::route('root.api.notifications.update', $this) : null;
-            }
+            get: fn(): ?string => $this->exists ? URL::route('root.api.notifications.update', $this) : null
         );
     }
 }

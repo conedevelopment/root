@@ -62,11 +62,9 @@ class Search extends RenderableFilter
      */
     public function getSearchableAttributes(): array
     {
-        return $this->fields->mapWithKeys(static function (Field $field): array {
-            return [
-                $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
-            ];
-        })->all();
+        return $this->fields->mapWithKeys(static fn(Field $field): array => [
+            $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
+        ])->all();
     }
 
     /**

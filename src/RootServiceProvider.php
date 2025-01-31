@@ -63,9 +63,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(Root::class, static function (Application $app): Root {
-            return new Root($app);
-        });
+        $this->app->singleton(Root::class, static fn(Application $app): Root => new Root($app));
 
         $this->app->alias(Root::class, 'root');
 
@@ -81,9 +79,7 @@ class RootServiceProvider extends ServiceProvider
             $app->make(Root::class)->boot();
         });
 
-        $this->app['request']->macro('isTurboFrameRequest', function (): bool {
-            return $this->hasHeader('Turbo-Frame');
-        });
+        $this->app['request']->macro('isTurboFrameRequest', fn(): bool => $this->hasHeader('Turbo-Frame'));
     }
 
     /**
@@ -151,11 +147,9 @@ class RootServiceProvider extends ServiceProvider
             }
         });
 
-        $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
-            return $id === 'create'
-                ? $route->parameter('_resource')->getModelInstance()
-                : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id);
-        });
+        $this->app['router']->bind('resourceModel', fn(string $id, Route $route): Model => $id === 'create'
+            ? $route->parameter('_resource')->getModelInstance()
+            : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id));
 
         $this->app['router']
             ->middleware(['web'])
@@ -174,9 +168,7 @@ class RootServiceProvider extends ServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
 
-        RateLimiter::for('root.auth', static function (Request $request): Limit {
-            return Limit::perMinute(6)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('root.auth', static fn(Request $request): Limit => Limit::perMinute(6)->by($request->user()?->id ?: $request->ip()));
     }
 
     /**
@@ -227,11 +219,9 @@ class RootServiceProvider extends ServiceProvider
     {
         $exceptions = $this->app->make(ExceptionHandler::class);
 
-        $exceptions->renderable(static function (SaveFormDataException $exception): RedirectResponse {
-            return Redirect::back()
-                ->withInput()
-                ->with('alerts.form-save', Alert::error($exception->getMessage()));
-        });
+        $exceptions->renderable(static fn(SaveFormDataException $exception): RedirectResponse => Redirect::back()
+            ->withInput()
+            ->with('alerts.form-save', Alert::error($exception->getMessage())));
     }
 
     /**
@@ -239,9 +229,7 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerAuth(): void
     {
-        Gate::define('viewRoot', static function (User $user): bool {
-            return Root::instance()->authorized($user);
-        });
+        Gate::define('viewRoot', static fn(User $user): bool => Root::instance()->authorized($user));
 
         Gate::policy(Medium::getProxiedClass(), MediumPolicy::class);
     }

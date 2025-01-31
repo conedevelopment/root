@@ -60,13 +60,11 @@ class Boolean extends Field
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = static function (Request $request, Model $model, ?bool $value): string {
-                return sprintf(
-                    '<span class="status %s">%s</span>',
-                    $value ? 'status--success' : 'status--danger',
-                    $value ? __('Yes') : __('No')
-                );
-            };
+            $this->formatResolver = static fn(Request $request, Model $model, ?bool $value): string => sprintf(
+                '<span class="status %s">%s</span>',
+                $value ? 'status--success' : 'status--danger',
+                $value ? __('Yes') : __('No')
+            );
         }
 
         return parent::resolveFormat($request, $model);

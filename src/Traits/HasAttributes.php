@@ -135,9 +135,7 @@ trait HasAttributes
     {
         return array_reduce(
             array_keys($this->attributes),
-            function (array $attributes, string $key): array {
-                return array_merge($attributes, [$key => $this->resolveAttribute($key)]);
-            },
+            fn(array $attributes, string $key): array => array_merge($attributes, [$key => $this->resolveAttribute($key)]),
             []
         );
     }
