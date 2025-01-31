@@ -49,7 +49,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected string $template = 'root::actions.action';
 
     /**
-     * Indicates if the action is descrtuctive.
+     * Indicates if the action is destructive.
      */
     protected bool $destructive = false;
 

@@ -13,7 +13,7 @@ class Alert extends Component
     protected string $type = 'info';
 
     /**
-     * Incidates whether the alert is closable.
+     * Indicates whether the alert is closable.
      */
     protected bool $closable = false;
 

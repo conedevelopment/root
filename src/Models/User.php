@@ -79,7 +79,7 @@ class User extends Authenticatable implements Contract
     }
 
     /**
-     * Determine whether the object requires two factor authentitaction.
+     * Determine whether the object requires two factor authentication.
      */
     public function requiresTwoFactorAuthentication(): bool
     {

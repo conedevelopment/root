@@ -311,7 +311,7 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
-     * Set the searachable attribute.
+     * Set the searchable attribute.
      */
     public function searchable(bool|Closure $value = true): static
     {
