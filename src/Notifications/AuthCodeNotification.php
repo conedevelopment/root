@@ -29,7 +29,7 @@ class AuthCodeNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(AuthCode $code)
+    public function __construct(#[\SensitiveParameter] AuthCode $code)
     {
         $this->code = $code;
     }
