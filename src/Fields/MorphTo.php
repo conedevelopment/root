@@ -98,7 +98,9 @@ class MorphTo extends BelongsTo
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'types' => array_map(static fn (string $type): string => __(Str::of($type)->classBasename()->headline()->value()), array_combine($this->types, $this->types)),
+            'types' => array_map(
+                static fn (string $type): string => __(Str::of($type)->classBasename()->headline()->value()), array_combine($this->types, $this->types)
+            ),
         ]);
     }
 

@@ -72,16 +72,17 @@ class BelongsToMany extends Relation
                 $model->getRelatedKey(),
                 $model->getForeignKey(),
                 'related'
-            )->withDefault())->withRelatableQuery(fn (Request $request, Builder $query, Pivot $model): Builder => $this->resolveRelatableQuery($request, $model->pivotParent)
-                ->unless($this->allowDuplicateRelations, fn (Builder $query): Builder => $query->whereNotIn(
-                    $query->getModel()->getQualifiedKeyName(),
-                    $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
-                )))->hydrate(function (Request $request, Pivot $model, mixed $value): void {
-                    $model->setAttribute(
-                        $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
-                        $value
-                    );
-                })->display(fn (Model $model): ?string => $this->resolveDisplay($model)),
+            )->withDefault())
+                ->withRelatableQuery(fn (Request $request, Builder $query, Pivot $model): Builder => $this->resolveRelatableQuery($request, $model->pivotParent)
+                    ->unless($this->allowDuplicateRelations, fn (Builder $query): Builder => $query->whereNotIn(
+                        $query->getModel()->getQualifiedKeyName(),
+                        $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
+                    )))->hydrate(function (Request $request, Pivot $model, mixed $value): void {
+                        $model->setAttribute(
+                            $this->getRelation($model->pivotParent)->getRelatedPivotKeyName(),
+                            $value
+                        );
+                    })->display(fn (Model $model): ?string => $this->resolveDisplay($model)),
         ];
     }
 
@@ -107,7 +108,9 @@ class BelongsToMany extends Relation
         }
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value());
+            $field->resolveRouteKeyNameUsing(
+                fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value()
+            );
         }
 
         parent::resolveField($request, $field);

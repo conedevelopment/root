@@ -111,12 +111,14 @@ class Root
             call_user_func_array($callback, [$this]);
         }
 
+        $path = $this->getPath();
+
         $this->breadcrumbs->patterns([
-            $this->getPath() => __('Dashboard'),
-            sprintf('%s/resources/{resource}', $this->getPath()) => static fn (Request $request): string => $request->route('_resource')->getName(),
-            sprintf('%s/resources/{resource}/create', $this->getPath()) => __('Create'),
-            sprintf('%s/resources/{resource}/{resourceModel}', $this->getPath()) => static fn (Request $request): string => $request->route('_resource')->modelTitle($request->route('resourceModel')),
-            sprintf('%s/resources/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
+            $path => __('Dashboard'),
+            sprintf('%s/resources/{resource}', $path) => static fn (Request $request): string => $request->route('_resource')->getName(),
+            sprintf('%s/resources/{resource}/create', $path) => __('Create'),
+            sprintf('%s/resources/{resource}/{resourceModel}', $path) => static fn (Request $request): string => $request->route('_resource')->modelTitle($request->route('resourceModel')),
+            sprintf('%s/resources/{resource}/{resourceModel}/edit', $path) => __('Edit'),
         ]);
     }
 

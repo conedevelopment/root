@@ -148,7 +148,9 @@ class Slug extends Text
         $this->unique = $value;
 
         if ($value) {
-            $this->createRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())])->updateRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())->ignoreModel($model)]);
+            $this->createRules(
+                static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())]
+            )->updateRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())->ignoreModel($model)]);
         }
 
         return $this;

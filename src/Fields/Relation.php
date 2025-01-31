@@ -437,7 +437,9 @@ abstract class Relation extends Field implements Form
         }
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value());
+            $field->resolveRouteKeyNameUsing(
+                fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value()
+            );
         }
     }
 
@@ -486,7 +488,8 @@ abstract class Relation extends Field implements Form
             $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
-        return $query->when(! is_null($this->queryResolver), fn (Builder $query): Builder => call_user_func_array($this->queryResolver, [$request, $query, $model]));
+        return $query
+            ->when(! is_null($this->queryResolver), fn (Builder $query): Builder => call_user_func_array($this->queryResolver, [$request, $query, $model]));
     }
 
     /**
@@ -752,11 +755,14 @@ abstract class Relation extends Field implements Form
      */
     protected function routesRegistered(Request $request): void
     {
+        $uri = $this->getUri();
+        $routeKeyName = $this->getRouteKeyName();
+
         Root::instance()->breadcrumbs->patterns([
             $this->getUri() => $this->label,
-            sprintf('%s/create', $this->getUri()) => __('Add'),
-            sprintf('%s/{%s}', $this->getUri(), $this->getRouteKeyName()) => fn (Request $request): string => $this->resolveDisplay($request->route($this->getRouteKeyName())),
-            sprintf('%s/{%s}/edit', $this->getUri(), $this->getRouteKeyName()) => __('Edit'),
+            sprintf('%s/create', $uri) => __('Add'),
+            sprintf('%s/{%s}', $uri, $routeKeyName) => fn (Request $request): string => $this->resolveDisplay($request->route($routeKeyName)),
+            sprintf('%s/{%s}/edit', $uri, $routeKeyName) => __('Edit'),
         ]);
     }
 
