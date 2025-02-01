@@ -102,7 +102,7 @@ class WidgetMake extends GeneratorCommand
 
         $name = str_replace('\\', '/', $this->getNameInput());
 
-        return 'widgets.'.implode('.', array_map([Str::class, 'kebab'], explode('/', $name)));
+        return 'widgets.'.implode('.', array_map(Str::kebab(...), explode('/', $name)));
     }
 
     /**

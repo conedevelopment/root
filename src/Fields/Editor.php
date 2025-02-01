@@ -119,21 +119,19 @@ class Editor extends Field
         {
             public function __construct(string $modelAttribute)
             {
-                parent::__construct(__('Media'), $modelAttribute.'-media', static function (): MorphToMany {
-                    return new MorphToMany(
-                        Medium::proxy()->newQuery(),
-                        new class extends Model
-                        {
-                            //
-                        },
-                        'media',
-                        'root_mediables',
-                        'medium_id',
-                        '_model_id',
-                        'id',
-                        'id'
-                    );
-                });
+                parent::__construct(__('Media'), $modelAttribute.'-media', static fn (): MorphToMany => new MorphToMany(
+                    Medium::proxy()->newQuery(),
+                    new class extends Model
+                    {
+                        //
+                    },
+                    'media',
+                    'root_mediables',
+                    'medium_id',
+                    '_model_id',
+                    'id',
+                    'id'
+                ));
 
                 $this->template = 'root::fields.editor.media';
 

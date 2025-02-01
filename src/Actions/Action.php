@@ -49,7 +49,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected string $template = 'root::actions.action';
 
     /**
-     * Indicates if the action is descrtuctive.
+     * Indicates if the action is destructive.
      */
     protected bool $destructive = false;
 
@@ -134,14 +134,10 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     {
         $field->setAttribute('form', $this->getKey());
         $field->id($this->getKey().'-'.$field->getAttribute('id'));
-        $field->resolveErrorsUsing(function (Request $request): MessageBag {
-            return $this->errors($request);
-        });
+        $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
-            });
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
         }
     }
 
@@ -282,7 +278,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): string|false
     {
         return json_encode($this->toArray());
     }

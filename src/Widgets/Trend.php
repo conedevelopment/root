@@ -467,7 +467,7 @@ abstract class Trend extends Metric
     /**
      * Get the results by the given interval.
      */
-    public function resultBy(array $result, DatePeriod $period, string $interval): mixed
+    public function resultBy(array $result, DatePeriod $period, string $interval): array
     {
         $dates = [];
 

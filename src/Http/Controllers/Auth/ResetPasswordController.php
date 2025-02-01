@@ -43,7 +43,7 @@ class ResetPasswordController extends Controller
 
         $response = Password::broker()->reset(
             $request->only(['email', 'password', 'password_confirmation', 'token']),
-            function (User $user, string $password): void {
+            function (User $user, #[\SensitiveParameter] string $password): void {
                 $this->resetPassword($user, $password);
 
                 if ($user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail()) {
@@ -60,7 +60,7 @@ class ResetPasswordController extends Controller
     /**
      * Reset the given user's password.
      */
-    protected function resetPassword(User $user, string $password): void
+    protected function resetPassword(User $user, #[\SensitiveParameter] string $password): void
     {
         $user->setAttribute('password', Hash::make($password));
 

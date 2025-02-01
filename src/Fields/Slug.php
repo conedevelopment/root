@@ -109,11 +109,11 @@ class Slug extends Text
     /**
      * {@inheritdoc}
      */
-    public function getValueForHydrate(Request $request): mixed
+    public function getValueForHydrate(Request $request): string
     {
         $value = parent::getValueForHydrate($request);
 
-        if (! $this->isNullable() && empty($value)) {
+        if (empty($value) && ! $this->isNullable()) {
             $value = Str::random();
         }
 
@@ -148,11 +148,9 @@ class Slug extends Text
         $this->unique = $value;
 
         if ($value) {
-            $this->createRules(static function (Request $request, Model $model): array {
-                return [Rule::unique($model->getTable())];
-            })->updateRules(static function (Request $request, Model $model): array {
-                return [Rule::unique($model->getTable())->ignoreModel($model)];
-            });
+            $this->createRules(
+                static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())]
+            )->updateRules(static fn (Request $request, Model $model): array => [Rule::unique($model->getTable())->ignoreModel($model)]);
         }
 
         return $this;
@@ -198,9 +196,7 @@ class Slug extends Text
 
         $value = is_null($match) ? $value : preg_replace_callback(
             sprintf('/%s([\d]+)?$/', preg_quote($this->separator)),
-            static function (array $match): string {
-                return str_replace($match[1], (string) (((int) $match[1]) + 1), $match[0]);
-            },
+            static fn (array $match): string => str_replace($match[1], (string) (((int) $match[1]) + 1), $match[0]),
             $match
         );
 

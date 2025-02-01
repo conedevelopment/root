@@ -156,8 +156,8 @@ class Medium extends Model implements Contract
         return new static(array_merge([
             'file_name' => $name = basename($path),
             'mime_type' => $type,
-            'width' => isset($width) ? $width : null,
-            'height' => isset($height) ? $height : null,
+            'width' => $width ?? null,
+            'height' => $height ?? null,
             'disk' => Config::get('root.media.disk', 'public'),
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
@@ -185,7 +185,7 @@ class Medium extends Model implements Contract
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(get_class(App::make(User::class)));
+        return $this->belongsTo(App::make(User::class)::class);
     }
 
     /**
@@ -196,9 +196,7 @@ class Medium extends Model implements Contract
     protected function isImage(): Attribute
     {
         return new Attribute(
-            get: static function (mixed $value, array $attributes): bool {
-                return Str::is('image/*', $attributes['mime_type']);
-            }
+            get: static fn (mixed $value, array $attributes): bool => Str::is('image/*', $attributes['mime_type'])
         );
     }
 
@@ -210,15 +208,11 @@ class Medium extends Model implements Contract
     protected function urls(): Attribute
     {
         return new Attribute(
-            get: function (): array {
-                return array_reduce(
-                    $this->properties['conversions'] ?? [],
-                    function (array $urls, string $conversion): array {
-                        return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
-                    },
-                    ['original' => $this->getUrl()]
-                );
-            }
+            get: fn (): array => array_reduce(
+                $this->properties['conversions'] ?? [],
+                fn (array $urls, string $conversion): array => array_merge($urls, [$conversion => $this->getUrl($conversion)]),
+                ['original' => $this->getUrl()]
+            )
         );
     }
 
@@ -242,11 +236,9 @@ class Medium extends Model implements Contract
     protected function dimensions(): Attribute
     {
         return new Attribute(
-            get: static function (mixed $value, array $attributes): ?string {
-                return isset($attributes['width'], $attributes['height'])
-                    ? sprintf('%dx%d px', $attributes['width'], $attributes['height'])
-                    : null;
-            }
+            get: static fn (mixed $value, array $attributes): ?string => isset($attributes['width'], $attributes['height'])
+                ? sprintf('%dx%d px', $attributes['width'], $attributes['height'])
+                : null
         );
     }
 

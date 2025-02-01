@@ -34,7 +34,7 @@ trait RegistersRoutes
      */
     public function getRoutePrefix(): string
     {
-        return (string) $this->getUriKey();
+        return $this->getUriKey();
     }
 
     /**

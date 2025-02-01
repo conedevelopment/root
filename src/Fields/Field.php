@@ -311,7 +311,7 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
-     * Set the searachable attribute.
+     * Set the searchable attribute.
      */
     public function searchable(bool|Closure $value = true): static
     {
@@ -441,7 +441,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the with old value attribute to false.
      */
-    public function withoutOldValue(): mixed
+    public function withoutOldValue(): static
     {
         return $this->withOldValue(false);
     }
@@ -588,7 +588,7 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function invalid(Request $request): bool
     {
-        return $this->resolveErrors($request)->has($this->getValidationKey()) ?: false;
+        return $this->resolveErrors($request)->has($this->getValidationKey());
     }
 
     /**
@@ -602,7 +602,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -661,9 +661,7 @@ abstract class Field implements Arrayable, JsonSerializable
         $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(
-            static function (array|Closure $rule) use ($request, $model): array {
-                return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
-            },
+            static fn (array|Closure $rule): array => is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]),
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 

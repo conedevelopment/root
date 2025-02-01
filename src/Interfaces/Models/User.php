@@ -30,7 +30,7 @@ interface User
     public function authCodes(): HasMany;
 
     /**
-     * Determine whether the object requires two factor authentitaction.
+     * Determine whether the object requires two factor authentication.
      */
     public function requiresTwoFactorAuthentication(): bool;
 

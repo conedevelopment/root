@@ -181,22 +181,18 @@ class Media extends File
                 'chunk_size' => Config::get('root.media.chunk_size'),
                 'query' => $filters->mapToData($request),
             ],
-            'selection' => array_map(static function (array $option): array {
-                return array_merge($option, [
-                    'html' => View::make('root::fields.file-option', $option)->render(),
-                ]);
-            }, $data['options'] ?? []),
+            'selection' => array_map(static fn (array $option): array => array_merge($option, [
+                'html' => View::make('root::fields.file-option', $option)->render(),
+            ]), $data['options'] ?? []),
             'url' => $this->modelUrl($model),
             'filters' => $filters->renderable()
-                ->map(function (RenderableFilter $filter) use ($request, $model): array {
-                    return $filter->toField()
-                        ->removeAttribute('name')
-                        ->setAttributes([
-                            'x-model.debounce.300ms' => $filter->getKey(),
-                            'x-bind:readonly' => 'processing',
-                        ])
-                        ->toInput($request, $this->getRelation($model)->make());
-                })
+                ->map(fn (RenderableFilter $filter): array => $filter->toField()
+                    ->removeAttribute('name')
+                    ->setAttributes([
+                        'x-model.debounce.300ms' => $filter->getKey(),
+                        'x-bind:readonly' => 'processing',
+                    ])
+                    ->toInput($request, $this->getRelation($model)->make()))
                 ->all(),
         ]);
     }

@@ -89,9 +89,7 @@ class Select extends Field
      */
     public function options(array|Closure $value): static
     {
-        $this->optionsResolver = is_callable($value) ? $value : static function () use ($value): array {
-            return $value;
-        };
+        $this->optionsResolver = is_callable($value) ? $value : static fn (): array => $value;
 
         return $this;
     }

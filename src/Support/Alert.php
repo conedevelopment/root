@@ -8,13 +8,13 @@ use Stringable;
 
 class Alert implements Arrayable, Jsonable, Stringable
 {
-    public const INFO = 'info';
+    public const string INFO = 'info';
 
-    public const SUCCESS = 'success';
+    public const string SUCCESS = 'success';
 
-    public const ERROR = 'error';
+    public const string ERROR = 'error';
 
-    public const WARNING = 'warning';
+    public const string WARNING = 'warning';
 
     /**
      * The alert message.

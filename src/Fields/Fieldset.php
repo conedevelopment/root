@@ -47,9 +47,9 @@ class Fieldset extends Field
         $field->resolveErrorsUsing($this->errorsResolver);
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value();
-            });
+            $field->resolveRouteKeyNameUsing(
+                fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value()
+            );
         }
     }
 

@@ -59,7 +59,7 @@ abstract class Metric extends Widget
 
         $range = $request->input('range', $default);
 
-        return in_array($range, array_keys($this->ranges())) ? $range : $default;
+        return array_key_exists($range, $this->ranges()) ? $range : $default;
     }
 
     /**
