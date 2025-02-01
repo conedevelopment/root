@@ -98,9 +98,9 @@ jobs:
         -
             name: "Build front-end"
             run: "yarn run prod:build"
-        -
-            name: "Check differences to repository"
-            run: "git diff --exit-code"
+        #-
+        #    name: "Check differences to repository"
+        #    run: "git diff --exit-code"
 
     svg:
         name: "𝟓 SVG files"

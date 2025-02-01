@@ -117,7 +117,9 @@ class Root
             $path => __('Dashboard'),
             sprintf('%s/resources/{resource}', $path) => static fn (Request $request): string => $request->route('_resource')->getName(),
             sprintf('%s/resources/{resource}/create', $path) => __('Create'),
-            sprintf('%s/resources/{resource}/{resourceModel}', $path) => static fn (Request $request): string => $request->route('_resource')->modelTitle($request->route('resourceModel')),
+            sprintf('%s/resources/{resource}/{resourceModel}', $path) => static function (Request $request): string {
+                return $request->route('_resource')->modelTitle($request->route('resourceModel'));
+            },
             sprintf('%s/resources/{resource}/{resourceModel}/edit', $path) => __('Edit'),
         ]);
     }
