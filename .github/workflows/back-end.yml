@@ -26,7 +26,7 @@ jobs:
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.3"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
                 tools: "parallel-lint"
@@ -50,6 +50,7 @@ jobs:
             matrix:
                 php-version:
                 - "8.3"
+                - "8.4"
                 dependencies:
                 - "lowest"
                 - "locked"
@@ -106,7 +107,7 @@ jobs:
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.3"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
         -
@@ -152,7 +153,7 @@ jobs:
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.3"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
                 tools: "phpcs,cs2pr"
