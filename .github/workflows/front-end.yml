@@ -23,7 +23,7 @@ concurrency:
 jobs:
     js_syntax_errors:
         name: "𝟏 JavaScript Syntax Errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -50,7 +50,7 @@ jobs:
 
     scss_coding_standards:
         name: "𝟐 Sassy CSS Coding Standards"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -77,7 +77,7 @@ jobs:
         needs:
         - "js_syntax_errors"
         - "scss_coding_standards"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -104,7 +104,7 @@ jobs:
 
     svg:
         name: "𝟓 SVG files"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 1
         steps:
         -

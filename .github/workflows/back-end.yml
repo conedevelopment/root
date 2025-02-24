@@ -19,7 +19,7 @@ concurrency:
 jobs:
     syntax_errors:
         name: "1️⃣ Syntax errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -55,7 +55,7 @@ jobs:
                 - "lowest"
                 - "locked"
                 - "highest"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -100,7 +100,7 @@ jobs:
         name: "3️⃣ Static Analysis"
         needs:
         - "syntax_errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -146,7 +146,7 @@ jobs:
         name: "4️⃣ Coding Standards"
         needs:
         - "syntax_errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
