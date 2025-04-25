@@ -251,11 +251,26 @@ abstract class Relation extends Field implements Form
     /**
      * {@inheritdoc}
      */
-    public function searchable(bool|Closure $value = true, array $columns = ['id']): static
+    public function searchable(bool|Closure $value = true, ?Closure $callback = null, array $columns = ['id']): static
     {
         $this->searchableColumns = $columns;
 
-        return parent::searchable($value);
+        $callback ??= function (Request $request, Builder $query, mixed $value, array $attributes): Builder {
+            return $query->has($this->getModelAttribute(), '>=', 1, 'or', static function (Builder $query) use ($attributes, $value): Builder {
+                foreach ($attributes as $attribute) {
+                    $query->where(
+                        $query->qualifyColumn($attribute),
+                        'like',
+                        "%{$value}%",
+                        $attributes[0] === $attribute ? 'and' : 'or'
+                    );
+                }
+
+                return $query;
+            });
+        };
+
+        return parent::searchable($value, $callback);
     }
 
     /**
@@ -267,15 +282,17 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * {@inheritdoc}
+     * Resolve the filter query.
      */
-    public function isSearchable(): bool
+    public function resolveFilterQuery(Request $request, Builder $query, mixed $value): Builder
     {
-        if ($this->isSubResource()) {
-            return false;
+        if (! $this->isFilterable()) {
+            return parent::resolveFilterQuery($request, $query, $value);
         }
 
-        return parent::isSearchable();
+        return call_user_func_array($this->filterQueryResolver, [
+            $request, $query, $value, $this->getSearchableColumns(),
+        ]);
     }
 
     /**

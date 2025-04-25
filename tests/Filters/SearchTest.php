@@ -14,8 +14,8 @@ class SearchTest extends TestCase
     public function test_a_search_filter_modifies_query(): void
     {
         $filter = new Search(new Fields([
-            new Text('Name'),
-            new BelongsToMany('Teams'),
+            (new Text('Name'))->searchable(),
+            (new BelongsToMany('Teams'))->searchable(),
         ]));
 
         $this->assertSame(

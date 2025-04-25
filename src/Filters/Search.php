@@ -4,7 +4,6 @@ namespace Cone\Root\Filters;
 
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Fields;
-use Cone\Root\Fields\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -30,41 +29,15 @@ class Search extends RenderableFilter
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
-        $attributes = $this->getSearchableAttributes();
-
-        if (empty($value) || empty($attributes)) {
+        if (empty($value)) {
             return $query;
         }
 
-        return $query->where(static function (Builder $query) use ($attributes, $value): void {
-            foreach ($attributes as $attribute => $fields) {
-                $operator = array_key_first($attributes) === $attribute ? 'and' : 'or';
-
-                if (is_array($fields)) {
-                    $query->has($attribute, '>=', 1, $operator, static function (Builder $query) use ($fields, $value): Builder {
-                        foreach ($fields as $field) {
-                            $operator = $fields[0] === $field ? 'and' : 'or';
-
-                            $query->where($query->qualifyColumn($field), 'like', "%{$value}%", $operator);
-                        }
-
-                        return $query;
-                    });
-                } else {
-                    $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", $operator);
-                }
-            }
+        return $query->where(function (Builder $query) use ($request, $value): void {
+            $this->fields->each(function (Field $field) use ($request, $query, $value): void {
+                $field->resolveFilterQuery($request, $query, $value);
+            });
         });
-    }
-
-    /**
-     * Get the serachable attributes.
-     */
-    public function getSearchableAttributes(): array
-    {
-        return $this->fields->mapWithKeys(static fn (Field $field): array => [
-            $field->getModelAttribute() => $field instanceof Relation ? $field->getSearchableColumns() : null,
-        ])->all();
     }
 
     /**
