@@ -386,10 +386,15 @@ abstract class Resource implements Arrayable, Form
 
         $sortables = $fields->sortable();
 
+        $filterables = $fields->filter(static function (Field $field): bool {
+            return $field->isFilterable() && ! $field->isSearchable();
+        });
+
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,
             $sortables->isNotEmpty() ? new Sort($sortables) : null,
             $this->isSoftDeletable() ? new TrashStatus : null,
+            ...$filterables->map->toFilter()->all(),
         ]));
     }
 

@@ -3,9 +3,12 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Root;
 use DateTimeInterface;
 use DateTimeZone;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -118,12 +121,20 @@ class Date extends Field
     {
         $value = parent::getValue($model);
 
-        if (! is_null($value)) {
-            $value = DateFactory::parse($value, Config::get('app.timezone'))
-                ->setTimezone($this->timezone);
+        return $this->parseValue($value);
+    }
+
+    /**
+     * Parse the given value.
+     */
+    public function parseValue(mixed $value): ?DateTimeInterface
+    {
+        if (is_null($value)) {
+            return $value;
         }
 
-        return $value;
+        return DateFactory::parse($value, Config::get('app.timezone'))
+            ->setTimezone($this->timezone);
     }
 
     /**
@@ -132,9 +143,65 @@ class Date extends Field
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = fn (Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : $value->format($this->format);
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
+                return is_null($value) ? $value : $value->format($this->format);
+            };
         }
 
         return parent::resolveFormat($request, $model);
+    }
+
+    /**
+     * Set the filterable attribute.
+     */
+    public function filterable(?Closure $callback = null, bool|Closure $search = false): static
+    {
+        $callback ??= function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
+            return $query->whereDate($query->qualifyColumn($attribute), $value);
+        };
+
+        return parent::filterable($callback, $search);
+    }
+
+    /**
+     * Get the form component data.
+     */
+    public function toDisplay(Request $request, Model $model): array
+    {
+        return array_merge(parent::toDisplay($request, $model), [
+            'value' => $this->resolveFormat($request, $model),
+        ]);
+    }
+
+    /**
+     * Get the filter representation of the field.
+     */
+    public function toFilter(): Filter
+    {
+        return new class($this) extends RenderableFilter
+        {
+            protected Date $field;
+
+            public function __construct(Date $field)
+            {
+                parent::__construct($field->getModelAttribute());
+
+                $this->field = $field;
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $this->field->resolveFilterQuery($request, $query, $value);
+            }
+
+            public function toField(): Field
+            {
+                return Date::make($this->field->getLabel(), $this->getRequestKey())
+                    ->value(function (Request $request): ?DateTimeInterface {
+                        return $this->field->parseValue($this->getValue($request));
+                    })
+                    ->suffix('');
+            }
+        };
     }
 }

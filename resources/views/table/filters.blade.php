@@ -1,4 +1,4 @@
-<form method="GET" action="{{ $url }}" id="{{ $key }}" onchange="this.requestSubmit()">
+<form method="GET" action="{{ $url }}" id="{{ $key }}" onchange="this.requestSubmit()" autocomplete="off">
     @if(! empty($filters))
         <div class="data-table-filter" x-data="{ open: false }" x-on:click.outside="open = false">
             <button

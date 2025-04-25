@@ -3,6 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
@@ -680,6 +682,36 @@ abstract class Field implements Arrayable, JsonSerializable
         );
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
+    }
+
+    /**
+     * Get the filter representation of the field.
+     */
+    public function toFilter(): Filter
+    {
+        return new class($this) extends RenderableFilter
+        {
+            protected Field $field;
+
+            public function __construct(Field $field)
+            {
+                parent::__construct($field->getModelAttribute());
+
+                $this->field = $field;
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $this->field->resolveFilterQuery($request, $query, $value);
+            }
+
+            public function toField(): Field
+            {
+                return Text::make($this->field->getLabel(), $this->getRequestKey())
+                    ->value(fn (Request $request): mixed => $this->getValue($request))
+                    ->suffix('');
+            }
+        };
     }
 
     /**
