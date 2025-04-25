@@ -734,8 +734,7 @@ abstract class Field implements Arrayable, JsonSerializable
             public function toField(): Field
             {
                 return Text::make($this->field->getLabel(), $this->getRequestKey())
-                    ->value(fn (Request $request): mixed => $this->getValue($request))
-                    ->suffix('');
+                    ->value(fn (Request $request): mixed => $this->getValue($request));
             }
         };
     }
