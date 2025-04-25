@@ -68,6 +68,14 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the filterable fields.
+     */
+    public function filterable(): static
+    {
+        return $this->filter->isFilterable();
+    }
+
+    /**
      * Filter the relation fields.
      */
     public function relation(): static

@@ -154,13 +154,13 @@ class Date extends Field
     /**
      * Set the filterable attribute.
      */
-    public function filterable(?Closure $callback = null, bool|Closure $search = false): static
+    public function filterable(bool|Closure $value = true, ?Closure $callback = null): static
     {
         $callback ??= function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
             return $query->whereDate($query->qualifyColumn($attribute), $value);
         };
 
-        return parent::filterable($callback, $search);
+        return parent::filterable($value, $callback);
     }
 
     /**

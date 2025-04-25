@@ -35,7 +35,7 @@ class Search extends RenderableFilter
 
         return $query->where(function (Builder $query) use ($request, $value): void {
             $this->fields->each(function (Field $field) use ($request, $query, $value): void {
-                $field->resolveFilterQuery($request, $query, $value);
+                $field->resolveSearchQuery($request, $query, $value);
             });
         });
     }

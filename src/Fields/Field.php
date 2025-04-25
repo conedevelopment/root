@@ -120,6 +120,16 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * The filter query resolver callback.
      */
+    protected ?Closure $searchQueryResolver = null;
+
+    /**
+     * Indicates if the field is filterable.
+     */
+    protected bool|Closure $filterable = false;
+
+    /**
+     * The filter query resolver callback.
+     */
     protected ?Closure $filterQueryResolver = null;
 
     /**
@@ -317,11 +327,13 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function searchable(bool|Closure $value = true, ?Closure $callback = null): static
     {
-        $callback ??= function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
+        $this->searchable = $value;
+
+        $this->searchQueryResolver = $callback ?: function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
             return $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", 'or');
         };
 
-        return $this->filterable($callback, $value);
+        return $this;
     }
 
     /**
@@ -329,11 +341,21 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function isSearchable(): bool
     {
-        if (! $this->isFilterable()) {
+        if ($this->computed) {
             return false;
         }
 
         return $this->searchable instanceof Closure ? call_user_func($this->searchable) : $this->searchable;
+    }
+
+    /**
+     * Resolve the search query.
+     */
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
+    {
+        return $this->isSearchable()
+            ? call_user_func_array($this->searchQueryResolver, [$request, $query, $value, $this->getModelAttribute()])
+            : $query;
     }
 
     /**
@@ -361,9 +383,9 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the filterable attribute.
      */
-    public function filterable(?Closure $callback = null, bool|Closure $search = false): static
+    public function filterable(bool|Closure $value = true, ?Closure $callback = null): static
     {
-        $this->searchable = $search;
+        $this->filterable = $value;
 
         $this->filterQueryResolver = $callback ?: function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
             return $query->where($query->qualifyColumn($attribute), $value);
@@ -377,7 +399,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function isFilterable(): bool
     {
-        return ! $this->computed && $this->filterQueryResolver instanceof Closure;
+        if ($this->computed) {
+            return false;
+        }
+
+        return $this->filterable instanceof Closure ? call_user_func($this->filterable) : $this->filterable;
     }
 
     /**

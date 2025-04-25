@@ -386,9 +386,7 @@ abstract class Resource implements Arrayable, Form
 
         $sortables = $fields->sortable();
 
-        $filterables = $fields->filter(static function (Field $field): bool {
-            return $field->isFilterable() && ! $field->isSearchable();
-        });
+        $filterables = $fields->filterable();
 
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,

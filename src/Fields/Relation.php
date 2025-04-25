@@ -284,13 +284,13 @@ abstract class Relation extends Field implements Form
     /**
      * Resolve the filter query.
      */
-    public function resolveFilterQuery(Request $request, Builder $query, mixed $value): Builder
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
     {
-        if (! $this->isFilterable()) {
-            return parent::resolveFilterQuery($request, $query, $value);
+        if (! $this->isSearchable()) {
+            return parent::resolveSearchQuery($request, $query, $value);
         }
 
-        return call_user_func_array($this->filterQueryResolver, [
+        return call_user_func_array($this->searchQueryResolver, [
             $request, $query, $value, $this->getSearchableColumns(),
         ]);
     }
