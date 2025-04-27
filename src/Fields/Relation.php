@@ -249,6 +249,20 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Set the filterable attribute.
+     */
+    public function filterable(bool|Closure $value = true, ?Closure $callback = null): static
+    {
+        $callback ??= function (Request $request, Builder $query, mixed $value): Builder {
+            return $query->whereHas($this->getModelAttribute(), static function (Builder $query) use ($value): Builder {
+                return $query->whereKey($value);
+            });
+        };
+
+        return parent::filterable($value, $callback);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function searchable(bool|Closure $value = true, ?Closure $callback = null, array $columns = ['id']): static
@@ -1035,5 +1049,42 @@ abstract class Relation extends Field implements Form
                 $this->mapRelatedAbilities($request, $model, $related)
             ),
         ]);
+    }
+
+    /**
+     * Get the filter representation of the field.
+     */
+    public function toFilter(): Filter
+    {
+        return new class($this) extends RenderableFilter
+        {
+            protected Relation $field;
+
+            public function __construct(Relation $field)
+            {
+                parent::__construct($field->getModelAttribute());
+
+                $this->field = $field;
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $this->field->resolveFilterQuery($request, $query, $value);
+            }
+
+            public function toField(): Field
+            {
+                return Select::make($this->field->getLabel(), $this->getRequestKey())
+                    ->value(fn (Request $request): mixed => $this->getValue($request))
+                    ->nullable()
+                    ->options(function (Request $request, Model $model): array {
+                        return array_column(
+                            $this->field->resolveOptions($request, $model),
+                            'label',
+                            'value',
+                        );
+                    });
+            }
+        };
     }
 }
