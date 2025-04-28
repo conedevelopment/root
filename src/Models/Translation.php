@@ -2,7 +2,6 @@
 
 namespace Cone\Root\Models;
 
-use App\Mail\Contact;
 use Cone\Root\Database\Factories\TranslationFactory;
 use Cone\Root\Interfaces\Models\Translation as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
@@ -51,7 +50,7 @@ class Translation extends Model implements Contract
      */
     public static function getProxiedInterface(): string
     {
-        return Contact::class;
+        return Contract::class;
     }
 
     /**
