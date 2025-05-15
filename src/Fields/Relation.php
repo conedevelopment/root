@@ -906,7 +906,7 @@ abstract class Relation extends Field implements Form
     {
         $query = parse_url($url, PHP_URL_QUERY);
 
-        parse_str($query, $result);
+        parse_str($query ?? '', $result);
 
         return array_filter($result, fn (string $key): bool => str_starts_with($key, $this->getRequestKey()), ARRAY_FILTER_USE_KEY);
     }
