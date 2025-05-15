@@ -27,7 +27,7 @@ class Meta extends Model implements Contract
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected $fillable = [
         'key',

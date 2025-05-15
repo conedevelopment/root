@@ -29,7 +29,7 @@ class AuthCode extends Model implements Contract
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [];
 

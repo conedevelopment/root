@@ -21,7 +21,7 @@ class Notification extends DatabaseNotification implements Contract
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var list<string>
      */
     protected $appends = [
         'formatted_created_at',
