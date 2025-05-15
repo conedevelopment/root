@@ -9,7 +9,7 @@ class ColorTest extends TestCase
 {
     protected Color $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

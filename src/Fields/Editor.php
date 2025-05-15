@@ -86,7 +86,7 @@ class Editor extends Field
     public function withMedia(?Closure $callback = null): static
     {
         if (is_null($this->fields)) {
-            $this->fields = new Fields();
+            $this->fields = new Fields;
         }
 
         if (is_null($this->media)) {
@@ -119,21 +119,19 @@ class Editor extends Field
         {
             public function __construct(string $modelAttribute)
             {
-                parent::__construct(__('Media'), $modelAttribute.'-media', static function (): MorphToMany {
-                    return new MorphToMany(
-                        Medium::proxy()->newQuery(),
-                        new class() extends Model
-                        {
-                            //
-                        },
-                        'media',
-                        'root_mediables',
-                        'medium_id',
-                        '_model_id',
-                        'id',
-                        'id'
-                    );
-                });
+                parent::__construct(__('Media'), $modelAttribute.'-media', static fn (): MorphToMany => new MorphToMany(
+                    Medium::proxy()->newQuery(),
+                    new class extends Model
+                    {
+                        //
+                    },
+                    'media',
+                    'root_mediables',
+                    'medium_id',
+                    '_model_id',
+                    'id',
+                    'id'
+                ));
 
                 $this->template = 'root::fields.editor.media';
 

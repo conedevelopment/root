@@ -30,6 +30,14 @@ trait RegistersRoutes
     }
 
     /**
+     * Get the route prefix.
+     */
+    public function getRoutePrefix(): string
+    {
+        return $this->getUriKey();
+    }
+
+    /**
      * Get the route parameter name.
      */
     public function getRouteParameterName(): string
@@ -50,11 +58,11 @@ trait RegistersRoutes
      */
     public function registerRoutes(Request $request, Router $router): void
     {
-        $this->uri = Str::start(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getUriKey()), '/');
+        $this->uri = Str::start(sprintf('%s/%s', $router->getLastGroupPrefix(), $this->getRoutePrefix()), '/');
 
         if (! App::routesAreCached()) {
             $router->group([
-                'prefix' => $this->getUriKey(),
+                'prefix' => $this->getRoutePrefix(),
                 'middleware' => $this->getRouteMiddleware(),
             ], function (Router $router): void {
                 $this->routes($router);

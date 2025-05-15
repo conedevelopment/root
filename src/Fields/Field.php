@@ -3,6 +3,8 @@
 namespace Cone\Root\Fields;
 
 use Closure;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
@@ -116,14 +118,29 @@ abstract class Field implements Arrayable, JsonSerializable
     protected bool|Closure $searchable = false;
 
     /**
-     * The search query resolver callback.
+     * The filter query resolver callback.
      */
     protected ?Closure $searchQueryResolver = null;
+
+    /**
+     * Indicates if the field is filterable.
+     */
+    protected bool|Closure $filterable = false;
+
+    /**
+     * The filter query resolver callback.
+     */
+    protected ?Closure $filterQueryResolver = null;
 
     /**
      * Determine if the field is computed.
      */
     protected bool $computed = false;
+
+    /**
+     * Indicates whether the field is translatable.
+     */
+    protected bool|Closure $translatable = false;
 
     /**
      * Create a new field instance.
@@ -306,11 +323,15 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
-     * Set the searachable attribute.
+     * Set the searchable attribute.
      */
-    public function searchable(bool|Closure $value = true): static
+    public function searchable(bool|Closure $value = true, ?Closure $callback = null): static
     {
         $this->searchable = $value;
+
+        $this->searchQueryResolver = $callback ?: function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
+            return $query->where($query->qualifyColumn($attribute), 'like', "%{$value}%", 'or');
+        };
 
         return $this;
     }
@@ -328,23 +349,71 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
-     * Set the search query resolver.
+     * Resolve the search query.
      */
-    public function searchWithQuery(Closure $callback): static
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
     {
-        $this->searchQueryResolver = $callback;
+        return $this->isSearchable()
+            ? call_user_func_array($this->searchQueryResolver, [$request, $query, $value, $this->getModelAttribute()])
+            : $query;
+    }
+
+    /**
+     * Set the translatable attribute.
+     */
+    public function translatable(bool|Closure $value = true): static
+    {
+        $this->translatable = $value;
 
         return $this;
     }
 
     /**
-     * Resolve the search query.
+     * Determine if the field is translatable.
      */
-    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
+    public function isTranslatable(): bool
     {
-        return is_null($this->searchQueryResolver)
-            ? $query
-            : call_user_func_array($this->searchQueryResolver, [$request, $query, $value]);
+        if ($this->computed) {
+            return false;
+        }
+
+        return $this->translatable instanceof Closure ? call_user_func($this->translatable) : $this->translatable;
+    }
+
+    /**
+     * Set the filterable attribute.
+     */
+    public function filterable(bool|Closure $value = true, ?Closure $callback = null): static
+    {
+        $this->filterable = $value;
+
+        $this->filterQueryResolver = $callback ?: function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
+            return $query->where($query->qualifyColumn($attribute), $value);
+        };
+
+        return $this;
+    }
+
+    /**
+     * Determine whether the field is filterable.
+     */
+    public function isFilterable(): bool
+    {
+        if ($this->computed) {
+            return false;
+        }
+
+        return $this->filterable instanceof Closure ? call_user_func($this->filterable) : $this->filterable;
+    }
+
+    /**
+     * Resolve the filter query.
+     */
+    public function resolveFilterQuery(Request $request, Builder $query, mixed $value): Builder
+    {
+        return $this->isFilterable()
+            ? call_user_func_array($this->filterQueryResolver, [$request, $query, $value, $this->getModelAttribute()])
+            : $query;
     }
 
     /**
@@ -382,7 +451,7 @@ abstract class Field implements Arrayable, JsonSerializable
 
         $value = $this->getValue($model);
 
-        if (! is_null($this->defaultValueResolver)) {
+        if (is_null($value) && ! is_null($this->defaultValueResolver)) {
             $value = call_user_func_array($this->defaultValueResolver, [$request, $model]);
         }
 
@@ -414,7 +483,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Set the with old value attribute to false.
      */
-    public function withoutOldValue(): mixed
+    public function withoutOldValue(): static
     {
         return $this->withOldValue(false);
     }
@@ -424,7 +493,12 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function getValue(Model $model): mixed
     {
-        return $model->getAttribute($this->getModelAttribute());
+        $attribute = $this->getModelAttribute();
+
+        return match (true) {
+            str_contains($attribute, '->') => data_get($model, str_replace('->', '.', $attribute)),
+            default => $model->getAttribute($this->getModelAttribute()),
+        };
     }
 
     /**
@@ -547,7 +621,7 @@ abstract class Field implements Arrayable, JsonSerializable
     public function resolveErrors(Request $request): MessageBag
     {
         return is_null($this->errorsResolver)
-            ? $request->session()->get('errors', new ViewErrorBag())->getBag('default')
+            ? $request->session()->get('errors', new ViewErrorBag)->getBag('default')
             : call_user_func_array($this->errorsResolver, [$request]);
     }
 
@@ -556,7 +630,7 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function invalid(Request $request): bool
     {
-        return $this->resolveErrors($request)->has($this->getValidationKey()) ?: false;
+        return $this->resolveErrors($request)->has($this->getValidationKey());
     }
 
     /**
@@ -570,7 +644,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -629,12 +703,47 @@ abstract class Field implements Arrayable, JsonSerializable
         $key = $model->exists ? 'update' : 'create';
 
         $rules = array_map(
-            static function (array|Closure $rule) use ($request, $model): array {
-                return is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]);
-            },
+            static fn (array|Closure $rule): array => is_array($rule) ? $rule : call_user_func_array($rule, [$request, $model]),
             Arr::only($this->rules, array_unique(['*', $key]))
         );
 
         return [$this->getValidationKey() => Arr::flatten($rules, 1)];
+    }
+
+    /**
+     * Get the filter representation of the field.
+     */
+    public function toFilter(): Filter
+    {
+        return new class($this) extends RenderableFilter
+        {
+            protected Field $field;
+
+            public function __construct(Field $field)
+            {
+                parent::__construct($field->getModelAttribute());
+
+                $this->field = $field;
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $this->field->resolveFilterQuery($request, $query, $value);
+            }
+
+            public function toField(): Field
+            {
+                return Text::make($this->field->getLabel(), $this->getRequestKey())
+                    ->value(fn (Request $request): mixed => $this->getValue($request));
+            }
+        };
+    }
+
+    /**
+     * Clone the field.
+     */
+    public function __clone(): void
+    {
+        //
     }
 }

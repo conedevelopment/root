@@ -3,12 +3,11 @@
 namespace Cone\Root\Http\Controllers\Auth;
 
 use Cone\Root\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Login;
+use Cone\Root\Notifications\AuthCodeNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response as ResponseFactory;
 use Illuminate\Support\Facades\URL;
@@ -49,18 +48,20 @@ class LoginController extends Controller
         }
 
         if (! Auth::guard()->user()->hasVerifiedEmail()) {
-            $this->logout($request);
-
-            throw ValidationException::withMessages([
+            return $this->logout($request)->withErrors([
                 'email' => [__('auth.unverified')],
             ]);
         }
 
         $request->session()->regenerate();
 
-        Event::dispatch(
-            new Login(Auth::getDefaultDriver(), $request->user(), $request->filled('remember'))
-        );
+        if ($request->user()->can('viewRoot') && $request->user()->shouldTwoFactorAuthenticate($request)) {
+            $request->user()->notify(
+                new AuthCodeNotification($request->user()->generateAuthCode())
+            );
+
+            $request->session()->flash('status', __('The two factor authentication link has been sent!'));
+        }
 
         return Redirect::intended(URL::route('root.dashboard'));
     }
@@ -71,6 +72,8 @@ class LoginController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard()->logout();
+
+        $request->session()->remove('root.auth.verified');
 
         $request->session()->invalidate();
 

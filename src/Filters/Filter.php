@@ -21,9 +21,9 @@ abstract class Filter
     /**
      * Create a new filter instance.
      */
-    public function __construct()
+    public function __construct(?string $key = null)
     {
-        $this->key = Str::of(static::class)->classBasename()->snake()->value();
+        $this->key = $key ?: Str::of(static::class)->classBasename()->snake()->value();
     }
 
     /**

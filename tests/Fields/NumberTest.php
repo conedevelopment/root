@@ -9,7 +9,7 @@ class NumberTest extends TestCase
 {
     protected Number $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

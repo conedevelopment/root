@@ -42,14 +42,12 @@ class URL extends Text
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
-                return is_null($value) ? $value : sprintf(
-                    '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
-                    $value,
-                    $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',
-                    call_user_func_array($this->textResolver, [$model])
-                );
-            };
+            $this->formatResolver = fn (Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : sprintf(
+                '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
+                $value,
+                $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',
+                call_user_func_array($this->textResolver, [$model])
+            );
         }
 
         return parent::resolveFormat($request, $model);

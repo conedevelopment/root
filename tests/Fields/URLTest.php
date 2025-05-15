@@ -10,7 +10,7 @@ class URLTest extends TestCase
 {
     protected URL $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +24,7 @@ class URLTest extends TestCase
 
     public function test_a_url_field_resolves_format(): void
     {
-        $model = new User();
+        $model = new User;
 
         $model->forceFill(['profile_url' => 'https://github.com/conedevelopment']);
         $this->assertSame(

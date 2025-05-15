@@ -1,4 +1,4 @@
-@if ($paginator->hasPages())
+@if($paginator->hasPages())
     <nav class="pagination" aria-label="">
         <ul class="pagination__links">
             @if(! $paginator->onFirstPage())
@@ -18,7 +18,7 @@
                 @elseif(is_array($element))
                     @foreach ($element as $page => $url)
                         <li>
-                            @if ($page === $paginator->currentPage())
+                            @if($page === $paginator->currentPage())
                                 <span class="btn btn--sm btn--outline-primary" aria-disabled="true" aria-current="page">
                                     {{ $page }}
                                 </span>

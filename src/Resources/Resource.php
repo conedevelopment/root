@@ -4,8 +4,15 @@ namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Fields\BelongsToMany;
+use Cone\Root\Fields\Events;
 use Cone\Root\Fields\Field;
+use Cone\Root\Fields\Fields;
+use Cone\Root\Fields\HasMany;
+use Cone\Root\Fields\Meta;
+use Cone\Root\Fields\MorphMany;
 use Cone\Root\Fields\Relation;
+use Cone\Root\Fields\Translations;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
@@ -16,10 +23,12 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesActions;
 use Cone\Root\Traits\ResolvesFilters;
 use Cone\Root\Traits\ResolvesWidgets;
+use Cone\Root\Traits\Translatable;
 use Cone\Root\Widgets\Metric;
 use Cone\Root\Widgets\Widget;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -34,12 +43,15 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Throwable;
 
 abstract class Resource implements Arrayable, Form
 {
-    use AsForm;
+    use AsForm {
+        AsForm::resolveFields as __resolveFields;
+    }
     use Authorizable;
     use RegistersRoutes {
         RegistersRoutes::registerRoutes as __registerRoutes;
@@ -115,6 +127,14 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Get the route prefix.
+     */
+    public function getRoutePrefix(): string
+    {
+        return sprintf('resources/%s', $this->getUriKey());
+    }
+
+    /**
      * Get the route parameter name.
      */
     public function getRouteParameterName(): string
@@ -181,7 +201,7 @@ abstract class Resource implements Arrayable, Form
 
         return is_null($policy)
             || ! method_exists($policy, $ability)
-            || call_user_func_array([$policy, $ability], [$request->user(), $model, ...$arguments]);
+            || Gate::allows($ability, [$model, ...$arguments]);
     }
 
     /**
@@ -262,9 +282,7 @@ abstract class Resource implements Arrayable, Form
             ->withoutEagerLoads()
             ->when(
                 $this->isSoftDeletable(),
-                static function (Builder $query): Builder {
-                    return $query->withTrashed();
-                }
+                static fn (Builder $query): Builder => $query->withTrashed()
             );
     }
 
@@ -301,6 +319,63 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Determine whether the resource model has root events.
+     */
+    public function hasRootEvents(): bool
+    {
+        return in_array(HasRootEvents::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Resolve the events field.
+     */
+    public function resolveEventsField(Request $request): ?Events
+    {
+        return $this->hasRootEvents() ? new Events : null;
+    }
+
+    /**
+     * Determine whether the resource model has root events.
+     */
+    public function translatable(): bool
+    {
+        return in_array(Translatable::class, class_uses_recursive($this->getModel()));
+    }
+
+    /**
+     * Resolve the translations field.
+     */
+    public function resolveTranslationsField(Request $request): ?Translations
+    {
+        return $this->translatable()
+            ? Translations::make()
+                ->withFields(fn (): array => $this->resolveFields($request)
+                    ->translatable()
+                    ->map(static fn (Field $field): Field => (clone $field)
+                        ->translatable(false)
+                        ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
+                        ->name($key)
+                        ->id($key))
+                    ->all())
+            : null;
+    }
+
+    /**
+     * Resolve the fields collection.
+     */
+    public function resolveFields(Request $request): Fields
+    {
+        if (is_null($this->fields)) {
+            $this->withFields(fn (): array => array_values(array_filter([
+                $this->resolveTranslationsField($request),
+                $this->resolveEventsField($request),
+            ])));
+        }
+
+        return $this->__resolveFields($request);
+    }
+
+    /**
      * Define the filters for the object.
      */
     public function filters(Request $request): array
@@ -311,10 +386,13 @@ abstract class Resource implements Arrayable, Form
 
         $sortables = $fields->sortable();
 
+        $filterables = $fields->filterable();
+
         return array_values(array_filter([
             $searchables->isNotEmpty() ? new Search($searchables) : null,
             $sortables->isNotEmpty() ? new Sort($sortables) : null,
-            $this->isSoftDeletable() ? new TrashStatus() : null,
+            $this->isSoftDeletable() ? new TrashStatus : null,
+            ...$filterables->map->toFilter()->all(),
         ]));
     }
 
@@ -327,9 +405,7 @@ abstract class Resource implements Arrayable, Form
         $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
-            });
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
         }
     }
 
@@ -346,7 +422,7 @@ abstract class Resource implements Arrayable, Form
      */
     protected function resolveAction(Request $request, Action $action): void
     {
-        $action->setQuery($this->resolveFilteredQuery($request));
+        $action->withQuery(fn (): Builder => $this->resolveFilteredQuery($request));
     }
 
     /**
@@ -355,7 +431,7 @@ abstract class Resource implements Arrayable, Form
     protected function resolveWidget(Request $request, Widget $widget): void
     {
         if ($widget instanceof Metric) {
-            $widget->setQuery($this->resolveFilteredQuery($request)->clone()->withoutEagerLoads());
+            $widget->withQuery(fn (): Builder => $this->resolveQuery($request));
         }
     }
 
@@ -394,12 +470,25 @@ abstract class Resource implements Arrayable, Form
     public function paginate(Request $request): LengthAwarePaginator
     {
         return $this->resolveFilteredQuery($request)
+            ->tap(function (Builder $query) use ($request): void {
+                $this->resolveFields($request)
+                    ->authorized($request, $query->getModel())
+                    ->visible('index')
+                    ->filter(fn (Field $field): bool => $field instanceof Relation)
+                    ->each(static function (Relation $relation) use ($query, $request): void {
+                        if ($relation instanceof BelongsToMany || $relation instanceof HasMany || $relation instanceof MorphMany) {
+                            $relation->resolveAggregate($request, $query);
+                        } elseif ($relation instanceof Meta) {
+                            $query->with('metaData');
+                        } else {
+                            $query->with($relation->getRelationName());
+                        }
+                    });
+            })
             ->latest()
             ->paginate($request->input($this->getPerPageKey()))
             ->withQueryString()
-            ->through(function (Model $model) use ($request): array {
-                return $this->mapModel($request, $model);
-            });
+            ->through(fn (Model $model): array => $this->mapModel($request, $model));
     }
 
     /**
@@ -413,7 +502,6 @@ abstract class Resource implements Arrayable, Form
             'model' => $model,
             'abilities' => $this->mapModelAbilities($request, $model),
             'fields' => $this->resolveFields($request)
-                ->subResource(false)
                 ->authorized($request, $model)
                 ->visible('index')
                 ->mapToDisplay($request, $model),
@@ -433,11 +521,19 @@ abstract class Resource implements Arrayable, Form
             $this->resolveFields($request)
                 ->authorized($request, $model)
                 ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->subResource(false)
                 ->persist($request, $model);
 
             $this->saving($request, $model);
 
             $model->save();
+
+            if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                $model->recordRootEvent(
+                    $model->wasRecentlyCreated ? 'Created' : 'Updated',
+                    $request->user()
+                );
+            }
 
             $this->saved($request, $model);
 
@@ -475,7 +571,7 @@ abstract class Resource implements Arrayable, Form
         $this->__registerRoutes($request, $router);
 
         $router->group([
-            'prefix' => $this->getUriKey(),
+            'prefix' => $this->getRoutePrefix(),
             'middleware' => $this->getRouteMiddleware(),
         ], function (Router $router) use ($request): void {
             $this->resolveActions($request)->registerRoutes($request, $router);
@@ -528,6 +624,7 @@ abstract class Resource implements Arrayable, Form
             'name' => $this->getName(),
             'uriKey' => $this->getUriKey(),
             'url' => $this->getUri(),
+            'baseUrl' => $this->getUri(),
         ];
     }
 
@@ -559,9 +656,7 @@ abstract class Resource implements Arrayable, Form
             'filters' => $this->resolveFilters($request)
                 ->authorized($request)
                 ->renderable()
-                ->map(function (RenderableFilter $filter) use ($request, $model): array {
-                    return $filter->toField()->toInput($request, $model);
-                })
+                ->map(static fn (RenderableFilter $filter): array => $filter->toField()->toInput($request, $model))
                 ->all(),
             'activeFilters' => $this->resolveFilters($request)->active($request)->count(),
             'url' => $this->getUri(),
@@ -617,11 +712,9 @@ abstract class Resource implements Arrayable, Form
             'relations' => $this->resolveFields($request)
                 ->subResource()
                 ->authorized($request, $model)
-                ->map(static function (Relation $relation) use ($request, $model): array {
-                    return array_merge($relation->toSubResource($request, $model), [
-                        'url' => trim(sprintf('%s?%s', $relation->modelUrl($model), $request->getQueryString()), '?'),
-                    ]);
-                }),
+                ->map(static fn (Relation $relation): array => array_merge($relation->toSubResource($request, $model), [
+                    'url' => URL::query($relation->modelUrl($model), $relation->parseQueryString($request->fullUrl())),
+                ])),
             'abilities' => array_merge(
                 $this->mapResourceAbilities($request),
                 $this->mapModelAbilities($request, $model)

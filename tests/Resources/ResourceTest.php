@@ -10,7 +10,7 @@ class ResourceTest extends TestCase
 {
     protected UserResource $resource;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -53,7 +53,7 @@ class ResourceTest extends TestCase
         $this->assertSame(['documents'], array_keys($query->getEagerLoads()));
 
         $this->assertSame(
-            'select * from "users"',
+            'select * from "users" where "users"."deleted_at" is null',
             $query->toRawSql()
         );
     }
@@ -68,7 +68,7 @@ class ResourceTest extends TestCase
         $query = $this->resource->resolveFilteredQuery($this->app['request']);
 
         $this->assertSame(
-            'select * from "users" where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') order by "users"."id" asc',
+            'select * from "users" where ("users"."name" like \'%test%\' or "users"."email" like \'%test%\') and "users"."deleted_at" is null order by "users"."id" asc',
             $query->toRawSql()
         );
     }
@@ -105,7 +105,7 @@ class ResourceTest extends TestCase
     {
         $action = $this->resource->resolveActions($this->app['request'])->first();
 
-        $this->assertSame('/root/users/actions/send-password-reset-notification', $action->getUri());
+        $this->assertSame('/root/resources/users/actions/send-password-reset-notification', $action->getUri());
 
         $this->assertArrayHasKey(
             trim($action->getUri(), '/'),
@@ -115,7 +115,7 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_handles_form_requests(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->app['request']->merge([
             'name' => 'Test',

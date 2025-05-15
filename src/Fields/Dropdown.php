@@ -33,18 +33,14 @@ class Dropdown extends Select
         $data = parent::toInput($request, $model);
 
         return array_merge($data, [
-            'options' => array_map(static function (array $option): array {
-                return array_merge($option, [
-                    'html' => View::make('root::fields.dropdown-option', $option)->render(),
-                ]);
-            }, $data['options']),
+            'options' => array_map(static fn (array $option): array => array_merge($option, [
+                'html' => View::make('root::fields.dropdown-option', $option)->render(),
+            ]), $data['options']),
             'selection' => Collection::make($data['options'])
                 ->filter(fn (array $option): bool => $option['selected'] ?? false)
-                ->map(static function (array $option): array {
-                    return array_merge($option, [
-                        'html' => View::make('root::fields.dropdown-option', $option)->render(),
-                    ]);
-                })
+                ->map(static fn (array $option): array => array_merge($option, [
+                    'html' => View::make('root::fields.dropdown-option', $option)->render(),
+                ]))
                 ->values()
                 ->all(),
             'config' => [

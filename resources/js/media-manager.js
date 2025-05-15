@@ -101,6 +101,25 @@ document.addEventListener('alpine:init', () => {
             selected(item) {
                 return this.selection.findIndex((selected) => selected.value === item.value) > -1;
             },
+            prune() {
+                this.processing = true;
+
+                const ids = this.selection.map((item) => item.value);
+
+                window.$http.delete(url, { data: { ids } }).then((response) => {
+                    this.selection = [];
+
+                    response.data.deleted.forEach((id) => {
+                        let index = this.items.findIndex((item) => item.value === id);
+
+                        this.items.splice(index, 1);
+                    });
+                }).catch((error) => {
+                    //
+                }).finally(() => {
+                    this.processing = false;
+                });
+            }
         };
     });
 });

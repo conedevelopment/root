@@ -30,6 +30,13 @@
 
 {{-- Content --}}
 @section('content')
+    @if(! empty($widgets))
+        <div class="l-row l-row--column:sm:2 l-row--column:lg:3">
+            @foreach($widgets as $widget)
+                @include($widget['template'], $widget)
+            @endforeach
+        </div>
+    @endif
     <div class="l-row">
         <div class="l-row__column">
             <div class="app-card">
@@ -58,7 +65,11 @@
                                     <h2 class="app-card__title">{{ $relation['label'] }}</h2>
                                 </div>
                                 <div class="app-card__body">
-                                    {{ __('Loading') }}...
+                                    <div class="data-table">
+                                        <x-root::alert>
+                                            {{ __('Loading') }}...
+                                        </x-root::alert>
+                                    </div>
                                 </div>
                             </div>
                         </turbo-frame>

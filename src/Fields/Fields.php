@@ -68,13 +68,27 @@ class Fields extends Collection
     }
 
     /**
+     * Filter the filterable fields.
+     */
+    public function filterable(): static
+    {
+        return $this->filter->isFilterable();
+    }
+
+    /**
      * Filter the relation fields.
      */
     public function relation(): static
     {
-        return $this->filter(static function (Field $field): bool {
-            return $field instanceof Relation;
-        });
+        return $this->filter(static fn (Field $field): bool => $field instanceof Relation);
+    }
+
+    /**
+     * Filter the translatable fields.
+     */
+    public function translatable(): static
+    {
+        return $this->filter(static fn (Field $field): bool => $field->isTranslatable());
     }
 
     /**
@@ -82,11 +96,9 @@ class Fields extends Collection
      */
     public function subResource(bool $value = true): static
     {
-        return $this->filter(static function (Field $field) use ($value): bool {
-            return $value
-                ? $field instanceof Relation && $field->isSubResource()
-                : ! $field instanceof Relation || ! $field->isSubResource();
-        });
+        return $this->filter(static fn (Field $field): bool => $value
+            ? $field instanceof Relation && $field->isSubResource()
+            : ! $field instanceof Relation || ! $field->isSubResource());
     }
 
     /**
@@ -94,9 +106,7 @@ class Fields extends Collection
      */
     public function mapToValidate(Request $request, Model $model): array
     {
-        return $this->reduce(static function (array $rules, Field $field) use ($request, $model): array {
-            return array_merge_recursive($rules, $field->toValidate($request, $model));
-        }, []);
+        return $this->reduce(static fn (array $rules, Field $field): array => array_merge_recursive($rules, $field->toValidate($request, $model)), []);
     }
 
     /**
@@ -123,7 +133,7 @@ class Fields extends Collection
         $router->prefix('fields')->group(function (Router $router) use ($request): void {
             $this->each(static function (Field $field) use ($request, $router): void {
                 if (in_array(RegistersRoutes::class, class_uses_recursive($field))) {
-                    /** @var \Tests\FieldWithRoute $field */
+                    /** @var \Cone\Root\Tests\phpstan\FieldWithRoute $field */
                     $field->registerRoutes($request, $router);
                 }
             });

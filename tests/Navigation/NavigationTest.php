@@ -10,11 +10,11 @@ class NavigationTest extends TestCase
 {
     protected Registry $registry;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->registry = new Registry();
+        $this->registry = new Registry;
     }
 
     public function test_a_navigation_registry_can_register_locations(): void

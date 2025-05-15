@@ -16,7 +16,7 @@ class RelationControllerTest extends TestCase
 
     protected Medium $medium;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -36,29 +36,29 @@ class RelationControllerTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\WithoutErrorHandler]
-    public function test_a_relation_controller_handles_index(): void
+    public function test_relation_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
             ->withoutExceptionHandling()
-            ->get('/root/users/'.$this->admin->getKey().'/fields/uploads')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/uploads')
             ->assertOk()
             ->assertViewIs('root::resources.index')
             ->assertViewHas($this->field->toIndex($this->app['request'], $this->admin));
     }
 
-    public function test_a_relation_controller_handles_create(): void
+    public function test_relation_controller_handles_create(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/uploads/create')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/uploads/create')
             ->assertOk()
             ->assertViewIs('root::resources.form')
             ->assertViewHas($this->field->toCreate($this->app['request'], $this->admin));
     }
 
-    public function test_a_relation_controller_handles_store(): void
+    public function test_relation_controller_handles_store(): void
     {
         $this->actingAs($this->admin)
-            ->post('/root/users/'.$this->admin->getKey().'/fields/uploads', $data = Medium::factory()->make()->toArray())
+            ->post('/root/resources/users/'.$this->admin->getKey().'/fields/uploads', $data = Medium::factory()->make()->toArray())
             ->assertRedirect()
             ->assertSessionHas('alerts.relation-created');
 
@@ -67,33 +67,33 @@ class RelationControllerTest extends TestCase
         );
     }
 
-    public function test_a_relation_controller_handles_show(): void
+    public function test_relation_controller_handles_show(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey())
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey())
             ->assertOk()
             ->assertViewIs('root::resources.show')
             ->assertViewHas($this->field->toShow($this->app['request'], $this->admin, $this->medium));
     }
 
-    public function test_a_relation_controller_handles_edit(): void
+    public function test_relation_controller_handles_edit(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('GET')['root/users/{resourceModel}/fields/uploads/{usersUpload}/edit'];
         });
 
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey().'/edit')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey().'/edit')
             ->assertOk()
             ->assertViewIs('root::resources.form')
             ->assertViewHas($this->field->toEdit($this->app['request'], $this->admin, $this->medium));
     }
 
-    public function test_a_relation_controller_handles_update(): void
+    public function test_relation_controller_handles_update(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('PATCH')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
@@ -101,7 +101,7 @@ class RelationControllerTest extends TestCase
 
         $this->actingAs($this->admin)
             ->patch(
-                '/root/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey(),
+                '/root/resources/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey(),
                 array_merge($this->medium->toArray(), ['file_name' => 'updated.png'])
             )
             ->assertRedirect()
@@ -110,14 +110,14 @@ class RelationControllerTest extends TestCase
         $this->assertSame('updated.png', $this->medium->refresh()->file_name);
     }
 
-    public function test_a_relation_controller_handles_destroy(): void
+    public function test_relation_controller_handles_destroy(): void
     {
         $this->app['request']->setRouteResolver(function () {
             return $this->app['router']->getRoutes()->get('DELETE')['root/users/{resourceModel}/fields/uploads/{usersUpload}'];
         });
 
         $this->actingAs($this->admin)
-            ->delete('/root/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey())
+            ->delete('/root/resources/users/'.$this->admin->getKey().'/fields/uploads/'.$this->medium->getKey())
             ->assertRedirect()
             ->assertSessionHas('alerts.relation-deleted');
 

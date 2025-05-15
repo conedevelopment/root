@@ -19,14 +19,14 @@ concurrency:
 jobs:
     syntax_errors:
         name: "1️⃣ Syntax errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.2"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
                 tools: "parallel-lint"
@@ -49,13 +49,13 @@ jobs:
             fail-fast: false
             matrix:
                 php-version:
-                - "8.2"
                 - "8.3"
+                - "8.4"
                 dependencies:
                 - "lowest"
                 - "locked"
                 - "highest"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
@@ -73,7 +73,7 @@ jobs:
             uses: "actions/checkout@v4"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "${{ matrix.dependencies }}"
         -
@@ -93,7 +93,7 @@ jobs:
         -
             name: "Tests have failed: upload logs"
             if: "${{ failure() }}"
-            uses: "actions/upload-artifact@v3"
+            uses: "actions/upload-artifact@v4"
             with:
                 path: "storage/logs/"
                 name: "laravel-logs-${{ matrix.php-version }}-${{ matrix.dependencies }}"
@@ -101,7 +101,7 @@ jobs:
             name: "Send coverage to Coveralls"
             env:
                 COVERALLS_REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-            if: "${{ env.COVERALLS_REPO_TOKEN && matrix.php-version == '8.2' && matrix.dependencies == 'locked' }}"
+            if: "${{ env.COVERALLS_REPO_TOKEN && matrix.php-version == '8.3' && matrix.dependencies == 'locked' }}"
             run: |
                 wget --no-verbose \
                     "https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.3/php-coveralls.phar"
@@ -111,14 +111,14 @@ jobs:
         name: "3️⃣ Static Analysis"
         needs:
         - "syntax_errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.2"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
         -
@@ -135,7 +135,7 @@ jobs:
             run: "composer validate --no-interaction --strict"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "locked"
         -
@@ -148,7 +148,7 @@ jobs:
                 ! git grep --line-number -e '\$this\s*->\s*\$this' -- ':!:*/back-end\.yml'
         -
             name: "Install orchestra/testbench"
-            run: "composer require --dev orchestra/testbench"
+            run: "composer require --dev --update-with-all-dependencies orchestra/testbench"
         -
             name: "Perform static analysis"
             run: "composer exec -- phpstan || true 'Annotate only'"
@@ -157,14 +157,14 @@ jobs:
         name: "4️⃣ Coding Standards"
         needs:
         - "syntax_errors"
-        runs-on: "ubuntu-22.04"
+        runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
         -
             name: "Set up PHP"
             uses: "shivammathur/setup-php@v2"
             with:
-                php-version: "8.2"
+                php-version: "8.4"
                 extensions: "dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, fileinfo, exif"
                 coverage: "none"
                 tools: "phpcs,cs2pr"
@@ -173,7 +173,7 @@ jobs:
             uses: "actions/checkout@v4"
         -
             name: "Install dependencies"
-            uses: "ramsey/composer-install@v2"
+            uses: "ramsey/composer-install@v3"
             with:
                 dependency-versions: "locked"
         #-

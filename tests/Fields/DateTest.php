@@ -11,7 +11,7 @@ class DateTest extends TestCase
 {
     protected Date $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -39,7 +39,7 @@ class DateTest extends TestCase
 
     public function test_a_date_field_has_time(): void
     {
-        $model = new User();
+        $model = new User;
 
         $now = DateFactory::now();
 

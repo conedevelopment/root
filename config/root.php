@@ -1,6 +1,7 @@
 <?php
 
 use Cone\Root\Http\Middleware\Authenticate;
+use Cone\Root\Http\Middleware\TwoFactorAuthenticate;
 
 return [
 
@@ -44,7 +45,21 @@ return [
         'web',
         Authenticate::class,
         'verified',
+        TwoFactorAuthenticate::class,
         'can:viewRoot',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Two Factor Verification
+    |--------------------------------------------------------------------------
+    |
+    | You can configure the two factor authentication here.
+    |
+    */
+
+    'two_factor' => [
+        'expiration' => 600,
     ],
 
     /*

@@ -4,10 +4,11 @@ namespace Cone\Root\Tests\Console;
 
 use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class FieldMakeTest extends TestCase
 {
-    public function test_a_field_make_command_creates_field(): void
+    public function test_field_make_command(): void
     {
         $this->artisan('root:field', [
             'name' => 'TestField',
@@ -15,12 +16,12 @@ class FieldMakeTest extends TestCase
         ])
             ->assertExitCode(Command::SUCCESS);
 
-        $this->assertFileExists($this->app->path('/Root/Fields/TestField.php'));
+        $this->assertFileExists($this->app->path('Root/Fields/TestField.php'));
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
-        unlink($this->app->path('/Root/Fields/TestField.php'));
+        File::delete($this->app->path('Root/Fields/TestField.php'));
 
         parent::tearDown();
     }

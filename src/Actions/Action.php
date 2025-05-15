@@ -2,7 +2,9 @@
 
 namespace Cone\Root\Actions;
 
+use Closure;
 use Cone\Root\Exceptions\QueryResolutionException;
+use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Fields\Field;
 use Cone\Root\Fields\Relation;
 use Cone\Root\Http\Controllers\ActionController;
@@ -11,6 +13,7 @@ use Cone\Root\Interfaces\Form;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
+use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\Makeable;
 use Cone\Root\Traits\RegistersRoutes;
 use Cone\Root\Traits\ResolvesVisibility;
@@ -21,11 +24,13 @@ use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 abstract class Action implements Arrayable, Form, JsonSerializable
 {
@@ -44,7 +49,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected string $template = 'root::actions.action';
 
     /**
-     * Indicates if the action is descrtuctive.
+     * Indicates if the action is destructive.
      */
     protected bool $destructive = false;
 
@@ -59,9 +64,9 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     protected bool $standalone = false;
 
     /**
-     * The Eloquent query.
+     * The query resolver.
      */
-    protected ?Builder $query = null;
+    protected ?Closure $queryResolver = null;
 
     /**
      * Handle the action.
@@ -101,25 +106,25 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     }
 
     /**
-     * Set the Eloquent query.
+     * Resolve the query.
      */
-    public function setQuery(Builder $query): static
+    public function resolveQuery(Request $request): Builder
     {
-        $this->query = $query;
+        if (is_null($this->queryResolver)) {
+            throw new QueryResolutionException;
+        }
 
-        return $this;
+        return call_user_func_array($this->queryResolver, [$request]);
     }
 
     /**
-     * Get the Eloquent query.
+     * Set the query resolver callback.
      */
-    public function getQuery(): Builder
+    public function withQuery(Closure $callback): static
     {
-        if (is_null($this->query)) {
-            throw new QueryResolutionException();
-        }
+        $this->queryResolver = $callback;
 
-        return $this->query;
+        return $this;
     }
 
     /**
@@ -129,14 +134,10 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     {
         $field->setAttribute('form', $this->getKey());
         $field->id($this->getKey().'-'.$field->getAttribute('id'));
-        $field->resolveErrorsUsing(function (Request $request): MessageBag {
-            return $this->errors($request);
-        });
+        $field->resolveErrorsUsing(fn (Request $request): MessageBag => $this->errors($request));
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(function () use ($field): string {
-                return Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value();
-            });
+            $field->resolveRouteKeyNameUsing(fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getKey())->value());
         }
     }
 
@@ -203,11 +204,20 @@ abstract class Action implements Arrayable, Form, JsonSerializable
 
         $models = match (true) {
             $this->isStandalone() => new Collection([$model]),
-            $request->boolean('all') => $this->getQuery()->get(),
-            default => $this->getQuery()->findMany($request->input('models', [])),
+            $request->boolean('all') => $this->resolveQuery($request)->get(),
+            default => $this->resolveQuery($request)->findMany($request->input('models', [])),
         };
 
         $this->handle($request, $models);
+
+        if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+            $models->each(static function (Model $model) use ($request): void {
+                $model->recordRootEvent(
+                    Str::of(static::class)->classBasename()->headline()->value(),
+                    $request->user()
+                );
+            });
+        }
     }
 
     /**
@@ -215,12 +225,24 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     public function perform(Request $request): Response
     {
-        $this->handleFormRequest($request, $this->getQuery()->getModel());
+        try {
+            DB::beginTransaction();
 
-        return Redirect::back()->with(
-            sprintf('alerts.action-%s', $this->getKey()),
-            Alert::info(__(':action was successful!', ['action' => $this->getName()]))
-        );
+            $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
+
+            DB::commit();
+
+            return Redirect::back()->with(
+                sprintf('alerts.action-%s', $this->getKey()),
+                Alert::info(__(':action was successful!', ['action' => $this->getName()]))
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            DB::rollBack();
+
+            throw new SaveFormDataException($exception->getMessage());
+        }
     }
 
     /**
@@ -256,7 +278,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): string|false
     {
         return json_encode($this->toArray());
     }
@@ -272,8 +294,8 @@ abstract class Action implements Arrayable, Form, JsonSerializable
             'key' => $this->getKey(),
             'modalKey' => $this->getModalKey(),
             'name' => $this->getName(),
+            'standalone' => $this->isStandalone(),
             'template' => $this->template,
-            'url' => $this->getUri(),
         ];
     }
 
@@ -283,6 +305,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     public function toForm(Request $request, Model $model): array
     {
         return array_merge($this->toArray(), [
+            'url' => ! is_null($request->route()) ? $this->replaceRoutePlaceholders($request->route()) : null,
             'open' => $this->errors($request)->isNotEmpty(),
             'fields' => $this->resolveFields($request)->mapToInputs($request, $model),
         ]);

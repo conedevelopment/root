@@ -2,8 +2,11 @@
 
 namespace Cone\Root;
 
+use Cone\Root\Exceptions\ResourceResolutionException;
 use Cone\Root\Exceptions\SaveFormDataException;
+use Cone\Root\Models\Medium;
 use Cone\Root\Models\User;
+use Cone\Root\Policies\MediumPolicy;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Alert;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -23,23 +26,35 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RootServiceProvider extends ServiceProvider
 {
     /**
      * All of the container bindings that should be registered.
+     *
+     * @var array
      */
-    public array $bindings = [
+    public $bindings = [
+        Interfaces\Breadcrumbs\Registry::class => Breadcrumbs\Registry::class,
+        Interfaces\Models\AuthCode::class => Models\AuthCode::class,
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
+        Interfaces\Models\Setting::class => Models\Setting::class,
+        Interfaces\Models\Translation::class => Models\Translation::class,
         Interfaces\Models\User::class => Models\User::class,
+        Interfaces\Navigation\Registry::class => Navigation\Registry::class,
+        Interfaces\Settings\Registry::class => Settings\Registry::class,
+        Interfaces\Settings\Repository::class => Settings\Repository::class,
     ];
 
     /**
      * All of the container singletons that should be registered.
+     *
+     * @var array
      */
-    public array $singletons = [
+    public $singletons = [
         Interfaces\Conversion\Manager::class => Conversion\Manager::class,
     ];
 
@@ -48,9 +63,7 @@ class RootServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(Root::class, static function (Application $app): Root {
-            return new Root($app);
-        });
+        $this->app->singleton(Root::class, static fn (Application $app): Root => new Root($app));
 
         $this->app->alias(Root::class, 'root');
 
@@ -66,9 +79,7 @@ class RootServiceProvider extends ServiceProvider
             $app->make(Root::class)->boot();
         });
 
-        $this->app['request']->macro('isTurboFrameRequest', function (): bool {
-            return $this->hasHeader('Turbo-Frame');
-        });
+        $this->app['request']->macro('isTurboFrameRequest', fn (): bool => $this->hasHeader('Turbo-Frame'));
     }
 
     /**
@@ -129,14 +140,16 @@ class RootServiceProvider extends ServiceProvider
         $root = $this->app->make(Root::class);
 
         $this->app['router']->bind('resource', function (string $key) use ($root): Resource {
-            return $root->resources->resolve($key);
+            try {
+                return $root->resources->resolve($key);
+            } catch (ResourceResolutionException) {
+                throw new NotFoundHttpException;
+            }
         });
 
-        $this->app['router']->bind('resourceModel', function (string $id, Route $route): Model {
-            return $id === 'create'
-                ? $route->parameter('_resource')->getModelInstance()
-                : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id);
-        });
+        $this->app['router']->bind('resourceModel', fn (string $id, Route $route): Model => $id === 'create'
+            ? $route->parameter('_resource')->getModelInstance()
+            : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id));
 
         $this->app['router']
             ->middleware(['web'])
@@ -155,9 +168,7 @@ class RootServiceProvider extends ServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
 
-        RateLimiter::for('root.auth', static function (Request $request): Limit {
-            return Limit::perMinute(6)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('root.auth', static fn (Request $request): Limit => Limit::perMinute(6)->by($request->user()?->id ?: $request->ip()));
     }
 
     /**
@@ -206,13 +217,11 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerExceptions(): void
     {
-        $this->app->make(ExceptionHandler::class)->renderable(
-            static function (SaveFormDataException $exception): RedirectResponse {
-                return Redirect::back()
-                    ->withInput()
-                    ->with('alerts.form-save', Alert::error($exception->getMessage()));
-            }
-        );
+        $exceptions = $this->app->make(ExceptionHandler::class);
+
+        $exceptions->renderable(static fn (SaveFormDataException $exception): RedirectResponse => Redirect::back()
+            ->withInput()
+            ->with('alerts.form-save', Alert::error($exception->getMessage())));
     }
 
     /**
@@ -220,9 +229,9 @@ class RootServiceProvider extends ServiceProvider
      */
     protected function registerAuth(): void
     {
-        Gate::define('viewRoot', static function (User $user): bool {
-            return Root::instance()->authorized($user);
-        });
+        Gate::define('viewRoot', static fn (User $user): bool => Root::instance()->authorized($user));
+
+        Gate::policy(Medium::getProxiedClass(), MediumPolicy::class);
     }
 
     /**

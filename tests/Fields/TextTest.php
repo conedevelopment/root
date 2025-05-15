@@ -9,7 +9,7 @@ class TextTest extends TestCase
 {
     protected Text $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

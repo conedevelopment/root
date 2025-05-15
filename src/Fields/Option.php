@@ -8,6 +8,8 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
 use JsonSerializable;
 
+use function Illuminate\Support\enum_value;
+
 class Option implements Arrayable, JsonSerializable
 {
     use Conditionable;
@@ -25,7 +27,7 @@ class Option implements Arrayable, JsonSerializable
     public function __construct(mixed $value, string $label)
     {
         $this->label = $label;
-        $this->setAttribute('value', $value);
+        $this->setAttribute('value', enum_value($value));
         $this->selected(false);
     }
 
@@ -48,7 +50,7 @@ class Option implements Arrayable, JsonSerializable
     /**
      * Convert the element to a JSON serializable format.
      */
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

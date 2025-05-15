@@ -12,6 +12,6 @@ class {{ class }} extends Trend
      */
     public function calculate(Request $request): array
     {
-        return $this->count($request, $this->query);
+        return $this->count($request, $this->resolveQuery($request));
     }
 }

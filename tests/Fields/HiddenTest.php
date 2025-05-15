@@ -9,7 +9,7 @@ class HiddenTest extends TestCase
 {
     protected Hidden $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

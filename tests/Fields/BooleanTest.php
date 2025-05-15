@@ -11,7 +11,7 @@ class BooleanTest extends TestCase
 {
     protected Boolean $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -52,7 +52,7 @@ class BooleanTest extends TestCase
 
     public function test_a_boolean_field_resolves_value(): void
     {
-        $model = new User();
+        $model = new User;
         $this->assertFalse($this->field->resolveValue($this->app['request'], $model));
 
         $model->forceFill(['admin' => false]);
@@ -64,7 +64,7 @@ class BooleanTest extends TestCase
 
     public function test_a_boolean_field_resolves_format(): void
     {
-        $model = new User();
+        $model = new User;
 
         $model->forceFill(['admin' => false]);
         $this->assertSame(

@@ -33,7 +33,7 @@
   line-height: config('line-height-md', $typography);
   position: relative;
 
-  &[aria-checked="true"],
+  &[aria-checked='true'],
   &:focus-visible {
     @include focus-ring(
       $type: config('focus-ring-type', $btn, false),

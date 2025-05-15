@@ -33,9 +33,7 @@ trait ResolvesVisibility
     {
         $this->visibilityResolvers[] = $context instanceof Closure
             ? $context
-            : static function (string|array $currentContext) use ($context) {
-                return ! empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
-            };
+            : static fn (string|array $currentContext) => ! empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
 
         return $this;
     }
@@ -45,10 +43,8 @@ trait ResolvesVisibility
      */
     public function hiddenOn(string|array|Closure $context): static
     {
-        return $this->visibleOn(static function (array|string $currentContext) use ($context): bool {
-            return $context instanceof Closure
-                ? ! call_user_func_array($context, [$currentContext])
-                : empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context)));
-        });
+        return $this->visibleOn(static fn (array|string $currentContext): bool => $context instanceof Closure
+            ? ! call_user_func_array($context, [$currentContext])
+            : empty(array_intersect(Arr::wrap($currentContext), Arr::wrap($context))));
     }
 }

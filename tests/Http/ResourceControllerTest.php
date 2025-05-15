@@ -13,7 +13,7 @@ class ResourceControllerTest extends TestCase
 
     protected User $admin;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class ResourceControllerTest extends TestCase
         $this->admin = User::factory()->create(['name' => 'Admin']);
     }
 
-    public function test_a_resource_controller_handles_index(): void
+    public function test_resource_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
             ->get($this->resource->getUri())
@@ -31,7 +31,7 @@ class ResourceControllerTest extends TestCase
             ->assertViewHas($this->resource->toIndex($this->app['request']));
     }
 
-    public function test_a_resource_controller_handles_create(): void
+    public function test_resource_controller_handles_create(): void
     {
         $this->actingAs($this->admin)
             ->get($this->resource->getUri().'/create')
@@ -40,7 +40,7 @@ class ResourceControllerTest extends TestCase
             ->assertViewHas($this->resource->toCreate($this->app['request']));
     }
 
-    public function test_a_resource_controller_handles_show(): void
+    public function test_resource_controller_handles_show(): void
     {
         $this->actingAs($this->admin)
             ->get($this->resource->getUri().'/'.$this->admin->getKey())
@@ -49,7 +49,7 @@ class ResourceControllerTest extends TestCase
             ->assertViewHas($this->resource->toShow($this->app['request'], $this->admin));
     }
 
-    public function test_a_resource_controller_handles_edit(): void
+    public function test_resource_controller_handles_edit(): void
     {
         $this->actingAs($this->admin)
             ->get($this->resource->getUri().'/'.$this->admin->getKey().'/edit')
@@ -58,7 +58,7 @@ class ResourceControllerTest extends TestCase
             ->assertViewHas($this->resource->toEdit($this->app['request'], $this->admin));
     }
 
-    public function test_a_resource_controller_handles_store(): void
+    public function test_resource_controller_handles_store(): void
     {
         $this->actingAs($this->admin)
             ->post($this->resource->getUri(), [
@@ -71,7 +71,7 @@ class ResourceControllerTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => 'test@root.local', 'name' => 'Test User']);
     }
 
-    public function test_a_resource_controller_handles_update(): void
+    public function test_resource_controller_handles_update(): void
     {
         $this->actingAs($this->admin)
             ->patch($this->resource->getUri().'/'.$this->admin->getKey(), array_merge($this->admin->toArray(), ['name' => 'Test Admin']))
@@ -80,9 +80,15 @@ class ResourceControllerTest extends TestCase
         $this->assertSame('Test Admin', $this->admin->refresh()->name);
     }
 
-    public function test_a_resource_controller_handles_destroy(): void
+    public function test_resource_controller_handles_destroy(): void
     {
         $user = User::factory()->create();
+
+        $this->actingAs($this->admin)
+            ->delete($this->resource->getUri().'/'.$user->getKey())
+            ->assertRedirect();
+
+        $this->assertTrue($user->refresh()->trashed());
 
         $this->actingAs($this->admin)
             ->delete($this->resource->getUri().'/'.$user->getKey())

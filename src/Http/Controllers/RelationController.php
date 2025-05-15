@@ -18,6 +18,7 @@ class RelationController extends Controller
      */
     public function index(Request $request, Model $model): Response
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
         $data = $field->toIndex($request, $model);
@@ -32,6 +33,7 @@ class RelationController extends Controller
      */
     public function create(Request $request, Model $model): Response
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
         $data = $field->toCreate($request, $model);
@@ -46,9 +48,10 @@ class RelationController extends Controller
      */
     public function store(Request $request, Model $model): RedirectResponse
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
-        $related = $field->getRelation($model)->make();
+        $related = $field->getRelation($model)->make()->setRelation('related', $model);
 
         $field->handleFormRequest($request, $related);
 
@@ -61,6 +64,7 @@ class RelationController extends Controller
      */
     public function show(Request $request, Model $model, Model $related): Response
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
         $data = $field->toShow($request, $model, $related);
@@ -75,6 +79,7 @@ class RelationController extends Controller
      */
     public function edit(Request $request, Model $model, Model $related): Response
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
         $data = $field->toEdit($request, $model, $related);
@@ -89,7 +94,10 @@ class RelationController extends Controller
      */
     public function update(Request $request, Model $model, Model $related): RedirectResponse
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
+
+        $related->setRelation('related', $model);
 
         $field->handleFormRequest($request, $related);
 
@@ -102,6 +110,7 @@ class RelationController extends Controller
      */
     public function destroy(Request $request, Model $model, Model $related): RedirectResponse
     {
+        /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
         $trashed = class_uses_recursive(SoftDeletes::class) && $related->trashed();

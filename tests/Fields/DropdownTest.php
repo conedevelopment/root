@@ -9,7 +9,7 @@ class DropdownTest extends TestCase
 {
     protected Dropdown $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

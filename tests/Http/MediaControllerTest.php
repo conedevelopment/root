@@ -18,7 +18,7 @@ class MediaControllerTest extends TestCase
 
     protected Media $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,21 +33,21 @@ class MediaControllerTest extends TestCase
             });
     }
 
-    public function test_a_media_controller_handles_index(): void
+    public function test_media_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
-            ->get('/root/users/'.$this->admin->getKey().'/fields/media')
+            ->get('/root/resources/users/'.$this->admin->getKey().'/fields/media')
             ->assertOk()
             ->assertJson($this->field->paginateRelatable($this->app['request'], $this->admin)->toArray());
     }
 
-    public function test_a_media_controller_handles_store(): void
+    public function test_media_controller_handles_store(): void
     {
         Queue::fake();
 
         $this->actingAs($this->admin)
             ->post(
-                '/root/users/'.$this->admin->getKey().'/fields/media',
+                '/root/resources/users/'.$this->admin->getKey().'/fields/media',
                 ['file' => UploadedFile::fake()->image('test.png')],
                 ['X-Chunk-Index' => 1, 'X-Chunk-Total' => 1]
             )
@@ -59,14 +59,14 @@ class MediaControllerTest extends TestCase
         Queue::assertPushedWithChain(MoveFile::class, [PerformConversions::class]);
     }
 
-    public function test_a_media_controller_handles_destroy(): void
+    public function test_media_controller_handles_destroy(): void
     {
         $medium = Medium::factory()->create();
 
         $this->actingAs($this->admin)
-            ->delete('/root/users/'.$this->admin->getKey().'/fields/media', ['ids' => [$medium->getKey()]])
+            ->delete('/root/resources/users/'.$this->admin->getKey().'/fields/media', ['ids' => [$medium->getKey()]])
             ->assertOk()
-            ->assertJson(['deleted' => 1]);
+            ->assertJson(['deleted' => [1]]);
 
         $this->assertDatabaseMissing('root_media', ['id' => $medium->getKey()]);
     }

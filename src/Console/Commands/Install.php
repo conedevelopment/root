@@ -41,5 +41,7 @@ class Install extends Command
             '--provider' => RootServiceProvider::class,
             '--tag' => 'root-stubs',
         ]);
+
+        $this->info('Root has been installed.');
     }
 }

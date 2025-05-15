@@ -38,7 +38,7 @@ trait HasAttributes
     public function classList(): ClassList
     {
         if (! isset($this->attributes['class'])) {
-            $this->attributes['class'] = new ClassList();
+            $this->attributes['class'] = new ClassList;
         }
 
         return $this->attributes['class'];
@@ -78,7 +78,7 @@ trait HasAttributes
     public function getAttribute(string $key, mixed $default = null): mixed
     {
         return match ($key) {
-            'class' => $this->classList()->__toString(),
+            'class' => (string) $this->classList(),
             default => $this->attributes[$key] ?? $default,
         };
     }
@@ -135,9 +135,7 @@ trait HasAttributes
     {
         return array_reduce(
             array_keys($this->attributes),
-            function (array $attributes, string $key): mixed {
-                return array_merge($attributes, [$key => $this->resolveAttribute($key)]);
-            },
+            fn (array $attributes, string $key): array => array_merge($attributes, [$key => $this->resolveAttribute($key)]),
             []
         );
     }

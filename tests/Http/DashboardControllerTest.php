@@ -10,14 +10,14 @@ class DashboardControllerTest extends TestCase
 {
     protected User $admin;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->admin = User::factory()->create();
     }
 
-    public function test_a_dashboard_controller_handles_request(): void
+    public function test_dashboard_controller_handles_request(): void
     {
         $this->actingAs($this->admin)
             ->get('/root')

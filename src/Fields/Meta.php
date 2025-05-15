@@ -24,7 +24,7 @@ class Meta extends MorphOne
     public function __construct(string $label, Closure|string|null $modelAttribute = null, Closure|string|null $relation = null)
     {
         $relation ??= function (Model $model): EloquentRelation {
-            /** @phpstan-var \Tests\MetaDataModel $model */
+            /** @phpstan-var \Cone\Root\Tests\phpstan\MetaDataModel $model */
             $related = $model->metaData()->make();
 
             return $model->metaData()
@@ -67,9 +67,7 @@ class Meta extends MorphOne
     {
         $this->field = new $field($this->label, $this->getModelAttribute());
 
-        $this->field->value(function (Request $request, Model $model): mixed {
-            return $this->resolveValue($request, $model);
-        });
+        $this->field->value(fn (Request $request, Model $model): mixed => $this->resolveValue($request, $model));
 
         if (! is_null($callback)) {
             call_user_func_array($callback, [$this->field]);
@@ -115,9 +113,7 @@ class Meta extends MorphOne
     public function resolveValue(Request $request, Model $model): mixed
     {
         if (is_null($this->valueResolver)) {
-            $this->valueResolver = static function (Request $request, Model $model, mixed $value): mixed {
-                return $value?->value;
-            };
+            $this->valueResolver = static fn (Request $request, Model $model, mixed $value): mixed => $value?->value;
         }
 
         return parent::resolveValue($request, $model);

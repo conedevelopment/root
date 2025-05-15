@@ -25,3 +25,15 @@ window.$http = Axios.create({
 
 // Cookie
 window.$cookie = new Cookie('__root_');
+
+// Handle the relation frame load event
+document.addEventListener('relation-frame-loaded', (event) => {
+    if (window.location.href !== event.detail.url) {
+        window.history.replaceState(window.history.state, document.title, event.detail.url);
+    }
+});
+
+// Handle the turbo:frame-missing
+document.addEventListener('turbo:frame-missing', (event) => {
+    event.preventDefault();
+});

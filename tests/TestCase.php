@@ -7,23 +7,27 @@ use Cone\Root\Root;
 use Cone\Root\Tests\Resources\UserResource;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Storage;
 
 abstract class TestCase extends BaseTestCase
 {
-    use LazilyRefreshDatabase;
+    use DatabaseMigrations;
 
     public function createApplication(): Application
     {
         $app = require __DIR__.'/app.php';
 
         $app->booting(static function () use ($app): void {
+            $app->afterResolving('migrator', function ($migrator) {
+                $migrator->path(__DIR__.'/migrations');
+            });
+
             $app->bind(UserInterface::class, User::class);
 
             Root::instance()->resources->register([
-                new UserResource(),
+                new UserResource,
             ]);
         });
 
@@ -32,7 +36,7 @@ abstract class TestCase extends BaseTestCase
         return $app;
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

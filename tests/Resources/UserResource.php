@@ -2,13 +2,18 @@
 
 namespace Cone\Root\Tests\Resources;
 
+use Cone\Root\Actions\SendPasswordResetNotification;
+use Cone\Root\Fields\BelongsToMany;
 use Cone\Root\Fields\Email;
 use Cone\Root\Fields\HasMany;
 use Cone\Root\Fields\ID;
 use Cone\Root\Fields\Media;
+use Cone\Root\Fields\MorphTo;
+use Cone\Root\Fields\Repeater;
+use Cone\Root\Fields\Select;
 use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Tests\Actions\SendPasswordResetNotification;
+use Cone\Root\Tests\Team;
 use Cone\Root\Tests\User;
 use Cone\Root\Tests\Widgets\UsersCount;
 use Cone\Root\Tests\Widgets\UsersTrend;
@@ -21,7 +26,7 @@ class UserResource extends Resource
     public function actions(Request $request): array
     {
         return [
-            new SendPasswordResetNotification(),
+            new SendPasswordResetNotification,
         ];
     }
 
@@ -45,14 +50,40 @@ class UserResource extends Resource
                         Text::make('Mime Type'),
                     ];
                 }),
+            BelongsToMany::make('Teams')
+                ->display('name')
+                ->asSubResource()
+                ->withPivotFields(function () {
+                    return [
+                        Select::make('Role')
+                            ->options([
+                                'admin' => 'Admin',
+                                'member' => 'Member',
+                            ]),
+                    ];
+                }),
+            MorphTo::make('Employer')
+                ->display('name')
+                ->nullable()
+                ->types([
+                    User::class,
+                    Team::class,
+                ]),
+            Repeater::make('Settings')
+                ->withFields(function () {
+                    return [
+                        Text::make('Key'),
+                        Text::make('Value'),
+                    ];
+                }),
         ];
     }
 
     public function widgets(Request $request): array
     {
         return [
-            new UsersCount(),
-            new UsersTrend(),
+            new UsersCount,
+            new UsersTrend,
         ];
     }
 }

@@ -2,19 +2,22 @@
 
 namespace Cone\Root\Models;
 
+use Closure;
 use Cone\Root\Database\Factories\MediumFactory;
 use Cone\Root\Interfaces\Models\Medium as Contract;
 use Cone\Root\Interfaces\Models\User;
+use Cone\Root\Jobs\MoveFile;
+use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
@@ -110,15 +113,39 @@ class Medium extends Model implements Contract
     /**
      * Create a new factory instance for the model.
      */
-    protected static function newFactory(): Factory
+    protected static function newFactory(): MediumFactory
     {
         return MediumFactory::new();
     }
 
     /**
+     * Upload the given file.
+     */
+    public static function upload(UploadedFile $file, ?Closure $callback = null): static
+    {
+        $medium = static::fromPath($file->getPathname(), [
+            'file_name' => $file->getClientOriginalName(),
+            'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+        ]);
+
+        if (is_callable($callback)) {
+            call_user_func_array($callback, [$medium, $file]);
+        }
+
+        $medium->save();
+
+        $path = Storage::disk('local')->path(Storage::disk('local')->putFile('root-tmp', $file));
+
+        MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
+            ->dispatch($medium, $path, false);
+
+        return $medium;
+    }
+
+    /**
      * Make a new medium instance from the given path.
      */
-    public static function makeFromPath(string $path, array $attributes = []): static
+    public static function fromPath(string $path, array $attributes = []): static
     {
         $type = mime_content_type($path);
 
@@ -129,8 +156,8 @@ class Medium extends Model implements Contract
         return new static(array_merge([
             'file_name' => $name = basename($path),
             'mime_type' => $type,
-            'width' => isset($width) ? $width : null,
-            'height' => isset($height) ? $height : null,
+            'width' => $width ?? null,
+            'height' => $height ?? null,
             'disk' => Config::get('root.media.disk', 'public'),
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
@@ -158,7 +185,7 @@ class Medium extends Model implements Contract
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(get_class(App::make(User::class)));
+        return $this->belongsTo(App::make(User::class)::class);
     }
 
     /**
@@ -169,9 +196,7 @@ class Medium extends Model implements Contract
     protected function isImage(): Attribute
     {
         return new Attribute(
-            get: static function (mixed $value, array $attributes): bool {
-                return Str::is('image/*', $attributes['mime_type']);
-            }
+            get: static fn (mixed $value, array $attributes): bool => Str::is('image/*', $attributes['mime_type'])
         );
     }
 
@@ -183,15 +208,11 @@ class Medium extends Model implements Contract
     protected function urls(): Attribute
     {
         return new Attribute(
-            get: function (): array {
-                return array_reduce(
-                    $this->properties['conversions'] ?? [],
-                    function (array $urls, string $conversion): array {
-                        return array_merge($urls, [$conversion => $this->getUrl($conversion)]);
-                    },
-                    ['original' => $this->getUrl()]
-                );
-            }
+            get: fn (): array => array_reduce(
+                $this->properties['conversions'] ?? [],
+                fn (array $urls, string $conversion): array => array_merge($urls, [$conversion => $this->getUrl($conversion)]),
+                ['original' => $this->getUrl()]
+            )
         );
     }
 
@@ -215,11 +236,9 @@ class Medium extends Model implements Contract
     protected function dimensions(): Attribute
     {
         return new Attribute(
-            get: static function (mixed $value, array $attributes): ?string {
-                return isset($attributes['width'], $attributes['height'])
-                    ? sprintf('%dx%d px', $attributes['width'], $attributes['height'])
-                    : null;
-            }
+            get: static fn (mixed $value, array $attributes): ?string => isset($attributes['width'], $attributes['height'])
+                ? sprintf('%dx%d px', $attributes['width'], $attributes['height'])
+                : null
         );
     }
 
@@ -306,13 +325,10 @@ class Medium extends Model implements Contract
      */
     public function scopeType(Builder $query, string $value): Builder
     {
-        switch ($value) {
-            case 'image':
-                return $query->where($query->qualifyColumn('mime_type'), 'like', 'image%');
-            case 'file':
-                return $query->where($query->qualifyColumn('mime_type'), 'not like', 'image%');
-            default:
-                return $query;
-        }
+        return match ($value) {
+            'image' => $query->where($query->qualifyColumn('mime_type'), 'like', 'image%'),
+            'file' => $query->where($query->qualifyColumn('mime_type'), 'not like', 'image%'),
+            default => $query,
+        };
     }
 }

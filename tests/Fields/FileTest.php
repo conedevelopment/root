@@ -11,7 +11,7 @@ class FileTest extends TestCase
 {
     protected File $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -9,11 +9,11 @@ class IDTest extends TestCase
 {
     protected ID $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->field = new ID();
+        $this->field = new ID;
     }
 
     public function test_an_id_field_has_default_attributes(): void

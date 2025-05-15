@@ -51,14 +51,12 @@ abstract class Value extends Metric
 
         return parent::aggregate($query, $extended, $fn, $column, $dateColumn)->when(
             $period->getStartDate()->getTimestamp() > 0,
-            function (Builder $query) use ($period, $dateColumn): Builder {
-                return $query->selectRaw(sprintf(
-                    "(case when %s between '%s' and '%s' then 'current' else 'previous' end) as `__interval`",
-                    $query->getQuery()->getGrammar()->wrap($dateColumn),
-                    $period->getStartDate()->format('Y-m-d H:i:s'),
-                    $period->getEndDate()->format('Y-m-d H:i:s')
-                ))->groupBy('__interval');
-            }
+            fn (Builder $query): Builder => $query->selectRaw(sprintf(
+                "(case when %s between '%s' and '%s' then 'current' else 'previous' end) as `__interval`",
+                $query->getQuery()->getGrammar()->wrap($dateColumn),
+                $period->getStartDate()->format('Y-m-d H:i:s'),
+                $period->getEndDate()->format('Y-m-d H:i:s')
+            ))->groupBy('__interval')
         );
     }
 

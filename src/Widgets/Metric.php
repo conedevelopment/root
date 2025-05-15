@@ -2,6 +2,8 @@
 
 namespace Cone\Root\Widgets;
 
+use Closure;
+use Cone\Root\Exceptions\QueryResolutionException;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -11,11 +13,6 @@ use Illuminate\Http\Request;
 
 abstract class Metric extends Widget
 {
-    /**
-     * The Eloquent query.
-     */
-    protected ?Builder $query = null;
-
     /**
      * The metric timezone.
      */
@@ -27,11 +24,28 @@ abstract class Metric extends Widget
     protected bool $async = true;
 
     /**
-     * Set the query.
+     * The query resolver.
      */
-    public function setQuery(Builder $query): static
+    protected ?Closure $queryResolver = null;
+
+    /**
+     * Resolve the query.
+     */
+    public function resolveQuery(Request $request): Builder
     {
-        $this->query = $query;
+        if (is_null($this->queryResolver)) {
+            throw new QueryResolutionException;
+        }
+
+        return call_user_func_array($this->queryResolver, [$request]);
+    }
+
+    /**
+     * Set the query resolver callback.
+     */
+    public function withQuery(Closure $callback): static
+    {
+        $this->queryResolver = $callback;
 
         return $this;
     }
@@ -45,7 +59,7 @@ abstract class Metric extends Widget
 
         $range = $request->input('range', $default);
 
-        return in_array($range, array_keys($this->ranges())) ? $range : $default;
+        return array_key_exists($range, $this->ranges()) ? $range : $default;
     }
 
     /**
@@ -129,7 +143,8 @@ abstract class Metric extends Widget
     {
         return array_merge(parent::data($request), [
             'ranges' => $this->ranges(),
-            'data' => ! $this->async || $request->isTurboFrameRequest() ? $this->calculate($request) : [],
+            'currentRange' => $this->getCurrentRange($request),
+            'data' => (! $this->async || $request->isTurboFrameRequest()) ? $this->calculate($request) : [],
         ]);
     }
 
@@ -215,6 +230,6 @@ abstract class Metric extends Widget
      */
     public function calculate(Request $request): array
     {
-        return $this->count($request, $this->query);
+        return $this->count($request, $this->resolveQuery($request));
     }
 }

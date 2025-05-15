@@ -3,13 +3,16 @@
 namespace Cone\Root;
 
 use Closure;
-use Cone\Root\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Interfaces\Breadcrumbs\Registry as Breadcrumbs;
+use Cone\Root\Interfaces\Navigation\Registry as Navigation;
+use Cone\Root\Interfaces\Settings\Registry as Settings;
 use Cone\Root\Models\User;
-use Cone\Root\Navigation\Registry as Navigation;
 use Cone\Root\Resources\Resources;
 use Cone\Root\Widgets\Widgets;
+use DateTimeZone;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +25,7 @@ class Root
      *
      * @var string
      */
-    public const VERSION = '2.2.5';
+    public const string VERSION = '2.6.4';
 
     /**
      * The registered booting callbacks.
@@ -55,9 +58,19 @@ class Root
     public readonly Breadcrumbs $breadcrumbs;
 
     /**
+     * The settings instance.
+     */
+    public readonly Settings $settings;
+
+    /**
      * The auth resolver.
      */
     protected ?Closure $authResolver = null;
+
+    /**
+     * The Root timezone.
+     */
+    protected string $timezone;
 
     /**
      * Create a new Root instance.
@@ -65,10 +78,12 @@ class Root
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->resources = new Resources();
-        $this->widgets = new Widgets();
-        $this->navigation = new Navigation();
-        $this->breadcrumbs = new Breadcrumbs();
+        $this->resources = new Resources;
+        $this->widgets = new Widgets;
+        $this->navigation = $app->make(Navigation::class);
+        $this->breadcrumbs = $app->make(Breadcrumbs::class);
+        $this->settings = $app->make(Settings::class);
+        $this->timezone = $app['config']->get('app.timezone');
     }
 
     /**
@@ -84,22 +99,28 @@ class Root
      */
     public function boot(): void
     {
+        $this->routes(function (Router $router): void {
+            $this->widgets->registerRoutes($this->app['request'], $router);
+        });
+
+        $this->resources->discoverIn($this->app->path('Root/Resources'));
+
         $this->resources->each->boot($this);
 
         foreach ($this->booting as $callback) {
             call_user_func_array($callback, [$this]);
         }
 
+        $path = $this->getPath();
+
         $this->breadcrumbs->patterns([
-            $this->getPath() => __('Dashboard'),
-            sprintf('%s/{resource}', $this->getPath()) => static function (Request $request): string {
-                return $request->route('_resource')->getName();
-            },
-            sprintf('%s/{resource}/create', $this->getPath()) => __('Create'),
-            sprintf('%s/{resource}/{resourceModel}', $this->getPath()) => static function (Request $request): string {
+            $path => __('Dashboard'),
+            sprintf('%s/resources/{resource}', $path) => static fn (Request $request): string => $request->route('_resource')->getName(),
+            sprintf('%s/resources/{resource}/create', $path) => __('Create'),
+            sprintf('%s/resources/{resource}/{resourceModel}', $path) => static function (Request $request): string {
                 return $request->route('_resource')->modelTitle($request->route('resourceModel'));
             },
-            sprintf('%s/{resource}/{resourceModel}/edit', $this->getPath()) => __('Edit'),
+            sprintf('%s/resources/{resource}/{resourceModel}/edit', $path) => __('Edit'),
         ]);
     }
 
@@ -170,5 +191,21 @@ class Root
     public function authorize(Closure $callback): void
     {
         $this->authResolver = $callback;
+    }
+
+    /**
+     * Set the Root timezone.
+     */
+    public function setTimezone(string|DateTimeZone $value): void
+    {
+        $this->timezone = $value instanceof DateTimeZone ? $value->getName() : $value;
+    }
+
+    /**
+     * Get the Root timezone.
+     */
+    public function getTimezone(): string
+    {
+        return $this->timezone;
     }
 }

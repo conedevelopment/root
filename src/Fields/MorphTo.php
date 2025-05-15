@@ -55,13 +55,13 @@ class MorphTo extends BelongsTo
      */
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
-        $value = explode(':', $value);
+        $value = is_null($value) ? $value : explode(':', $value);
 
-        $model->setAttribute($this->getRelation($model)->getMorphType(), $value[0]);
-
-        $related = tap(new $value[0], static function (Model $related) use ($value): void {
-            $related->forceFill([$related->getKeyName() => $value[1]]);
-        });
+        $related = is_null($value)
+            ? $value
+            : tap(new $value[0], static function (Model $related) use ($value): void {
+                $related->forceFill([$related->getKeyName() => $value[1]]);
+            });
 
         parent::resolveHydrate($request, $model, $related);
     }
@@ -98,9 +98,9 @@ class MorphTo extends BelongsTo
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'types' => array_map(static function (string $type): string {
-                return __(Str::of($type)->classBasename()->headline()->value());
-            }, array_combine($this->types, $this->types)),
+            'types' => array_map(
+                static fn (string $type): string => __(Str::of($type)->classBasename()->headline()->value()), array_combine($this->types, $this->types)
+            ),
         ]);
     }
 

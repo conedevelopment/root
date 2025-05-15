@@ -11,7 +11,7 @@ class BelongsToTest extends TestCase
 {
     protected BelongsTo $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class BelongsToTest extends TestCase
     {
         $medium = Medium::factory()->make();
 
-        $user = new User();
+        $user = new User;
 
         $this->field->resolveHydrate($this->app['request'], $medium, $user);
 

@@ -2,7 +2,11 @@
 
 namespace Cone\Root\Fields;
 
+use BackedEnum;
 use Closure;
+use Cone\Root\Filters\Filter;
+use Cone\Root\Filters\RenderableFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -72,6 +76,8 @@ class Select extends Field
 
                 return Collection::make($value)
                     ->map(static function (mixed $value) use ($options): string {
+                        $value = $value instanceof BackedEnum ? $value->value : $value;
+
                         return $options[$value] ?? $value;
                     })
                     ->implode(', ');
@@ -86,9 +92,7 @@ class Select extends Field
      */
     public function options(array|Closure $value): static
     {
-        $this->optionsResolver = is_callable($value) ? $value : static function () use ($value): array {
-            return $value;
-        };
+        $this->optionsResolver = is_callable($value) ? $value : static fn (): array => $value;
 
         return $this;
     }
@@ -132,5 +136,42 @@ class Select extends Field
             'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
         ]);
+    }
+
+    /**
+     * Get the filter representation of the field.
+     */
+    public function toFilter(): Filter
+    {
+        return new class($this) extends RenderableFilter
+        {
+            protected Select $field;
+
+            public function __construct(Select $field)
+            {
+                parent::__construct($field->getModelAttribute());
+
+                $this->field = $field;
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $this->field->resolveFilterQuery($request, $query, $value);
+            }
+
+            public function toField(): Field
+            {
+                return Select::make($this->field->getLabel(), $this->getRequestKey())
+                    ->value(fn (Request $request): mixed => $this->getValue($request))
+                    ->nullable()
+                    ->options(function (Request $request, Model $model): array {
+                        return array_column(
+                            $this->field->resolveOptions($request, $model),
+                            'label',
+                            'value',
+                        );
+                    });
+            }
+        };
     }
 }

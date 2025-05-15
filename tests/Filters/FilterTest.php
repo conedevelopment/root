@@ -11,11 +11,11 @@ class FilterTest extends TestCase
 {
     protected Filter $filter;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->filter = new class() extends Filter
+        $this->filter = new class extends Filter
         {
             public function __construct()
             {

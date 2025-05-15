@@ -31,14 +31,30 @@
         </template>
     </ol>
     <x-slot:footer class="modal__footer--space-between">
-        <input
-            type="file"
-            class="form-file"
-            accept="{{ $config['accept'] }}"
-            multiple
-            x-bind:disabled="processing"
-            x-on:change="queueFiles($event.target.files)"
-        >
+        <div class="modal__column">
+            <input
+                type="file"
+                class="form-file"
+                accept="{{ $config['accept'] }}"
+                multiple
+                x-bind:disabled="processing"
+                x-on:change="queueFiles($event.target.files)"
+            >
+            <button
+                type="button"
+                class="btn btn--delete"
+                x-show="selection.length > 0"
+                x-bind:disabled="selection.length == 0"
+                x-on:click="() => {
+                    if (window.confirm('{{ __('Are you sure?') }}')) {
+                        prune();
+                    }
+                }"
+            >
+                {{ __('Delete') }}
+                <span x-text="'(' + selection.length.toString() + ')'"></span>
+            </button>
+        </div>
         <div class="modal__column">
             <button type="button" class="btn btn--primary" x-on:click="open = false">
                 {{ __('Close') }}

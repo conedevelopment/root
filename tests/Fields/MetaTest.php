@@ -12,7 +12,7 @@ class MetaTest extends TestCase
 {
     protected Meta $field;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +34,7 @@ class MetaTest extends TestCase
 
     public function test_a_meta_field_has_options(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertSame(
             [], $this->field->resolveOptions($this->app['request'], $model)
@@ -43,7 +43,7 @@ class MetaTest extends TestCase
 
     public function test_a_meta_field_hydates_model(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertFalse($model->relationLoaded('__root_price'));
 
@@ -54,7 +54,7 @@ class MetaTest extends TestCase
 
     public function test_a_meta_field_has_display_representation(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertSame(
             $this->field->getField()->toDisplay($this->app['request'], $model),
@@ -64,7 +64,7 @@ class MetaTest extends TestCase
 
     public function test_a_meta_field_has_input_representation(): void
     {
-        $model = new User();
+        $model = new User;
 
         $this->assertSame(
             json_encode($this->field->getField()->toInput($this->app['request'], $model)),

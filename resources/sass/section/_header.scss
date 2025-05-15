@@ -1,7 +1,7 @@
 @use 'sprucecss/scss/spruce' as *;
 
 .app-header {
-  backdrop-filter: saturate(180%) blur(.25rem);
+  backdrop-filter: saturate(180%) blur(0.25rem);
   background-color: color('background', 'header');
   border-block-end: 1px solid color('border');
   inset-block-start: 0;

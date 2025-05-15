@@ -60,7 +60,7 @@ class Media extends File
      */
     public function getModel(): Model
     {
-        return $this->model ?: new class() extends Model
+        return $this->model ?: new class extends Model
         {
             use HasMedia;
         };
@@ -80,7 +80,7 @@ class Media extends File
     public function filters(Request $request): array
     {
         return [
-            new MediaSearch(),
+            new MediaSearch,
         ];
     }
 
@@ -147,7 +147,7 @@ class Media extends File
         $disk->append($file->getClientOriginalName(), $file->get());
 
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return array_merge($this->toOption($request, $model, new Medium()), [
+            return array_merge($this->toOption($request, $model, new Medium), [
                 'processing' => true,
                 'fileName' => null,
             ]);
@@ -181,22 +181,18 @@ class Media extends File
                 'chunk_size' => Config::get('root.media.chunk_size'),
                 'query' => $filters->mapToData($request),
             ],
-            'selection' => array_map(static function (array $option): array {
-                return array_merge($option, [
-                    'html' => View::make('root::fields.file-option', $option)->render(),
-                ]);
-            }, $data['options'] ?? []),
+            'selection' => array_map(static fn (array $option): array => array_merge($option, [
+                'html' => View::make('root::fields.file-option', $option)->render(),
+            ]), $data['options'] ?? []),
             'url' => $this->modelUrl($model),
             'filters' => $filters->renderable()
-                ->map(function (RenderableFilter $filter) use ($request, $model): array {
-                    return $filter->toField()
-                        ->removeAttribute('name')
-                        ->setAttributes([
-                            'x-model.debounce.300ms' => $filter->getKey(),
-                            'x-bind:readonly' => 'processing',
-                        ])
-                        ->toInput($request, $this->getRelation($model)->make());
-                })
+                ->map(fn (RenderableFilter $filter): array => $filter->toField()
+                    ->removeAttribute('name')
+                    ->setAttributes([
+                        'x-model.debounce.300ms' => $filter->getKey(),
+                        'x-bind:readonly' => 'processing',
+                    ])
+                    ->toInput($request, $this->getRelation($model)->make()))
                 ->all(),
         ]);
     }

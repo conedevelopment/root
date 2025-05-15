@@ -1,4 +1,4 @@
-<form method="GET" action="{{ $url }}" id="{{ $key }}" onchange="this.requestSubmit()">
+<form method="GET" action="{{ $url }}" id="{{ $key }}" onchange="this.requestSubmit()" autocomplete="off">
     @if(! empty($filters))
         <div class="data-table-filter" x-data="{ open: false }" x-on:click.outside="open = false">
             <button
@@ -21,7 +21,7 @@
                         <button type="submit" class="btn btn--primary btn--sm">
                             {{ __('Filter') }}
                         </button>
-                        <a href="{{ $url }}" class="btn btn--light btn--sm">
+                        <a href="{{ $baseUrl }}" class="btn btn--light btn--sm">
                             {{ __('Reset') }}
                         </a>
                     </div>

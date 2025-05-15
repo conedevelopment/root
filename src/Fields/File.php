@@ -102,11 +102,9 @@ class File extends MorphToMany
     public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
-            $this->display(function (Medium $related): string {
-                return $related->isImage
-                    ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
-                    : $related->file_name;
-            });
+            $this->display(fn (Medium $related): string => $related->isImage
+                ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
+                : $related->file_name);
         }
 
         return parent::resolveDisplay($related);
@@ -171,7 +169,7 @@ class File extends MorphToMany
     {
         $target = str_replace($request->header('X-Chunk-Hash', ''), '', $path);
 
-        $medium = (Medium::proxy())::makeFromPath($path, [
+        $medium = (Medium::proxy())::fromPath($path, [
             'disk' => $this->disk,
             'file_name' => $name = basename($target),
             'name' => pathinfo($name, PATHINFO_FILENAME),
@@ -189,7 +187,11 @@ class File extends MorphToMany
         MoveFile::withChain($medium->convertible() ? [new PerformConversions($medium)] : [])
             ->dispatch($medium, $path, false);
 
-        return $this->toOption($request, $model, $medium);
+        $option = $this->toOption($request, $model, $medium);
+
+        return array_merge($option, [
+            'html' => View::make('root::fields.file-option', $option)->render(),
+        ]);
     }
 
     /**
@@ -210,9 +212,7 @@ class File extends MorphToMany
         $model->saved(function (Model $model) use ($request, $value): void {
             $files = Arr::wrap($request->file($this->getRequestKey(), []));
 
-            $ids = array_map(function (UploadedFile $file) use ($request, $model): int {
-                return $this->store($request, $model, $file)['value'];
-            }, $files);
+            $ids = array_map(fn (UploadedFile $file): int => $this->store($request, $model, $file)['value'], $files);
 
             $value += $this->mergePivotValues($ids);
 
@@ -229,20 +229,30 @@ class File extends MorphToMany
     /**
      * Prune the related models.
      */
-    public function prune(Request $request, Model $model, array $keys): int
+    public function prune(Request $request, Model $model, array $keys): array
     {
-        $count = 0;
+        $deleted = [];
 
         $this->resolveRelatableQuery($request, $model)
             ->whereIn('id', $keys)
             ->cursor()
-            ->each(static function (Medium $medium) use (&$count): void {
-                $medium->delete();
+            ->each(static function (Medium $medium) use ($request, &$deleted): void {
+                if ($request->user()->can('delete', $medium)) {
+                    $medium->delete();
 
-                $count++;
+                    $deleted[] = $medium->getKey();
+                }
             });
 
-        return $count;
+        return $deleted;
+    }
+
+    /**
+     * Determine if the relation is a subresource.
+     */
+    public function isSubResource(): bool
+    {
+        return false;
     }
 
     /**

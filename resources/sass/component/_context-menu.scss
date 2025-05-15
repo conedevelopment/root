@@ -36,16 +36,16 @@
   &__item {
     align-items: center;
     background: none;
-    block-size: 2.25rem;
     border: 0;
     border-radius: config('border-radius-sm', $display);
     color: color('text');
     display: flex;
     justify-content: space-between;
-    line-height: config('line-height-md', $typography);
+    line-height: 1.25;
     margin: 0.15em;
-    padding-block: 0.25em;
+    padding-block: 0.45em;
     padding-inline: 0.6em;
+    text-align: start;
     text-decoration: none;
 
     &:hover:not([aria-current='page'], :has(.theme-switcher)) {

@@ -13,10 +13,6 @@ parameters:
         - database/
         - routes/
     level: 5
-    checkAlwaysTrueCheckTypeFunctionCall: true
-    checkAlwaysTrueInstanceof: true
-    checkAlwaysTrueStrictComparison: true
-    checkAlwaysTrueLooseComparison: true
     checkClassCaseSensitivity: false
     checkDynamicProperties: true
     checkExplicitMixed: false
