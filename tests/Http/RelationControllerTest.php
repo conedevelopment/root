@@ -35,9 +35,11 @@ class RelationControllerTest extends TestCase
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\WithoutErrorHandler]
     public function test_relation_controller_handles_index(): void
     {
         $this->actingAs($this->admin)
+            ->withoutExceptionHandling()
             ->get('/root/resources/users/'.$this->admin->getKey().'/fields/uploads')
             ->assertOk()
             ->assertViewIs('root::resources.index')
