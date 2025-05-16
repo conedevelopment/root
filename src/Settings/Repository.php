@@ -8,6 +8,10 @@ use Cone\Root\Models\Setting;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 class Repository implements Arrayable, ArrayAccess, Contract
 {
     /**
