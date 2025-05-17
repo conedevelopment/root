@@ -55,6 +55,11 @@ jobs:
                 - "lowest"
                 - "locked"
                 - "highest"
+                include:
+                -
+                    php-version: "8.3"
+                    dependencies: "locked"
+                    coverage: true
         runs-on: "ubuntu-24.04"
         timeout-minutes: 5
         steps:
@@ -90,11 +95,12 @@ jobs:
             name: "Send coverage to Coveralls"
             env:
                 COVERALLS_REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-            if: "${{ env.COVERALLS_REPO_TOKEN && matrix.php-version == '8.3' && matrix.dependencies == 'locked' }}"
-            run: |
-                wget --no-verbose \
-                    "https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.3/php-coveralls.phar"
-                php ./php-coveralls.phar --verbose
+            if: "${{ env.COVERALLS_REPO_TOKEN && matrix.coverage }}"
+            uses: "coverallsapp/github-action@v2"
+            with:
+                github-token: "${{ env.COVERALLS_REPO_TOKEN }}"
+                flag-name: "Unit"
+                allow-empty: false
 
     static_analysis:
         name: "3️⃣ Static Analysis"
