@@ -30,3 +30,7 @@ parameters:
         - '#^Method Cone\\\S+::render\(\) should return Illuminate\\View\\View but returns Illuminate\\Contracts\\View\\View\.$#'
         # SoftDeletes
         - '#(\$forceDeleting|::withTrashed|::onlyTrashed|::trashed|::restore)#'
+        -
+            identifier: property.defaultValue
+            path: tests/User.php
+            count: 1
