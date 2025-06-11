@@ -843,7 +843,7 @@ abstract class Relation extends Field implements Form
         $ability .= Str::of($this->getModelAttribute())->singular()->studly()->value();
 
         return is_null($policy)
-            || ! method_exists($policy, $ability)
+            || ! is_callable([$policy, $ability])
             || Gate::allows($ability, [$model, ...$arguments]);
     }
 

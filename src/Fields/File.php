@@ -102,9 +102,14 @@ class File extends MorphToMany
     public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
-            $this->display(fn (Medium $related): string => $related->isImage
-                ? sprintf('<img src="%s" width="40" height="40" alt="%s">', $related->getUrl($this->displayConversion), $related->name)
-                : $related->file_name);
+            $this->display(function (Medium $related): string {
+                return $related->isImage
+                    ? sprintf(
+                        '<img src="%s" width="40" height="40" alt="%s">',
+                        $related->getUrl($this->displayConversion), $related->name
+                    )
+                    : $related->file_name;
+            });
         }
 
         return parent::resolveDisplay($related);
@@ -117,7 +122,7 @@ class File extends MorphToMany
     {
         $value = $this->resolveDisplay($related);
 
-        if ($related->isImage || ! $this->resolveAbility('view', $request, $model, $related)) {
+        if (! $this->resolveAbility('view', $request, $model, $related)) {
             return $value;
         }
 
