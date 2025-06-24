@@ -679,7 +679,7 @@ abstract class Relation extends Field implements Form
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? (string) $model->getKey() : 'create', $this->getUri());
     }
 
     /**
@@ -906,7 +906,7 @@ abstract class Relation extends Field implements Form
     {
         $query = parse_url($url, PHP_URL_QUERY);
 
-        parse_str($query, $result);
+        parse_str($query ?? '', $result);
 
         return array_filter($result, fn (string $key): bool => str_starts_with($key, $this->getRequestKey()), ARRAY_FILTER_USE_KEY);
     }
