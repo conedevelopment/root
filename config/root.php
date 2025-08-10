@@ -1,7 +1,6 @@
 <?php
 
-use Cone\Root\Http\Middleware\Authenticate;
-use Cone\Root\Http\Middleware\TwoFactorAuthenticate;
+use Cone\Laravel\Auth\Http\Middleware\VerifiesAuthCodes;
 
 return [
 
@@ -43,23 +42,10 @@ return [
 
     'middleware' => [
         'web',
-        Authenticate::class,
+        'auth',
         'verified',
-        TwoFactorAuthenticate::class,
+        VerifiesAuthCodes::class,
         'can:viewRoot',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Two Factor Verification
-    |--------------------------------------------------------------------------
-    |
-    | You can configure the two factor authentication here.
-    |
-    */
-
-    'two_factor' => [
-        'expiration' => 600,
     ],
 
     /*

@@ -37,7 +37,6 @@ class RootServiceProvider extends ServiceProvider
      */
     public $bindings = [
         Interfaces\Breadcrumbs\Registry::class => Breadcrumbs\Registry::class,
-        Interfaces\Models\AuthCode::class => Models\AuthCode::class,
         Interfaces\Models\Medium::class => Models\Medium::class,
         Interfaces\Models\Meta::class => Models\Meta::class,
         Interfaces\Models\Notification::class => Models\Notification::class,
@@ -150,15 +149,6 @@ class RootServiceProvider extends ServiceProvider
         $this->app['router']->bind('resourceModel', fn (string $id, Route $route): Model => $id === 'create'
             ? $route->parameter('_resource')->getModelInstance()
             : $route->parameter('_resource')->resolveRouteBinding($this->app['request'], $id));
-
-        $this->app['router']
-            ->middleware(['web'])
-            ->domain($root->getDomain())
-            ->prefix($root->getPath())
-            ->as('root.auth.')
-            ->group(function (): void {
-                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
-            });
 
         $root->routes(function (Router $router): void {
             $router->prefix('api')->as('api.')->group(function (): void {
