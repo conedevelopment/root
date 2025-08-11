@@ -1,0 +1,4 @@
+{
+    "preset": "laravel",
+    "declare_strict_types": true
+}
