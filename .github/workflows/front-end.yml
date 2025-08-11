@@ -3,7 +3,7 @@
 name: "Front-end"
 
 # ECMAScript version: 2018
-# Node.js version: 18.12
+# Node.js version: 23
 # Yarn version: 1
 
 on:
@@ -33,7 +33,7 @@ jobs:
             name: "Set up Node.js"
             uses: "actions/setup-node@v4"
             with:
-                node-version: "18"
+                node-version: "23"
                 check-latest: true
                 cache: "yarn"
         -
@@ -60,7 +60,7 @@ jobs:
             name: "Set up Node.js"
             uses: "actions/setup-node@v4"
             with:
-                node-version: "18"
+                node-version: "23"
                 cache: "yarn"
         -
             name: "Configure yarn"
@@ -87,7 +87,7 @@ jobs:
             name: "Set up Node.js"
             uses: "actions/setup-node@v4"
             with:
-                node-version: "18"
+                node-version: "23"
                 cache: "yarn"
         -
             name: "Configure yarn"

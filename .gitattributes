@@ -12,6 +12,7 @@
 /js-tests export-ignore
 /phpstan.neon.dist export-ignore
 /phpunit.xml.dist export-ignore
+/pint.json export-ignore
 /public/build/assets/** linguist-generated
 /tests export-ignore
 /yarn.lock export-ignore linguist-generated
