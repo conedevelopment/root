@@ -36,7 +36,7 @@ class TwoFactorController extends Controller
     /**
      * Show the verification resend form.
      */
-    public function show(Request $request): Response|RedirectResponse
+    public function show(Request $request): Response
     {
         return ResponseFactory::view('root::auth.two-factor', [
             'code' => $request->input('code'),
@@ -64,7 +64,7 @@ class TwoFactorController extends Controller
         if ($request->boolean('trust')) {
             Cookie::queue(
                 'device_token',
-                sha1(sprintf('%s:%s', $request->user()->getKey(), $request->user()->email)),
+                $request->user()->generateDeviceToken($request),
                 Date::now()->addYear()->diffInMinutes(absolute: true),
             );
         }

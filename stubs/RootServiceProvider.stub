@@ -7,6 +7,7 @@ use {{ namespace }}Root\Resources\UserResource;
 use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\Root;
 use Cone\Root\Widgets\Welcome;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class RootServiceProvider extends ServiceProvider

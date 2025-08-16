@@ -29,10 +29,14 @@ class ForgotPasswordController extends Controller
     {
         $data = $request->validate(['email' => ['required', 'string', 'email']]);
 
-        Password::broker()->sendResetLink($data, static function (User $user, #[\SensitiveParameter] string $token): void {
-            $user->notify(new ResetPassword($token));
-        });
+        Password::broker()->sendResetLink(
+            $data,
+            static function (User $user, #[\SensitiveParameter] string $token): void {
+                $user->notify(new ResetPassword($token));
+            }
+        );
 
-        return Redirect::route('root.auth.password.request')->with('status', __(Password::RESET_LINK_SENT));
+        return Redirect::route('root.auth.password.request')
+            ->with('status', __(Password::RESET_LINK_SENT));
     }
 }
