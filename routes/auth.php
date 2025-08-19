@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cone\Root\Http\Controllers\Auth\ForgotPasswordController;
 use Cone\Root\Http\Controllers\Auth\LoginController;
 use Cone\Root\Http\Controllers\Auth\ResetPasswordController;

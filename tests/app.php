@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cone\Root\RootServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Fields;
 
 use Closure;
@@ -514,7 +516,7 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request, Model $model): ?string
+    public function resolveFormat(Request $request, Model $model): mixed
     {
         $value = $this->resolveValue($request, $model);
 

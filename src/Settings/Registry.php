@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Settings;
 
 use Cone\Root\Interfaces\Settings\Registry as Contract;

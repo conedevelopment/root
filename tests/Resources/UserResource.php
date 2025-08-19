@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Tests\Resources;
 
 use Cone\Root\Actions\SendPasswordResetNotification;

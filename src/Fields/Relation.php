@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Fields;
 
 use Closure;
@@ -679,7 +681,7 @@ abstract class Relation extends Field implements Form
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? (string) $model->getKey() : 'create', $this->getUri());
     }
 
     /**
@@ -904,7 +906,7 @@ abstract class Relation extends Field implements Form
      */
     public function parseQueryString(string $url): array
     {
-        $query = parse_url($url, PHP_URL_QUERY);
+        $query = parse_url($url, PHP_URL_QUERY) ?: '';
 
         parse_str($query, $result);
 

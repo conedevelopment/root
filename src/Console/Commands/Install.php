@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Console\Commands;
 
 use Cone\Root\Database\Seeders\RootTestDataSeeder;

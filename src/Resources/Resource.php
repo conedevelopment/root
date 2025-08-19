@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Resources;
 
 use Cone\Root\Actions\Action;
@@ -315,7 +317,7 @@ abstract class Resource implements Arrayable, Form
      */
     public function modelTitle(Model $model): string
     {
-        return $model->getKey();
+        return (string) $model->getKey();
     }
 
     /**

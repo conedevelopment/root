@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Database\Factories;
 
 use Cone\Root\Models\Setting;

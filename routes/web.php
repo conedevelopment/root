@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cone\Root\Http\Controllers\DashboardController;
 use Cone\Root\Http\Controllers\DownloadController;
 use Cone\Root\Http\Controllers\ResourceController;

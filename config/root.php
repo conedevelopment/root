@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cone\Root\Http\Middleware\Authenticate;
 use Cone\Root\Http\Middleware\TwoFactorAuthenticate;
 

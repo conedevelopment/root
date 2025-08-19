@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\View\Components\Layout;
 
 use Cone\Root\Root;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cone\Root\Fields;
 
 use Closure;
@@ -207,7 +209,7 @@ class Repeater extends Field
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->exists ? $model->getKey() : 'create', $this->getUri());
+        return str_replace('{resourceModel}', $model->exists ? (string) $model->getKey() : 'create', $this->getUri());
     }
 
     /**
