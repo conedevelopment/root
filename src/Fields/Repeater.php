@@ -209,7 +209,9 @@ class Repeater extends Field
      */
     public function modelUrl(Model $model): string
     {
-        return str_replace('{resourceModel}', $model->exists ? (string) $model->getKey() : 'create', $this->getUri());
+        $key = $model->exists ? (string) $model->getKey() : 'create';
+
+        return str_replace('{resourceModel}', $key, $this->getUri());
     }
 
     /**

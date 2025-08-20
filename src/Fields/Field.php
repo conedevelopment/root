@@ -516,12 +516,16 @@ abstract class Field implements Arrayable, JsonSerializable
     /**
      * Format the value.
      */
-    public function resolveFormat(Request $request, Model $model): mixed
+    public function resolveFormat(Request $request, Model $model): ?string
     {
         $value = $this->resolveValue($request, $model);
 
         if (is_null($this->formatResolver)) {
-            return is_array($value) ? json_encode($value) : $value;
+            return match (true) {
+                is_array($value) => json_encode($value),
+                is_null($value) => $value,
+                default => (string) $value,
+            };
         }
 
         return call_user_func_array($this->formatResolver, [$request, $model, $value]);
