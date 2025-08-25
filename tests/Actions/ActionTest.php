@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cone\Root\Tests\Actions;
 
 use Cone\Root\Exceptions\QueryResolutionException;
-use Cone\Root\Exceptions\SaveFormDataException;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
@@ -146,15 +145,5 @@ class ActionTest extends TestCase
 
         $response->assertRedirect()
             ->assertSessionHas(sprintf('alerts.action-%s', $this->action->getKey()));
-    }
-
-    public function test_an_action_handles_exceptions_on_perform(): void
-    {
-        $this->expectException(SaveFormDataException::class);
-
-        $this->createTestResponse(
-            $this->action->perform($this->app['request']),
-            $this->app['request']
-        );
     }
 }

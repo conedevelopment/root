@@ -47,10 +47,7 @@ class ResourceController extends Controller
     {
         $model = $resource->getModelInstance();
 
-        $resource->handleFormRequest($request, $model);
-
-        return Redirect::to($resource->modelUrl($model))
-            ->with('alerts.resource-created', Alert::success(__('The resource has been created!')));
+        return $resource->handleFormRequest($request, $model);
     }
 
     /**
@@ -82,10 +79,7 @@ class ResourceController extends Controller
      */
     public function update(Request $request, Resource $resource, Model $model): RedirectResponse
     {
-        $resource->handleFormRequest($request, $model);
-
-        return Redirect::to($resource->modelUrl($model))
-            ->with('alerts.resource-updated', Alert::success(__('The resource has been updated!')));
+        return $resource->handleFormRequest($request, $model);
     }
 
     /**

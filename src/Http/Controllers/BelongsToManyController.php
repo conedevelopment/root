@@ -29,10 +29,7 @@ class BelongsToManyController extends RelationController
 
         $pivot->incrementing = true;
 
-        $field->handleFormRequest($request, $pivot);
-
-        return Redirect::to($field->relatedUrl($pivot))
-            ->with('alerts.relation-created', Alert::success(__('The relation has been created!')));
+        return $field->handleFormRequest($request, $pivot);
     }
 
     /**
@@ -48,10 +45,7 @@ class BelongsToManyController extends RelationController
 
         $pivot->setRelation('related', $related);
 
-        $field->handleFormRequest($request, $pivot);
-
-        return Redirect::to($field->relatedUrl($pivot))
-            ->with('alerts.relation-updated', Alert::success(__('The relation has been updated!')));
+        return $field->handleFormRequest($request, $pivot);
     }
 
     /**

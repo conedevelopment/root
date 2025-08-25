@@ -73,7 +73,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Handle the action.
      */
-    abstract public function handle(Request $request, Collection $models): void;
+    abstract public function handle(Request $request, Collection $models): mixed;
 
     /**
      * Get the key.
@@ -200,26 +200,47 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Handle the request.
      */
-    public function handleFormRequest(Request $request, Model $model): void
+    public function handleFormRequest(Request $request, Model $model): Response
     {
         $this->validateFormRequest($request, $model);
 
-        $models = match (true) {
-            $this->isStandalone() => new Collection([$model]),
-            $request->boolean('all') => $this->resolveQuery($request)->get(),
-            default => $this->resolveQuery($request)->findMany($request->input('models', [])),
-        };
+        try {
+            return DB::transaction(function () use ($request, $model): Response {
+                $models = match (true) {
+                    $this->isStandalone() => new Collection([$model]),
+                    $request->boolean('all') => $this->resolveQuery($request)->get(),
+                    default => $this->resolveQuery($request)->findMany($request->input('models', [])),
+                };
 
-        $this->handle($request, $models);
+                $result = $this->handle($request, $models);
 
-        if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
-            $models->each(static function (Model $model) use ($request): void {
-                $model->recordRootEvent(
-                    Str::of(static::class)->classBasename()->headline()->value(),
-                    $request->user()
-                );
+                if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                    $models->each(static function (Model $model) use ($request): void {
+                        $model->recordRootEvent(
+                            Str::of(static::class)->classBasename()->headline()->value(),
+                            $request->user()
+                        );
+                    });
+                }
+
+                return $this->formResponse($request, $model, $result);
             });
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new SaveFormDataException($exception->getMessage());
         }
+    }
+
+    /**
+     * Make a form response.
+     */
+    public function formResponse(Request $request, Model $model, mixed $result): Response
+    {
+        return Redirect::back()->with(
+            sprintf('alerts.action-%s', $this->getKey()),
+            Alert::info(__(':action was successful!', ['action' => $this->getName()]))
+        );
     }
 
     /**
@@ -227,24 +248,10 @@ abstract class Action implements Arrayable, Form, JsonSerializable
      */
     public function perform(Request $request): Response
     {
-        try {
-            DB::beginTransaction();
-
-            $this->handleFormRequest($request, $this->resolveQuery($request)->getModel());
-
-            DB::commit();
-
-            return Redirect::back()->with(
-                sprintf('alerts.action-%s', $this->getKey()),
-                Alert::info(__(':action was successful!', ['action' => $this->getName()]))
-            );
-        } catch (Throwable $exception) {
-            report($exception);
-
-            DB::rollBack();
-
-            throw new SaveFormDataException($exception->getMessage());
-        }
+        return $this->handleFormRequest(
+            $request,
+            $this->resolveQuery($request)->getModel()
+        );
     }
 
     /**

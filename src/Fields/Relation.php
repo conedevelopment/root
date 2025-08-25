@@ -15,6 +15,7 @@ use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
+use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\HasRootEvents;
 use Cone\Root\Traits\RegistersRoutes;
@@ -32,9 +33,11 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -706,27 +709,27 @@ abstract class Relation extends Field implements Form
     /**
      * Handle the request.
      */
-    public function handleFormRequest(Request $request, Model $model): void
+    public function handleFormRequest(Request $request, Model $model): Response
     {
         $this->validateFormRequest($request, $model);
 
         try {
-            DB::beginTransaction();
+            return DB::transaction(function () use ($request, $model): Response {
+                $this->persist($request, $model, $this->getValueForHydrate($request));
 
-            $this->persist($request, $model, $this->getValueForHydrate($request));
+                $model->save();
 
-            $model->save();
+                if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                    $model->recordRootEvent(
+                        $model->wasRecentlyCreated ? 'Created' : 'Updated',
+                        $request->user()
+                    );
+                }
 
-            if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
-                $model->recordRootEvent(
-                    $model->wasRecentlyCreated ? 'Created' : 'Updated',
-                    $request->user()
-                );
-            }
+                $this->saved($request, $model);
 
-            $this->saved($request, $model);
-
-            DB::commit();
+                return $this->formResponse($request, $model);
+            });
         } catch (Throwable $exception) {
             report($exception);
 
@@ -734,6 +737,15 @@ abstract class Relation extends Field implements Form
 
             throw new SaveFormDataException($exception->getMessage());
         }
+    }
+
+    /**
+     * Make a form response.
+     */
+    public function formResponse(Request $request, Model $model): Response
+    {
+        return Redirect::to($this->relatedUrl($model))
+            ->with('alerts.relation-saved', Alert::success(__('The relation has been saved!')));
     }
 
     /**

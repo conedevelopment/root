@@ -60,7 +60,7 @@ class RelationControllerTest extends TestCase
         $this->actingAs($this->admin)
             ->post('/root/resources/users/'.$this->admin->getKey().'/fields/uploads', $data = Medium::factory()->make()->toArray())
             ->assertRedirect()
-            ->assertSessionHas('alerts.relation-created');
+            ->assertSessionHas('alerts.relation-saved');
 
         $this->assertTrue(
             $this->admin->refresh()->uploads->contains(fn ($medium) => $medium->file_name === $data['file_name'])
@@ -105,7 +105,7 @@ class RelationControllerTest extends TestCase
                 array_merge($this->medium->toArray(), ['file_name' => 'updated.png'])
             )
             ->assertRedirect()
-            ->assertSessionHas('alerts.relation-updated');
+            ->assertSessionHas('alerts.relation-saved');
 
         $this->assertSame('updated.png', $this->medium->refresh()->file_name);
     }

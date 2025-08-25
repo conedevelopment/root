@@ -23,6 +23,7 @@ use Cone\Root\Filters\TrashStatus;
 use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
 use Cone\Root\Root;
+use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasRootEvents;
@@ -45,8 +46,10 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 abstract class Resource implements Arrayable, Form
@@ -513,40 +516,47 @@ abstract class Resource implements Arrayable, Form
     /**
      * Handle the request.
      */
-    public function handleFormRequest(Request $request, Model $model): void
+    public function handleFormRequest(Request $request, Model $model): Response
     {
         $this->validateFormRequest($request, $model);
 
         try {
-            DB::beginTransaction();
+            return DB::transaction(function () use ($request, $model): Response {
+                $this->resolveFields($request)
+                    ->authorized($request, $model)
+                    ->visible($request->isMethod('POST') ? 'create' : 'update')
+                    ->subResource(false)
+                    ->persist($request, $model);
 
-            $this->resolveFields($request)
-                ->authorized($request, $model)
-                ->visible($request->isMethod('POST') ? 'create' : 'update')
-                ->subResource(false)
-                ->persist($request, $model);
+                $this->saving($request, $model);
 
-            $this->saving($request, $model);
+                $model->save();
 
-            $model->save();
+                if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
+                    $model->recordRootEvent(
+                        $model->wasRecentlyCreated ? 'Created' : 'Updated',
+                        $request->user()
+                    );
+                }
 
-            if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
-                $model->recordRootEvent(
-                    $model->wasRecentlyCreated ? 'Created' : 'Updated',
-                    $request->user()
-                );
-            }
+                $this->saved($request, $model);
 
-            $this->saved($request, $model);
-
-            DB::commit();
+                return $this->formResponse($request, $model);
+            });
         } catch (Throwable $exception) {
             report($exception);
 
-            DB::rollBack();
-
             throw new SaveFormDataException($exception->getMessage());
         }
+    }
+
+    /**
+     * Make a form response.
+     */
+    public function formResponse(Request $request, Model $model): Response
+    {
+        return Redirect::to($this->modelUrl($model))
+            ->with('alerts.resource-saved', Alert::success(__('The resource has been saved!')));
     }
 
     /**

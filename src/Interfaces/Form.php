@@ -7,13 +7,14 @@ namespace Cone\Root\Interfaces;
 use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 interface Form
 {
     /**
      * Handle the request.
      */
-    public function handleFormRequest(Request $request, Model $model): void;
+    public function handleFormRequest(Request $request, Model $model): Response;
 
     /**
      * Validate the request.

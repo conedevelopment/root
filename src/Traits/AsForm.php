@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\ViewErrorBag;
+use Symfony\Component\HttpFoundation\Response;
 
 trait AsForm
 {
@@ -26,7 +27,7 @@ trait AsForm
     /**
      * Handle the request.
      */
-    abstract public function handleFormRequest(Request $request, Model $model): void;
+    abstract public function handleFormRequest(Request $request, Model $model): Response;
 
     /**
      * Validate the request.

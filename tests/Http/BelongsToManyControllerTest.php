@@ -58,7 +58,7 @@ class BelongsToManyControllerTest extends TestCase
                 'role' => 'member',
             ])
             ->assertRedirect()
-            ->assertSessionHas('alerts.relation-created');
+            ->assertSessionHas('alerts.relation-saved');
 
         $this->assertDatabaseHas('team_user', [
             'user_id' => $this->admin->getKey(),
@@ -79,7 +79,7 @@ class BelongsToManyControllerTest extends TestCase
                 'role' => 'member',
             ])
             ->assertRedirect()
-            ->assertSessionHas('alerts.relation-updated');
+            ->assertSessionHas('alerts.relation-saved');
 
         $this->assertSame('member', $team->pivot->refresh()->role);
     }
