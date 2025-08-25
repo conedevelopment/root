@@ -15,8 +15,9 @@ class SendVerificationNotification extends Action
      */
     public function handle(Request $request, Collection $models): void
     {
-        $models->reject(static fn (User $user): bool => $user->hasVerifiedEmail())->each(static function (User $user): void {
-            $user->sendEmailVerificationNotification();
-        });
+        $models->reject(static fn (User $user): bool => $user->hasVerifiedEmail())
+            ->each(static function (User $user): void {
+                $user->sendEmailVerificationNotification();
+            });
     }
 }

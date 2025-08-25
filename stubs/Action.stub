@@ -11,7 +11,7 @@ class {{ class }} extends Action
     /**
      * Handle the action.
      */
-    public function handle(Request $request, Collection $models): mixed
+    public function handle(Request $request, Collection $models): void
     {
         //
     }

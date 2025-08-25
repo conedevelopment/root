@@ -73,7 +73,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Handle the action.
      */
-    abstract public function handle(Request $request, Collection $models): mixed;
+    abstract public function handle(Request $request, Collection $models): void;
 
     /**
      * Get the key.
@@ -212,7 +212,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
                     default => $this->resolveQuery($request)->findMany($request->input('models', [])),
                 };
 
-                $result = $this->handle($request, $models);
+                $this->handle($request, $models);
 
                 if (in_array(HasRootEvents::class, class_uses_recursive($model))) {
                     $models->each(static function (Model $model) use ($request): void {
@@ -223,7 +223,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
                     });
                 }
 
-                return $this->formResponse($request, $model, $result);
+                return $this->formResponse($request, $model);
             });
         } catch (Throwable $exception) {
             report($exception);
@@ -235,7 +235,7 @@ abstract class Action implements Arrayable, Form, JsonSerializable
     /**
      * Make a form response.
      */
-    public function formResponse(Request $request, Model $model, mixed $result): Response
+    public function formResponse(Request $request, Model $model): Response
     {
         return Redirect::back()->with(
             sprintf('alerts.action-%s', $this->getKey()),
