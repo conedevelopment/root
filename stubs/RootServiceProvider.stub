@@ -3,7 +3,6 @@
 namespace {{ namespace }}Providers;
 
 use {{ namespace }}Models\User;
-use {{ namespace }}Root\Resources\UserResource;
 use Cone\Root\Interfaces\Models\User as UserInterface;
 use Cone\Root\Root;
 use Cone\Root\Widgets\Welcome;
@@ -36,12 +35,8 @@ class RootServiceProvider extends ServiceProvider
             return false;
         });
 
-        Root::instance()->resources->register([
-            new UserResource(),
-        ]);
-
         Root::instance()->widgets->register([
-            new Welcome(),
+            new Welcome,
         ]);
     }
 }
