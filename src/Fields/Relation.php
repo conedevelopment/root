@@ -661,8 +661,8 @@ abstract class Relation extends Field implements Form
     {
         return [
             'id' => $related->getKey(),
-            'url' => $this->relatedUrl($model, $related),
             'model' => $related->setRelation('related', $model),
+            'url' => $this->relatedUrl($related),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
@@ -683,9 +683,9 @@ abstract class Relation extends Field implements Form
     /**
      * Get the related URL.
      */
-    public function relatedUrl(Model $model, Model $related): string
+    public function relatedUrl(Model $related): string
     {
-        return sprintf('%s/%s', $this->modelUrl($model), $related->getKey());
+        return sprintf('%s/%s', $this->modelUrl($related->getRelationValue('related')), $related->getKey());
     }
 
     /**
@@ -1007,7 +1007,7 @@ abstract class Relation extends Field implements Form
             'template' => 'root::resources.show',
             'title' => $this->resolveDisplay($related),
             'model' => $related->setRelation('related', $model),
-            'action' => $this->relatedUrl($model, $related),
+            'action' => $this->relatedUrl($related),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $related)
@@ -1034,7 +1034,7 @@ abstract class Relation extends Field implements Form
             'template' => 'root::resources.form',
             'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
             'model' => $related->setRelation('related', $model),
-            'action' => $this->relatedUrl($model, $related),
+            'action' => $this->relatedUrl($related),
             'method' => 'PATCH',
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
