@@ -95,6 +95,11 @@ abstract class Relation extends Field implements Form
     protected ?Closure $aggregateResolver = null;
 
     /**
+     * Determine whether the relation values are aggregated.
+     */
+    protected bool $aggregated = false;
+
+    /**
      * The option group resolver.
      */
     protected string|Closure|null $groupResolver = null;
@@ -380,7 +385,7 @@ abstract class Relation extends Field implements Form
             $this->display($related->getKeyName());
         }
 
-        return call_user_func_array($this->displayResolver, [$related]);
+        return (string) call_user_func_array($this->displayResolver, [$related]);
     }
 
     /**
@@ -388,7 +393,7 @@ abstract class Relation extends Field implements Form
      */
     public function getValue(Model $model): mixed
     {
-        if (is_callable($this->aggregateResolver)) {
+        if ($this->aggregated) {
             return parent::getValue($model);
         }
 
@@ -410,7 +415,7 @@ abstract class Relation extends Field implements Form
             $this->formatResolver = function (Request $request, Model $model): mixed {
                 $default = $this->getValue($model);
 
-                if (is_callable($this->aggregateResolver)) {
+                if ($this->aggregated) {
                     return (string) $default;
                 }
 
@@ -540,6 +545,8 @@ abstract class Relation extends Field implements Form
                 $fn,
                 $column === '*' ? '' : sprintf('_%s', $column)
             ));
+
+            $this->aggregated = true;
 
             return $query->withAggregate($this->getRelationName(), $column, $fn);
         };
