@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Cone\Root\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Jsonable;
 use Stringable;
 
-class Alert implements Arrayable, Jsonable, Stringable
+class Alert implements Arrayable, Htmlable, Jsonable, Stringable
 {
     public const string INFO = 'info';
 
@@ -91,10 +92,18 @@ class Alert implements Arrayable, Jsonable, Stringable
     }
 
     /**
+     * Get content as a string of HTML.
+     */
+    public function toHtml(): string
+    {
+        return $this->message;
+    }
+
+    /**
      * Get the string representation of the object.
      */
     public function __toString(): string
     {
-        return $this->message;
+        return $this->toHtml();
     }
 }

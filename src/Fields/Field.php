@@ -7,6 +7,7 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
+use Cone\Root\Support\Copyable;
 use Cone\Root\Traits\Authorizable;
 use Cone\Root\Traits\HasAttributes;
 use Cone\Root\Traits\Makeable;
@@ -143,6 +144,11 @@ abstract class Field implements Arrayable, JsonSerializable
      * Indicates whether the field is translatable.
      */
     protected bool|Closure $translatable = false;
+
+    /**
+     * Indicates whether the field is copyable.
+     */
+    protected bool|Closure $copyable = false;
 
     /**
      * Create a new field instance.
@@ -361,6 +367,24 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Set the copyable attribute.
+     */
+    public function copyable(bool|Closure $value = true): static
+    {
+        $this->copyable = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine whether the field value is copyable.
+     */
+    public function isCopyable(): bool
+    {
+        return $this->copyable instanceof Closure ? call_user_func($this->copyable) : $this->copyable;
+    }
+
+    /**
      * Set the translatable attribute.
      */
     public function translatable(bool|Closure $value = true): static
@@ -520,15 +544,22 @@ abstract class Field implements Arrayable, JsonSerializable
     {
         $value = $this->resolveValue($request, $model);
 
-        if (is_null($this->formatResolver)) {
-            return match (true) {
-                is_array($value) => json_encode($value),
-                is_null($value) => $value,
-                default => (string) $value,
-            };
+        $formattedValue = match (true) {
+            ! is_null($this->formatResolver) => call_user_func_array($this->formatResolver, [$request, $model, $value]),
+            is_array($value) => json_encode($value),
+            is_null($value) => $value,
+            default => (string) $value,
+        };
+
+        if (! $this->isCopyable()) {
+            return $formattedValue;
         }
 
-        return call_user_func_array($this->formatResolver, [$request, $model, $value]);
+        return (string) Copyable::make($formattedValue, match (true) {
+            is_array($value) => json_encode($value),
+            is_null($value) => $value,
+            default => (string) $value,
+        });
     }
 
     /**
