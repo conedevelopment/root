@@ -1,4 +1,4 @@
-{{ $text }}
+{!! $text !!}
 <button
     type="button"
     class="btn btn--light btn--sm btn--icon"
