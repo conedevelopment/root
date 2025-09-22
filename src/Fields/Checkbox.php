@@ -32,7 +32,7 @@ class Checkbox extends Select
      */
     public function newOption(mixed $value, string $label): Option
     {
-        return parent::newOption($value, $label)
+        return (new CheckboxOption($value, $label))
             ->class('form-check__control')
             ->setAttributes([
                 'type' => 'checkbox',
