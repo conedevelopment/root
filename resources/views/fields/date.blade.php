@@ -14,11 +14,13 @@
             <div class="form-group-label" style="white-space: nowrap;">{!! $suffix !!}</div>
         @endif
     </div>
-    <span class="form-description">
-        <button type="button" class="btn btn--light btn--sm" x-on:click="$refs.input.value = ''">
-            {{ __('Clear') }}
-        </button>
-    </span>
+    @unless($attrs->get('disabled') || $attrs->get('readonly'))
+        <span class="form-description">
+            <button type="button" class="btn btn--light btn--sm" x-on:click="$refs.input.value = ''">
+                {{ __('Clear') }}
+            </button>
+        </span>
+    @endunless
     @if($invalid)
         <span class="field-feedback field-feedback--invalid">{!! $error !!}</span>
     @endif
