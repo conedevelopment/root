@@ -7,6 +7,7 @@ namespace Cone\Root\Conversion;
 use Cone\Root\Models\Medium;
 use Exception;
 use GdImage;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -48,7 +49,12 @@ class Image
     {
         $this->medium = $medium;
 
-        $this->path = Storage::disk('local')->path('root-tmp/'.Str::random(40));
+        $disk = Storage::build([
+            'driver' => 'local',
+            'root' => Config::get('root.media.tmp_dir'),
+        ]);
+
+        $this->path = $disk->path(Str::random(40));
 
         $this->type = exif_imagetype($medium->getAbsolutePath());
 
