@@ -53,7 +53,11 @@ export default class Item
             this.error = error.response.data.message;
             this.failed = true;
 
-            throw new Error();
+            throw new Error(error.response.data.message);
+        }).finally(() => {
+            this.uploaded = 0;
+            this.progress = 0;
+            this.processing = false;
         });
     }
 

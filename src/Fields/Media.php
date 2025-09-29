@@ -17,6 +17,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class Media extends File
@@ -149,10 +150,10 @@ class Media extends File
         $disk->append($file->getClientOriginalName(), $file->get());
 
         if ($request->header('X-Chunk-Index') !== $request->header('X-Chunk-Total')) {
-            return array_merge($this->toOption($request, $model, new Medium), [
-                'processing' => true,
-                'fileName' => null,
-            ]);
+            return array_merge(
+                $this->toOption($request, $model, new Medium(['mime_type' => '', 'file_name' => $file->getBasename()])),
+                ['processing' => true, 'fileName' => null, 'uuid' => Str::uuid()]
+            );
         }
 
         return $this->stored($request, $model, $disk->path($file->getClientOriginalName()));
