@@ -66,21 +66,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Branding
-    |--------------------------------------------------------------------------
-    |
-    | You can specify the logo and the base colors. If you wish to customize
-    | the layout deeper, you might publish the assets and modify anything
-    | you need to.
-    |
-    */
-
-    'branding' => [
-        'logo' => '/vendor/root/root-logo-dark.svg',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Media Settings
     |--------------------------------------------------------------------------
     |

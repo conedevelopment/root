@@ -2,7 +2,7 @@
     <div class="app-header__inner">
         <div class="app-header__column">
             <a class="app-header__logo" href="{{ URL::route('root.dashboard') }}" aria-label="{{ Config::get('app.name') }}">
-                <img src="{{ URL::asset('vendor/root/img/root-logo.svg') }}" alt="">
+                @include('root::partials.logo')
             </a>
             <div class="app-header__actions app-header__actions--secondary">
                 <button
