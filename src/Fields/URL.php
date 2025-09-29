@@ -17,6 +17,11 @@ class URL extends Text
     protected Closure $textResolver;
 
     /**
+     * The link attributes.
+     */
+    protected array $linkAttributes = [];
+
+    /**
      * Create a new field instance.
      */
     public function __construct(string $label, Closure|string|null $modelAttribute = null)
@@ -39,17 +44,65 @@ class URL extends Text
     }
 
     /**
+     * Set the download attribute.
+     */
+    public function download(string $filename = ''): static
+    {
+        $this->linkAttributes['download'] = $filename;
+
+        return $this;
+    }
+
+    /**
+     * Set the target attribute.
+     */
+    public function target(string $target): static
+    {
+        $this->linkAttributes['target'] = $target;
+
+        return $this;
+    }
+
+    /**
+     * Set the rel attribute.
+     */
+    public function rel(string $rel): mixed
+    {
+        $this->linkAttributes['rel'] = $rel;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolveFormat(Request $request, Model $model): ?string
     {
         if (is_null($this->formatResolver)) {
-            $this->formatResolver = fn (Request $request, Model $model, mixed $value): ?string => is_null($value) ? $value : sprintf(
-                '<a href="%1$s" title="%1$s"%2$s>%3$s</a>',
-                $value,
-                $this->isExternal($value) ? ' data-turbo="false" target="_blank"' : '',
-                call_user_func_array($this->textResolver, [$model])
-            );
+            $this->formatResolver = function (Request $request, Model $model, mixed $value): ?string {
+                if (is_null($value)) {
+                    return $value;
+                }
+
+                $attributes = array_merge($this->linkAttributes, [
+                    'href' => $value,
+                    'title' => $value,
+                    'data-turbo' => $this->isExternal($value) ? 'false' : null,
+                    'target' => $this->isExternal($value) ? '_blank' : ($this->linkAttributes['target'] ?? null),
+                ]);
+
+                $attributes = array_map(
+                    fn (?string $value, string $key): string => sprintf('%s="%s"', $key, $value),
+                    array_values($attributes),
+                    array_keys($attributes)
+                );
+
+                return sprintf(
+                    '<a %s>%s</a>',
+                    implode(' ', $attributes),
+                    call_user_func_array($this->textResolver, [$model])
+                );
+            };
         }
 
         return parent::resolveFormat($request, $model);

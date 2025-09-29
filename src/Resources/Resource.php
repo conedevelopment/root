@@ -612,12 +612,12 @@ abstract class Resource implements Arrayable, Form
     {
         $event->route->defaults('resource', $this->getKey());
 
-        $controller = $event->route->getController();
+        if ($controller = $event->route->getController()) {
+            $controller->middleware($this->getRouteMiddleware());
 
-        $controller->middleware($this->getRouteMiddleware());
-
-        if (! is_null($this->getPolicy())) {
-            $controller->authorizeResource($this->getModel(), 'resourceModel');
+            if (! is_null($this->getPolicy())) {
+                $controller->authorizeResource($this->getModel(), 'resourceModel');
+            }
         }
 
         $this->__routeMatched($event);
