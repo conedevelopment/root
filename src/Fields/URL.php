@@ -93,10 +93,12 @@ class URL extends Text
 
                 $attributes = array_map(
                     static function (string|Closure|null $attribute, string $name) use ($request, $model, $value): string {
-                        return match (true) {
+                        $attribute = (string) match (true) {
                             $attribute instanceof Closure => call_user_func_array($attribute, [$request, $model, $value]),
-                            default => sprintf('%s="%s"', $name, (string) $attribute),
+                            default => $attribute,
                         };
+
+                        return sprintf('%s="%s"', $name, $attribute);
                     },
                     array_values($attributes),
                     array_keys($attributes)
