@@ -46,7 +46,7 @@ class URL extends Text
     /**
      * Set the download attribute.
      */
-    public function download(string $filename = ''): static
+    public function download(string|Closure $filename = ''): static
     {
         $this->linkAttributes['download'] = $filename;
 
@@ -56,7 +56,7 @@ class URL extends Text
     /**
      * Set the target attribute.
      */
-    public function target(string $target): static
+    public function target(string|Closure $target): static
     {
         $this->linkAttributes['target'] = $target;
 
@@ -66,7 +66,7 @@ class URL extends Text
     /**
      * Set the rel attribute.
      */
-    public function rel(string $rel): mixed
+    public function rel(string|Closure $rel): mixed
     {
         $this->linkAttributes['rel'] = $rel;
 
@@ -92,7 +92,12 @@ class URL extends Text
                 ]);
 
                 $attributes = array_map(
-                    fn (?string $value, string $key): string => sprintf('%s="%s"', $key, $value),
+                    static function (string|Closure|null $attribute, string $name) use ($request, $model, $value): string {
+                        return match (true) {
+                            $attribute instanceof Closure => call_user_func_array($attribute, [$request, $model, $value]),
+                            default => sprintf('%s="%s"', $name, (string) $attribute),
+                        };
+                    },
                     array_values($attributes),
                     array_keys($attributes)
                 );
