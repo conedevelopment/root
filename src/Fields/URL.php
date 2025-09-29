@@ -84,12 +84,11 @@ class URL extends Text
                     return $value;
                 }
 
-                $attributes = array_merge($this->linkAttributes, [
-                    'href' => $value,
-                    'title' => $value,
-                    'data-turbo' => $this->isExternal($value) ? 'false' : null,
-                    'target' => $this->isExternal($value) ? '_blank' : ($this->linkAttributes['target'] ?? null),
-                ]);
+                $attributes = array_merge(
+                    $this->linkAttributes,
+                    ['href' => $value, 'title' => $value],
+                    $this->isExternal($value) ? ['data-turbo' => 'false', 'target' => '_blank'] : []
+                );
 
                 $attributes = array_map(
                     static function (string|Closure|null $attribute, string $name) use ($request, $model, $value): string {
