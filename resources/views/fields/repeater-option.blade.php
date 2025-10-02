@@ -54,12 +54,10 @@
         </div>
     </div>
     <div class="repeater__body" x-show="open">
-        <div class="form-group-stack form-group-stack--bordered form-group-container">
-            <div class="form-group--row">
-                @foreach($fields as $field)
-                    @include($field['template'], $field)
-                @endforeach
-            </div>
+        <div class="form-group-stack form-group-container">
+            @foreach($fields as $field)
+                @include($field['template'], $field)
+            @endforeach
         </div>
     </div>
 </div>
