@@ -768,7 +768,13 @@ abstract class Relation extends Field implements Form
      */
     public function resolveRouteBinding(Request $request, string $id): Model
     {
-        return $this->getRelation($request->route()->parentOfParameter($this->getRouteKeyName()))->findOrFail($id);
+        $parent = $request->route()->parentOfParameter($this->getRouteKeyName());
+
+        $model = $this->getRelation($parent)->findOrFail($id);
+
+        $parent->setRelation('_child', $model);
+
+        return $model;
     }
 
     /**
