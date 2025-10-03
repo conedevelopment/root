@@ -770,11 +770,7 @@ abstract class Relation extends Field implements Form
     {
         $parent = $request->route()->parentOfParameter($this->getRouteKeyName());
 
-        $model = $this->getRelation($parent)->findOrFail($id);
-
-        $parent->setRelation('_child', $model);
-
-        return $model;
+        return $this->getRelation($parent)->findOrFail($id);
     }
 
     /**
