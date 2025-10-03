@@ -316,7 +316,7 @@ class BelongsToMany extends Relation
 
         $pivot->setRelation('related', $relation->make());
 
-        return array_merge($this->toSubResource($request, $model), [
+        return array_merge(parent::toCreate($request, $model), [
             'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
             'model' => $pivot,
             'action' => $this->modelUrl($model),
