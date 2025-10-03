@@ -41,7 +41,12 @@ class MorphToMany extends BelongsToMany
                     ->unless($this->allowDuplicateRelations, function (Builder $query) use ($model): Builder {
                         return $query->whereNotIn(
                             $query->getModel()->getQualifiedKeyName(),
-                            $this->getRelation($model->pivotParent)->select($query->getModel()->getQualifiedKeyName())
+                            $this->getRelation($model->pivotParent)
+                                ->select($query->getModel()->getQualifiedKeyName())
+                                ->whereNot(
+                                    $query->getModel()->getQualifiedKeyName(),
+                                    $model->getAttribute($model->getRelatedKey())
+                                )
                         );
                     });
             })->hydrate(function (Request $request, MorphPivot $model, mixed $value): void {

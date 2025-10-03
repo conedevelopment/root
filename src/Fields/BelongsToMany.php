@@ -238,7 +238,28 @@ class BelongsToMany extends Relation
 
         $pivot->setRelation('related', $related);
 
-        return parent::mapRelated($request, $model, $pivot);
+        return [
+            'id' => $related->getKey(),
+            'model' => $pivot,
+            'url' => $this->relatedUrl($pivot),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('index')
+                ->mapToDisplay($request, $pivot),
+            'abilities' => $this->mapRelatedAbilities($request, $model, $related),
+        ];
+    }
+
+    /**
+     * Get the related URL.
+     */
+    public function relatedUrl(Model $related): string
+    {
+        return match (true) {
+            $related instanceof Pivot => sprintf('%s/%s', $this->modelUrl($related->pivotParent), $related->getKey()),
+            default => parent::relatedUrl($related),
+        };
     }
 
     /**
@@ -316,15 +337,17 @@ class BelongsToMany extends Relation
 
         $pivot->setRelation('related', $relation->make());
 
-        return array_merge(parent::toCreate($request, $model), [
+        return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
             'title' => __('Attach :model', ['model' => $this->getRelatedName()]),
             'model' => $pivot,
             'action' => $this->modelUrl($model),
             'method' => 'POST',
+            'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
                 ->authorized($request, $pivot)
-                ->visible('relation.create')
+                ->visible('create')
                 ->mapToInputs($request, $pivot),
         ]);
     }
@@ -340,7 +363,26 @@ class BelongsToMany extends Relation
 
         $pivot->setRelation('related', $related);
 
-        return parent::toShow($request, $model, $pivot);
+        return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.show',
+            'title' => $this->resolveDisplay($related),
+            'model' => $pivot,
+            'action' => $this->relatedUrl($pivot),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('show')
+                ->mapToDisplay($request, $pivot),
+            'actions' => $this->resolveActions($request)
+                ->authorized($request, $related)
+                ->visible('show')
+                ->standalone(false)
+                ->mapToForms($request, $pivot),
+            'abilities' => array_merge(
+                $this->mapRelationAbilities($request, $model),
+                $this->mapRelatedAbilities($request, $model, $related)
+            ),
+        ]);
     }
 
     /**
@@ -354,6 +396,22 @@ class BelongsToMany extends Relation
 
         $pivot->setRelation('related', $related);
 
-        return parent::toEdit($request, $model, $pivot);
+        return array_merge($this->toSubResource($request, $model), [
+            'template' => 'root::resources.form',
+            'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
+            'model' => $pivot,
+            'action' => $this->relatedUrl($pivot),
+            'method' => 'PATCH',
+            'uploads' => $this->hasFileField($request),
+            'fields' => $this->resolveFields($request)
+                ->subResource(false)
+                ->authorized($request, $related)
+                ->visible('update')
+                ->mapToInputs($request, $pivot),
+            'abilities' => array_merge(
+                $this->mapRelationAbilities($request, $model),
+                $this->mapRelatedAbilities($request, $model, $related)
+            ),
+        ]);
     }
 }
