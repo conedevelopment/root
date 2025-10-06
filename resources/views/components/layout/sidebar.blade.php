@@ -2,7 +2,7 @@
     <aside class="app-sidebar">
         <div class="app-sidebar__header">
             <a class="app-sidebar__logo" href="{{ URL::route('root.dashboard') }}" aria-label="{{ Config::get('app.name') }}">
-                <img src="{{ URL::asset('vendor/root/img/root-logo.svg') }}">
+                @include('root::partials.logo')
             </a>
             <button
                 type="button"
