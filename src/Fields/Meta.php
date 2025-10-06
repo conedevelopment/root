@@ -129,6 +129,10 @@ class Meta extends MorphOne
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $related = $this->getValue($model);
 
+                $related ??= $this->getRelation($model)->make([
+                    'key' => $this->getModelAttribute(),
+                ]);
+
                 $related->setAttribute('value', $value);
 
                 $model->setRelation($this->getRelationName(), $related);
