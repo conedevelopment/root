@@ -22,6 +22,6 @@ trait HasMetaData
      */
     public function metaValue(string $key, mixed $default = null): mixed
     {
-        return $this->metaData->firstWhere('key', $key)?->value ?: $default;
+        return $this->metaData->sortByDesc('created_at')->firstWhere('key', $key)?->value ?: $default;
     }
 }
