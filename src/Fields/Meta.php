@@ -99,7 +99,10 @@ class Meta extends MorphOne
             && $model->relationLoaded('metaData')
             && ! $model->relationLoaded($name)
         ) {
-            $model->setRelation($name, $model->metaValue($this->getModelAttribute()));
+            $model->setRelation(
+                $name,
+                $model->metaData->sortByDesc('created_at')->firstWhere('key', $this->getModelAttribute())
+            );
         }
 
         return parent::getValue($model);
