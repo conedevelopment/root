@@ -283,12 +283,10 @@ abstract class Resource implements Arrayable, Form
      */
     public function resolveRouteBindingQuery(Request $request): Builder
     {
-        return $this->resolveQuery($request)
-            ->withoutEagerLoads()
-            ->when(
-                $this->isSoftDeletable(),
-                static fn (Builder $query): Builder => $query->withTrashed()
-            );
+        return $this->resolveQuery($request)->when(
+            $this->isSoftDeletable(),
+            static fn (Builder $query): Builder => $query->withTrashed()
+        );
     }
 
     /**
