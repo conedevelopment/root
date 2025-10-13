@@ -26,7 +26,7 @@
         "laravel/pint": "^1.6",
         "mockery/mockery": "^1.6",
         "larastan/larastan": "^3.4",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^12.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

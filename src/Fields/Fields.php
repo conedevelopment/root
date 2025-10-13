@@ -108,7 +108,10 @@ class Fields extends Collection
      */
     public function mapToValidate(Request $request, Model $model): array
     {
-        return $this->reduce(static fn (array $rules, Field $field): array => array_merge_recursive($rules, $field->toValidate($request, $model)), []);
+        return $this->subResource(false)
+            ->reduce(static function (array $rules, Field $field) use ($request, $model): array {
+                return array_merge_recursive($rules, $field->toValidate($request, $model));
+            }, []);
     }
 
     /**
