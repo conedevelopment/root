@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cone\Root\Fields;
 
-use BackedEnum;
 use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-
 use Illuminate\Support\Collection;
 
 class Select extends Field
