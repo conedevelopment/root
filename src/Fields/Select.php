@@ -8,10 +8,12 @@ use BackedEnum;
 use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
+use function Illuminate\Support\enum_value;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+
 use Illuminate\Support\Collection;
 
 class Select extends Field
@@ -78,7 +80,7 @@ class Select extends Field
 
                 return Collection::make($value)
                     ->map(static function (mixed $value) use ($options): string {
-                        $value = $value instanceof BackedEnum ? $value->value : $value;
+                        $value = enum_value($value);
 
                         return $options[$value] ?? $value;
                     })
@@ -115,7 +117,10 @@ class Select extends Field
         return array_map(function (mixed $label, mixed $option) use ($value): array {
             $option = $label instanceof Option ? $label : $this->newOption($option, $label);
 
-            $option->selected(in_array($option->getAttribute('value'), $value));
+            $option->selected(in_array(
+                $option->getAttribute('value'),
+                array_map(fn (mixed $v): mixed => enum_value($v), $value)
+            ));
 
             return $option->toArray();
         }, $options, array_keys($options));
