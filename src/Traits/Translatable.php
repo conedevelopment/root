@@ -27,7 +27,7 @@ trait Translatable
 
         return match ($locale) {
             (Translation::proxy())::getTranslatableLocale() => $this->getAttribute($key),
-            default => $this->translations->firstWhere('locale', $locale)?->values[$key] ?? null,
+            default => $this->translations->firstWhere('locale', $locale)?->values[$key] ?? $this->getAttribute($key),
         };
     }
 }
