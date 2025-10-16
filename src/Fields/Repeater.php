@@ -205,16 +205,6 @@ class Repeater extends Field
     }
 
     /**
-     * Get the model URL.
-     */
-    public function modelUrl(Model $model): string
-    {
-        $key = $model->exists ? (string) $model->getKey() : 'create';
-
-        return str_replace('{resourceModel}', $key, $this->getUri());
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function resolveFormat(Request $request, Model $model): ?string
@@ -281,7 +271,7 @@ class Repeater extends Field
                     'html' => View::make('root::fields.repeater-option', $option)->render(),
                 ]);
             }, $this->resolveOptions($request, $model)),
-            'url' => $this->modelUrl($model),
+            'url' => $this->replaceRoutePlaceholders($request->route()),
         ]);
     }
 
