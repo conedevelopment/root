@@ -55,7 +55,7 @@ class TranslationTest extends TestCase
             $this->user->translate('name', Translation::getTranslatableLocale())
         );
 
-        $this->assertNull(
+        $this->assertSame(
             $this->user->name,
             $this->user->translate('name', 'fake')
         );

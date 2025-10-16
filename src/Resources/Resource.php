@@ -356,20 +356,20 @@ abstract class Resource implements Arrayable, Form
         }
 
         return Translations::make()
-                ->withFields(function () use ($request): array {
-                    return $this->resolveFields($request)
-                        ->translatable()
-                        ->map(static function (Field $field): Field {
-                            return (clone $field)
-                                ->translatable(false)
-                                ->value(static function (Request $request, Translation $model) use ($field): mixed {
-                                    return $model->values[$field->getModelAttribute()] ?? null;
-                                })
-                                ->hydrate(static function (Request $request, Translation $model, mixed $value) use ($field): void {
-                                    $model->values[$field->getModelAttribute()] = $value;
-                                });
-                        })->all();
-                });
+            ->withFields(function () use ($request): array {
+                return $this->resolveFields($request)
+                    ->translatable()
+                    ->map(static function (Field $field): Field {
+                        return (clone $field)
+                            ->translatable(false)
+                            ->value(static function (Request $request, Translation $model) use ($field): mixed {
+                                return $model->values[$field->getModelAttribute()] ?? null;
+                            })
+                            ->hydrate(static function (Request $request, Translation $model, mixed $value) use ($field): void {
+                                $model->values[$field->getModelAttribute()] = $value;
+                            });
+                    })->all();
+            });
     }
 
     /**

@@ -2,89 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Cone\Root\Models;
+namespace Cone\Root\Traits;
 
-use Cone\Root\Database\Factories\TranslationFactory;
-use Cone\Root\Interfaces\Models\Translation as Contract;
-use Cone\Root\Traits\InteractsWithProxy;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Cone\Root\Models\Translation;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\App;
 
-class Translation extends Model implements Contract
+trait Translatable
 {
-    use HasFactory;
-    use InteractsWithProxy;
-
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
+     * Get the translations for the model.
      */
-    protected $casts = [
-        'values' => AsArrayObject::class,
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'locale',
-        'values',
-    ];
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'root_translations';
-
-    /**
-     * The translatable model's locale.
-     */
-    protected static string $translatableLocale = 'en';
-
-    /**
-     * Get the proxied interface.
-     */
-    public static function getProxiedInterface(): string
+    public function translations(): MorphMany
     {
-        return Contract::class;
+        return $this->morphMany(Translation::getProxiedClass(), 'translatable');
     }
 
     /**
-     * Create a new factory instance for the model.
+     * Translate the value of the given key.
      */
-    protected static function newFactory(): TranslationFactory
+    public function translate(string $key, ?string $locale = null): mixed
     {
-        return TranslationFactory::new();
-    }
+        $locale ??= App::getLocale();
 
-    /**
-     * Set the translatable model's locale.
-     */
-    public static function setTranslatableLocale(string $locale): void
-    {
-        static::$translatableLocale = $locale;
-    }
-
-    /**
-     * Get the translatable model's locale.
-     */
-    public static function getTranslatableLocale(): string
-    {
-        return static::$translatableLocale;
-    }
-
-    /**
-     * Get the translatable model for the translation.
-     */
-    public function translatable(): MorphTo
-    {
-        return $this->morphTo();
+        return match ($locale) {
+            (Translation::proxy())::getTranslatableLocale() => $this->getAttribute($key),
+            default => $this->translations->firstWhere('locale', $locale)?->values[$key] ?? $this->getAttribute($key),
+        };
     }
 }

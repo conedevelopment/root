@@ -7,6 +7,7 @@ namespace Cone\Root\Models;
 use Cone\Root\Database\Factories\TranslationFactory;
 use Cone\Root\Interfaces\Models\Translation as Contract;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -22,7 +23,7 @@ class Translation extends Model implements Contract
      * @var array<string, string>
      */
     protected $casts = [
-        'values' => 'json',
+        'values' => AsArrayObject::class,
     ];
 
     /**
