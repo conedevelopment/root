@@ -68,7 +68,7 @@ class Translations extends MorphMany
     public function resolveDisplay(Model $related): ?string
     {
         if (is_null($this->displayResolver)) {
-            $this->display('locale');
+            $this->display(fn (): string => strtoupper($related->locale));
         }
 
         return parent::resolveDisplay($related);
@@ -93,10 +93,13 @@ class Translations extends MorphMany
                         ? $options
                         : array_unique(array_merge([$model->locale], $options));
 
-                    return array_combine($options, array_map('strtoupper', $options));
+                    return array_combine(
+                        array_map('strtolower', $options),
+                        array_map('strtoupper', $options)
+                    );
                 })
                 ->required()
-                ->rules(['required', 'string', Rule::in(array_keys($this->getLocales()))]),
+                ->rules(['required', 'string', Rule::in(array_map('strtolower', $this->getLocales()))]),
         ];
     }
 }
