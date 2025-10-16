@@ -22,6 +22,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Filters\TrashStatus;
 use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
+use Cone\Root\Models\Translation;
 use Cone\Root\Root;
 use Cone\Root\Support\Alert;
 use Cone\Root\Traits\AsForm;
@@ -350,17 +351,25 @@ abstract class Resource implements Arrayable, Form
      */
     public function resolveTranslationsField(Request $request): ?Translations
     {
-        return $this->translatable()
-            ? Translations::make()
-                ->withFields(fn (): array => $this->resolveFields($request)
-                    ->translatable()
-                    ->map(static fn (Field $field): Field => (clone $field)
-                        ->translatable(false)
-                        ->setModelAttribute($key = 'values->'.$field->getModelAttribute())
-                        ->name($key)
-                        ->id($key))
-                    ->all())
-            : null;
+        if (! $this->translatable()) {
+            return null;
+        }
+
+        return Translations::make()
+                ->withFields(function () use ($request): array {
+                    return $this->resolveFields($request)
+                        ->translatable()
+                        ->map(static function (Field $field): Field {
+                            return (clone $field)
+                                ->translatable(false)
+                                ->value(static function (Request $request, Translation $model) use ($field): mixed {
+                                    return $model->values[$field->getModelAttribute()] ?? null;
+                                })
+                                ->hydrate(static function (Request $request, Translation $model, mixed $value) use ($field): void {
+                                    $model->values[$field->getModelAttribute()] = $value;
+                                });
+                        })->all();
+                });
     }
 
     /**
