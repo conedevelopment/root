@@ -116,9 +116,13 @@ class Repeater extends Field
         );
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(
-                fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getModelAttribute())->value()
-            );
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())
+                    ->singular()
+                    ->ucfirst()
+                    ->prepend($this->getModelAttribute())
+                    ->value();
+            });
         }
     }
 
@@ -284,5 +288,13 @@ class Repeater extends Field
             parent::toValidate($request, $model),
             $this->resolveFields($request)->mapToValidate($request, $model)
         );
+    }
+
+    /**
+     * Clone the field.
+     */
+    public function __clone(): void
+    {
+        $this->fields = null;
     }
 }
