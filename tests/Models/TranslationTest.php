@@ -56,6 +56,7 @@ class TranslationTest extends TestCase
         );
 
         $this->assertNull(
+            $this->user->name,
             $this->user->translate('name', 'fake')
         );
     }
