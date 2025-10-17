@@ -79,7 +79,7 @@ class TwoFactorController extends Controller
      */
     public function resend(Request $request): RedirectResponse
     {
-        $code = $request->user()->authCodes()->create();
+        $code = $request->user()->generateAuthCode();
 
         $request->user()->notify(new AuthCodeNotification($code));
 

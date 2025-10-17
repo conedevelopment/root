@@ -23,7 +23,9 @@ class AuthCode extends Model implements Contract
      *
      * @var list<string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'code',
+    ];
 
     /**
      * The table associated with the model.

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Date;
 
 class User extends Authenticatable implements Contract
 {
@@ -101,6 +102,22 @@ class User extends Authenticatable implements Contract
         }
 
         return ! $request->session()->has('root.auth.two-factor');
+    }
+
+    /**
+     * Generate a new auth code for the user.
+     */
+    public function generateAuthCode(): AuthCode
+    {
+        $this->authCodes()->delete();
+
+        $code = $this->authCodes()->make()->forceFill([
+            'expires_at' => Date::now()->addMinutes(5),
+        ]);
+
+        $code->save();
+
+        return $code;
     }
 
     /**
