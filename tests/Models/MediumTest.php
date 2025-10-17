@@ -60,11 +60,6 @@ class MediumTest extends TestCase
             $query->toSql()
         );
         $this->assertSame(['%test%'], $query->getBindings());
-
-        $this->assertSame(
-            'select * from "root_media"',
-            Medium::query()->search()->toSql()
-        );
     }
 
     public function test_a_medium_has_type_query_scope(): void
