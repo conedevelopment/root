@@ -13,6 +13,7 @@ use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -53,15 +54,6 @@ class Medium extends Model implements Contract
      */
     protected $attributes = [
         'properties' => '{"conversions":[]}',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'properties' => 'json',
     ];
 
     /**
@@ -164,6 +156,18 @@ class Medium extends Model implements Contract
             'size' => max(round(filesize($path) / 1024), 1),
             'name' => pathinfo($name, PATHINFO_FILENAME),
         ], $attributes));
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'properties':'json'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'properties' => 'json',
+        ];
     }
 
     /**
@@ -313,7 +317,8 @@ class Medium extends Model implements Contract
     /**
      * Scope the query only to the given search term.
      */
-    public function scopeSearch(Builder $query, ?string $value = null): Builder
+    #[Scope]
+    protected function search(Builder $query, string $value): Builder
     {
         if (is_null($value)) {
             return $query;
@@ -325,7 +330,8 @@ class Medium extends Model implements Contract
     /**
      * Scope the query only to the given type.
      */
-    public function scopeType(Builder $query, string $value): Builder
+    #[Scope]
+    protected function type(Builder $query, string $value): Builder
     {
         return match ($value) {
             'image' => $query->where($query->qualifyColumn('mime_type'), 'like', 'image%'),

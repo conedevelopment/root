@@ -33,4 +33,16 @@ class Attachment extends MorphPivot
      * @var string
      */
     protected $table = 'root_mediables';
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'meta':'json'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'json',
+        ];
+    }
 }

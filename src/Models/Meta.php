@@ -18,15 +18,6 @@ class Meta extends Model implements Contract
     use InteractsWithProxy;
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'value' => MetaValue::class,
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -57,6 +48,18 @@ class Meta extends Model implements Contract
     protected static function newFactory(): MetaFactory
     {
         return MetaFactory::new();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'value':'\Cone\Root\Casts\MetaValue'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'value' => MetaValue::class,
+        ];
     }
 
     /**

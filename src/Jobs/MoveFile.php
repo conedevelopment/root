@@ -23,21 +23,6 @@ class MoveFile implements ShouldQueue
     use SerializesModels;
 
     /**
-     * The medium instance.
-     */
-    public Medium $medium;
-
-    /**
-     * The path to the file.
-     */
-    public string $path;
-
-    /**
-     * Indicates if the original file should be preserved.
-     */
-    public bool $preserve = true;
-
-    /**
      * Delete the job if its models no longer exist.
      *
      * @var bool
@@ -47,11 +32,12 @@ class MoveFile implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(Medium $medium, string $path, bool $preserve = true)
-    {
-        $this->path = $path;
-        $this->medium = $medium;
-        $this->preserve = $preserve;
+    public function __construct(
+        public readonly Medium $medium,
+        public readonly string $path,
+        public readonly bool $preserve = true
+    ) {
+        //
     }
 
     /**

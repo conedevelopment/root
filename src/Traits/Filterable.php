@@ -15,7 +15,7 @@ trait Filterable
     public function scopeFilter(Builder $query, Request $request): Builder
     {
         foreach ($request->except('filter') as $name => $value) {
-            if ($this->hasNamedScope($name)) {
+            if ($this->hasNamedScope($name) && ! empty($value)) {
                 $this->callNamedScope($name, [$query, $value]);
             }
         }

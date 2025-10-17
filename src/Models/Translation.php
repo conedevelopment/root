@@ -18,15 +18,6 @@ class Translation extends Model implements Contract
     use InteractsWithProxy;
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'values' => AsArrayObject::class,
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -78,6 +69,18 @@ class Translation extends Model implements Contract
     public static function getTranslatableLocale(): string
     {
         return static::$translatableLocale;
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'values':'\Illuminate\Database\Eloquent\Casts\AsArrayObject'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'values' => AsArrayObject::class,
+        ];
     }
 
     /**

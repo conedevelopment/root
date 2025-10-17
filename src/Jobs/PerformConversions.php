@@ -20,11 +20,6 @@ class PerformConversions implements ShouldQueue
     use SerializesModels;
 
     /**
-     * The medium instance.
-     */
-    public Medium $medium;
-
-    /**
      * Delete the job if its models no longer exist.
      *
      * @var bool
@@ -34,9 +29,9 @@ class PerformConversions implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(Medium $medium)
+    public function __construct(public readonly Medium $medium)
     {
-        $this->medium = $medium;
+        //
     }
 
     /**

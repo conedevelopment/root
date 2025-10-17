@@ -18,15 +18,6 @@ class Event extends Model implements Contract
     use InteractsWithProxy;
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'payload' => 'json',
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -57,6 +48,18 @@ class Event extends Model implements Contract
     protected static function newFactory(): EventFactory
     {
         return EventFactory::new();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'payload':'json'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'payload' => 'json',
+        ];
     }
 
     /**

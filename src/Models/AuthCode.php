@@ -19,16 +19,6 @@ class AuthCode extends Model implements Contract
     use InteractsWithProxy;
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'code' => 'int',
-        'expires_at' => 'datetime',
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -41,6 +31,30 @@ class AuthCode extends Model implements Contract
      * @var string
      */
     protected $table = 'root_auth_codes';
+
+    /**
+     * Create a new Eloquent model instance.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct(
+            array_merge(['code' => static::generate()], $attributes)
+        );
+    }
+
+    /**
+     * Generate a new code.
+     */
+    public static function generate(): string
+    {
+        do {
+            $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        } while (preg_match('/(\d)\1{2,}/', $code) === 1);
+
+        return $code;
+    }
 
     /**
      * Get the proxied interface.
@@ -56,6 +70,19 @@ class AuthCode extends Model implements Contract
     protected static function newFactory(): AuthCodeFactory
     {
         return AuthCodeFactory::new();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array{'code':'int', 'expires_at':'datetime'}
+     */
+    protected function casts(): array
+    {
+        return [
+            'code' => 'int',
+            'expires_at' => 'datetime',
+        ];
     }
 
     /**

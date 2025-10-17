@@ -59,7 +59,7 @@ class LoginController extends Controller
 
         if ($request->user()->can('viewRoot') && $request->user()->shouldTwoFactorAuthenticate($request)) {
             $request->user()->notify(
-                new AuthCodeNotification($request->user()->generateAuthCode())
+                new AuthCodeNotification($request->user()->authCodes()->create())
             );
 
             $request->session()->flash('status', __('The two factor authentication link has been sent!'));
