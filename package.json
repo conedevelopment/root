@@ -36,7 +36,7 @@
         "sass-loader": "^8.0.0",
         "sprucecss": "^2.3.3",
         "tiptap": "^1.32.2",
-        "vite": "^7.0.0"
+        "vite": "^7.1.11"
     },
     "devDependencies": {
         "stylelint": "^16.10.0",
