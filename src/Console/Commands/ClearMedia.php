@@ -15,7 +15,7 @@ class ClearMedia extends Command
      *
      * @var string
      */
-    protected $signature = 'root:clear-media {--all: Delete all the media and files}';
+    protected $signature = 'root:clear-media {--all : Delete all the media and files}';
 
     /**
      * The console command description.
