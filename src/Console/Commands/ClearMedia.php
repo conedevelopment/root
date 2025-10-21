@@ -6,6 +6,7 @@ namespace Cone\Root\Console\Commands;
 
 use Cone\Root\Models\Medium;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class ClearMedia extends Command
 {
@@ -14,7 +15,7 @@ class ClearMedia extends Command
      *
      * @var string
      */
-    protected $signature = 'root:clear-media';
+    protected $signature = 'root:clear-media {--all: Delete all the media and files}';
 
     /**
      * The console command description.
@@ -30,11 +31,18 @@ class ClearMedia extends Command
     {
         $count = 0;
 
-        Medium::proxy()->newQuery()->cursor()->each(static function (Medium $medium) use (&$count): void {
-            $medium->delete();
+        $all = $this->option('all');
 
-            $count++;
-        });
+        Medium::proxy()
+            ->newQuery()
+            ->cursor()
+            ->each(static function (Medium $medium) use (&$count, $all): void {
+                if ($all || ! Storage::disk($medium->disk)->exists($medium->getPath())) {
+                    $medium->delete();
+
+                    $count++;
+                }
+            });
 
         $this->info(sprintf('%d media have been deleted!', $count));
     }
