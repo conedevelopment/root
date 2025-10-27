@@ -18,6 +18,15 @@ class Translation extends Model implements Contract
     use InteractsWithProxy;
 
     /**
+     * The attributes that should have default values.
+     *
+     * @var array<string, string>
+     */
+    protected $attributes = [
+        'values' => '[]',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

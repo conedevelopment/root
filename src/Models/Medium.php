@@ -15,6 +15,7 @@ use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -161,12 +162,12 @@ class Medium extends Model implements Contract
     /**
      * Get the attributes that should be cast.
      *
-     * @return array{'properties':'json'}
+     * @return array{'values':'\Illuminate\Database\Eloquent\Casts\AsArrayObject'}
      */
     protected function casts(): array
     {
         return [
-            'properties' => 'json',
+            'properties' => AsArrayObject::class,
         ];
     }
 
