@@ -3,7 +3,6 @@ import Axios from 'axios';
 import focus from '@alpinejs/focus';
 import Cookie from '@conedevelopment/qkie';
 import './notifications';
-import './theme';
 import * as Turbo from '@hotwired/turbo';
 
 // Turbo
@@ -25,6 +24,36 @@ window.$http = Axios.create({
 
 // Cookie
 window.$cookie = new Cookie('__root_');
+
+(() => {
+    const setTheme = (theme) => {
+        if (theme === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        document.documentElement.setAttribute('data-theme-mode', theme);
+    }
+
+    document.addEventListener('theme:change', (event) => {
+        document.documentElement.classList.add('no-transition');
+
+        window.$cookie.set('theme', event.detail.theme);
+
+        setTheme(event.detail.theme);
+
+        document.documentElement.classList.remove('no-transition');
+    });
+
+    window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', (event) => {
+            if (window.$cookie.get('theme', 'system') === 'system') {
+                setTheme(event.matches ? 'dark' : 'light');
+            }
+        });
+
+    setTheme(window.$cookie.get('theme', 'system'));
+})();
 
 // Handle the relation frame load event
 document.addEventListener('relation-frame-loaded', (event) => {

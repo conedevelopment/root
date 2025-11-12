@@ -100,6 +100,8 @@ class RootServiceProvider extends ServiceProvider
         $this->registerExceptions();
         $this->registerAuth();
         $this->registerEvents();
+
+        EncryptCookies::except(['__root_theme']);
     }
 
     /**

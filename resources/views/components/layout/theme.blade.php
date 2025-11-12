@@ -29,3 +29,12 @@
         <x-root::icon name="system-mode" class="btn__icon" />
     </button>
 </div>
+
+{{-- Scripts --}}
+@pushOnce('scripts')
+    {{
+        Vite::withEntryPoints('resources/js/theme.js')
+            ->useBuildDirectory('vendor/root/build')
+            ->useHotFile(public_path('vendor/root/hot'))
+    }}
+@endPushOnce
