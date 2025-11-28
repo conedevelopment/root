@@ -616,6 +616,14 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the page key.
+     */
+    public function getPageKey(): string
+    {
+        return sprintf('%s_page', $this->getRequestKey());
+    }
+
+    /**
      * Get the sort key.
      */
     public function getSortKey(): string
@@ -657,10 +665,11 @@ abstract class Relation extends Field implements Form
             ->withCount($this->withCount)
             ->latest()
             ->paginate(
-                $request->input(
+                perPage: $request->input(
                     $this->getPerPageKey(),
                     $request->isTurboFrameRequest() ? 5 : $relation->getRelated()->getPerPage()
-                )
+                ),
+                pageName: $this->getPageKey()
             )->withQueryString();
     }
 
