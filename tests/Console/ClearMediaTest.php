@@ -14,7 +14,7 @@ class ClearMediaTest extends TestCase
     {
         $medium = Medium::factory()->create();
 
-        $this->artisan('root:clear-media', ['all' => true])
+        $this->artisan('root:clear-media', ['--all' => true])
             ->expectsOutput('1 media have been deleted!')
             ->assertExitCode(Command::SUCCESS);
 
