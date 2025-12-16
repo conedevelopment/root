@@ -7,6 +7,7 @@ namespace Cone\Root\Traits;
 use Closure;
 use Cone\Root\Support\ClassList;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasAttributes
@@ -21,7 +22,7 @@ trait HasAttributes
      */
     public function id(string $value): static
     {
-        return $this->setAttribute('id', strtolower($value));
+        return $this->setAttribute('id', Str::of($value)->slug()->value());
     }
 
     /**

@@ -55,6 +55,13 @@ class Select extends Field
      */
     public function multiple(bool $value = true): static
     {
+        $name = match ($value) {
+            true => $this->getAttribute('name').'[]',
+            default => trim($this->getAttribute('name'), '[]'),
+        };
+
+        $this->setAttribute('name', $name);
+
         return $this->setAttribute('multiple', $value);
     }
 
