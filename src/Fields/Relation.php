@@ -583,11 +583,15 @@ abstract class Relation extends Field implements Form
     {
         return $this->resolveRelatableQuery($request, $model)
             ->get()
-            ->when(! is_null($this->groupResolver), fn (Collection $collection): Collection => $collection->groupBy($this->groupResolver)
-                ->map(fn (Collection $group, string $key): array => [
+            ->when(! is_null($this->groupResolver), function (Collection $collection): Collection {
+                return $collection->groupBy($this->groupResolver);
+            })
+            ->map(function (Collection $group, string $key) use ($request, $model): array {
+                return [
                     'label' => $key,
                     'options' => $group->map(fn (Model $related): array => $this->toOption($request, $model, $related))->all(),
-                ]), fn (Collection $collection): Collection => $collection->map(fn (Model $related): array => $this->toOption($request, $model, $related)))
+                ];
+            })
             ->toArray();
     }
 
