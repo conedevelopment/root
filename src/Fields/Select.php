@@ -7,13 +7,13 @@ namespace Cone\Root\Fields;
 use Closure;
 use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
+use function Illuminate\Support\enum_value;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
-use function Illuminate\Support\enum_value;
+use Illuminate\Support\Collection;
 
 class Select extends Field
 {
@@ -102,7 +102,7 @@ class Select extends Field
      */
     public function options(array|Closure $value): static
     {
-        $this->optionsResolver = is_callable($value) ? $value : static fn (): array => $value;
+        $this->optionsResolver = is_array($value) ? static fn (): array => $value : $value;
 
         return $this;
     }
