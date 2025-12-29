@@ -161,7 +161,7 @@ abstract class Resource implements Arrayable, Form
      */
     public function getModelName(): string
     {
-        return __(Str::of($this->getModel())->classBasename()->value());
+        return __(Str::of($this->getModel())->classBasename()->headline()->value());
     }
 
     /**
