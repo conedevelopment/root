@@ -1,15 +1,15 @@
 {
   "resources/js/app.js": {
-    "file": "assets/app-DkVGwCQq.js",
+    "file": "assets/app-D8zIyr35.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-qZviUOA4.css"
+      "assets/app-C-Vs_CXM.css"
     ]
   },
   "resources/js/chart.js": {
-    "file": "assets/chart-CxTZjYJl.js",
+    "file": "assets/chart-CtPqM5KN.js",
     "name": "chart",
     "src": "resources/js/chart.js",
     "isEntry": true,
@@ -18,7 +18,7 @@
     ]
   },
   "resources/js/dropdown.js": {
-    "file": "assets/dropdown-CxTZjYJl.js",
+    "file": "assets/dropdown-CtPqM5KN.js",
     "name": "dropdown",
     "src": "resources/js/dropdown.js",
     "isEntry": true,
@@ -27,7 +27,7 @@
     ]
   },
   "resources/js/editor.js": {
-    "file": "assets/editor-CxTZjYJl.js",
+    "file": "assets/editor-CtPqM5KN.js",
     "name": "editor",
     "src": "resources/js/editor.js",
     "isEntry": true,
@@ -36,7 +36,7 @@
     ]
   },
   "resources/js/media-manager.js": {
-    "file": "assets/media-manager-CxTZjYJl.js",
+    "file": "assets/media-manager-CtPqM5KN.js",
     "name": "media-manager",
     "src": "resources/js/media-manager.js",
     "isEntry": true,
@@ -44,8 +44,17 @@
       "resources/js/app.js"
     ]
   },
+  "resources/js/relation.js": {
+    "file": "assets/relation-CtPqM5KN.js",
+    "name": "relation",
+    "src": "resources/js/relation.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
   "resources/js/repeater.js": {
-    "file": "assets/repeater-CxTZjYJl.js",
+    "file": "assets/repeater-CtPqM5KN.js",
     "name": "repeater",
     "src": "resources/js/repeater.js",
     "isEntry": true,
@@ -54,7 +63,7 @@
     ]
   },
   "resources/js/table.js": {
-    "file": "assets/table-CxTZjYJl.js",
+    "file": "assets/table-CtPqM5KN.js",
     "name": "table",
     "src": "resources/js/table.js",
     "isEntry": true,
@@ -63,7 +72,7 @@
     ]
   },
   "resources/js/theme.js": {
-    "file": "assets/theme-CxTZjYJl.js",
+    "file": "assets/theme-CtPqM5KN.js",
     "name": "theme",
     "src": "resources/js/theme.js",
     "isEntry": true,
@@ -72,7 +81,7 @@
     ]
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-CxTZjYJl.js",
+    "file": "assets/app-CtPqM5KN.js",
     "name": "app",
     "src": "resources/sass/app.scss",
     "isEntry": true,

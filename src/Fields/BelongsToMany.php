@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentRelation;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -110,9 +109,13 @@ class BelongsToMany extends Relation
         }
 
         if ($field instanceof Relation) {
-            $field->resolveRouteKeyNameUsing(
-                fn (): string => Str::of($field->getRelationName())->singular()->ucfirst()->prepend($this->getRouteKeyName())->value()
-            );
+            $field->resolveRouteKeyNameUsing(function () use ($field): string {
+                return Str::of($field->getRelationName())
+                    ->singular()
+                    ->ucfirst()
+                    ->prepend($this->getRouteKeyName())
+                    ->value();
+            });
         }
 
         parent::resolveField($request, $field);
@@ -263,19 +266,11 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * {@inheritdoc}
+     * Get the relation controller class.
      */
-    public function routes(Router $router): void
+    public function getRelationController(): string
     {
-        if ($this->isSubResource()) {
-            $router->get('/', [BelongsToManyController::class, 'index']);
-            $router->get('/create', [BelongsToManyController::class, 'create']);
-            $router->get("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'show']);
-            $router->post('/', [BelongsToManyController::class, 'store']);
-            $router->get("/{{$this->getRouteKeyName()}}/edit", [BelongsToManyController::class, 'edit']);
-            $router->patch("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'update']);
-            $router->delete("/{{$this->getRouteKeyName()}}", [BelongsToManyController::class, 'destroy']);
-        }
+        return BelongsToManyController::class;
     }
 
     /**

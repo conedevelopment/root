@@ -22,6 +22,7 @@ export default defineConfig({
             input: [
                 'resources/js/app.js',
                 'resources/js/editor.js',
+                'resources/js/relation.js',
                 'resources/js/media-manager.js',
                 'resources/js/repeater.js',
                 'resources/js/dropdown.js',

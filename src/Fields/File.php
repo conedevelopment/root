@@ -138,11 +138,7 @@ class File extends MorphToMany
     {
         return $this->resolveValue($request, $model)
             ->map(function (Medium $medium) use ($request, $model): array {
-                $option = $this->toOption($request, $model, $medium);
-
-                return array_merge($option, [
-                    'html' => View::make('root::fields.file-option', $option)->render(),
-                ]);
+                return $this->toOption($request, $model, $medium);
             })
             ->all();
     }
@@ -280,16 +276,17 @@ class File extends MorphToMany
         $option['attrs']->merge(['name' => $name]);
 
         /** @var \Cone\Root\Models\Medium $related */
-
-        return array_merge($option, [
+        $option = array_merge($option, [
             'fileName' => $related->file_name,
             'isImage' => $related->isImage,
             'processing' => false,
-            'url' => ! is_null($this->displayConversion) && $related->hasConversion($this->displayConversion)
-                ? $related->getUrl($this->displayConversion)
-                : $related->getUrl(),
+            'url' => $related->getUrl($this->displayConversion),
             'uuid' => $related->uuid,
         ]);
+
+        $option['html'] = View::make('root::fields.file-option', $option)->render();
+
+        return $option;
     }
 
     /**

@@ -11,6 +11,7 @@ use Cone\Root\Filters\Filter;
 use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Filters\Search;
 use Cone\Root\Filters\Sort;
+use Cone\Root\Http\Controllers\AsyncRelationController;
 use Cone\Root\Http\Controllers\RelationController;
 use Cone\Root\Http\Middleware\Authorize;
 use Cone\Root\Interfaces\Form;
@@ -35,6 +36,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,6 +90,11 @@ abstract class Relation extends Field implements Form
      * The query resolver callback.
      */
     protected ?Closure $queryResolver = null;
+
+    /**
+     * Indicates whether the field is async.
+     */
+    protected ?bool $async = false;
 
     /**
      * Determine if the field is computed.
@@ -218,11 +225,43 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the modal key.
+     */
+    public function getModalKey(): string
+    {
+        return sprintf('relation-field-%s', $this->getModelAttribute());
+    }
+
+    /**
+     * Set the async attribute.
+     */
+    public function async(bool $value = true): static
+    {
+        $this->async = $value;
+
+        $this->template = $value ? 'root::fields.relation' : 'root::fields.select';
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is async.
+     */
+    public function isAsync(): bool
+    {
+        return $this->async;
+    }
+
+    /**
      * Set the as subresource attribute.
      */
     public function asSubResource(bool $value = true): static
     {
         $this->asSubResource = $value;
+
+        if ($value) {
+            $this->async(false);
+        }
 
         return $this;
     }
@@ -452,7 +491,13 @@ abstract class Relation extends Field implements Form
     {
         $fields = $this->resolveFields($request)->authorized($request);
 
-        $searchables = $fields->searchable();
+        $searchables = match (true) {
+            $this->isAsync() => new Fields(array_map(
+                fn (string $column): Hidden => Hidden::make($this->getRelationName(), $column)->searchable(),
+                $this->getSearchableColumns()
+            )),
+            default => $fields->searchable(),
+        };
 
         $sortables = $fields->sortable();
 
@@ -530,8 +575,12 @@ abstract class Relation extends Field implements Form
             $query = call_user_func_array($scope, [$request, $query, $model]);
         }
 
-        return $query
-            ->when(! is_null($this->queryResolver), fn (Builder $query): Builder => call_user_func_array($this->queryResolver, [$request, $query, $model]));
+        return $query->when(
+            ! is_null($this->queryResolver),
+            function (Builder $query) use ($request, $model): Builder {
+                return call_user_func_array($this->queryResolver, [$request, $query, $model]);
+            }
+        );
     }
 
     /**
@@ -581,18 +630,30 @@ abstract class Relation extends Field implements Form
      */
     public function resolveOptions(Request $request, Model $model): array
     {
-        return $this->resolveRelatableQuery($request, $model)
-            ->get()
-            ->when(! is_null($this->groupResolver), function (Collection $collection): Collection {
-                return $collection->groupBy($this->groupResolver);
-            })
-            ->map(function (Collection $group, string $key) use ($request, $model): array {
-                return [
-                    'label' => $key,
-                    'options' => $group->map(fn (Model $related): array => $this->toOption($request, $model, $related))->all(),
-                ];
-            })
-            ->toArray();
+        $options = match (true) {
+            $this->isAsync() => Collection::wrap($this->resolveValue($request, $model)),
+            default => $this->resolveRelatableQuery($request, $model)->get(),
+        };
+
+        return $options->when(
+            ! is_null($this->groupResolver),
+            function (Collection $collection) use ($request, $model): Collection {
+                return $collection->groupBy($this->groupResolver)
+                    ->map(function (Collection $group, string $key) use ($request, $model): array {
+                        return [
+                            'label' => $key,
+                            'options' => $group->map(function (Model $related) use ($request, $model): array {
+                                return $this->toOption($request, $model, $related);
+                            })->all(),
+                        ];
+                    });
+            },
+            function (Collection $collection) use ($request, $model): Collection {
+                return $collection->map(function (Model $related) use ($request, $model): array {
+                    return $this->toOption($request, $model, $related);
+                });
+            }
+        )->toArray();
     }
 
     /**
@@ -675,6 +736,20 @@ abstract class Relation extends Field implements Form
                 ),
                 pageName: $this->getPageKey()
             )->withQueryString();
+    }
+
+    /**
+     * Paginate the relatable models.
+     */
+    public function paginateRelatable(Request $request, Model $model): LengthAwarePaginator
+    {
+        return $this->resolveFilters($request)
+            ->apply($request, $this->resolveRelatableQuery($request, $model))
+            ->paginate($request->input('per_page'))
+            ->withQueryString()
+            ->through(function (Model $related) use ($request, $model): array {
+                return $this->toOption($request, $model, $related);
+            });
     }
 
     /**
@@ -905,18 +980,30 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Get the relation controller class.
+     */
+    public function getRelationController(): string
+    {
+        return RelationController::class;
+    }
+
+    /**
      * Register the routes.
      */
     public function routes(Router $router): void
     {
+        if ($this->isAsync()) {
+            $router->get('/search', AsyncRelationController::class);
+        }
+
         if ($this->isSubResource()) {
-            $router->get('/', [RelationController::class, 'index']);
-            $router->get('/create', [RelationController::class, 'create']);
-            $router->get("/{{$this->getRouteKeyName()}}", [RelationController::class, 'show']);
-            $router->post('/', [RelationController::class, 'store']);
-            $router->get("/{{$this->getRouteKeyName()}}/edit", [RelationController::class, 'edit']);
-            $router->patch("/{{$this->getRouteKeyName()}}", [RelationController::class, 'update']);
-            $router->delete("/{{$this->getRouteKeyName()}}", [RelationController::class, 'destroy']);
+            $router->get('/', [$this->getRelationController(), 'index']);
+            $router->get('/create', [$this->getRelationController(), 'create']);
+            $router->get("/{{$this->getRouteKeyName()}}", [$this->getRelationController(), 'show']);
+            $router->post('/', [$this->getRelationController(), 'store']);
+            $router->get("/{{$this->getRouteKeyName()}}/edit", [$this->getRelationController(), 'edit']);
+            $router->patch("/{{$this->getRouteKeyName()}}", [$this->getRelationController(), 'update']);
+            $router->delete("/{{$this->getRouteKeyName()}}", [$this->getRelationController(), 'destroy']);
         }
     }
 
@@ -950,9 +1037,23 @@ abstract class Relation extends Field implements Form
     {
         $value = $this->resolveValue($request, $model);
 
-        return $this->newOption($related, $this->resolveDisplay($related))
+        $option = $this->newOption($related, $this->resolveDisplay($related))
             ->selected(! is_null($value) && ($value instanceof Model ? $value->is($related) : $value->contains($related)))
+            ->setAttribute('id', sprintf('%s-%s', $this->getModelAttribute(), $related->getKey()))
+            ->setAttribute('readonly', $this->getAttribute('readonly', false))
+            ->setAttribute('disabled', $this->getAttribute('disabled', false))
+            ->setAttribute('name', match (true) {
+                $value instanceof Collection => sprintf('%s[]', $this->getModelAttribute()),
+                default => $this->getModelAttribute(),
+            })
             ->toArray();
+
+        return array_merge($option, [
+            'html' => match (true) {
+                $this->isAsync() => View::make('root::fields.relation-option', $option)->render(),
+                default => '',
+            },
+        ]);
     }
 
     /**
@@ -961,8 +1062,23 @@ abstract class Relation extends Field implements Form
     public function toInput(Request $request, Model $model): array
     {
         return array_merge(parent::toInput($request, $model), [
+            'async' => $this->isAsync(),
+            'config' => [
+                'multiple' => $this->resolveValue($request, $model) instanceof Collection,
+            ],
+            'modalKey' => $this->getModalKey(),
             'nullable' => $this->isNullable(),
             'options' => $this->resolveOptions($request, $model),
+            'url' => $this->isAsync() ? sprintf('%s/search', $this->modelUrl($model)) : null,
+            'filters' => $this->isAsync()
+                ? $this->resolveFilters($request)
+                    ->authorized($request)
+                    ->renderable()
+                    ->map(static function (RenderableFilter $filter) use ($request, $model): array {
+                        return $filter->toField()->toInput($request, $model);
+                    })
+                    ->all()
+                : [],
         ]);
     }
 

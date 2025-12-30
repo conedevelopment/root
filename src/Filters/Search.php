@@ -49,6 +49,11 @@ class Search extends RenderableFilter
     {
         return SearchField::make($this->getName(), $this->getRequestKey())
             ->value(fn (Request $request): ?string => $this->getValue($request))
+            ->setAttributes([
+                'x-bind:readonly' => 'processing',
+                'x-on:change.prevent.stop' => '',
+                'x-on:input' => '($event) => $event.target?.form?.dispatchEvent(new Event(\'change\'))',
+            ])
             ->placeholder(sprintf('%s...', $this->getName()));
     }
 }

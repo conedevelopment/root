@@ -1,4 +1,4 @@
-<div class="form-group--row" x-data="{ selection: {{ json_encode($selection) }} }">
+<div class="form-group--row" x-data="{ selection: {{ json_encode($options) }} }">
     <span class="form-label">{{ $label }}</span>
     <div class="file-list">
         <button

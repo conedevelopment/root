@@ -9,14 +9,12 @@ use Cone\Root\Filters\RenderableFilter;
 use Cone\Root\Http\Controllers\MediaController;
 use Cone\Root\Models\Medium;
 use Cone\Root\Traits\HasMedia;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -85,24 +83,6 @@ class Media extends File
         return [
             new MediaSearch,
         ];
-    }
-
-    /**
-     * Paginate the relatable models.
-     */
-    public function paginateRelatable(Request $request, Model $model): LengthAwarePaginator
-    {
-        return $this->resolveFilters($request)
-            ->apply($request, $this->resolveRelatableQuery($request, $model))
-            ->paginate($request->input('per_page'))
-            ->withQueryString()
-            ->through(function (Medium $related) use ($request, $model): array {
-                $option = $this->toOption($request, $model, $related);
-
-                return array_merge($option, [
-                    'html' => View::make('root::fields.file-option', $option)->render(),
-                ]);
-            });
     }
 
     /**
@@ -184,18 +164,17 @@ class Media extends File
                 'chunk_size' => Config::get('root.media.chunk_size'),
                 'query' => $filters->mapToData($request),
             ],
-            'selection' => array_map(static fn (array $option): array => array_merge($option, [
-                'html' => View::make('root::fields.file-option', $option)->render(),
-            ]), $data['options'] ?? []),
             'url' => $this->modelUrl($model),
             'filters' => $filters->renderable()
-                ->map(fn (RenderableFilter $filter): array => $filter->toField()
-                    ->removeAttribute('name')
-                    ->setAttributes([
-                        'x-model.debounce.300ms' => $filter->getKey(),
-                        'x-bind:readonly' => 'processing',
-                    ])
-                    ->toInput($request, $this->getRelation($model)->make()))
+                ->map(function (RenderableFilter $filter) use ($request, $model): array {
+                    return $filter->toField()
+                        ->removeAttribute('name')
+                        ->setAttributes([
+                            'x-model.debounce.300ms' => $filter->getKey(),
+                            'x-bind:readonly' => 'processing',
+                        ])
+                        ->toInput($request, $this->getRelation($model)->make());
+                })
                 ->all(),
         ]);
     }
