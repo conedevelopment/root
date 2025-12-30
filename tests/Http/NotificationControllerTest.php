@@ -8,7 +8,7 @@ use Cone\Root\Models\Notification;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class NotificationControllerTest extends TestCase
+final class NotificationControllerTest extends TestCase
 {
     protected User $admin;
 

@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Filters;
 use Cone\Root\Filters\MediaSearch;
 use Cone\Root\Tests\TestCase;
 
-class MediaSearchTest extends TestCase
+final class MediaSearchTest extends TestCase
 {
     public function test_a_media_search_has_searchable_attributes(): void
     {

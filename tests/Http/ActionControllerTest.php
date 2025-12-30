@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Http;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class ActionControllerTest extends TestCase
+final class ActionControllerTest extends TestCase
 {
     protected User $admin;
 

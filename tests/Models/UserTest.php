@@ -11,7 +11,7 @@ use Cone\Root\Models\Notification;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class UserTest extends TestCase
+final class UserTest extends TestCase
 {
     protected User $user;
 

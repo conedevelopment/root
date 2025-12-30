@@ -8,7 +8,7 @@ use Cone\Root\Fields\Select;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class SelectTest extends TestCase
+final class SelectTest extends TestCase
 {
     protected Select $field;
 

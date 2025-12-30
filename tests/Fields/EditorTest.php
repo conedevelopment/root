@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Editor;
 use Cone\Root\Tests\TestCase;
 
-class EditorTest extends TestCase
+final class EditorTest extends TestCase
 {
     protected Editor $field;
 

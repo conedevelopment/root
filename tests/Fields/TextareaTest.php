@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Textarea;
 use Cone\Root\Tests\TestCase;
 
-class TextareaTest extends TestCase
+final class TextareaTest extends TestCase
 {
     protected Textarea $field;
 

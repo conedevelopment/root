@@ -8,7 +8,7 @@ use Cone\Root\Models\Medium;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 
-class ClearMediaTest extends TestCase
+final class ClearMediaTest extends TestCase
 {
     public function test_clear_media_command(): void
     {

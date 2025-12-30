@@ -8,7 +8,7 @@ use Cone\Root\Fields\Repeater;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 
-class RepeaterTest extends TestCase
+final class RepeaterTest extends TestCase
 {
     protected Repeater $field;
 

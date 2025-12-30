@@ -10,7 +10,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Notification;
 
-class AuthTwoFactorControllerTest extends TestCase
+final class AuthTwoFactorControllerTest extends TestCase
 {
     protected User $user;
 

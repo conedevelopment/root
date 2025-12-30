@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class PublishTest extends TestCase
+final class PublishTest extends TestCase
 {
     public function test_publish_command(): void
     {

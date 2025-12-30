@@ -8,7 +8,7 @@ use Cone\Root\Navigation\Item;
 use Cone\Root\Navigation\Registry;
 use Cone\Root\Tests\TestCase;
 
-class NavigationTest extends TestCase
+final class NavigationTest extends TestCase
 {
     protected Registry $registry;
 

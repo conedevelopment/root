@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 
-class TextTest extends TestCase
+final class TextTest extends TestCase
 {
     protected Text $field;
 

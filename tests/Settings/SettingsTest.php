@@ -9,7 +9,7 @@ use Cone\Root\Settings\Repository;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Support\Facades\Date;
 
-class SettingsTest extends TestCase
+final class SettingsTest extends TestCase
 {
     protected Registry $registry;
 

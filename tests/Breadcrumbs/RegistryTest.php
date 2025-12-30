@@ -9,7 +9,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
-class RegistryTest extends TestCase
+final class RegistryTest extends TestCase
 {
     protected Registry $registry;
 

@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class InstallTest extends TestCase
+final class InstallTest extends TestCase
 {
     public function test_install_command(): void
     {

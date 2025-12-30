@@ -8,7 +8,7 @@ use Cone\Root\Models\Event;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class EventTest extends TestCase
+final class EventTest extends TestCase
 {
     protected User $user;
 

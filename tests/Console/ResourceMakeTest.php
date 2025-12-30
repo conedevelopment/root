@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class ResourceMakeTest extends TestCase
+final class ResourceMakeTest extends TestCase
 {
     public function test_resource_make_command(): void
     {

@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Color;
 use Cone\Root\Tests\TestCase;
 
-class ColorTest extends TestCase
+final class ColorTest extends TestCase
 {
     protected Color $field;
 

@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class TrendMakeTest extends TestCase
+final class TrendMakeTest extends TestCase
 {
     public function test_trend_make_command(): void
     {

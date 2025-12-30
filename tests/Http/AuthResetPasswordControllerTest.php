@@ -10,7 +10,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
 
-class AuthResetPasswordControllerTest extends TestCase
+final class AuthResetPasswordControllerTest extends TestCase
 {
     protected string $token;
 

@@ -10,7 +10,7 @@ use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 
-class AuthForgotPasswordControllerTest extends TestCase
+final class AuthForgotPasswordControllerTest extends TestCase
 {
     protected User $user;
 

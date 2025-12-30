@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Checkbox;
 use Cone\Root\Tests\TestCase;
 
-class CheckboxTest extends TestCase
+final class CheckboxTest extends TestCase
 {
     protected Checkbox $field;
 

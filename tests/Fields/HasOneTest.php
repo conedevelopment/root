@@ -9,7 +9,7 @@ use Cone\Root\Models\Medium;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class HasOneTest extends TestCase
+final class HasOneTest extends TestCase
 {
     protected HasOne $field;
 

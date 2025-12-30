@@ -9,7 +9,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Cone\Root\Widgets\Widget;
 
-class WidgetControllerTest extends TestCase
+final class WidgetControllerTest extends TestCase
 {
     protected User $admin;
 

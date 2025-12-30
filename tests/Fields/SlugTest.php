@@ -8,7 +8,7 @@ use Cone\Root\Fields\Slug;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class SlugTest extends TestCase
+final class SlugTest extends TestCase
 {
     protected Slug $field;
 

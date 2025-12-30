@@ -9,7 +9,7 @@ use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class MorphToControllerTest extends TestCase
+final class MorphToControllerTest extends TestCase
 {
     protected MorphTo $field;
 

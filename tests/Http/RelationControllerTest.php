@@ -10,7 +10,7 @@ use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class RelationControllerTest extends TestCase
+final class RelationControllerTest extends TestCase
 {
     protected HasMany $field;
 

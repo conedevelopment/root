@@ -9,7 +9,7 @@ use Cone\Root\Tests\Resources\UserResource;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class ResourceControllerTest extends TestCase
+final class ResourceControllerTest extends TestCase
 {
     protected UserResource $resource;
 

@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Number;
 use Cone\Root\Tests\TestCase;
 
-class NumberTest extends TestCase
+final class NumberTest extends TestCase
 {
     protected Number $field;
 

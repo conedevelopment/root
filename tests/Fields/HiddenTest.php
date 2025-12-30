@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Hidden;
 use Cone\Root\Tests\TestCase;
 
-class HiddenTest extends TestCase
+final class HiddenTest extends TestCase
 {
     protected Hidden $field;
 
