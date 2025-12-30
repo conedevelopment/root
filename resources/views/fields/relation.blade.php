@@ -46,9 +46,11 @@
                 x-on:submit.prevent
                 x-on:open-{{ $modalKey }}.window.once="fetch"
             >
-                @foreach($filters as $filter)
-                    @include($filter['template'], $filter)
-                @endforeach
+                <div class="form-group-stack form-group-stack--bordered form-group-container">
+                    @foreach($filters as $filter)
+                        @include($filter['template'], $filter)
+                    @endforeach
+                </div>
             </form>
             <ul class="file-list__items" x-show="items.length > 0" x-cloak>
                 <template x-for="(item, index) in items" :key="item.value">

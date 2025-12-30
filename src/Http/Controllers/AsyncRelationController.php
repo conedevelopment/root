@@ -13,10 +13,14 @@ class AsyncRelationController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Model $model): JsonResponse
+    public function __invoke(Request $request, Model $model, ...$params): JsonResponse
     {
         $field = $request->route('field');
 
-        return new JsonResponse($field->paginateRelatable($request, $model));
+        $related = array_filter($params, fn (mixed $param): bool => $param instanceof Model);
+
+        $related = $related[array_key_last($related)] ?? null;
+
+        return new JsonResponse($field->paginateRelatable($request, $related ?: $model));
     }
 }
