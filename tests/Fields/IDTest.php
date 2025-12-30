@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\ID;
 use Cone\Root\Tests\TestCase;
 
-class IDTest extends TestCase
+final class IDTest extends TestCase
 {
     protected ID $field;
 

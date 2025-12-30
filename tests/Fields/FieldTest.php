@@ -9,7 +9,7 @@ use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 
-class FieldTest extends TestCase
+final class FieldTest extends TestCase
 {
     protected Field $field;
 

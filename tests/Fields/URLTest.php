@@ -8,7 +8,7 @@ use Cone\Root\Fields\URL;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class URLTest extends TestCase
+final class URLTest extends TestCase
 {
     protected URL $field;
 

@@ -9,7 +9,7 @@ use Cone\Root\Models\Medium;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
-class ImageTest extends TestCase
+final class ImageTest extends TestCase
 {
     public function test_jpeg_can_be_converted(): void
     {

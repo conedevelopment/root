@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Range;
 use Cone\Root\Tests\TestCase;
 
-class RangeTest extends TestCase
+final class RangeTest extends TestCase
 {
     protected Range $field;
 

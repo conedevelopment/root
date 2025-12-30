@@ -9,7 +9,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class FilterTest extends TestCase
+final class FilterTest extends TestCase
 {
     protected Filter $filter;
 

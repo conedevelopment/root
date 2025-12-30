@@ -8,7 +8,7 @@ use Cone\Root\Models\Meta;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class MetaTest extends TestCase
+final class MetaTest extends TestCase
 {
     protected User $user;
 

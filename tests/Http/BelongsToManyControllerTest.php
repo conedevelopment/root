@@ -10,7 +10,7 @@ use Cone\Root\Tests\Team;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class BelongsToManyControllerTest extends TestCase
+final class BelongsToManyControllerTest extends TestCase
 {
     protected User $admin;
 

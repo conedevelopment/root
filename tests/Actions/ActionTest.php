@@ -9,7 +9,7 @@ use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class ActionTest extends TestCase
+final class ActionTest extends TestCase
 {
     protected SendNotification $action;
 

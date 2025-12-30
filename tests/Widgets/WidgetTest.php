@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Widgets\Welcome;
 use Cone\Root\Widgets\Widget;
 
-class WidgetTest extends TestCase
+final class WidgetTest extends TestCase
 {
     protected Widget $widget;
 

@@ -8,7 +8,7 @@ use Cone\Root\Models\Medium;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class MediumTest extends TestCase
+final class MediumTest extends TestCase
 {
     protected User $user;
 

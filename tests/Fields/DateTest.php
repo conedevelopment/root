@@ -9,7 +9,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Date as DateFactory;
 
-class DateTest extends TestCase
+final class DateTest extends TestCase
 {
     protected Date $field;
 

@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Radio;
 use Cone\Root\Tests\TestCase;
 
-class RadioTest extends TestCase
+final class RadioTest extends TestCase
 {
     protected Radio $field;
 

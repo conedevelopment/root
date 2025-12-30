@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class ClearChunkTest extends TestCase
+final class ClearChunkTest extends TestCase
 {
     public function test_clear_chunk_command(): void
     {

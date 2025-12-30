@@ -8,7 +8,7 @@ use Cone\Root\Models\AuthCode;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class AuthCodeTest extends TestCase
+final class AuthCodeTest extends TestCase
 {
     protected User $user;
 

@@ -10,7 +10,7 @@ use Cone\Root\Tests\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 
-class SendVerificationNotificationTest extends TestCase
+final class SendVerificationNotificationTest extends TestCase
 {
     public function test_send_verification_notifications_action(): void
     {

@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class ActionMakeTest extends TestCase
+final class ActionMakeTest extends TestCase
 {
     public function test_action_make_command(): void
     {

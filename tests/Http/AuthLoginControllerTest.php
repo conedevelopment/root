@@ -11,7 +11,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
-class AuthLoginControllerTest extends TestCase
+final class AuthLoginControllerTest extends TestCase
 {
     protected User $user;
 

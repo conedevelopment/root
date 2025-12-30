@@ -10,7 +10,7 @@ use Cone\Root\Tests\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
-class SendPasswordResetNotificationTest extends TestCase
+final class SendPasswordResetNotificationTest extends TestCase
 {
     public function test_send_password_reset_notifications_action(): void
     {

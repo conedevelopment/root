@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Email;
 use Cone\Root\Tests\TestCase;
 
-class EmailTest extends TestCase
+final class EmailTest extends TestCase
 {
     protected Email $field;
 

@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class WidgetMakeTest extends TestCase
+final class WidgetMakeTest extends TestCase
 {
     public function test_widget_make_command(): void
     {

@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class FieldMakeTest extends TestCase
+final class FieldMakeTest extends TestCase
 {
     public function test_field_make_command(): void
     {

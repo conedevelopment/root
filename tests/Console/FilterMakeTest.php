@@ -8,7 +8,7 @@ use Cone\Root\Tests\TestCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class FilterMakeTest extends TestCase
+final class FilterMakeTest extends TestCase
 {
     public function test_filter_make_command(): void
     {

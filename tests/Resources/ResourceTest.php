@@ -8,7 +8,7 @@ use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class ResourceTest extends TestCase
+final class ResourceTest extends TestCase
 {
     protected UserResource $resource;
 

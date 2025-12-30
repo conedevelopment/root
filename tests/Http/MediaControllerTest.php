@@ -14,7 +14,7 @@ use Cone\Root\Tests\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 
-class MediaControllerTest extends TestCase
+final class MediaControllerTest extends TestCase
 {
     protected User $admin;
 

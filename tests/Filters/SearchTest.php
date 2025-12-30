@@ -11,7 +11,7 @@ use Cone\Root\Filters\Search;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class SearchTest extends TestCase
+final class SearchTest extends TestCase
 {
     public function test_a_search_filter_modifies_query(): void
     {

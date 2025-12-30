@@ -11,7 +11,7 @@ use Cone\Root\Filters\Sort;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class SortTest extends TestCase
+final class SortTest extends TestCase
 {
     public function test_a_sort_filter_modifies_query(): void
     {

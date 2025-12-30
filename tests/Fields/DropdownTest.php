@@ -7,7 +7,7 @@ namespace Cone\Root\Tests\Fields;
 use Cone\Root\Fields\Dropdown;
 use Cone\Root\Tests\TestCase;
 
-class DropdownTest extends TestCase
+final class DropdownTest extends TestCase
 {
     protected Dropdown $field;
 

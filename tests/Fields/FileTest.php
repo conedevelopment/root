@@ -9,7 +9,7 @@ use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 use Illuminate\Http\UploadedFile;
 
-class FileTest extends TestCase
+final class FileTest extends TestCase
 {
     protected File $field;
 

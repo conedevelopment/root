@@ -9,7 +9,7 @@ use Cone\Root\Fields\Boolean;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Http\Request;
 
-class BooleanTest extends TestCase
+final class BooleanTest extends TestCase
 {
     protected Boolean $field;
 

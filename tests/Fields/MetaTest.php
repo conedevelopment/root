@@ -10,7 +10,7 @@ use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class MetaTest extends TestCase
+final class MetaTest extends TestCase
 {
     protected Meta $field;
 

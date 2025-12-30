@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class ConversionDriverTest extends TestCase
+final class ConversionDriverTest extends TestCase
 {
     protected Manager $manager;
 

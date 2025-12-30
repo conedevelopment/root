@@ -8,7 +8,7 @@ use Cone\Root\Models\Translation;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class TranslationTest extends TestCase
+final class TranslationTest extends TestCase
 {
     protected User $user;
 

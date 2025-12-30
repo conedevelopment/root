@@ -8,7 +8,7 @@ use Cone\Root\Root;
 use Cone\Root\Tests\TestCase;
 use Cone\Root\Tests\User;
 
-class DashboardControllerTest extends TestCase
+final class DashboardControllerTest extends TestCase
 {
     protected User $admin;
 

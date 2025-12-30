@@ -10,7 +10,7 @@ use Cone\Root\Tests\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
-class DownloadControllerTest extends TestCase
+final class DownloadControllerTest extends TestCase
 {
     protected User $admin;
 

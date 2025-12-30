@@ -8,7 +8,7 @@ use Cone\Root\Fields\Fieldset;
 use Cone\Root\Fields\Text;
 use Cone\Root\Tests\TestCase;
 
-class FieldsetTest extends TestCase
+final class FieldsetTest extends TestCase
 {
     protected Fieldset $field;
 
