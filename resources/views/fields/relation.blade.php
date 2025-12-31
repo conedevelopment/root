@@ -56,7 +56,7 @@
                 <template x-for="(item, index) in items" :key="item.value">
                     <li class="file-list-item">
                         <div class="file-list-item__column">
-                            <span class="file-list-item__name" x-html="item.label"></span>
+                            <span x-html="item.label"></span>
                         </div>
                         <div class="file-list-item__actions">
                             <div class="form-group form-group--vertical-check">

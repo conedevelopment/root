@@ -94,7 +94,7 @@ abstract class Relation extends Field implements Form
     /**
      * Indicates whether the field is async.
      */
-    protected ?bool $async = false;
+    protected bool $async = false;
 
     /**
      * Determine if the field is computed.
@@ -492,10 +492,7 @@ abstract class Relation extends Field implements Form
         $fields = $this->resolveFields($request)->authorized($request);
 
         $searchables = match (true) {
-            $this->isAsync() => new Fields(array_map(
-                fn (string $column): Hidden => Hidden::make($this->getRelationName(), $column)->searchable(),
-                $this->getSearchableColumns()
-            )),
+            $this->isAsync() => $this->mapAsyncSearchableFields($request),
             default => $fields->searchable(),
         };
 
@@ -508,6 +505,17 @@ abstract class Relation extends Field implements Form
             $sortables->isNotEmpty() ? new Sort($sortables) : null,
             ...$filterables->map->toFilter()->all(),
         ]));
+    }
+
+    /**
+     * Map the async searchable fields.
+     */
+    protected function mapAsyncSearchableFields(Request $request): Fields
+    {
+        return new Fields(array_map(
+            fn (string $column): Hidden => Hidden::make($this->getRelationName(), $column)->searchable(),
+            $this->getSearchableColumns()
+        ));
     }
 
     /**

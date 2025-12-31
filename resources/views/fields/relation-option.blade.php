@@ -1,6 +1,6 @@
 <div class="file-list-item">
     <div class="file-list-item__column">
-        <span id="{{ $attrs->get('id') }}" class="file-list-item__name">{!! $label !!}</span>
+        <span id="{{ $attrs->get('id') }}">{!! $label !!}</span>
         <input type="hidden" name="{{ $attrs->get('name') }}" value="{{ $attrs->get('value') }}">
     </div>
     @unless($attrs->get('readonly') || $attrs->get('disabled'))

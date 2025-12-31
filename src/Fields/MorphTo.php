@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cone\Root\Fields;
 
+use Closure;
+use Cone\Root\Fields\Select as SelectField;
+use Cone\Root\Filters\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo as EloquentRelation;
@@ -21,6 +24,11 @@ class MorphTo extends BelongsTo
     protected string $template = 'root::fields.relation';
 
     /**
+     * Indicates whether the field is async.
+     */
+    protected bool $async = true;
+
+    /**
      * The morph types.
      */
     protected array $types = [];
@@ -36,24 +44,61 @@ class MorphTo extends BelongsTo
     /**
      * {@inheritdoc}
      */
+    public function async(bool $value = true): static
+    {
+        return $this;
+    }
+
+    /**
+     * Get the morph types.
+     */
+    public function getTypes(): array
+    {
+        return $this->types;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function filters(Request $request): array
     {
-        $filters = parent::filters($request);
+        $typeFilter = new class($this) extends Select
+        {
+            public function __construct(protected MorphTo $field)
+            {
+                parent::__construct('type');
+            }
 
-        if ($this->isAsync()) {
-            $typeFilter = Select::make(__('Type'), 'type')
-                ->options(array_map(
+            public function getName(): string
+            {
+                return __('Type');
+            }
+
+            public function apply(Request $request, Builder $query, mixed $value): Builder
+            {
+                return $query;
+            }
+
+            public function options(Request $request): array
+            {
+                return array_map(
                     static function (string $type): string {
                         return __(Str::of($type)->classBasename()->headline()->value());
                     },
-                    array_combine($this->types, $this->types)
-                ))
-                ->toFilter();
+                    array_combine($this->field->getTypes(), $this->field->getTypes())
+                );
+            }
 
-            array_unshift($filters, $typeFilter);
-        }
+            public function toField(): SelectField
+            {
+                return parent::toField()
+                    ->value(function (Request $request, Model $model): ?string {
+                        return $model->getAttribute($this->field->getRelation($model)->getMorphType());
+                    });
+            }
+        };
 
-        return $filters;
+        return array_merge([$typeFilter], parent::filters($request));
     }
 
     /**
@@ -71,6 +116,59 @@ class MorphTo extends BelongsTo
         );
 
         return parent::resolveRelatableQuery($request, $model);
+    }
+
+    /**
+     * Map the async searchable fields.
+     */
+    protected function mapAsyncSearchableFields(Request $request): Fields
+    {
+        $fields = new Fields;
+
+        foreach ($this->getSearchableColumns() as $type => $columns) {
+            foreach ($columns as $column) {
+                $field = Hidden::make($this->getRelationName(), sprintf('%s:%s', $type, $column))
+                    ->searchable(callback: function (Request $request, Builder $query, mixed $value, string $attribute): Builder {
+                        [$type, $column] = explode(':', $attribute);
+
+                        return match ($query->getModel()::class) {
+                            $type => $query->where($query->qualifyColumn($column), 'like', "%{$value}%", 'or'),
+                            default => $query,
+                        };
+                    });
+
+                $fields->push($field);
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function searchable(bool|Closure $value = true, ?Closure $callback = null, array $columns = ['id']): static
+    {
+        $columns = match (true) {
+            array_is_list($columns) => array_fill_keys($this->types, $columns),
+            default => $columns,
+        };
+
+        return parent::searchable($value, $callback, $columns);
+    }
+
+    /**
+     * Resolve the filter query.
+     */
+    public function resolveSearchQuery(Request $request, Builder $query, mixed $value): Builder
+    {
+        if (! $this->isSearchable()) {
+            return parent::resolveSearchQuery($request, $query, $value);
+        }
+
+        return call_user_func_array($this->searchQueryResolver, [
+            $request, $query, $value, $this->getSearchableColumns(),
+        ]);
     }
 
     /**
@@ -95,7 +193,10 @@ class MorphTo extends BelongsTo
      */
     public function newOption(Model $related, string $label): Option
     {
-        return new Option(sprintf('%s:%s', $related::class, $related->getKey()), $label);
+        return new Option(
+            sprintf('%s:%s', $related::class, $related->getKey()),
+            sprintf('%s (%s)', $label, __(Str::of($related::class)->classBasename()->headline()->value()))
+        );
     }
 
     /**
