@@ -119,6 +119,17 @@ class MorphTo extends BelongsTo
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getSearchableColumns(): array
+    {
+        return match (true) {
+            array_is_list($this->searchableColumns) => array_fill_keys($this->types, $this->searchableColumns),
+            default => $this->searchableColumns,
+        };
+    }
+
+    /**
      * Map the async searchable fields.
      */
     protected function mapAsyncSearchableFields(Request $request): Fields
