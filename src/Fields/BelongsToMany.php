@@ -205,7 +205,7 @@ class BelongsToMany extends Relation
                     ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
                             $relation->getPivotAccessor(),
-                            $relation->newPivot($value[$related->getKey()] ?? [])
+                            $relation->newPivot($value[$related->getKey()])
                         );
                     });
 
