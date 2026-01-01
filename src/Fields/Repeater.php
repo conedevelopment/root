@@ -191,7 +191,9 @@ class Repeater extends Field
     {
         $value = (array) $this->resolveValue($request, $model);
 
-        return array_map(fn (array $option): array => $this->toOption($request, $model, $this->newTemporaryModel($option)), $value);
+        return array_map(function (array $option) use ($request, $model): array {
+            return $this->toOption($request, $model, $this->newTemporaryModel($option));
+        }, $value);
     }
 
     /**
