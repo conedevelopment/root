@@ -198,12 +198,14 @@ class BelongsToMany extends Relation
             $this->hydrateResolver = function (Request $request, Model $model, mixed $value): void {
                 $relation = $this->getRelation($model);
 
+                $value = array_is_list($value) ? array_fill_keys($value, []) : $value;
+
                 $results = $this->resolveRelatableQuery($request, $model)
                     ->findMany(array_keys($value))
                     ->each(static function (Model $related) use ($relation, $value): void {
                         $related->setRelation(
                             $relation->getPivotAccessor(),
-                            $relation->newPivot($value[$related->getKey()])
+                            $relation->newPivot($value[$related->getKey()] ?? [])
                         );
                     });
 
