@@ -149,7 +149,9 @@ class Repeater extends Field
                 $field->setModelAttribute($attribute)
                     ->name($attribute)
                     ->id($attribute)
-                    ->value(fn (): mixed => $tmpModel->getAttribute($key));
+                    ->when($tmpModel->hasAttribute($key), function (Field $field) use ($tmpModel, $key): void {
+                        $field->value(fn (): mixed => $tmpModel->getAttribute($key));
+                    });
             });
 
             return $fields;
@@ -179,7 +181,7 @@ class Repeater extends Field
         };
 
         return $model->forceFill(array_replace(
-            ['_key' => Str::uuid()],
+            ['_key' => Str::uuid()->toString()],
             $attributes
         ));
     }
@@ -217,10 +219,12 @@ class Repeater extends Field
     {
         if (is_null($this->formatResolver)) {
             $this->formatResolver = function (Request $request, Model $model, ?array $value = null): string {
-                $values = array_map(fn (array $value): array => $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
-                    ->authorized($request, $model)
-                    ->visible('show')
-                    ->mapToDisplay($request, $model), (array) $value);
+                $values = array_map(function (array $value) use ($request, $model): array {
+                    return $this->resolveOptionFields($request, $model, $this->newTemporaryModel($value))
+                        ->authorized($request, $model)
+                        ->visible('show')
+                        ->mapToDisplay($request, $model);
+                }, (array) $value);
 
                 return View::make('root::fields.repeater-table', ['values' => $values])->render();
             };
