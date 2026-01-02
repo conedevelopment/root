@@ -106,11 +106,6 @@ abstract class Field implements Arrayable, JsonSerializable
     protected bool $withOldValue = true;
 
     /**
-     * Indicates if the field has been hydrated.
-     */
-    protected bool $hydrated = false;
-
-    /**
      * Indicates if the field is sortable.
      */
     protected bool|Closure $sortable = false;
@@ -471,9 +466,11 @@ abstract class Field implements Arrayable, JsonSerializable
      */
     public function resolveValue(Request $request, Model $model): mixed
     {
-        if (! $this->hydrated && $this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
-            $this->resolveHydrate($request, $model, $this->getOldValue($request));
-        }
+        once(function () use ($request, $model): void {
+            if ($this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
+                $this->resolveHydrate($request, $model, $this->getOldValue($request));
+            }
+        });
 
         $value = $this->getValue($model);
 
@@ -615,8 +612,6 @@ abstract class Field implements Arrayable, JsonSerializable
         }
 
         call_user_func_array($this->hydrateResolver, [$request, $model, $value]);
-
-        $this->hydrated = true;
     }
 
     /**
