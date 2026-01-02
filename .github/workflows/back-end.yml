@@ -57,7 +57,7 @@ jobs:
                 - "highest"
                 include:
                 -
-                    php-version: "8.3"
+                    php-version: "8.4"
                     dependencies: "locked"
                     coverage: true
         runs-on: "ubuntu-24.04"
