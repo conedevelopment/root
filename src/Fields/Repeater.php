@@ -133,7 +133,8 @@ class Repeater extends Field
     {
         $this->optionFieldsResolver = function (Request $request, Model $model, Model $tmpModel) use ($callback): Fields {
             $fields = new Fields([
-                Hidden::make(__('Key'), '_key'),
+                Hidden::make(__('Key'), '_key')
+                    ->hiddenOn(['index', 'show']),
             ]);
 
             $fields->register(call_user_func_array($callback, [$request, $model, $tmpModel]));
