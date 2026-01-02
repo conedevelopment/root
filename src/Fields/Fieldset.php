@@ -78,6 +78,16 @@ class Fieldset extends Field
     /**
      * {@inheritdoc}
      */
+    public function hydrateFromRequest(Request $request, Model $model): void
+    {
+        $this->resolveFields($request)->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrateFromRequest($request, $model);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function resolveHydrate(Request $request, Model $model, mixed $value): void
     {
         $this->resolveFields($request)->each(static function (Field $field) use ($request, $model): void {
