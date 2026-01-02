@@ -109,4 +109,21 @@ class ResourceController extends Controller
         return Redirect::back()
             ->with('alerts.resource-restored', Alert::success(__('The resource has been restored!')));
     }
+
+    /**
+     * Hydrate the specified resource form.
+     */
+    public function hydrate(Request $request, Resource $resource, Model $model): Response
+    {
+        $resource->handleHydrateRequest($request, $model);
+
+        $data = match (true) {
+            $model->exists => $resource->toEdit($request, $model),
+            default => $resource->toCreate($request),
+        };
+
+        return ResponseFactory::view(
+            'root::resources.form-turbo-frame', $data
+        );
+    }
 }

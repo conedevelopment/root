@@ -27,3 +27,4 @@ Route::get('/resources/{resource}/{resourceModel}/edit', [ResourceController::cl
 Route::patch('/resources/{resource}/{resourceModel}', [ResourceController::class, 'update'])->name('resource.update');
 Route::delete('/resources/{resource}/{resourceModel}', [ResourceController::class, 'destroy'])->name('resource.delete');
 Route::post('/resources/{resource}/{resourceModel}/restore', [ResourceController::class, 'restore'])->name('resource.restore');
+Route::match(['POST', 'PATCH'], '/resources/{resource}/{resourceModel}/hydrate', [ResourceController::class, 'hydrate'])->name('resource.hydrate');

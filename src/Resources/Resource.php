@@ -319,7 +319,10 @@ abstract class Resource implements Arrayable, Form
      */
     public function modelTitle(Model $model): string
     {
-        return (string) $model->getKey();
+        return match (true) {
+            ! $model->exists => __('New :model', ['model' => $this->getModelName()]),
+            default => (string) $model->getKey(),
+        };
     }
 
     /**
@@ -558,6 +561,22 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
+     * Hydrate the model with the request data.
+     */
+    public function handleHydrateRequest(Request $request, Model $model): void
+    {
+        DB::transaction(function () use ($request, $model): void {
+            $this->resolveFields($request)
+                ->authorized($request, $model)
+                ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->subResource(false)
+                ->each(static function (Field $field) use ($request, $model): void {
+                    $field->resolveHydrate($request, $model, $field->getValueForHydrate($request));
+                });
+        });
+    }
+
+    /**
      * Make a form response.
      */
     public function formResponse(Request $request, Model $model): Response
@@ -693,6 +712,7 @@ abstract class Resource implements Arrayable, Form
             'title' => __('Create :resource', ['resource' => $this->getModelName()]),
             'model' => $model = $this->getModelInstance(),
             'action' => $this->getUri(),
+            'hydrateUrl' => sprintf('%s/create/hydrate', $this->getUri()),
             'method' => 'POST',
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
@@ -751,6 +771,7 @@ abstract class Resource implements Arrayable, Form
             'title' => __('Edit :resource: :model', ['resource' => $this->getModelName(), 'model' => $this->modelTitle($model)]),
             'model' => $model,
             'action' => $this->modelUrl($model),
+            'hydrateUrl' => sprintf('%s/hydrate', $this->modelUrl($model)),
             'method' => 'PATCH',
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)

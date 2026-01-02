@@ -116,4 +116,24 @@ class RelationController extends Controller
         return Redirect::to($field->modelUrl($model))
             ->with('alerts.relation-deleted', Alert::success(__('The relation has been deleted!')));
     }
+
+    /**
+     * Hydrate the specified resource form.
+     */
+    public function hydrate(Request $request, Model $model, Model $related): Response
+    {
+        /** @var \Cone\Root\Fields\Relation $field */
+        $field = $request->route('field');
+
+        $field->handleHydrateRequest($request, $model, $related);
+
+        $data = match (true) {
+            $model->exists => $field->toEdit($request, $model, $related),
+            default => $field->toCreate($request, $model),
+        };
+
+        return ResponseFactory::view(
+            'root::resources.form-turbo-frame', $data
+        );
+    }
 }

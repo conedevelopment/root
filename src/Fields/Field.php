@@ -579,6 +579,17 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Set the field to hydrate on change event.
+     */
+    public function hydratesOnChange(): static
+    {
+        return $this->setAttribute(
+            'x-on:change.debounce.250ms',
+            '($event) => $event.target.dispatchEvent(new CustomEvent(\'hydrate\', { bubbles: true }))'
+        );
+    }
+
+    /**
      * Set the hydrate resolver.
      */
     public function hydrate(Closure $callback): static

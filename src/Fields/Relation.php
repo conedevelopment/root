@@ -850,6 +850,24 @@ abstract class Relation extends Field implements Form
     }
 
     /**
+     * Hydrate the model with the request data.
+     */
+    public function handleHydrateRequest(Request $request, Model $model, Model $related): void
+    {
+        DB::transaction(function () use ($request, $model, $related): void {
+            $related->setRelation('related', $model);
+
+            $this->resolveFields($request)
+                ->authorized($request, $related)
+                ->visible($request->isMethod('POST') ? 'create' : 'update')
+                ->subResource(false)
+                ->each(static function (Field $field) use ($request, $related): void {
+                    $field->resolveHydrate($request, $related, $field->getValueForHydrate($request));
+                });
+        });
+    }
+
+    /**
      * Handle the saved form event.
      */
     public function saved(Request $request, Model $model): void
@@ -1010,6 +1028,7 @@ abstract class Relation extends Field implements Form
             $router->get("/{{$this->getRouteKeyName()}}/edit", [$this->getRelationController(), 'edit']);
             $router->patch("/{{$this->getRouteKeyName()}}", [$this->getRelationController(), 'update']);
             $router->delete("/{{$this->getRouteKeyName()}}", [$this->getRelationController(), 'destroy']);
+            $router->match(['POST', 'PATCH'], "/{{$this->getRouteKeyName()}}/hydrate", [$this->getRelationController(), 'hydrate']);
         }
     }
 
@@ -1144,6 +1163,7 @@ abstract class Relation extends Field implements Form
             'title' => __('Create :model', ['model' => $this->getRelatedName()]),
             'model' => $related = $this->getRelation($model)->make()->setRelation('related', $model),
             'action' => $this->modelUrl($model),
+            'hydrateUrl' => sprintf('%s/create/hydrate', $this->modelUrl($model)),
             'uploads' => $this->hasFileField($request),
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
@@ -1191,6 +1211,7 @@ abstract class Relation extends Field implements Form
             'title' => __('Edit :model', ['model' => $this->resolveDisplay($related)]),
             'model' => $related->setRelation('related', $model),
             'action' => $this->relatedUrl($related),
+            'hydrateUrl' => sprintf('%s/hydrate', $this->relatedUrl($related)),
             'method' => 'PATCH',
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
