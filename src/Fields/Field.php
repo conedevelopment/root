@@ -462,15 +462,25 @@ abstract class Field implements Arrayable, JsonSerializable
     }
 
     /**
+     * Hydrate the model from the old value.
+     */
+    public function hydrateFromRequest(Request $request, Model $model): void
+    {
+        once(function () use ($request, $model): void {
+            if (in_array($request->method(), ['POST', 'PATCH']) && $request->isTurboFrameRequest()) {
+                $this->resolveHydrate($request, $model, $this->getValueForHydrate($request));
+            } elseif ($this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
+                $this->resolveHydrate($request, $model, $this->getOldValue($request));
+            }
+        });
+    }
+
+    /**
      * Resolve the value.
      */
     public function resolveValue(Request $request, Model $model): mixed
     {
-        once(function () use ($request, $model): void {
-            if ($this->withOldValue && $request->session()->hasOldInput($this->getRequestKey())) {
-                $this->resolveHydrate($request, $model, $this->getOldValue($request));
-            }
-        });
+        $this->hydrateFromRequest($request, $model);
 
         $value = $this->getValue($model);
 

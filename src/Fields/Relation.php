@@ -850,24 +850,6 @@ abstract class Relation extends Field implements Form
     }
 
     /**
-     * Hydrate the model with the request data.
-     */
-    public function handleHydrateRequest(Request $request, Model $model, Model $related): void
-    {
-        DB::transaction(function () use ($request, $model, $related): void {
-            $related->setRelation('related', $model);
-
-            $this->resolveFields($request)
-                ->authorized($request, $related)
-                ->visible($request->isMethod('POST') ? 'create' : 'update')
-                ->subResource(false)
-                ->each(static function (Field $field) use ($request, $related): void {
-                    $field->resolveHydrate($request, $related, $field->getValueForHydrate($request));
-                });
-        });
-    }
-
-    /**
      * Handle the saved form event.
      */
     public function saved(Request $request, Model $model): void
@@ -1168,8 +1150,9 @@ abstract class Relation extends Field implements Form
             'method' => 'POST',
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $related)
                 ->visible('create')
+                ->hydrateFromRequest($request, $related)
+                ->authorized($request, $related)
                 ->mapToInputs($request, $related),
         ]);
     }
@@ -1216,8 +1199,9 @@ abstract class Relation extends Field implements Form
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $related)
                 ->visible('update')
+                ->hydrateFromRequest($request, $related)
+                ->authorized($request, $related)
                 ->mapToInputs($request, $related),
             'abilities' => array_merge(
                 $this->mapRelationAbilities($request, $model),

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response as ResponseFactory;
 
@@ -115,15 +116,13 @@ class ResourceController extends Controller
      */
     public function hydrate(Request $request, Resource $resource, Model $model): Response
     {
-        $resource->handleHydrateRequest($request, $model);
+        return DB::transaction(static function () use ($resource, $request, $model): Response {
+            $data = match (true) {
+                $model->exists => $resource->toEdit($request, $model),
+                default => $resource->toCreate($request),
+            };
 
-        $data = match (true) {
-            $model->exists => $resource->toEdit($request, $model),
-            default => $resource->toCreate($request),
-        };
-
-        return ResponseFactory::view(
-            'root::resources.form-turbo-frame', $data
-        );
+            return ResponseFactory::view('root::resources.form-turbo-frame', $data);
+        });
     }
 }

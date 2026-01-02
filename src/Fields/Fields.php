@@ -38,6 +38,16 @@ class Fields extends Collection
     }
 
     /**
+     * Hydrate the model from the request.
+     */
+    public function hydrateFromRequest(Request $request, Model $model): static
+    {
+        return $this->each(static function (Field $field) use ($request, $model): void {
+            $field->hydrateFromRequest($request, $model);
+        });
+    }
+
+    /**
      * Filter the fields that are available for the current request and model.
      */
     public function authorized(Request $request, ?Model $model = null): static

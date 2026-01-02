@@ -561,22 +561,6 @@ abstract class Resource implements Arrayable, Form
     }
 
     /**
-     * Hydrate the model with the request data.
-     */
-    public function handleHydrateRequest(Request $request, Model $model): void
-    {
-        DB::transaction(function () use ($request, $model): void {
-            $this->resolveFields($request)
-                ->authorized($request, $model)
-                ->visible($request->isMethod('POST') ? 'create' : 'update')
-                ->subResource(false)
-                ->each(static function (Field $field) use ($request, $model): void {
-                    $field->resolveHydrate($request, $model, $field->getValueForHydrate($request));
-                });
-        });
-    }
-
-    /**
      * Make a form response.
      */
     public function formResponse(Request $request, Model $model): Response
@@ -717,8 +701,9 @@ abstract class Resource implements Arrayable, Form
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $model)
                 ->visible('create')
+                ->hydrateFromRequest($request, $model)
+                ->authorized($request, $model)
                 ->mapToInputs($request, $model),
             'abilities' => $this->mapResourceAbilities($request),
         ]);
@@ -776,8 +761,9 @@ abstract class Resource implements Arrayable, Form
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $model)
                 ->visible('update')
+                ->hydrateFromRequest($request, $model)
+                ->authorized($request, $model)
                 ->mapToInputs($request, $model),
             'abilities' => array_merge(
                 $this->mapResourceAbilities($request),

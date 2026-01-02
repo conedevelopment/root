@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response as ResponseFactory;
 
@@ -125,15 +126,13 @@ class RelationController extends Controller
         /** @var \Cone\Root\Fields\Relation $field */
         $field = $request->route('field');
 
-        $field->handleHydrateRequest($request, $model, $related);
+        return DB::transaction(static function () use ($request, $model, $related, $field): Response {
+            $data = match (true) {
+                $model->exists => $field->toEdit($request, $model, $related),
+                default => $field->toCreate($request, $model),
+            };
 
-        $data = match (true) {
-            $model->exists => $field->toEdit($request, $model, $related),
-            default => $field->toCreate($request, $model),
-        };
-
-        return ResponseFactory::view(
-            'root::resources.form-turbo-frame', $data
-        );
+            return ResponseFactory::view('root::resources.form-turbo-frame', $data);
+        });
     }
 }
