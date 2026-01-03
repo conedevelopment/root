@@ -11,27 +11,30 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Traits\Conditionable;
 use JsonSerializable;
 
-use function Illuminate\Support\enum_value;
-
-class Option implements Arrayable, JsonSerializable
+class OptGroup implements Arrayable, JsonSerializable
 {
     use Conditionable;
     use HasAttributes;
     use Makeable;
 
     /**
-     * The option label.
+     * The options within the opt group.
+     *
+     * @var list<Option>
      */
-    protected string $label;
+    protected array $options = [];
 
     /**
-     * Create a new option instance.
+     * Create a new opt group instance.
      */
-    public function __construct(mixed $value, string $label)
+    public function __construct(protected string $label, array $options)
     {
-        $this->label = $label;
-        $this->setAttribute('value', enum_value($value));
-        $this->selected(false);
+        $this->options = array_map(function (Option|int|string $item, int|string $key): Option {
+            return match (true) {
+                $item instanceof Option => $item,
+                default => new Option((string) $key, (string) $item),
+            };
+        }, $options, array_keys($options));
     }
 
     /**
@@ -47,9 +50,11 @@ class Option implements Arrayable, JsonSerializable
      */
     public function selected(bool|Closure $value = true): static
     {
-        $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
+        foreach ($this->options as $option) {
+            $option->selected($value);
+        }
 
-        return $this->setAttribute('selected', $value);
+        return $this;
     }
 
     /**
@@ -68,8 +73,7 @@ class Option implements Arrayable, JsonSerializable
         return [
             'attrs' => $this->newAttributeBag(),
             'label' => $this->label,
-            'selected' => $this->getAttribute('selected'),
-            'value' => $this->getAttribute('value'),
+            'options' => array_map(fn (Option $option): array => $option->toArray(), $this->options),
         ];
     }
 }

@@ -120,13 +120,18 @@ class Select extends Field
 
         $value = Arr::wrap($this->resolveValue($request, $model));
 
-        return array_map(function (mixed $label, mixed $option) use ($value): array {
-            $option = $label instanceof Option ? $label : $this->newOption($option, $label);
+        $value = array_map(fn (mixed $v): mixed => enum_value($v), $value);
 
-            $option->selected(in_array(
-                $option->getAttribute('value'),
-                array_map(fn (mixed $v): mixed => enum_value($v), $value)
-            ));
+        return array_map(function (mixed $label, mixed $option) use ($value): array {
+            $option = match (true) {
+                $option instanceof Option => $option,
+                is_array($label) => new OptGroup((string) $option, (array) $label),
+                default => $this->newOption($option, $label),
+            };
+
+            $option->selected(static function (Option $option) use ($value): bool {
+                return in_array($option->getAttribute('value'), $value);
+            });
 
             return $option->toArray();
         }, $options, array_keys($options));
