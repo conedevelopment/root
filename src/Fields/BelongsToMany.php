@@ -343,8 +343,8 @@ class BelongsToMany extends Relation
             'uploads' => $this->hasFileField($request),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $pivot)
                 ->visible('create')
+                ->authorized($request, $pivot)
                 ->mapToInputs($request, $pivot),
         ]);
     }
@@ -367,8 +367,8 @@ class BelongsToMany extends Relation
             'action' => $this->relatedUrl($pivot),
             'fields' => $this->resolveFields($request)
                 ->subResource(false)
-                ->authorized($request, $related)
                 ->visible('show')
+                ->authorized($request, $related)
                 ->mapToDisplay($request, $pivot),
             'actions' => $this->resolveActions($request)
                 ->authorized($request, $related)
