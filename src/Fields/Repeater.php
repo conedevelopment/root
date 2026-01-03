@@ -107,6 +107,18 @@ class Repeater extends Field
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function resolveValue(Request $request, Model $model): array
+    {
+        $value = (array) parent::resolveValue($request, $model);
+
+        $value = array_intersect_key($value, array_unique(array_column($value, '_key')));
+
+        return array_values($value);
+    }
+
+    /**
      * Handle the callback for the field resolution.
      */
     protected function resolveField(Request $request, Field $field): void
