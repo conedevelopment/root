@@ -9,11 +9,11 @@ document.addEventListener('alpine:init', () => {
             },
             fetch() {
                 const data = new FormData(this.$refs.form);
-                const query = new URLSearchParams(data).toString();
+                const query = new URLSearchParams(data);
 
                 this.processing = true;
 
-                window.$http.get(`${url}?${query}`).then((response) => {
+                window.$http.get(url, { params: query }).then((response) => {
                     this.items = response.data.data;
                 }).catch((error) => {
                     this.items = [];

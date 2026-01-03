@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToRelation;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as EloquentRelation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Uri;
 
 /**
  * @extends \Cone\Root\Fields\BelongsToMany<\Illuminate\Database\Eloquent\Relations\MorphToMany>
@@ -56,5 +57,23 @@ class MorphToMany extends BelongsToMany
                 );
             })->display(fn (Model $model): ?string => $this->resolveDisplay($model)),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toInput(Request $request, Model $model): array
+    {
+        $data = parent::toInput($request, $model);
+
+        if (! empty($data['url'])) {
+            $relation = $this->getRelation($model);
+
+            $data['url'] = Uri::of($data['url'])
+                ->withQuery([$relation->getMorphType() => $relation->getRelated()::class])
+                ->value();
+        }
+
+        return $data;
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOneOrMany as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 
 /**
  * @template TRelation of \Illuminate\Database\Eloquent\Relations\MorphOneOrMany
@@ -148,5 +149,23 @@ abstract class MorphOneOrMany extends HasOneOrMany
         $this->types = array_merge($this->types, $types);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toInput(Request $request, Model $model): array
+    {
+        $data = parent::toInput($request, $model);
+
+        if (! empty($data['url'])) {
+            $relation = $this->getRelation($model);
+
+            $data['url'] = Uri::of($data['url'])
+                ->withQuery([$relation->getMorphType() => $relation->getRelated()::class])
+                ->value();
+        }
+
+        return $data;
     }
 }

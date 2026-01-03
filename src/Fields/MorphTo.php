@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo as EloquentRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 
 /**
  * @extends \Cone\Root\Fields\BelongsTo<\Illuminate\Database\Eloquent\Relations\MorphTo>
@@ -225,8 +226,12 @@ class MorphTo extends BelongsTo
      */
     public function toInput(Request $request, Model $model): array
     {
+        $relation = $this->getRelation($model);
+
         return array_merge(parent::toInput($request, $model), [
-            'url' => sprintf('%s/search', $this->replaceRoutePlaceholders($request->route())),
+            'url' => Uri::of(sprintf('%s/search', $this->replaceRoutePlaceholders($request->route())))
+                ->withQuery([$relation->getMorphType() => $relation->getRelated()::class])
+                ->value(),
             'morphTypeName' => $name = $this->getRelation($model)->getMorphType(),
             'morphType' => $model->getAttribute($name),
         ]);
