@@ -229,7 +229,7 @@ abstract class Relation extends Field implements Form
      */
     public function getModalKey(): string
     {
-        return sprintf('relation-field-%s', $this->getModelAttribute());
+        return sprintf('relation-field-%s', str_replace(['.', '->'], '-', $this->getModelAttribute()));
     }
 
     /**
@@ -555,7 +555,9 @@ abstract class Relation extends Field implements Form
      */
     protected function resolveFilter(Request $request, Filter $filter): void
     {
-        $filter->setKey(sprintf('%s_%s', $this->getRequestKey(), $filter->getKey()));
+        $key = Str::afterLast($this->getRequestKey(), '.');
+
+        $filter->setKey(sprintf('%s_%s', $key, $filter->getKey()));
     }
 
     /**

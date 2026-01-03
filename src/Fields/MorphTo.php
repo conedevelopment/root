@@ -215,7 +215,7 @@ class MorphTo extends BelongsTo
      */
     public function types(array $types): static
     {
-        $this->types = $types;
+        $this->types = array_merge($this->types, $types);
 
         return $this;
     }
