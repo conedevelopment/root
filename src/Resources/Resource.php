@@ -491,13 +491,13 @@ abstract class Resource implements Arrayable, Form
                     ->visible('index')
                     ->filter(fn (Field $field): bool => $field instanceof Relation)
                     ->each(static function (Relation $relation) use ($query, $request): void {
-                        if ($relation instanceof BelongsToMany || $relation instanceof HasMany || $relation instanceof MorphMany) {
-                            $relation->resolveAggregate($request, $query);
-                        } elseif ($relation instanceof Meta) {
-                            $query->with('metaData');
-                        } else {
-                            $query->with($relation->getRelationName());
-                        }
+                        match (true) {
+                            $relation instanceof Meta => $query->with('metaData'),
+                            $relation instanceof BelongsToMany,
+                            $relation instanceof HasMany,
+                            $relation instanceof MorphMany => $relation->resolveAggregate($request, $query),
+                            default => $query->with($relation->getRelationName()),
+                        };
                     });
             })
             ->latest()
