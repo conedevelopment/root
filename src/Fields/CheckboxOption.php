@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Cone\Root\Fields;
 
+use Closure;
+
 class CheckboxOption extends Option
 {
     /**
      * Set the "selected" HTML attribute.
      */
-    public function selected(bool $value = true): static
+    public function selected(Closure|bool $value = true): static
     {
         return $this->checked($value);
     }
@@ -17,8 +19,10 @@ class CheckboxOption extends Option
     /**
      * Set the "selected" HTML attribute.
      */
-    public function checked(bool $value = true): static
+    public function checked(Closure|bool $value = true): static
     {
+        $value = $value instanceof Closure ? call_user_func_array($value, [$this]) : $value;
+
         return $this->setAttribute('checked', $value);
     }
 
