@@ -58,22 +58,4 @@ class MorphToMany extends BelongsToMany
             })->display(fn (Model $model): ?string => $this->resolveDisplay($model)),
         ];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toInput(Request $request, Model $model): array
-    {
-        $data = parent::toInput($request, $model);
-
-        if (! empty($data['url'])) {
-            $relation = $this->getRelation($model);
-
-            $data['url'] = Uri::of($data['url'])
-                ->withQuery([$relation->getMorphType() => $relation->getRelated()::class])
-                ->value();
-        }
-
-        return $data;
-    }
 }
