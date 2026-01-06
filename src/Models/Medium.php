@@ -13,6 +13,7 @@ use Cone\Root\Jobs\PerformConversions;
 use Cone\Root\Support\Facades\Conversion;
 use Cone\Root\Traits\Filterable;
 use Cone\Root\Traits\InteractsWithProxy;
+use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Mail\Attachment;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
@@ -31,7 +33,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class Medium extends Model implements Contract
+class Medium extends Model implements Attachable, Contract
 {
     use Filterable;
     use HasFactory;
@@ -339,5 +341,15 @@ class Medium extends Model implements Contract
             'file' => $query->where($query->qualifyColumn('mime_type'), 'not like', 'image%'),
             default => $query,
         };
+    }
+
+    /**
+     * Get an attachment instance for this entity.
+     */
+    public function toMailAttachment(): Attachment
+    {
+        return Attachment::fromPath($this->getAbsolutePath())
+            ->as($this->file_name)
+            ->mime($this->mime_type);
     }
 }
