@@ -18,7 +18,7 @@ final class ClassListTest extends TestCase
 
     public function test_a_class_list_can_add_classes(): void
     {
-        $classList = new ClassList();
+        $classList = new ClassList;
 
         $classList->add('foo');
         $this->assertSame(['foo'], $classList->toArray());

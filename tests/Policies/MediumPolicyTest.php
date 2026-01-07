@@ -21,7 +21,7 @@ final class MediumPolicyTest extends TestCase
     {
         parent::setUp();
 
-        $this->policy = new MediumPolicy();
+        $this->policy = new MediumPolicy;
         $this->user = User::factory()->create();
         $this->medium = Medium::factory()->create();
     }

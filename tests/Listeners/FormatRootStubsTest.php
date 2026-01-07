@@ -8,7 +8,6 @@ use Cone\Root\Listeners\FormatRootStubs;
 use Cone\Root\Tests\TestCase;
 use Illuminate\Foundation\Events\VendorTagPublished;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\File;
 
 final class FormatRootStubsTest extends TestCase
 {
@@ -19,7 +18,7 @@ final class FormatRootStubsTest extends TestCase
 
         $event = new VendorTagPublished('root-stubs', [$tempFile]);
 
-        $listener = new FormatRootStubs();
+        $listener = new FormatRootStubs;
         $listener->handle($event);
 
         $contents = file_get_contents($tempFile);
@@ -37,7 +36,7 @@ final class FormatRootStubsTest extends TestCase
 
         $event = new VendorTagPublished('other-tag', [$tempFile]);
 
-        $listener = new FormatRootStubs();
+        $listener = new FormatRootStubs;
         $listener->handle($event);
 
         $contents = file_get_contents($tempFile);
@@ -57,7 +56,7 @@ final class FormatRootStubsTest extends TestCase
 
         $event = new VendorTagPublished('root-stubs', [$tempFile1, $tempFile2]);
 
-        $listener = new FormatRootStubs();
+        $listener = new FormatRootStubs;
         $listener->handle($event);
 
         $contents1 = file_get_contents($tempFile1);

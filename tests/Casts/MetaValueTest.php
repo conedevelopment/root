@@ -18,7 +18,7 @@ final class MetaValueTest extends TestCase
     {
         parent::setUp();
 
-        $this->cast = new MetaValue();
+        $this->cast = new MetaValue;
 
         $this->model = new class extends Model
         {

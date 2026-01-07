@@ -33,15 +33,12 @@ class TestMakeable
     public function __construct(
         public string $param1,
         public string $param2
-    ) {
-    }
+    ) {}
 }
 
 class TestMakeableNoParams
 {
     use Makeable;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

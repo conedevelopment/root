@@ -18,7 +18,7 @@ final class RootMessageTest extends TestCase
 
     public function test_root_message_can_set_subject(): void
     {
-        $message = new RootMessage();
+        $message = new RootMessage;
         $message->subject('Test Subject');
 
         $this->assertSame('Test Subject', $message->toArray()['subject']);
@@ -26,7 +26,7 @@ final class RootMessageTest extends TestCase
 
     public function test_root_message_can_set_message(): void
     {
-        $message = new RootMessage();
+        $message = new RootMessage;
         $message->message('Test Message');
 
         $this->assertSame('Test Message', $message->toArray()['message']);
@@ -34,7 +34,7 @@ final class RootMessageTest extends TestCase
 
     public function test_root_message_can_set_data(): void
     {
-        $message = new RootMessage();
+        $message = new RootMessage;
         $message->data(['key' => 'value']);
 
         $this->assertSame(['key' => 'value'], $message->toArray()['data']);
@@ -54,7 +54,7 @@ final class RootMessageTest extends TestCase
 
     public function test_root_message_methods_are_fluent(): void
     {
-        $message = new RootMessage();
+        $message = new RootMessage;
 
         $result = $message->subject('Test')
             ->message('Message')

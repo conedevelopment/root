@@ -19,9 +19,9 @@ final class RootChannelTest extends TestCase
 
         $user = User::factory()->create();
 
-        $notification = new TestRootNotification();
+        $notification = new TestRootNotification;
 
-        (new RootChannel())->send($user, $notification);
+        (new RootChannel)->send($user, $notification);
 
         $this->assertDatabaseHas('root_notifications', [
             'notifiable_type' => User::class,
@@ -35,9 +35,9 @@ final class RootChannelTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $notification = new TestRootNotification();
+        $notification = new TestRootNotification;
 
-        (new RootChannel())->send($user, $notification);
+        (new RootChannel)->send($user, $notification);
 
         $this->assertDatabaseHas('root_notifications', [
             'type' => TestRootNotification::class,
@@ -49,7 +49,7 @@ class TestRootNotification extends RootNotification
 {
     public function toRoot(object $notifiable): RootMessage
     {
-        return (new RootMessage())
+        return (new RootMessage)
             ->subject('Test Subject')
             ->message('Test Message');
     }

@@ -11,7 +11,7 @@ final class ChartTest extends TestCase
 {
     public function test_chart_component_renders(): void
     {
-        $component = new Chart();
+        $component = new Chart;
 
         $view = $component->render();
 

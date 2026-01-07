@@ -11,14 +11,14 @@ final class AlertComponentTest extends TestCase
 {
     public function test_alert_component_can_be_instantiated(): void
     {
-        $component = new AlertComponent();
+        $component = new AlertComponent;
 
         $this->assertInstanceOf(AlertComponent::class, $component);
     }
 
     public function test_alert_component_renders(): void
     {
-        $component = new AlertComponent();
+        $component = new AlertComponent;
 
         $view = $component->render();
 

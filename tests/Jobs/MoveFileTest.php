@@ -28,26 +28,24 @@ final class MoveFileTest extends TestCase
 
     public function test_move_file_job_moves_file_to_storage(): void
     {
-        Storage::fake('public');
-
         $file = UploadedFile::fake()->image('test.jpg');
         $tempPath = $file->getRealPath();
 
         $medium = Medium::factory()->make([
             'disk' => 'public',
-            'path' => 'media/test.jpg',
+            'file_name' => 'test.jpg',
         ]);
 
         $job = new MoveFile($medium, $tempPath, true);
         $job->handle();
 
-        Storage::disk('public')->assertExists('media/test.jpg');
+        Storage::disk('public')->assertExists('test.jpg');
+
+        Storage::disk('public')->delete('test.jpg');
     }
 
     public function test_move_file_job_deletes_original_when_not_preserved(): void
     {
-        Storage::fake('public');
-
         $tempDir = Storage::disk('local')->path('root-tmp');
         $tempPath = $tempDir.'/test-file.jpg';
         File::ensureDirectoryExists($tempDir);
@@ -55,14 +53,16 @@ final class MoveFileTest extends TestCase
 
         $medium = Medium::factory()->make([
             'disk' => 'public',
-            'path' => 'media/test.jpg',
+            'file_name' => 'test.jpg',
         ]);
 
         $job = new MoveFile($medium, $tempPath, false);
         $job->handle();
 
-        Storage::disk('public')->assertExists('media/test.jpg');
+        Storage::disk('public')->assertExists('test.jpg');
         $this->assertFalse(File::exists($tempPath));
+
+        Storage::disk('public')->delete('test.jpg');
     }
 
     public function test_move_file_job_preserves_original_when_preserve_is_true(): void
@@ -76,13 +76,15 @@ final class MoveFileTest extends TestCase
 
         $medium = Medium::factory()->make([
             'disk' => 'public',
-            'path' => 'media/test.jpg',
+            'file_name' => 'test.jpg',
         ]);
 
         $job = new MoveFile($medium, $tempPath, true);
         $job->handle();
 
-        Storage::disk('public')->assertExists('media/test.jpg');
+        Storage::disk('public')->assertExists('test.jpg');
         $this->assertTrue(File::exists($tempPath));
+
+        Storage::disk('public')->delete('test.jpg');
     }
 }
