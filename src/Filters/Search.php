@@ -52,7 +52,7 @@ class Search extends RenderableFilter
             ->setAttributes([
                 'x-bind:readonly' => 'processing',
                 'x-on:change.prevent.stop' => '',
-                'x-on:input' => '($event) => $event.target?.form?.dispatchEvent(new Event(\'change\'))',
+                'x-on:input.debounce.300ms' => '($event) => $event.target?.form?.dispatchEvent(new Event(\'change\'))',
             ])
             ->placeholder(sprintf('%s...', $this->getName()));
     }
